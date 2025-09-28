@@ -2,7 +2,7 @@ import { Routes, Route } from 'react-router-dom';
 import ProtectedRoute from './ProtectedRoute';
 import { routes } from './routes';
 import Login from '../pages/auth/Login';
-import Layout from '../components/Layout/Layout';
+import Layout from '@/components/layout/Layout';
 
 export default function AppRoutes() {
     return (

@@ -197,6 +197,10 @@
     scroll-behavior: smooth;
   }
 
+  button {
+    @apply cursor-pointer;
+  }
+
   [dir="rtl"] {
     font-family: "Cairo", system-ui, sans-serif;
   }
