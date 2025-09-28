@@ -1,7 +1,7 @@
 import React from 'react';
 import { Outlet } from 'react-router-dom';
 import Navbar from './Navbar';
-import SideBar from './Sidebar';
+import SideBar from './SideBar';
 import { useUserStore } from '@/utils/stores/user.store';
 
 export default function Layout() {
