@@ -14,6 +14,6 @@ export const loginFields = [
 ];
 
 export const loginDefaultValues = {
-    email: 'admin@example.com',
+    email: 'admin@admin.com',
     password: '12345678'
 };
