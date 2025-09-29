@@ -34,6 +34,28 @@
         "level": {
             "label": "المستوى الأكاديمي",
             "placeholder": "اختر المستوى الأكاديمي"
+        },
+        "code": {
+            "label": "الكود",
+            "placeholder": "أدخل الكود",
+            "integer": "الكود يجب أن يكون رقماً صحيحاً",
+            "min": "الكود يجب أن يكون على الأقل 1"
+        },
+        "city_id": {
+            "label": "المدينة",
+            "placeholder": "اختر المدينة",
+            "integer": "يجب اختيار المدينة",
+            "min": "يرجى اختيار مدينة صحيحة"
+        },
+        "educational_entity_classification": {
+            "label": {
+                "en": "تصنيف الكيان التعليمي (إنجليزي)",
+                "ar": "تصنيف الكيان التعليمي (عربي)"
+            },
+            "placeholder": {
+                "en": "أدخل تصنيف الكيان التعليمي بالإنجليزية",
+                "ar": "أدخل تصنيف الكيان التعليمي بالعربية"
+            }
         }
     },
     "common": {
@@ -56,5 +78,57 @@
         "create": "إنشاء مدينة",
         "edit": "تعديل المدينة",
         "update": "تحديث المدينة"
+    },
+    "kinships": {
+        "create": "إنشاء صلة قرابة",
+        "update": "تحديث صلة القرابة"
+    },
+    "attendance_types": {
+        "create": "إنشاء نوع حضور",
+        "update": "تحديث نوع الحضور"
+    },
+    "quoran_parts": {
+        "create": "إنشاء جزء قرآن",
+        "update": "تحديث الجزء القرآني"
+    },
+    "main_programs": {
+        "create": "إنشاء البرنامج الرئيسي",
+        "update": "تحديث البرنامج الرئيسي"
+    },
+    "academic_levels": {
+        "create": "إنشاء مستوى أكاديمي",
+        "update": "تحديث المستوى الأكاديمي"
+    },
+    "academic_years": {
+        "create": "إنشاء سنة أكاديمية",
+        "update": "تحديث السنة الأكاديمية"
+    },
+    "location_types": {
+        "create": "إنشاء نوع موقع",
+        "update": "تحديث نوع الموقع"
+    },
+    "memorization_program_entity_types": {
+        "create": "إنشاء برنامج حفظ",
+        "update": "تحديث برنامج الحفظ"
+    },
+    "education_program_entity_types": {
+        "create": "إنشاء برنامج تعليمي",
+        "update": "تحديث البرنامج التعليمي"
+    },
+    "specifications": {
+        "create": "إنشاء تخصص",
+        "update": "تحديث التخصص"
+    },
+    "activities": {
+        "create": "إنشاء نشاط",
+        "update": "تحديث النشاط"
+    },
+    "entity_categories": {
+        "create": "إنشاء فئة كيان",
+        "update": "تحديث فئة الكيان"
+    },
+    "neighborhoods": {
+        "create": "إنشاء حي",
+        "update": "تحديث الحي"
     }
 }

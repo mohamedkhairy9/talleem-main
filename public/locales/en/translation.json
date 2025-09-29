@@ -32,6 +32,28 @@
         "level": {
             "label": "Academic Level",
             "placeholder": "Select academic level"
+        },
+        "code": {
+            "label": "Code",
+            "placeholder": "Enter code",
+            "integer": "Code must be an integer",
+            "min": "Code must be at least 1"
+        },
+        "city_id": {
+            "label": "City",
+            "placeholder": "Select city",
+            "integer": "City must be selected",
+            "min": "Please select a valid city"
+        },
+        "educational_entity_classification": {
+            "label": {
+                "en": "Educational Entity Classification (English)",
+                "ar": "Educational Entity Classification (Arabic)"
+            },
+            "placeholder": {
+                "en": "Enter educational entity classification in English",
+                "ar": "Enter educational entity classification in Arabic"
+            }
         }
     },
     "common": {
@@ -54,5 +76,57 @@
         "create": "Create City",
         "edit": "Edit City",
         "update": "Update City"
+    },
+    "kinships": {
+        "create": "Create Kinship",
+        "update": "Update Kinship"
+    },
+    "attendance_types": {
+        "create": "Create Attendance Type",
+        "update": "Update Attendance Type"
+    },
+    "quoran_parts": {
+        "create": "Create Quoran Part",
+        "update": "Update Quoran Part"
+    },
+    "main_programs": {
+        "create": "Create Main Program",
+        "update": "Update Main Program"
+    },
+    "academic_levels": {
+        "create": "Create Academic Level",
+        "update": "Update Academic Level"
+    },
+    "academic_years": {
+        "create": "Create Academic Year",
+        "update": "Update Academic Year"
+    },
+    "location_types": {
+        "create": "Create Location Type",
+        "update": "Update Location Type"
+    },
+    "memorization_program_entity_types": {
+        "create": "Create Memorization Program",
+        "update": "Update Memorization Program"
+    },
+    "education_program_entity_types": {
+        "create": "Create Education Program",
+        "update": "Update Education Program"
+    },
+    "specifications": {
+        "create": "Create Specification",
+        "update": "Update Specification"
+    },
+    "activities": {
+        "create": "Create Activity",
+        "update": "Update Activity"
+    },
+    "entity_categories": {
+        "create": "Create Entity Category",
+        "update": "Update Entity Category"
+    },
+    "neighborhoods": {
+        "create": "Create Neighborhood",
+        "update": "Update Neighborhood"
     }
 }

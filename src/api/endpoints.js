@@ -75,11 +75,11 @@ export const API_URLS = {
         DELETE: id => `/quoran-parts/${id}`
     },
     ATTENDANCES_TYPES: {
-        CREATE: '/attendances-types',
-        LIST: '/attendances-types',
-        DETAILS: id => `/attendances-types/${id}`,
-        UPDATE: id => `/attendances-types/${id}`,
-        DELETE: id => `/attendances-types/${id}`
+        CREATE: '/attendance-types',
+        LIST: '/attendance-types',
+        DETAILS: id => `/attendance-types/${id}`,
+        UPDATE: id => `/attendance-types/${id}`,
+        DELETE: id => `/attendance-types/${id}`
     },
     MEMORIZATION_PROGRAM_ENTITY_TYPES: {
         CREATE: '/memorization-program-entity-types',
@@ -136,6 +136,34 @@ export const API_URLS = {
         DETAILS: id => `/academic-levels/${id}`,
         UPDATE: id => `/academic-levels/${id}`,
         DELETE: id => `/academic-levels/${id}`
+    },
+    LOCATION_TYPES: {
+        CREATE: '/location-types',
+        LIST: '/location-types',
+        DETAILS: id => `/location-types/${id}`,
+        UPDATE: id => `/location-types/${id}`,
+        DELETE: id => `/location-types/${id}`
+    },
+    SPECIFICATIONS: {
+        CREATE: '/specifications',
+        LIST: '/specifications',
+        DETAILS: id => `/specifications/${id}`,
+        UPDATE: id => `/specifications/${id}`,
+        DELETE: id => `/specifications/${id}`
+    },
+    ACTIVITIES: {
+        CREATE: '/activities',
+        LIST: '/activities',
+        DETAILS: id => `/activities/${id}`,
+        UPDATE: id => `/activities/${id}`,
+        DELETE: id => `/activities/${id}`
+    },
+    ENTITY_CATEGORIES: {
+        CREATE: '/entity-categories',
+        LIST: '/entity-categories',
+        DETAILS: id => `/entity-categories/${id}`,
+        UPDATE: id => `/entity-categories/${id}`,
+        DELETE: id => `/entity-categories/${id}`
     }
 };
 
@@ -164,5 +192,9 @@ export const API_KEYS = {
     CITIES: 'cities',
     NEIGHBORHOODS: 'neighborhoods',
     ACADEMIC_YEARS: 'academic-years',
-    ACADEMIC_LEVELS: 'academic-levels'
+    ACADEMIC_LEVELS: 'academic-levels',
+    LOCATION_TYPES: 'location-types',
+    SPECIFICATIONS: 'specifications',
+    ACTIVITIES: 'activities',
+    ENTITY_CATEGORIES: 'entity-categories'
 };

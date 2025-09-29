@@ -18,6 +18,10 @@ import Cities from '@/pages/cities/Cities';
 import Neighborhoods from '@/pages/neighborhoods/Neighborhoods';
 import AcademicYears from '@/pages/academic-years/AcademicYears';
 import AcademicLevels from '@/pages/academic-levels/AcademicLevels';
+import LocationTypes from '@/pages/location-types/LocationTypes';
+import Specifications from '@/pages/specifications/Specifications';
+import Activities from '@/pages/activities/Activities';
+import EntityCategories from '@/pages/entity-categories/EntityCategories';
 
 export const routes = [
     {
@@ -95,5 +99,25 @@ export const routes = [
     {
         path: '/academic-levels',
         element: <AcademicLevels />
+    },
+    {
+        path: '/location-types',
+        element: <LocationTypes />
+    },
+    {
+        path: '/specifications',
+        element: <Specifications />
+    },
+    {
+        path: '/activities',
+        element: <Activities />
+    },
+    {
+        path: '/entity-categories',
+        element: <EntityCategories />
+    },
+    {
+        path: '/neighborhoods',
+        element: <Neighborhoods />
     }
 ];

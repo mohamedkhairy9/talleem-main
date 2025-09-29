@@ -1,6 +1,7 @@
 import React from 'react';
 import { Controller } from 'react-hook-form';
 import Select from 'react-select';
+import useLocale from '@/utils/hooks/global/useLocale';
 
 export default function SelectRFH({
     label,
@@ -15,6 +16,7 @@ export default function SelectRFH({
     classes,
     placeholder = 'Please select ..'
 }) {
+    const { t } = useLocale();
     const getDefaultValue = () => {
         if (defaultValue) {
             if (isMulti) {
@@ -49,7 +51,7 @@ export default function SelectRFH({
                     htmlFor={name}
                     className="block  font-medium text-gray-700 mb-1 font-montserrat"
                 >
-                    {label}
+                    {t(label)}
                 </label>
             )}
             <Controller
@@ -65,7 +67,7 @@ export default function SelectRFH({
                         classNamePrefix="react-select"
                         options={options}
                         isDisabled={disabled}
-                        placeholder={placeholder}
+                        placeholder={t(placeholder)}
                         styles={{
                             control: (provided, state) => ({
                                 ...provided,
