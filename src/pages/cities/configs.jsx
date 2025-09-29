@@ -10,11 +10,6 @@ export const citiesColumns = [
     columnHelper.accessor('name', {
         header: 'City',
         cell: info => <NameCell directValue={info.row.original.name} />
-    }),
-    columnHelper.accessor('created_at', {
-        header: 'Created At',
-        cell: info => <DateCell fullDate value={info.getValue()} />,
-        enableColumnFilter: false
     })
 ];
 
