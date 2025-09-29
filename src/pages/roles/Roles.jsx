@@ -28,11 +28,10 @@ export default function Roles() {
                 setPagination={setPagination}
             />
             {isOpen.add && (
-                <CreateRole isOpen={isOpen.add} onClose={toggle.add} />
+                <CreateRole onClose={toggle.add} />
             )}
             {isOpen.edit && (
                 <EditRole
-                    isOpen={isOpen.edit}
                     onClose={toggle.edit}
                     oldData={isOpen.edit}
                 />

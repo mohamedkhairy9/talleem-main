@@ -77,7 +77,7 @@ const Modal = ({
           relative overflow-y-auto w-full ${sizeClasses[size]} 
           bg-white rounded-lg shadow-2xl 
           transform transition-all duration-100 ease-out
-          animate-in fade-in zoom-in-95
+          animate-in  zoom-in-95
           max-h-[90vh] overflow-hidden
           ${size === 'full' ? 'h-full' : ''}
         `}

@@ -1,18 +1,18 @@
 {
     "validation": {
         "required": "This field is required",
-        "display_name": {
-            "en_min": "English display name must be at least 2 characters",
-            "ar_min": "Arabic display name must be at least 2 characters",
-            "en_max": "English display name must not exceed 100 characters",
-            "ar_max": "Arabic display name must not exceed 100 characters",
+        "name": {
+            "en_min": "English name must be at least 2 characters",
+            "ar_min": "Arabic name must be at least 2 characters",
+            "en_max": "English name must not exceed 100 characters",
+            "ar_max": "Arabic name must not exceed 100 characters",
             "label": {
-                "en": "Display Name (English)",
-                "ar": "Display Name (Arabic)"
+                "en": "Name (English)",
+                "ar": "Name (Arabic)"
             },
             "placeholder": {
-                "en": "Enter display name in English",
-                "ar": "Enter display name in Arabic"
+                "en": "Enter name in English",
+                "ar": "Enter name in Arabic"
             }
         },
         "description": {
@@ -28,6 +28,10 @@
                 "en": "Enter description in English",
                 "ar": "Enter description in Arabic"
             }
+        },
+        "level": {
+            "label": "Academic Level",
+            "placeholder": "Select academic level"
         }
     },
     "common": {
@@ -37,5 +41,13 @@
     "roles": {
         "create": "Create Role",
         "update": "Update Role"
+    },
+    "academic_qualifications": {
+        "create": "Create Academic Qualification",
+        "update": "Update Academic Qualification"
+    },
+    "jobs": {
+        "create": "Create Job",
+        "update": "Update Job"
     }
 }
