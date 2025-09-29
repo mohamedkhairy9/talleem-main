@@ -57,7 +57,7 @@ export default function SideBar() {
             {!isMobile && (
                 <div
                     className={`${
-                        isOpen ? 'w-64' : 'w-[70px]'
+                        isOpen ? 'w-[270px]' : 'w-[70px]'
                     } h-screen shrink-0 transition-all duration-200`}
                 ></div>
             )}
@@ -76,7 +76,7 @@ export default function SideBar() {
                 className={`flex shrink-0 flex-col
                 fixed left-0 top-0 h-screen bg-white shadow-xl border-r border-gray-200 z-40
                 transition-all duration-200 ease-in-out
-                ${isOpen ? 'w-64' : 'w-[70px]'}
+                ${isOpen ? 'w-[270px]' : 'w-[70px]'}
                 ${isMobile && !isOpen ? '-translate-x-full' : 'translate-x-0'}
             `}
             >
@@ -114,7 +114,7 @@ export default function SideBar() {
                     {isOpen && <span></span>}
                 </div>
 
-                <nav className="flex-1 p-3 space-y-1 overflow-y-auto">
+                <nav className="flex-1 p-3 space-y-1 scrollbar-hide overflow-y-auto">
                     {sideMenuTabs.map(tab => {
                         const Icon = tab.icon;
                         const active = isActive(tab.path);
@@ -124,12 +124,12 @@ export default function SideBar() {
                                 key={tab.path}
                                 onClick={() => handleNavigation(tab.path)}
                                 className={`
-                                    w-full flex items-center gap-3  px-3 py-2.5 rounded-lg transition-all duration-200
+                                    w-full flex items-center gap-1 text-base px-3 py-2.5 rounded-lg transition-all duration-200
                                     group relative
                                     ${
                                         active
-                                            ? 'bg-gradient-to-br from-[#667eea] to-[#764ba2] text-white  shadow-sm'
-                                            : 'text-gray-500 hover:gap-5 hover:text-indigo-600 hover:bg-gray-100'
+                                            ? 'bg-gradient-to-br from-[#667eea] to-[#764ba2] text-white shadow-sm'
+                                            : 'text-gray-500 hover:gap-2 hover:text-indigo-600 hover:bg-gray-100'
                                     }
                                 `}
                                 aria-label={tab.title}

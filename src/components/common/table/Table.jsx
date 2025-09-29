@@ -517,7 +517,7 @@ const Table = ({
                 </button>
 
                 {isOpen && (
-                    <div className="absolute top-8 left-0 bg-white border border-gray-200 rounded-lg shadow-lg z-50 w-64">
+                    <div className="absolute top-8 left-0 bg-white border border-gray-200 rounded-lg shadow-lg z-[999] w-64">
                         <div className="p-3 border-b border-gray-200">
                             <input
                                 type="text"
@@ -991,7 +991,7 @@ const Table = ({
 
                 {/* Table */}
                 <div
-                    className={`overflow-auto  ${isFullscreen ? 'flex-1' : ''}`}
+                    className={`overflow-x-auto  ${isFullscreen ? 'flex-1' : ''}`}
                     ref={tableRef}
                 >
                     <table className="w-full">

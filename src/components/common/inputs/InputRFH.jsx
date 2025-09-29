@@ -1,4 +1,5 @@
-import SelectRFH from "./SelectRFH";
+import useLocale from '@/utils/hooks/global/useLocale';
+import SelectRFH from './SelectRFH';
 
 export default function InputRFH({
     error,
@@ -9,11 +10,24 @@ export default function InputRFH({
     register,
     options,
     control,
-    defaultValue
+    defaultValue,
+    p = 'px-4 py-3'
 }) {
+    const { t } = useLocale();
 
     if (type === 'select') {
-        return <SelectRFH defaultValue={defaultValue} control={control} register={register} error={error} label={label} name={name} options={options} placeholder={placeholder} />
+        return (
+            <SelectRFH
+                defaultValue={defaultValue}
+                control={control}
+                register={register}
+                error={error}
+                label={label}
+                name={name}
+                options={options}
+                placeholder={placeholder}
+            />
+        );
     }
     return (
         <div>
@@ -22,26 +36,27 @@ export default function InputRFH({
                     htmlFor={name}
                     className="block  font-medium text-gray-700 mb-1 font-montserrat"
                 >
-                    {label}
+                    {t(label)}
                 </label>
             )}
             <input
                 {...register(name)}
                 type={type}
-                className={`w-full px-4 py-3 border outline-none rounded-lg focus:border-blue-500 transition-colors duration-200 font-montserrat ${
+                id={name || ''}
+                className={`w-full ${p} border outline-none rounded-lg focus:border-blue-500 transition-colors duration-200 font-montserrat ${
                     error
                         ? 'border-red-300  focus:border-red-500'
                         : 'border-gray-300'
                 }`}
-                placeholder={placeholder || ''}
+                placeholder={t(placeholder) || ''}
             />
             {
                 <p
                     id="password-error"
-                    className="mt-2 h-4 text-xs text-red-600 font-montserrat"
+                    className="mt-1 h-4 text-xs text-red-600 font-montserrat"
                     role="alert"
                 >
-                    {error || ''}
+                    {t(error) || ''}
                 </p>
             }
         </div>

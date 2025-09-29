@@ -1,3 +1,4 @@
+import useLocale from '@/utils/hooks/global/useLocale';
 import React from 'react';
 
 export default function Btn({
@@ -10,6 +11,7 @@ export default function Btn({
     loaderSize = 'size-7',
     type
 }) {
+    const { t } = useLocale();
     if (hidden) return null;
     return (
         <button
@@ -23,7 +25,9 @@ export default function Btn({
                     className={`${loaderSize} animate-spin shrink-0 rounded-full border-4 border-white border-t-transparent`}
                 ></span>
             )}
-            {!loading && <span className="text-lg font-medium">{label}</span>}
+            {!loading && (
+                <span className="text-lg font-medium">{t(label)}</span>
+            )}
         </button>
     );
 }

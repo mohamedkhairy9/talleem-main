@@ -4,9 +4,11 @@ import Table from '@/components/common/table/Table';
 import { rolesColumns } from './configs';
 import useIsOpen from '@/utils/hooks/global/useIsOpen';
 import usePagination from '@/utils/hooks/global/usePagination';
+import CreateRole from './CreateRole';
+import EditRole from './EditRole';
+import DeleteRole from './DeleteRole';
 
 export default function Roles() {
-
     const { isOpen, toggle } = useIsOpen();
     const { pagination, setPagination } = usePagination();
     const { data, isLoading, refresh } = useRolesQuery(pagination);
@@ -25,14 +27,19 @@ export default function Roles() {
                 pagination={pagination}
                 setPagination={setPagination}
             />
-            {isOpen.add && <CreateRole onClose={toggle.add} />}
+            {isOpen.add && (
+                <CreateRole isOpen={isOpen.add} onClose={toggle.add} />
+            )}
             {isOpen.edit && (
-                <EditRole onClose={toggle.edit} oldData={isOpen.edit} />
+                <EditRole
+                    isOpen={isOpen.edit}
+                    onClose={toggle.edit}
+                    oldData={isOpen.edit}
+                />
             )}
             {isOpen.delete && (
-                <DeleteRole setIsOpen={toggle.delete} id={isOpen.delete?._id} />
+                <DeleteRole onClose={toggle.delete} id={isOpen.delete?.id} />
             )}
         </div>
     );
-
 }

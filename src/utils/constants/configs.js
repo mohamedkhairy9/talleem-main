@@ -2,20 +2,39 @@
 import {
     HiHome,
     HiUsers,
-    HiCube,
-    HiShoppingCart,
-    HiCreditCard,
-    HiChartBar,
-    HiBell
+    HiShieldCheck,
+    HiCollection,
+    HiBell,
+    HiClipboardList,
+    HiAcademicCap,
+    HiOfficeBuilding,
+    HiBookOpen,
+    HiUserGroup,
+    HiBriefcase,
+    HiLocationMarker,
+    HiCalendar,
+    HiChartBar
 } from 'react-icons/hi';
 
 export const sideMenuTabs = [
     { title: 'Home', path: '/', icon: HiHome },
     { title: 'Roles', path: '/roles', icon: HiUsers },
-    { title: 'Products', path: '/products', icon: HiCube },
-    { title: 'Orders', path: '/orders', icon: HiShoppingCart },
-    { title: 'Payments', path: '/payments', icon: HiCreditCard },
-    { title: 'Reports', path: '/reports', icon: HiChartBar },
-    { title: 'Notifications', path: '/notifications', icon: HiBell }
+    { title: 'Permissions', path: '/permissions', icon: HiShieldCheck },
+    { title: 'Resources', path: '/resources', icon: HiCollection },
+    { title: 'Notifications', path: '/notifications', icon: HiBell },
+    { title: 'Activity Logs', path: '/activity-logs', icon: HiClipboardList },
+    { title: 'Academic Qualifications', path: '/academic-qualifications', icon: HiAcademicCap },
+    { title: 'Branches', path: '/branches', icon: HiOfficeBuilding },
+    { title: 'Main Programs', path: '/main-programs', icon: HiBookOpen },
+    { title: 'Quran Parts', path: '/quoran-parts', icon: HiBookOpen },
+    { title: 'Attendance Types', path: '/attendances-types', icon: HiClipboardList },
+    { title: 'Memorization Programs', path: '/memorization-program-entity-types', icon: HiAcademicCap },
+    { title: 'Education Programs', path: '/education-program-entity-types', icon: HiAcademicCap },
+    { title: 'Kinships', path: '/kinships', icon: HiUserGroup },
+    { title: 'Jobs', path: '/jobs', icon: HiBriefcase },
+    { title: 'Cities', path: '/cities', icon: HiLocationMarker },
+    { title: 'Neighborhoods', path: '/neighborhoods', icon: HiLocationMarker },
+    { title: 'Academic Years', path: '/academic-years', icon: HiCalendar },
+    { title: 'Academic Levels', path: '/academic-levels', icon: HiChartBar }
 ];
 

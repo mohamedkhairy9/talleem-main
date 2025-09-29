@@ -21,7 +21,7 @@ export const useRoleQuery = id => {
 export const useCreateRoleMutation = () => {
     const queryClient = useQueryClient();
     return useCustomMutation({
-        mutationFn: ({ data }) => rolesService.createRole(data),
+        mutationFn: data => rolesService.createRole(data),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: [API_KEYS.ROLES] });
         },
@@ -34,7 +34,7 @@ export const useCreateRoleMutation = () => {
 export const useUpdateRoleMutation = () => {
     const queryClient = useQueryClient();
     return useCustomMutation({
-        mutationFn: ({ data }) => rolesService.updateRole(data.id, data),
+        mutationFn: data => rolesService.updateRole(data.id, data),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: [API_KEYS.ROLES] });
         },
@@ -47,7 +47,7 @@ export const useUpdateRoleMutation = () => {
 export const useDeleteRoleMutation = () => {
     const queryClient = useQueryClient();
     return useCustomMutation({
-        mutationFn: ({ id }) => rolesService.deleteRole(id),
+        mutationFn: id => rolesService.deleteRole(id),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: [API_KEYS.ROLES] });
         },

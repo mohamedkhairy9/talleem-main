@@ -1,0 +1,41 @@
+{
+    "validation": {
+        "required": "This field is required",
+        "display_name": {
+            "en_min": "English display name must be at least 2 characters",
+            "ar_min": "Arabic display name must be at least 2 characters",
+            "en_max": "English display name must not exceed 100 characters",
+            "ar_max": "Arabic display name must not exceed 100 characters",
+            "label": {
+                "en": "Display Name (English)",
+                "ar": "Display Name (Arabic)"
+            },
+            "placeholder": {
+                "en": "Enter display name in English",
+                "ar": "Enter display name in Arabic"
+            }
+        },
+        "description": {
+            "en_min": "English description must be at least 10 characters",
+            "ar_min": "Arabic description must be at least 10 characters",
+            "en_max": "English description must not exceed 500 characters",
+            "ar_max": "Arabic description must not exceed 500 characters",
+            "label": {
+                "en": "Description (English)",
+                "ar": "Description (Arabic)"
+            },
+            "placeholder": {
+                "en": "Enter description in English",
+                "ar": "Enter description in Arabic"
+            }
+        }
+    },
+    "common": {
+        "close": "Close",
+        "submit": "Submit"
+    },
+    "roles": {
+        "create": "Create Role",
+        "update": "Update Role"
+    }
+}

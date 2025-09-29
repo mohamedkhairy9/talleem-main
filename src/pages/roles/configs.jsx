@@ -22,3 +22,38 @@ export const rolesColumns = [
         enableColumnFilter: false
     })
 ];
+
+export const rolesFields = [
+    {
+        name: 'display_name.en',
+        label: 'validation.display_name.label.en',
+        type: 'text',
+        placeholder: 'validation.display_name.placeholder.en',
+        editMode: true,
+        viewMode: true
+    },
+    {
+        name: 'display_name.ar',
+        label: 'validation.display_name.label.ar',
+        type: 'text',
+        placeholder: 'validation.display_name.placeholder.ar',
+        editMode: true,
+        viewMode: true
+    },
+    {
+        name: 'description.en',
+        label: 'validation.description.label.en',
+        type: 'textarea',
+        placeholder: 'validation.description.placeholder.en',
+        editMode: true,
+        viewMode: true
+    },
+    {
+        name: 'description.ar',
+        label: 'validation.description.label.ar',
+        type: 'textarea',
+        placeholder: 'validation.description.placeholder.ar',
+        editMode: true,
+        viewMode: true
+    }
+];

@@ -1,8 +1,8 @@
 import React, { useEffect, useRef } from 'react';
 
 const Modal = ({
-    isOpen=true,
-    setIsOpen,
+    isOpen = true,
+    onClose,
     children,
     closeOnBackdrop = true,
     closeOnEscape = true,
@@ -24,7 +24,7 @@ const Modal = ({
     // Handle backdrop click
     const handleBackdropClick = e => {
         if (closeOnBackdrop && e.target === backdropRef.current) {
-            setIsOpen(false);
+            onClose(false);
         }
     };
 
@@ -32,7 +32,7 @@ const Modal = ({
     useEffect(() => {
         const handleEscape = e => {
             if (closeOnEscape && e.key === 'Escape' && isOpen) {
-                setIsOpen(false);
+                onClose(false);
             }
         };
 
@@ -46,7 +46,7 @@ const Modal = ({
             document.removeEventListener('keydown', handleEscape);
             document.body.style.overflow = 'unset';
         };
-    }, [isOpen, closeOnEscape, setIsOpen]);
+    }, [isOpen, closeOnEscape, onClose]);
 
     useEffect(() => {
         if (isOpen && modalRef.current) {
@@ -65,7 +65,7 @@ const Modal = ({
     return (
         <div
             ref={backdropRef}
-            className="fixed h-screen inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm transition-all duration-300 ease-out"
+            className="fixed h-screen inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm transition-all duration-100 ease-out"
             onClick={handleBackdropClick}
             role="dialog"
             aria-modal="true"
@@ -76,7 +76,7 @@ const Modal = ({
                 className={`
           relative overflow-y-auto w-full ${sizeClasses[size]} 
           bg-white rounded-lg shadow-2xl 
-          transform transition-all duration-300 ease-out
+          transform transition-all duration-100 ease-out
           animate-in fade-in zoom-in-95
           max-h-[90vh] overflow-hidden
           ${size === 'full' ? 'h-full' : ''}

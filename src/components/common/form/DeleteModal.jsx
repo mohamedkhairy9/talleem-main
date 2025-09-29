@@ -3,9 +3,9 @@ import { MdDelete } from 'react-icons/md';
 import { CiWarning } from 'react-icons/ci';
 import Modal from './Modal';
 
-export default function DeleteModal({ deleteFn, setIsOpen, loading = false }) {
+export default function DeleteModal({ deleteFn, onClose, loading = false }) {
     return (
-        <Modal setIsOpen={setIsOpen}>
+        <Modal onClose={onClose}>
             <div className="bg-white p-5 rounded-xl font-semibold">
                 <CiWarning className="mx-auto text-4xl text-red-500" />
                 <p className="text-center my-5">
@@ -13,7 +13,7 @@ export default function DeleteModal({ deleteFn, setIsOpen, loading = false }) {
                 </p>
                 <div className="flex justify-center gap-4">
                     <button
-                        onClick={() => setIsOpen(false)}
+                        onClick={onClose}
                         className="bg-gray-600 hover:bg-gray-700 text-white px-8 py-2 rounded "
                     >
                         Cancel

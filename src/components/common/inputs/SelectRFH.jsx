@@ -108,7 +108,7 @@ export default function SelectRFH({
                 )}
             />
             <p
-                className="mt-2 h-4 text-xs text-red-600 font-montserrat"
+                className="mt-1 h-4 text-xs text-red-600 font-montserrat"
                 role="alert"
             >
                 {error || ''}
