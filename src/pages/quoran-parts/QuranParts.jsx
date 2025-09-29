@@ -7,16 +7,18 @@ import usePagination from '@/utils/hooks/global/usePagination';
 import CreateQuoranPart from './CreateQuoranPart';
 import EditQuoranPart from './EditQuoranPart';
 import DeleteQuoranPart from './DeleteQuoranPart';
+import useLocale from '@/utils/hooks/global/useLocale';
 
 export default function QuranParts() {
     const { isOpen, toggle } = useIsOpen();
     const { pagination, setPagination } = usePagination();
     const { data, isLoading, refresh } = useQuoranPartsQuery(pagination);
+    const { t } = useLocale();
 
     return (
         <div>
             <Table
-                title="Quoran Parts"
+                title={t('table_titles.quoran_parts')}
                 refresh={refresh}
                 loading={isLoading}
                 data={data?.data}

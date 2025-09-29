@@ -21,44 +21,84 @@ import {
 } from 'react-icons/hi';
 
 export const sideMenuTabs = [
-    { title: 'Home', path: '/', icon: HiHome },
-    { title: 'Roles', path: '/roles', icon: HiUsers },
-    // { title: 'Permissions', path: '/permissions', icon: HiShieldCheck },
-    // { title: 'Resources', path: '/resources', icon: HiCollection },
-    // { title: 'Notifications', path: '/notifications', icon: HiBell },
-    // { title: 'Activity Logs', path: '/activity-logs', icon: HiClipboardList },
+    { titleKey: 'sidebar.home', path: '/', icon: HiHome },
+    { titleKey: 'sidebar.roles', path: '/roles', icon: HiUsers },
+    // { titleKey: 'sidebar.permissions', path: '/permissions', icon: HiShieldCheck },
+    // { titleKey: 'sidebar.resources', path: '/resources', icon: HiCollection },
+    // { titleKey: 'sidebar.notifications', path: '/notifications', icon: HiBell },
+    // { titleKey: 'sidebar.activity_logs', path: '/activity-logs', icon: HiClipboardList },
     {
-        title: 'Academic Qualifications',
+        titleKey: 'sidebar.academic_qualifications',
         path: '/academic-qualifications',
         icon: HiAcademicCap
     },
-    { title: 'Branches', path: '/branches', icon: HiOfficeBuilding },
-    { title: 'Main Programs', path: '/main-programs', icon: HiBookOpen },
-    { title: 'Quran Parts', path: '/quoran-parts', icon: HiBookOpen },
+    { titleKey: 'sidebar.branches', path: '/branches', icon: HiOfficeBuilding },
     {
-        title: 'Attendance Types',
+        titleKey: 'sidebar.main_programs',
+        path: '/main-programs',
+        icon: HiBookOpen
+    },
+    {
+        titleKey: 'sidebar.quoran_parts',
+        path: '/quoran-parts',
+        icon: HiBookOpen
+    },
+    {
+        titleKey: 'sidebar.attendance_types',
         path: '/attendances-types',
         icon: HiClipboardList
     },
     {
-        title: 'Memorization Programs',
+        titleKey: 'sidebar.memorization_programs',
         path: '/memorization-program-entity-types',
         icon: HiAcademicCap
     },
     {
-        title: 'Education Programs',
+        titleKey: 'sidebar.education_programs',
         path: '/education-program-entity-types',
         icon: HiAcademicCap
     },
-    { title: 'Kinships', path: '/kinships', icon: HiUserGroup },
-    { title: 'Jobs', path: '/jobs', icon: HiBriefcase },
-    { title: 'Cities', path: '/cities', icon: HiLocationMarker },
-    { title: 'Neighborhoods', path: '/neighborhoods', icon: HiLocationMarker },
-    { title: 'Academic Years', path: '/academic-years', icon: HiCalendar },
-    { title: 'Academic Levels', path: '/academic-levels', icon: HiChartBar },
-    { title: 'Location Types', path: '/location-types', icon: HiMap },
-    { title: 'Specifications', path: '/specifications', icon: HiTag },
-    { title: 'Activities', path: '/activities', icon: HiLightningBolt },
-    { title: 'Entity Categories', path: '/entity-categories', icon: HiFolder },
-    { title: 'Session Periods', path: '/session-periods', icon: HiClock }
+    { titleKey: 'sidebar.kinships', path: '/kinships', icon: HiUserGroup },
+    { titleKey: 'sidebar.jobs', path: '/jobs', icon: HiBriefcase },
+    { titleKey: 'sidebar.cities', path: '/cities', icon: HiLocationMarker },
+    {
+        titleKey: 'sidebar.neighborhoods',
+        path: '/neighborhoods',
+        icon: HiLocationMarker
+    },
+    {
+        titleKey: 'sidebar.academic_years',
+        path: '/academic-years',
+        icon: HiCalendar
+    },
+    {
+        titleKey: 'sidebar.academic_levels',
+        path: '/academic-levels',
+        icon: HiChartBar
+    },
+    {
+        titleKey: 'sidebar.location_types',
+        path: '/location-types',
+        icon: HiMap
+    },
+    {
+        titleKey: 'sidebar.specifications',
+        path: '/specifications',
+        icon: HiTag
+    },
+    {
+        titleKey: 'sidebar.activities',
+        path: '/activities',
+        icon: HiLightningBolt
+    },
+    {
+        titleKey: 'sidebar.entity_categories',
+        path: '/entity-categories',
+        icon: HiFolder
+    },
+    {
+        titleKey: 'sidebar.session_periods',
+        path: '/session-periods',
+        icon: HiClock
+    }
 ];

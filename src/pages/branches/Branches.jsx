@@ -7,16 +7,18 @@ import usePagination from '@/utils/hooks/global/usePagination';
 import CreateBranch from './CreateBranch';
 import EditBranch from './EditBranch';
 import DeleteBranch from './DeleteBranch';
+import useLocale from '@/utils/hooks/global/useLocale';
 
 export default function Branches() {
     const { isOpen, toggle } = useIsOpen();
     const { pagination, setPagination } = usePagination();
     const { data, isLoading, refresh } = useBranchesQuery(pagination);
+    const { t } = useLocale();
 
     return (
         <div>
             <Table
-                title="Branches"
+                title={t('table_titles.branches')}
                 refresh={refresh}
                 loading={isLoading}
                 data={data?.data}

@@ -7,16 +7,18 @@ import usePagination from '@/utils/hooks/global/usePagination';
 import CreateAcademicYear from './CreateAcademicYear';
 import EditAcademicYear from './EditAcademicYear';
 import DeleteAcademicYear from './DeleteAcademicYear';
+import useLocale from '@/utils/hooks/global/useLocale';
 
 export default function AcademicYears() {
     const { isOpen, toggle } = useIsOpen();
     const { pagination, setPagination } = usePagination();
     const { data, isLoading, refresh } = useAcademicYearsQuery(pagination);
+    const { t } = useLocale();
 
     return (
         <div>
             <Table
-                title="Academic Years"
+                title={t('table_titles.academic_years')}
                 refresh={refresh}
                 loading={isLoading}
                 data={data?.data}

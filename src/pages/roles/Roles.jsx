@@ -6,17 +6,18 @@ import useIsOpen from '@/utils/hooks/global/useIsOpen';
 import usePagination from '@/utils/hooks/global/usePagination';
 import CreateRole from './CreateRole';
 import EditRole from './EditRole';
-import DeleteRole from './DeleteRole';
+import useLocale from '@/utils/hooks/global/useLocale';
 
 export default function Roles() {
     const { isOpen, toggle } = useIsOpen();
     const { pagination, setPagination } = usePagination();
     const { data, isLoading, refresh } = useRolesQuery(pagination);
+    const { t } = useLocale();
 
     return (
         <div>
             <Table
-                title="Roles"
+                title={t('table_titles.roles')}
                 refresh={refresh}
                 loading={isLoading}
                 data={data?.data}
@@ -27,14 +28,9 @@ export default function Roles() {
                 pagination={pagination}
                 setPagination={setPagination}
             />
-            {isOpen.add && (
-                <CreateRole onClose={toggle.add} />
-            )}
+            {isOpen.add && <CreateRole onClose={toggle.add} />}
             {isOpen.edit && (
-                <EditRole
-                    onClose={toggle.edit}
-                    oldData={isOpen.edit}
-                />
+                <EditRole onClose={toggle.edit} oldData={isOpen.edit} />
             )}
             {isOpen.delete && (
                 <DeleteRole onClose={toggle.delete} id={isOpen.delete?.id} />

@@ -7,16 +7,18 @@ import usePagination from '@/utils/hooks/global/usePagination';
 import CreateAttendanceType from './CreateAttendanceType';
 import EditAttendanceType from './EditAttendanceType';
 import DeleteAttendanceType from './DeleteAttendanceType';
+import useLocale from '@/utils/hooks/global/useLocale';
 
 export default function AttendanceTypes() {
     const { isOpen, toggle } = useIsOpen();
     const { pagination, setPagination } = usePagination();
     const { data, isLoading, refresh } = useAttendanceTypesQuery(pagination);
+    const { t } = useLocale();
 
     return (
         <div>
             <Table
-                title="Attendance Types"
+                title={t('table_titles.attendance_types')}
                 refresh={refresh}
                 loading={isLoading}
                 data={data?.data}

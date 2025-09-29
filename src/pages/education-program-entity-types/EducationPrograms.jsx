@@ -7,17 +7,19 @@ import usePagination from '@/utils/hooks/global/usePagination';
 import CreateEducationProgramEntityType from './CreateEducationProgramEntityType';
 import EditEducationProgramEntityType from './EditEducationProgramEntityType';
 import DeleteEducationProgramEntityType from './DeleteEducationProgramEntityType';
+import useLocale from '@/utils/hooks/global/useLocale';
 
 export default function EducationPrograms() {
     const { isOpen, toggle } = useIsOpen();
     const { pagination, setPagination } = usePagination();
     const { data, isLoading, refresh } =
         useEducationProgramEntityTypesQuery(pagination);
+    const { t } = useLocale();
 
     return (
         <div>
             <Table
-                title="Education Programs"
+                title={t('table_titles.education_programs')}
                 refresh={refresh}
                 loading={isLoading}
                 data={data?.data}

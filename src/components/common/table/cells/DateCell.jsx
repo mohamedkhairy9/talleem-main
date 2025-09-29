@@ -1,19 +1,21 @@
+import useLanguageStore from '@/utils/stores/language.store';
 import React from 'react';
 
 export default function DateCell({ value, fullDate = false }) {
+    const isRTL = useLanguageStore(state => state.isRTL);
     const dateObj = new Date(value);
 
     const formatDate = (date, isFullDate) => {
         if (isFullDate) {
             return {
-                date: date.toLocaleDateString('en-US', {
+                date: date.toLocaleDateString(isRTL ? 'ar-EG' : 'en-US', {
                     weekday: 'short',
                     year: 'numeric',
                     month: 'short',
                     day: 'numeric',
                     timeZone: 'UTC'
                 }),
-                time: date.toLocaleTimeString('en-US', {
+                time: date.toLocaleTimeString(isRTL ? 'ar-EG' : 'en-US', {
                     hour: '2-digit',
                     minute: '2-digit',
                     hour12: true,
@@ -22,7 +24,7 @@ export default function DateCell({ value, fullDate = false }) {
             };
         }
         return {
-            date: date.toLocaleDateString('en-US', {
+            date: date.toLocaleDateString(isRTL ? 'ar-EG' : 'en-US', {
                 month: 'short',
                 day: 'numeric',
                 year: 'numeric',

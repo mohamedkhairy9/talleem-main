@@ -7,16 +7,19 @@ import usePagination from '@/utils/hooks/global/usePagination';
 import CreateAcademicQualification from './CreateAcademicQualification';
 import EditAcademicQualification from './EditAcademicQualification';
 import DeleteAcademicQualification from './DeleteAcademicQualification';
+import useLocale from '@/utils/hooks/global/useLocale';
 
 export default function AcademicQualifications() {
     const { isOpen, toggle } = useIsOpen();
     const { pagination, setPagination } = usePagination();
-    const { data, isLoading, refresh } = useAcademicQualificationsQuery(pagination);
+    const { data, isLoading, refresh } =
+        useAcademicQualificationsQuery(pagination);
+    const { t } = useLocale();
 
     return (
         <div>
             <Table
-                title="Academic Qualifications"
+                title={t('table_titles.academic_qualifications')}
                 refresh={refresh}
                 loading={isLoading}
                 data={data?.data}
@@ -28,7 +31,10 @@ export default function AcademicQualifications() {
                 setPagination={setPagination}
             />
             {isOpen.add && (
-                <CreateAcademicQualification isOpen={isOpen.add} onClose={toggle.add} />
+                <CreateAcademicQualification
+                    isOpen={isOpen.add}
+                    onClose={toggle.add}
+                />
             )}
             {isOpen.edit && (
                 <EditAcademicQualification
@@ -38,7 +44,10 @@ export default function AcademicQualifications() {
                 />
             )}
             {isOpen.delete && (
-                <DeleteAcademicQualification onClose={toggle.delete} id={isOpen.delete?.id} />
+                <DeleteAcademicQualification
+                    onClose={toggle.delete}
+                    id={isOpen.delete?.id}
+                />
             )}
         </div>
     );

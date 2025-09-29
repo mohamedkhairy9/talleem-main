@@ -38,6 +38,8 @@ import {
     MdShare,
     MdInfo
 } from 'react-icons/md';
+import { useTranslation } from 'react-i18next';
+import useLanguageStore from '@/utils/stores/language.store';
 
 const columnHelper = createColumnHelper();
 
@@ -60,7 +62,8 @@ const Table = ({
     setPagination
 }) => {
     // Core state
-
+    const { t } = useTranslation();
+    const isRTL = useLanguageStore(state => state.isRTL);
     const [sorting, setSorting] = useState([]);
     const [columnFilters, setColumnFilters] = useState([]);
     const [globalFilter, setGlobalFilter] = useState('');
@@ -109,7 +112,7 @@ const Table = ({
 
     const ACTIONS = columnHelper.display({
         id: 'actions',
-        header: 'Actions',
+        header: t('table.actions'),
         size: 120,
         cell: ({ row }) => (
             <div className="flex items-center space-x-1">
@@ -119,7 +122,7 @@ const Table = ({
                         toggleModals.edit(row.original);
                     }}
                     className="p-1 text-blue-600 hover:text-blue-800 hover:bg-blue-50 rounded transition-colors"
-                    title="Edit"
+                    title={t('table.edit')}
                 >
                     <MdEdit className="w-4 h-4" />
                 </button>
@@ -130,13 +133,12 @@ const Table = ({
                             navigator.clipboard.writeText(
                                 JSON.stringify(row.original, null, 2)
                             );
-                            alert('Row data copied to clipboard!');
                         } catch (err) {
                             console.log('Copy failed:', err);
                         }
                     }}
                     className="p-1 text-gray-600 hover:text-gray-800 hover:bg-gray-50 rounded transition-colors"
-                    title="Copy"
+                    title={t('table.copy')}
                 >
                     <MdContentCopy className="w-4 h-4" />
                 </button>
@@ -146,7 +148,7 @@ const Table = ({
                         toggleModals.delete(row.original);
                     }}
                     className="p-1 text-red-600 hover:text-red-800 hover:bg-red-50 rounded transition-colors"
-                    title="Delete"
+                    title={t('table.delete')}
                 >
                     <MdDelete className="w-4 h-4" />
                 </button>
@@ -521,7 +523,7 @@ const Table = ({
                         <div className="p-3 border-b border-gray-200">
                             <input
                                 type="text"
-                                placeholder="Filter value..."
+                                placeholder={t('table.filter_value')}
                                 className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                                 value={filterValue}
                                 onChange={e => setFilterValue(e.target.value)}
@@ -554,13 +556,13 @@ const Table = ({
                                 }}
                                 className="text-sm text-red-600 hover:text-red-700 font-medium"
                             >
-                                Clear
+                                {t('table.clear')}
                             </button>
                             <button
                                 onClick={() => setIsOpen(false)}
                                 className="text-sm text-gray-600 hover:text-gray-700"
                             >
-                                Close
+                                {t('table.close')}
                             </button>
                         </div>
                     </div>
@@ -637,11 +639,13 @@ const Table = ({
                                 </h2>
                                 <div className="flex items-center space-x-3">
                                     <span className="text-sm text-gray-500 bg-gray-100 px-3 py-1 rounded-full font-medium">
-                                        {totalCount.toLocaleString()} total
+                                        {totalCount.toLocaleString()}{' '}
+                                        {t('table.total')}
                                     </span>
                                     {selectedCount > 0 && (
                                         <span className="text-sm text-blue-600 bg-blue-100 px-3 py-1 rounded-full font-medium">
-                                            {selectedCount} selected
+                                            {selectedCount}{' '}
+                                            {t('table.selected')}
                                         </span>
                                     )}
                                 </div>
@@ -661,7 +665,7 @@ const Table = ({
                                                         : 'text-gray-600 hover:text-gray-900'
                                                 }`}
                                             >
-                                                {d}
+                                                {t(`table.${d}`)}
                                             </button>
                                         )
                                     )}
@@ -675,8 +679,8 @@ const Table = ({
                                     className="p-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
                                     title={
                                         isFullscreen
-                                            ? 'Exit fullscreen'
-                                            : 'Enter fullscreen'
+                                            ? t('table.exit_fullscreen')
+                                            : t('table.enter_fullscreen')
                                     }
                                 >
                                     {isFullscreen ? (
@@ -695,7 +699,9 @@ const Table = ({
                                 <MdSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
                                 <input
                                     type="text"
-                                    placeholder="Search across columns..."
+                                    placeholder={t(
+                                        'table.search_across_columns'
+                                    )}
                                     className="pl-10 pr-4 py-2 border border-gray-300 rounded-lg text-sm outline-none duration-200 focus:border-blue-500 w-80"
                                     value={globalFilter ?? ''}
                                     onChange={e =>
@@ -721,7 +727,7 @@ const Table = ({
                                 >
                                     <MdAdd className="w-4 h-4" />
                                     <span className="text-sm font-medium">
-                                        Add New
+                                        {t('table.add_new')}
                                     </span>
                                 </button>
 
@@ -734,16 +740,22 @@ const Table = ({
                                             )
                                         }
                                         className="p-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
-                                        title="Column settings"
+                                        title={t('table.column_settings')}
                                     >
                                         <MdViewColumn className="w-4 h-4 text-gray-600" />
                                     </button>
 
                                     {showColumnSettings && (
-                                        <div className="absolute right-0 top-12 bg-white border border-gray-200 rounded-lg shadow-lg z-50 w-64">
+                                        <div
+                                            className={`absolute ${
+                                                isRTL ? 'left-0' : 'right-0'
+                                            } top-12 bg-white border border-gray-200 rounded-lg shadow-lg z-50 w-64`}
+                                        >
                                             <div className="p-4 border-b border-gray-200">
                                                 <h3 className="font-medium text-gray-900">
-                                                    Column Visibility
+                                                    {t(
+                                                        'table.column_visibility'
+                                                    )}
                                                 </h3>
                                             </div>
                                             <div className="p-2 max-h-64 overflow-y-auto">
@@ -791,7 +803,7 @@ const Table = ({
                                         >
                                             <MdDownload className="w-4 h-4" />
                                             <span className="text-sm font-medium">
-                                                Export
+                                                {t('table.export')}
                                             </span>
                                             <MdExpandMore className="w-4 h-4" />
                                         </button>
@@ -805,7 +817,9 @@ const Table = ({
                                                     >
                                                         <MdTableChart className="w-4 h-4 text-green-600" />
                                                         <span>
-                                                            Export as CSV
+                                                            {t(
+                                                                'table.export_as_csv'
+                                                            )}
                                                         </span>
                                                     </button>
                                                     <button
@@ -814,7 +828,9 @@ const Table = ({
                                                     >
                                                         <MdFileDownload className="w-4 h-4 text-blue-600" />
                                                         <span>
-                                                            Export as JSON
+                                                            {t(
+                                                                'table.export_as_json'
+                                                            )}
                                                         </span>
                                                     </button>
                                                     <button
@@ -822,7 +838,11 @@ const Table = ({
                                                         className="w-full flex items-center space-x-2 px-3 py-2 text-sm hover:bg-gray-50 rounded transition-colors"
                                                     >
                                                         <MdPrint className="w-4 h-4 text-purple-600" />
-                                                        <span>Print Table</span>
+                                                        <span>
+                                                            {t(
+                                                                'table.print_table'
+                                                            )}
+                                                        </span>
                                                     </button>
                                                 </div>
                                             </div>
@@ -835,7 +855,7 @@ const Table = ({
                                     onClick={refresh}
                                     className="p-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
                                     disabled={loading}
-                                    title="Refresh data"
+                                    title={t('table.refresh_data')}
                                 >
                                     <MdRefresh
                                         className={`w-4 h-4 text-gray-600 ${
@@ -851,8 +871,7 @@ const Table = ({
                             <div className="flex items-center justify-between bg-blue-50 border border-blue-200 rounded-lg p-3">
                                 <div className="flex items-center space-x-4">
                                     <span className="text-sm font-medium text-blue-900">
-                                        {selectedCount} item
-                                        {selectedCount > 1 ? 's' : ''} selected
+                                        {selectedCount} {t('table.selected')}
                                     </span>
                                     <div className="flex items-center space-x-2">
                                         <div className="relative selected-export-menu">
@@ -865,7 +884,9 @@ const Table = ({
                                                 className="flex items-center space-x-1 px-3 py-1 bg-blue-600 text-white text-sm rounded hover:bg-blue-700 transition-colors"
                                             >
                                                 <MdDownload className="w-4 h-4" />
-                                                <span>Export Selected</span>
+                                                <span>
+                                                    {t('table.export_selected')}
+                                                </span>
                                                 <MdExpandMore
                                                     className={`w-4 h-4 transition-transform ${
                                                         showSelectedExportMenu
@@ -884,7 +905,9 @@ const Table = ({
                                                         className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-2"
                                                     >
                                                         <MdDownload className="w-4 h-4" />
-                                                        Export as CSV
+                                                        {t(
+                                                            'table.export_as_csv'
+                                                        )}
                                                     </button>
                                                     <button
                                                         onClick={
@@ -893,7 +916,9 @@ const Table = ({
                                                         className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-2"
                                                     >
                                                         <MdDownload className="w-4 h-4" />
-                                                        Export as JSON
+                                                        {t(
+                                                            'table.export_as_json'
+                                                        )}
                                                     </button>
                                                     <button
                                                         onClick={
@@ -902,7 +927,9 @@ const Table = ({
                                                         className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-2"
                                                     >
                                                         <MdPrint className="w-4 h-4" />
-                                                        Print Selected
+                                                        {t(
+                                                            'table.print_selected'
+                                                        )}
                                                     </button>
                                                 </div>
                                             )}
@@ -934,7 +961,7 @@ const Table = ({
                                     onClick={() => setRowSelection({})}
                                     className="text-blue-600 hover:text-blue-800 text-sm font-medium"
                                 >
-                                    Clear Selection
+                                    {t('table.clear_selection')}
                                 </button>
                             </div>
                         )}
@@ -944,11 +971,14 @@ const Table = ({
                             <div className="flex items-center space-x-2 flex-wrap">
                                 <span className="text-sm text-gray-500 flex items-center space-x-1">
                                     <MdInfo className="w-4 h-4" />
-                                    <span>Active filters:</span>
+                                    <span>{t('table.active_filters')}:</span>
                                 </span>
                                 {globalFilter && (
                                     <span className="inline-flex items-center space-x-1 px-3 py-1 bg-blue-100 text-blue-800 text-sm rounded-full">
-                                        <span>Search: "{globalFilter}"</span>
+                                        <span>
+                                            {t('table.search')}: "{globalFilter}
+                                            "
+                                        </span>
                                         <button
                                             onClick={() => setGlobalFilter('')}
                                         >
@@ -991,7 +1021,9 @@ const Table = ({
 
                 {/* Table */}
                 <div
-                    className={`overflow-x-auto  ${isFullscreen ? 'flex-1' : ''}`}
+                    className={`overflow-x-auto  ${
+                        isFullscreen ? 'flex-1' : ''
+                    }`}
                     ref={tableRef}
                 >
                     <table className="w-full">
@@ -1022,13 +1054,23 @@ const Table = ({
                                                             onClick={header.column.getToggleSortingHandler()}
                                                         >
                                                             <span>
-                                                                {flexRender(
-                                                                    header
-                                                                        .column
-                                                                        .columnDef
-                                                                        .header,
-                                                                    header.getContext()
-                                                                )}
+                                                                {idx === 0
+                                                                    ? flexRender(
+                                                                          header
+                                                                              .column
+                                                                              .columnDef
+                                                                              .header,
+                                                                          header.getContext()
+                                                                      )
+                                                                    : t(
+                                                                          flexRender(
+                                                                              header
+                                                                                  .column
+                                                                                  .columnDef
+                                                                                  .header,
+                                                                              header.getContext()
+                                                                          )
+                                                                      )}
                                                             </span>
                                                             {header.column.getCanSort() && (
                                                                 <div className="flex flex-col">
@@ -1161,7 +1203,7 @@ const Table = ({
                         <div className="flex items-center space-x-6">
                             <div className="flex items-center space-x-2">
                                 <span className="text-sm text-gray-700 font-medium">
-                                    Rows per page:
+                                    {t('table.rows_per_page')}:
                                 </span>
                                 <select
                                     value={pagination.per_page}
@@ -1198,28 +1240,28 @@ const Table = ({
                                         totalCount
                                     )}
                                 </span>{' '}
-                                of{' '}
+                                {t('table.of')}{' '}
                                 <span className="font-medium">
                                     {totalCount.toLocaleString()}
                                 </span>{' '}
-                                entries
+                                {t('table.entries')}
                             </div>
 
                             {selectedCount > 0 && (
                                 <div className="text-sm text-blue-600 bg-blue-100 px-3 py-1 rounded-full font-medium">
-                                    {selectedCount} selected
+                                    {selectedCount} {t('table.selected')}
                                 </div>
                             )}
                         </div>
 
-                        <div className="flex items-center space-x-2">
+                        <div dir="ltr" className="flex items-center space-x-2">
                             <button
                                 onClick={() =>
                                     setPagination({ ...pagination, page: 1 })
                                 }
                                 disabled={pagination.page <= 1}
                                 className="p-2 border border-gray-300 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-100 transition-colors"
-                                title="First page"
+                                title={t('table.first_page')}
                             >
                                 <MdFirstPage className="w-5 h-5" />
                             </button>
@@ -1233,7 +1275,7 @@ const Table = ({
                                 }
                                 disabled={pagination.page <= 1}
                                 className="p-2 border border-gray-300 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-100 transition-colors"
-                                title="Previous page"
+                                title={t('table.previous_page')}
                             >
                                 <MdChevronLeft className="w-5 h-5" />
                             </button>
@@ -1308,7 +1350,7 @@ const Table = ({
                                     Math.ceil(totalCount / pagination.per_page)
                                 }
                                 className="p-2 border border-gray-300 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-100 transition-colors"
-                                title="Next page"
+                                title={t('table.next_page')}
                             >
                                 <MdChevronRight className="w-5 h-5" />
                             </button>
@@ -1327,17 +1369,17 @@ const Table = ({
                                     Math.ceil(totalCount / pagination.per_page)
                                 }
                                 className="p-2 border border-gray-300 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-100 transition-colors"
-                                title="Last page"
+                                title={t('table.last_page')}
                             >
                                 <MdLastPage className="w-5 h-5" />
                             </button>
 
                             <div className="ml-4 text-sm text-gray-500">
-                                Page{' '}
+                                {t('table.page')}{' '}
                                 <span className="font-medium">
                                     {pagination.page}
                                 </span>{' '}
-                                of{' '}
+                                {t('table.of')}{' '}
                                 <span className="font-medium">
                                     {Math.ceil(
                                         totalCount / pagination.per_page

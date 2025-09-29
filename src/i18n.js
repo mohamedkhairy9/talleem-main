@@ -7,12 +7,22 @@ i18n.use(HttpApi)
     .init({
         supportedLngs: ['en', 'ar'],
         fallbackLng: 'en',
+        lng: localStorage.getItem('language-storage')
+            ? JSON.parse(localStorage.getItem('language-storage')).state
+                  ?.language || 'en'
+            : 'en',
+        debug: false, // Disable debug mode for production
         interpolation: {
             escapeValue: false
         },
         backend: {
             loadPath: '/locales/{{lng}}/translation.json'
-        }
+        },
+        react: {
+            useSuspense: false // Disable suspense to prevent loading issues
+        },
+        load: 'languageOnly', // Only load language, not region
+        cleanCode: true // Clean language codes
     });
 
 export default i18n;

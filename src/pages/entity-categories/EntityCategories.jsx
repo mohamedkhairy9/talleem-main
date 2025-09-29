@@ -7,16 +7,18 @@ import usePagination from '@/utils/hooks/global/usePagination';
 import CreateEntityCategory from './CreateEntityCategory';
 import EditEntityCategory from './EditEntityCategory';
 import DeleteEntityCategory from './DeleteEntityCategory';
+import useLocale from '@/utils/hooks/global/useLocale';
 
 export default function EntityCategories() {
     const { isOpen, toggle } = useIsOpen();
     const { pagination, setPagination } = usePagination();
     const { data, isLoading, refresh } = useEntityCategoriesQuery(pagination);
+    const { t } = useLocale();
 
     return (
         <div>
             <Table
-                title="Entity Categories"
+                title={t('table_titles.entity_categories')}
                 refresh={refresh}
                 loading={isLoading}
                 data={data?.data}

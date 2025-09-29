@@ -7,16 +7,18 @@ import usePagination from '@/utils/hooks/global/usePagination';
 import CreateMainProgram from './CreateMainProgram';
 import EditMainProgram from './EditMainProgram';
 import DeleteMainProgram from './DeleteMainProgram';
+import useLocale from '@/utils/hooks/global/useLocale';
 
 export default function MainPrograms() {
     const { isOpen, toggle } = useIsOpen();
     const { pagination, setPagination } = usePagination();
     const { data, isLoading, refresh } = useMainProgramsQuery(pagination);
+    const { t } = useLocale();
 
     return (
         <div>
             <Table
-                title="Main Programs"
+                title={t('table_titles.main_programs')}
                 refresh={refresh}
                 loading={isLoading}
                 data={data?.data}

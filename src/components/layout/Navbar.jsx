@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import {
     HiSearch,
-    HiBell,
     HiChevronDown,
     HiLogout,
     HiUser,
@@ -9,6 +8,7 @@ import {
 } from 'react-icons/hi';
 import { useUserStore } from '@/utils/stores/user.store';
 import { useLogoutMutation } from '@/api/hooks/useAuth';
+import LanguageSwitcher from '@/components/common/LanguageSwitcher';
 
 export default function Navbar() {
     const user = useUserStore(state => state.user);
@@ -28,10 +28,7 @@ export default function Navbar() {
         <div className="w-full bg-white border-b border-gray-200 px-6 py-4">
             <div className="flex items-center justify-end">
                 <div className="flex gap-4 items-center">
-                    <button className="relative  text-gray-400 size-10 flex items-center justify-center hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-colors duration-200">
-                        <HiBell className="h-6 w-6" />
-                        <span className="absolute top-2 right-2  block size-2 rounded-full bg-red-400 ring-2 ring-white"></span>
-                    </button>
+                    <LanguageSwitcher />
 
                     <div className="relative">
                         <button
@@ -40,8 +37,7 @@ export default function Navbar() {
                         >
                             <div className="size-10 rounded-full bg-blue-600 flex items-center justify-center">
                                 <span className="text-base font-medium text-white">
-                                    {user?.name?.charAt(0).toUpperCase() ||
-                                        'U'}
+                                    {user?.name?.charAt(0).toUpperCase() || 'U'}
                                 </span>
                             </div>
 

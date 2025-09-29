@@ -7,17 +7,19 @@ import usePagination from '@/utils/hooks/global/usePagination';
 import CreateMemorizationProgramEntityType from './CreateMemorizationProgramEntityType';
 import EditMemorizationProgramEntityType from './EditMemorizationProgramEntityType';
 import DeleteMemorizationProgramEntityType from './DeleteMemorizationProgramEntityType';
+import useLocale from '@/utils/hooks/global/useLocale';
 
 export default function MemorizationPrograms() {
     const { isOpen, toggle } = useIsOpen();
     const { pagination, setPagination } = usePagination();
     const { data, isLoading, refresh } =
         useMemorizationProgramEntityTypesQuery(pagination);
+    const { t } = useLocale();
 
     return (
         <div>
             <Table
-                title="Memorization Programs"
+                title={t('table_titles.memorization_programs')}
                 refresh={refresh}
                 loading={isLoading}
                 data={data?.data}

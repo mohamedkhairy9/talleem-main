@@ -7,16 +7,18 @@ import usePagination from '@/utils/hooks/global/usePagination';
 import CreateKinship from './CreateKinship';
 import EditKinship from './EditKinship';
 import DeleteKinship from './DeleteKinship';
+import useLocale from '@/utils/hooks/global/useLocale';
 
 export default function Kinships() {
     const { isOpen, toggle } = useIsOpen();
     const { pagination, setPagination } = usePagination();
     const { data, isLoading, refresh } = useKinshipsQuery(pagination);
+    const { t } = useLocale();
 
     return (
         <div>
             <Table
-                title="Kinships"
+                title={t('table_titles.kinships')}
                 refresh={refresh}
                 loading={isLoading}
                 data={data?.data}

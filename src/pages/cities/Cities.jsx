@@ -7,16 +7,18 @@ import usePagination from '@/utils/hooks/global/usePagination';
 import CreateCity from './CreateCity';
 import EditCity from './EditCity';
 import DeleteCity from './DeleteCity';
+import useLocale from '@/utils/hooks/global/useLocale';
 
 export default function Cities() {
     const { isOpen, toggle } = useIsOpen();
     const { pagination, setPagination } = usePagination();
     const { data, isLoading, refresh } = useCitiesQuery(pagination);
+    const { t } = useLocale();
 
     return (
         <div>
             <Table
-                title="Cities"
+                title={t('table_titles.cities')}
                 refresh={refresh}
                 loading={isLoading}
                 data={data?.data}

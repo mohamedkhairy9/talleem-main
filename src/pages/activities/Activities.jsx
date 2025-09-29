@@ -7,16 +7,18 @@ import usePagination from '@/utils/hooks/global/usePagination';
 import CreateActivity from './CreateActivity';
 import EditActivity from './EditActivity';
 import DeleteActivity from './DeleteActivity';
+import useLocale from '@/utils/hooks/global/useLocale';
 
 export default function Activities() {
     const { isOpen, toggle } = useIsOpen();
     const { pagination, setPagination } = usePagination();
     const { data, isLoading, refresh } = useActivitiesQuery(pagination);
+    const { t } = useLocale();
 
     return (
         <div>
             <Table
-                title="Activities"
+                title={t('table_titles.activities')}
                 refresh={refresh}
                 loading={isLoading}
                 data={data?.data}

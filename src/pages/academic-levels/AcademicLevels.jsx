@@ -7,16 +7,18 @@ import usePagination from '@/utils/hooks/global/usePagination';
 import CreateAcademicLevel from './CreateAcademicLevel';
 import EditAcademicLevel from './EditAcademicLevel';
 import DeleteAcademicLevel from './DeleteAcademicLevel';
+import useLocale from '@/utils/hooks/global/useLocale';
 
 export default function AcademicLevels() {
     const { isOpen, toggle } = useIsOpen();
     const { pagination, setPagination } = usePagination();
     const { data, isLoading, refresh } = useAcademicLevelsQuery(pagination);
+    const { t } = useLocale();
 
     return (
         <div>
             <Table
-                title="Academic Levels"
+                title={t('table_titles.academic_levels')}
                 refresh={refresh}
                 loading={isLoading}
                 data={data?.data}

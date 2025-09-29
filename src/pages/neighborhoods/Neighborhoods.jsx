@@ -7,16 +7,18 @@ import usePagination from '@/utils/hooks/global/usePagination';
 import CreateNeighborhood from './CreateNeighborhood';
 import EditNeighborhood from './EditNeighborhood';
 import DeleteNeighborhood from './DeleteNeighborhood';
+import useLocale from '@/utils/hooks/global/useLocale';
 
 export default function Neighborhoods() {
     const { isOpen, toggle } = useIsOpen();
     const { pagination, setPagination } = usePagination();
     const { data, isLoading, refresh } = useNeighborhoodsQuery(pagination);
+    const { t } = useLocale();
 
     return (
         <div>
             <Table
-                title="Neighborhoods"
+                title={t('table_titles.neighborhoods')}
                 refresh={refresh}
                 loading={isLoading}
                 data={data?.data}

@@ -3,12 +3,16 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { HiMenuAlt3, HiX } from 'react-icons/hi';
 import Logo from '../common/Logo';
 import { sideMenuTabs } from '../../utils/constants/configs';
+import useLanguageStore from '../../utils/stores/language.store';
+import useLocale from '../../utils/hooks/global/useLocale';
 
 export default function SideBar() {
     const [isOpen, setIsOpen] = useState(true);
     const [isMobile, setIsMobile] = useState(false);
     const location = useLocation();
     const navigate = useNavigate();
+    const { isRTL } = useLanguageStore();
+    const { t } = useLocale();
 
     // Handle responsive design
     useEffect(() => {
@@ -65,7 +69,9 @@ export default function SideBar() {
             {isMobile && !isOpen && (
                 <button
                     onClick={toggleSidebar}
-                    className="fixed top-4 left-4 z-50 p-2 bg-blue-600 text-white rounded-lg shadow-lg hover:bg-blue-700 transition-colors duration-200"
+                    className={`fixed top-4 z-50 p-2 bg-blue-600 text-white rounded-lg shadow-lg hover:bg-blue-700 transition-colors duration-200 ${
+                        isRTL ? 'right-4' : 'left-4'
+                    }`}
                     aria-label="Toggle menu"
                 >
                     {isOpen ? <HiX size={24} /> : <HiMenuAlt3 size={24} />}
@@ -74,10 +80,21 @@ export default function SideBar() {
 
             <div
                 className={`flex shrink-0 flex-col
-                fixed left-0 top-0 h-screen bg-white shadow-xl border-r border-gray-200 z-40
+                fixed top-0 h-screen bg-white shadow-xl z-40
                 transition-all duration-200 ease-in-out
                 ${isOpen ? 'w-[270px]' : 'w-[70px]'}
-                ${isMobile && !isOpen ? '-translate-x-full' : 'translate-x-0'}
+                ${
+                    isRTL
+                        ? 'right-0 border-l border-gray-200'
+                        : 'left-0 border-r border-gray-200'
+                }
+                ${
+                    isMobile && !isOpen
+                        ? isRTL
+                            ? 'translate-x-full'
+                            : '-translate-x-full'
+                        : 'translate-x-0'
+                }
             `}
             >
                 <div className="flex justify-between items-center p-4 gap-2 border-b border-gray-200">
@@ -118,6 +135,7 @@ export default function SideBar() {
                     {sideMenuTabs.map(tab => {
                         const Icon = tab.icon;
                         const active = isActive(tab.path);
+                        const title = t(tab.titleKey);
 
                         return (
                             <button
@@ -127,13 +145,18 @@ export default function SideBar() {
                                     w-full flex items-center gap-1 text-base px-3 py-2.5 rounded-lg transition-all duration-200
                                     group relative
                                     ${
+                                        isRTL
+                                            ? 'text-right'
+                                            : 'text-left'
+                                    }
+                                    ${
                                         active
                                             ? 'bg-gradient-to-br from-[#667eea] to-[#764ba2] text-white shadow-sm'
                                             : 'text-gray-500 hover:gap-2 hover:text-indigo-600 hover:bg-gray-100'
                                     }
                                 `}
-                                aria-label={tab.title}
-                                title={!isOpen ? tab.title : ''}
+                                aria-label={title}
+                                title={!isOpen ? title : ''}
                             >
                                 <div
                                     className={`
@@ -151,6 +174,7 @@ export default function SideBar() {
                                 <span
                                     className={`
                                     font-medium transition-all duration-200 overflow-hidden whitespace-nowrap
+                                    ${isRTL ? 'text-right' : 'text-left'}
                                     ${
                                         isOpen
                                             ? 'opacity-100 max-w-full'
@@ -159,7 +183,7 @@ export default function SideBar() {
                                     ${active ? 'font-semibold' : ''}
                                 `}
                                 >
-                                    {tab.title}
+                                    {title}
                                 </span>
                             </button>
                         );
@@ -178,7 +202,7 @@ export default function SideBar() {
                     >
                         <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse shrink-0" />
                         <span className="text-sm font-medium whitespace-nowrap">
-                            System Online
+                            {t('sidebar.system_online')}
                         </span>
                     </div>
                 </div>

@@ -1,14 +1,13 @@
 import { useTranslation } from 'react-i18next';
+import useLanguageStore from '../../stores/language.store';
 
 export default function useLocale(path = '') {
     const { t, i18n } = useTranslation(path);
-    const currentLocale = i18n.language || 'en';
+    const { language: currentLocale, isRTL, setLanguage } = useLanguageStore();
 
     const changeLocale = lng => {
-        i18n.changeLanguage(lng);
+        setLanguage(lng);
     };
-
-    const isRTL = currentLocale === 'ar';
 
     return {
         t,

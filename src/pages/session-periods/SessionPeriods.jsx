@@ -7,16 +7,18 @@ import usePagination from '@/utils/hooks/global/usePagination';
 import CreateSessionPeriod from './CreateSessionPeriod';
 import EditSessionPeriod from './EditSessionPeriod';
 import DeleteSessionPeriod from './DeleteSessionPeriod';
+import useLocale from '@/utils/hooks/global/useLocale';
 
 export default function SessionPeriods() {
     const { isOpen, toggle } = useIsOpen();
     const { pagination, setPagination } = usePagination();
     const { data, isLoading, refresh } = useSessionPeriodsQuery(pagination);
+    const { t } = useLocale();
 
     return (
         <div>
             <Table
-                title="Session Periods"
+                title={t('table_titles.session_periods')}
                 refresh={refresh}
                 loading={isLoading}
                 data={data?.data}

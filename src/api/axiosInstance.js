@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { useUserStore } from '../utils/stores/user.store';
+import i18n from '../i18n';
 
 const baseURL =
     import.meta.env.VITE_API_BASE_URL ||
@@ -12,13 +13,18 @@ export const axiosInstance = axios.create({
     }
 });
 
-// Attach token automatically from Zustand
+// Attach token automatically from Zustand and set Accept-Language header
 axiosInstance.interceptors.request.use(
     config => {
         const token = useUserStore.getState().access_token;
         if (token) {
             config.headers.Authorization = `Bearer ${token}`;
         }
+
+        // Set Accept-Language header based on current i18n language
+        const currentLanguage = i18n.language || 'en';
+        config.headers['Accept-Language'] = currentLanguage;
+
         return config;
     },
     error => Promise.reject(error)

@@ -7,16 +7,18 @@ import usePagination from '@/utils/hooks/global/usePagination';
 import CreateLocationType from './CreateLocationType';
 import EditLocationType from './EditLocationType';
 import DeleteLocationType from './DeleteLocationType';
+import useLocale from '@/utils/hooks/global/useLocale';
 
 export default function LocationTypes() {
     const { isOpen, toggle } = useIsOpen();
     const { pagination, setPagination } = usePagination();
     const { data, isLoading, refresh } = useLocationTypesQuery(pagination);
+    const { t } = useLocale();
 
     return (
         <div>
             <Table
-                title="Location Types"
+                title={t('table_titles.location_types')}
                 refresh={refresh}
                 loading={isLoading}
                 data={data?.data}

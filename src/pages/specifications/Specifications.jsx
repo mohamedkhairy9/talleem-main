@@ -7,16 +7,18 @@ import usePagination from '@/utils/hooks/global/usePagination';
 import CreateSpecification from './CreateSpecification';
 import EditSpecification from './EditSpecification';
 import DeleteSpecification from './DeleteSpecification';
+import useLocale from '@/utils/hooks/global/useLocale';
 
 export default function Specifications() {
     const { isOpen, toggle } = useIsOpen();
     const { pagination, setPagination } = usePagination();
     const { data, isLoading, refresh } = useSpecificationsQuery(pagination);
+    const { t } = useLocale();
 
     return (
         <div>
             <Table
-                title="Specifications"
+                title={t('table_titles.specifications')}
                 refresh={refresh}
                 loading={isLoading}
                 data={data?.data}
