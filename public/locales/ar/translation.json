@@ -140,5 +140,9 @@
     "branches": {
         "create": "إنشاء فرع",
         "update": "تحديث الفرع"
+    },
+    "session_periods": {
+        "create": "إنشاء فترة جلسة",
+        "update": "تحديث فترة الجلسة"
     }
 }

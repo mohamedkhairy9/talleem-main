@@ -138,5 +138,9 @@
     "branches": {
         "create": "Create Branch",
         "update": "Update Branch"
+    },
+    "session_periods": {
+        "create": "Create Session Period",
+        "update": "Update Session Period"
     }
 }

@@ -22,6 +22,7 @@ import LocationTypes from '@/pages/location-types/LocationTypes';
 import Specifications from '@/pages/specifications/Specifications';
 import Activities from '@/pages/activities/Activities';
 import EntityCategories from '@/pages/entity-categories/EntityCategories';
+import SessionPeriods from '@/pages/session-periods/SessionPeriods';
 
 export const routes = [
     {
@@ -115,6 +116,10 @@ export const routes = [
     {
         path: '/entity-categories',
         element: <EntityCategories />
+    },
+    {
+        path: '/session-periods',
+        element: <SessionPeriods />
     },
     {
         path: '/neighborhoods',

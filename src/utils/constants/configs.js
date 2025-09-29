@@ -16,7 +16,8 @@ import {
     HiMap,
     HiTag,
     HiLightningBolt,
-    HiFolder
+    HiFolder,
+    HiClock
 } from 'react-icons/hi';
 
 export const sideMenuTabs = [
@@ -58,5 +59,6 @@ export const sideMenuTabs = [
     { title: 'Location Types', path: '/location-types', icon: HiMap },
     { title: 'Specifications', path: '/specifications', icon: HiTag },
     { title: 'Activities', path: '/activities', icon: HiLightningBolt },
-    { title: 'Entity Categories', path: '/entity-categories', icon: HiFolder }
+    { title: 'Entity Categories', path: '/entity-categories', icon: HiFolder },
+    { title: 'Session Periods', path: '/session-periods', icon: HiClock }
 ];
