@@ -49,5 +49,10 @@
     "jobs": {
         "create": "Create Job",
         "update": "Update Job"
+    },
+    "cities": {
+        "create": "Create City",
+        "edit": "Edit City",
+        "update": "Update City"
     }
 }
