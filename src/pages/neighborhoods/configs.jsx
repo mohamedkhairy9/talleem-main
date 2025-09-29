@@ -14,11 +14,6 @@ export const neighborhoodsColumns = [
     columnHelper.accessor('city', {
         header: 'City',
         cell: info => <NameCell directValue={info.row.original.city?.name} />
-    }),
-    columnHelper.accessor('created_at', {
-        header: 'Created At',
-        cell: info => <DateCell fullDate value={info.getValue()} />,
-        enableColumnFilter: false
     })
 ];
 

@@ -47,6 +47,12 @@
             "integer": "يجب اختيار المدينة",
             "min": "يرجى اختيار مدينة صحيحة"
         },
+        "neighborhood_id": {
+            "label": "الحي",
+            "placeholder": "اختر الحي",
+            "integer": "يجب اختيار الحي",
+            "min": "يرجى اختيار حي صحيح"
+        },
         "educational_entity_classification": {
             "label": {
                 "en": "تصنيف الكيان التعليمي (إنجليزي)",
@@ -130,5 +136,9 @@
     "neighborhoods": {
         "create": "إنشاء حي",
         "update": "تحديث الحي"
+    },
+    "branches": {
+        "create": "إنشاء فرع",
+        "update": "تحديث الفرع"
     }
 }

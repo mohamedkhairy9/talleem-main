@@ -45,6 +45,12 @@
             "integer": "City must be selected",
             "min": "Please select a valid city"
         },
+        "neighborhood_id": {
+            "label": "Neighborhood",
+            "placeholder": "Select neighborhood",
+            "integer": "Neighborhood must be selected",
+            "min": "Please select a valid neighborhood"
+        },
         "educational_entity_classification": {
             "label": {
                 "en": "Educational Entity Classification (English)",
@@ -128,5 +134,9 @@
     "neighborhoods": {
         "create": "Create Neighborhood",
         "update": "Update Neighborhood"
+    },
+    "branches": {
+        "create": "Create Branch",
+        "update": "Update Branch"
     }
 }
