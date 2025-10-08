@@ -1,6 +1,7 @@
 import Cell from '@/components/common/table/cells/Cell';
 import DateCell from '@/components/common/table/cells/DateCell';
 import NameCell from '@/components/common/table/cells/NameCell';
+import { enabledDisabledOptions } from '@/utils/constants/options';
 import { createColumnHelper } from '@tanstack/react-table';
 import React from 'react';
 
@@ -72,5 +73,14 @@ export const branchesFields = [
         placeholder: 'validation.code.placeholder',
         editMode: true,
         viewMode: true
-    }
+    },
+    {
+        name: 'status',
+        label: 'validation.status.label',
+        type: 'select',
+        placeholder: 'validation.status.placeholder',
+        options: enabledDisabledOptions,
+        editMode: true,
+        viewMode: true
+    },
 ];

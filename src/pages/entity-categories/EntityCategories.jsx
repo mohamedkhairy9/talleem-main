@@ -8,6 +8,8 @@ import CreateEntityCategory from './CreateEntityCategory';
 import EditEntityCategory from './EditEntityCategory';
 import DeleteEntityCategory from './DeleteEntityCategory';
 import useLocale from '@/utils/hooks/global/useLocale';
+import i18next from 'i18next';
+import { getOriginalObject } from '@/utils/helpers/global.fns';
 
 export default function EntityCategories() {
     const { isOpen, toggle } = useIsOpen();
@@ -15,13 +17,18 @@ export default function EntityCategories() {
     const { data, isLoading, refresh } = useEntityCategoriesQuery(pagination);
     const { t } = useLocale();
 
+    const tableData = data?.data?.map(item => ({
+        ...item,
+        name: item.name?.[i18next.language]
+    }));
+
     return (
         <div>
             <Table
                 title={t('table_titles.entity_categories')}
                 refresh={refresh}
                 loading={isLoading}
-                data={data?.data}
+                data={tableData}
                 serverPagination={true}
                 totalCount={data?.meta?.total}
                 columns={entityCategoriesColumns}
@@ -33,7 +40,7 @@ export default function EntityCategories() {
             {isOpen.edit && (
                 <EditEntityCategory
                     onClose={toggle.edit}
-                    oldData={isOpen.edit}
+                    oldData={getOriginalObject(isOpen.edit, data?.data)}
                 />
             )}
             {isOpen.delete && (

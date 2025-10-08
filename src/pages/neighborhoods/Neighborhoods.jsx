@@ -8,6 +8,8 @@ import CreateNeighborhood from './CreateNeighborhood';
 import EditNeighborhood from './EditNeighborhood';
 import DeleteNeighborhood from './DeleteNeighborhood';
 import useLocale from '@/utils/hooks/global/useLocale';
+import i18next from 'i18next';
+import { getOriginalObject } from '@/utils/helpers/global.fns';
 
 export default function Neighborhoods() {
     const { isOpen, toggle } = useIsOpen();
@@ -15,13 +17,23 @@ export default function Neighborhoods() {
     const { data, isLoading, refresh } = useNeighborhoodsQuery(pagination);
     const { t } = useLocale();
 
+    const tableData = data?.data?.map(item => ({
+        ...item,
+        name: item.name?.[i18next.language]
+    }));
+
+    const formData = data?.data?.map(item => ({
+        ...item,
+        city_id: item.city?.id
+    }));
+
     return (
         <div>
             <Table
                 title={t('table_titles.neighborhoods')}
                 refresh={refresh}
                 loading={isLoading}
-                data={data?.data}
+                data={tableData}
                 serverPagination={true}
                 totalCount={data?.meta?.total}
                 columns={neighborhoodsColumns}
@@ -31,7 +43,10 @@ export default function Neighborhoods() {
             />
             {isOpen.add && <CreateNeighborhood onClose={toggle.add} />}
             {isOpen.edit && (
-                <EditNeighborhood onClose={toggle.edit} oldData={isOpen.edit} />
+                <EditNeighborhood
+                    onClose={toggle.edit}
+                    oldData={getOriginalObject(isOpen.edit, formData)}
+                />
             )}
             {isOpen.delete && (
                 <DeleteNeighborhood

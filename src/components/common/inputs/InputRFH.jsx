@@ -13,6 +13,8 @@ export default function InputRFH({
     defaultValue,
     p = 'px-4 py-3'
 }) {
+    console.log('defaultValue',defaultValue);
+    
     const { t } = useLocale();
 
     if (type === 'select') {

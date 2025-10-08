@@ -44,6 +44,9 @@ export default function SelectRFH({
         return null;
     };
 
+    console.log('defaultValue',defaultValue);
+    
+
     return (
         <div className="flex flex-col gap-px">
             {label && (

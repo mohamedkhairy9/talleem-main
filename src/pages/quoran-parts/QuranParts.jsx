@@ -8,6 +8,7 @@ import CreateQuoranPart from './CreateQuoranPart';
 import EditQuoranPart from './EditQuoranPart';
 import DeleteQuoranPart from './DeleteQuoranPart';
 import useLocale from '@/utils/hooks/global/useLocale';
+import i18next from 'i18next';
 
 export default function QuranParts() {
     const { isOpen, toggle } = useIsOpen();
@@ -15,13 +16,21 @@ export default function QuranParts() {
     const { data, isLoading, refresh } = useQuoranPartsQuery(pagination);
     const { t } = useLocale();
 
+    const tableData = data?.data?.map(item => ({
+        ...item,
+        name: item.name?.[i18next.language]
+    }));
+
+    console.log(tableData);
+    
+
     return (
         <div>
             <Table
                 title={t('table_titles.quoran_parts')}
                 refresh={refresh}
                 loading={isLoading}
-                data={data?.data}
+                data={tableData}
                 serverPagination={true}
                 totalCount={data?.meta?.total}
                 columns={quoranPartsColumns}

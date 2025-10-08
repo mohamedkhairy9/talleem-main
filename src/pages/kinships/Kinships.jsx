@@ -8,6 +8,8 @@ import CreateKinship from './CreateKinship';
 import EditKinship from './EditKinship';
 import DeleteKinship from './DeleteKinship';
 import useLocale from '@/utils/hooks/global/useLocale';
+import i18next from 'i18next';
+import { getOriginalObject } from '@/utils/helpers/global.fns';
 
 export default function Kinships() {
     const { isOpen, toggle } = useIsOpen();
@@ -15,13 +17,18 @@ export default function Kinships() {
     const { data, isLoading, refresh } = useKinshipsQuery(pagination);
     const { t } = useLocale();
 
+    const tableData = data?.data?.map(item => ({
+        ...item,
+        name: item.name?.[i18next.language]
+    }));
+
     return (
         <div>
             <Table
                 title={t('table_titles.kinships')}
                 refresh={refresh}
                 loading={isLoading}
-                data={data?.data}
+                data={tableData}
                 serverPagination={true}
                 totalCount={data?.meta?.total}
                 columns={kinshipsColumns}
@@ -31,7 +38,10 @@ export default function Kinships() {
             />
             {isOpen.add && <CreateKinship onClose={toggle.add} />}
             {isOpen.edit && (
-                <EditKinship onClose={toggle.edit} oldData={isOpen.edit} />
+                <EditKinship
+                    onClose={toggle.edit}
+                    oldData={getOriginalObject(isOpen.edit, data?.data)}
+                />
             )}
             {isOpen.delete && (
                 <DeleteKinship onClose={toggle.delete} id={isOpen.delete?.id} />

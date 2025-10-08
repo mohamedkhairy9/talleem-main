@@ -8,6 +8,8 @@ import CreateAttendanceType from './CreateAttendanceType';
 import EditAttendanceType from './EditAttendanceType';
 import DeleteAttendanceType from './DeleteAttendanceType';
 import useLocale from '@/utils/hooks/global/useLocale';
+import i18next from 'i18next';
+import { getOriginalObject } from '@/utils/helpers/global.fns';
 
 export default function AttendanceTypes() {
     const { isOpen, toggle } = useIsOpen();
@@ -15,13 +17,18 @@ export default function AttendanceTypes() {
     const { data, isLoading, refresh } = useAttendanceTypesQuery(pagination);
     const { t } = useLocale();
 
+    const tableData = data?.data?.map(item => ({
+        ...item,
+        name: item.name?.[i18next.language]
+    }));
+
     return (
         <div>
             <Table
                 title={t('table_titles.attendance_types')}
                 refresh={refresh}
                 loading={isLoading}
-                data={data?.data}
+                data={tableData}
                 serverPagination={true}
                 totalCount={data?.meta?.total}
                 columns={attendanceTypesColumns}
@@ -33,7 +40,7 @@ export default function AttendanceTypes() {
             {isOpen.edit && (
                 <EditAttendanceType
                     onClose={toggle.edit}
-                    oldData={isOpen.edit}
+                    oldData={getOriginalObject(isOpen.edit, data?.data)}
                 />
             )}
             {isOpen.delete && (

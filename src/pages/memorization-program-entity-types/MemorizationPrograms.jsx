@@ -8,6 +8,8 @@ import CreateMemorizationProgramEntityType from './CreateMemorizationProgramEnti
 import EditMemorizationProgramEntityType from './EditMemorizationProgramEntityType';
 import DeleteMemorizationProgramEntityType from './DeleteMemorizationProgramEntityType';
 import useLocale from '@/utils/hooks/global/useLocale';
+import i18next from 'i18next';
+import { getOriginalObject } from '@/utils/helpers/global.fns';
 
 export default function MemorizationPrograms() {
     const { isOpen, toggle } = useIsOpen();
@@ -16,13 +18,18 @@ export default function MemorizationPrograms() {
         useMemorizationProgramEntityTypesQuery(pagination);
     const { t } = useLocale();
 
+    const tableData = data?.data?.map(item => ({
+        ...item,
+        name: item.name?.[i18next.language]
+    }));
+
     return (
         <div>
             <Table
                 title={t('table_titles.memorization_programs')}
                 refresh={refresh}
                 loading={isLoading}
-                data={data?.data}
+                data={tableData}
                 serverPagination={true}
                 totalCount={data?.meta?.total}
                 columns={memorizationProgramEntityTypesColumns}
@@ -36,7 +43,7 @@ export default function MemorizationPrograms() {
             {isOpen.edit && (
                 <EditMemorizationProgramEntityType
                     onClose={toggle.edit}
-                    oldData={isOpen.edit}
+                    oldData={getOriginalObject(isOpen.edit, data?.data)}
                 />
             )}
             {isOpen.delete && (

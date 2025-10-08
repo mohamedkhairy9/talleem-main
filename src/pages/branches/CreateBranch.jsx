@@ -7,6 +7,7 @@ import { useCitiesQuery } from '@/api/hooks/useCities';
 import { useNeighborhoodsQuery } from '@/api/hooks/useNeighborhoods';
 import Loader from '@/components/common/Loader';
 import { allData } from '@/utils/constants/global.constants';
+import { enabledDisabledOptions } from '@/utils/constants/options';
 
 export default function CreateBranch({ onClose }) {
     const { mutate, isPending } = useCreateBranchMutation();
@@ -26,7 +27,8 @@ export default function CreateBranch({ onClose }) {
                 onClose={onClose}
                 options={{
                     city_id: citiesData?.data,
-                    neighborhood_id: neighborhoodsData?.data
+                    neighborhood_id: neighborhoodsData?.data,
+                    status: enabledDisabledOptions
                 }}
             />
         </Modal>

@@ -1,6 +1,6 @@
 import useRFH from '@/utils/hooks/global/useRFH';
 import { branchesSchema as schema } from '@/utils/yup/branches.schemas';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { branchesFields } from './configs';
 import InputRFH from '@/components/common/inputs/InputRFH';
 import Btn from '@/components/common/buttons/Btn';
@@ -16,7 +16,7 @@ export default function FormBranch({
     mutate,
     options
 }) {
-    const { register, errors, handleSubmit, control } = useRFH({
+    const { register, errors, handleSubmit, control, reset } = useRFH({
         schema,
         defaultValues: oldData
     });

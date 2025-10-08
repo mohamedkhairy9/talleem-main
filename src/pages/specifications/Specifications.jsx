@@ -8,6 +8,8 @@ import CreateSpecification from './CreateSpecification';
 import EditSpecification from './EditSpecification';
 import DeleteSpecification from './DeleteSpecification';
 import useLocale from '@/utils/hooks/global/useLocale';
+import i18next from 'i18next';
+import { getOriginalObject } from '@/utils/helpers/global.fns';
 
 export default function Specifications() {
     const { isOpen, toggle } = useIsOpen();
@@ -15,13 +17,18 @@ export default function Specifications() {
     const { data, isLoading, refresh } = useSpecificationsQuery(pagination);
     const { t } = useLocale();
 
+    const tableData = data?.data?.map(item => ({
+        ...item,
+        name: item.name?.[i18next.language]
+    }));
+
     return (
         <div>
             <Table
                 title={t('table_titles.specifications')}
                 refresh={refresh}
                 loading={isLoading}
-                data={data?.data}
+                data={tableData}
                 serverPagination={true}
                 totalCount={data?.meta?.total}
                 columns={specificationsColumns}
@@ -33,7 +40,7 @@ export default function Specifications() {
             {isOpen.edit && (
                 <EditSpecification
                     onClose={toggle.edit}
-                    oldData={isOpen.edit}
+                    oldData={getOriginalObject(isOpen.edit, data?.data)}
                 />
             )}
             {isOpen.delete && (

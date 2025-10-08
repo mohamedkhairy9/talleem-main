@@ -8,6 +8,8 @@ import CreateSessionPeriod from './CreateSessionPeriod';
 import EditSessionPeriod from './EditSessionPeriod';
 import DeleteSessionPeriod from './DeleteSessionPeriod';
 import useLocale from '@/utils/hooks/global/useLocale';
+import i18next from 'i18next';
+import { getOriginalObject } from '@/utils/helpers/global.fns';
 
 export default function SessionPeriods() {
     const { isOpen, toggle } = useIsOpen();
@@ -15,13 +17,18 @@ export default function SessionPeriods() {
     const { data, isLoading, refresh } = useSessionPeriodsQuery(pagination);
     const { t } = useLocale();
 
+    const tableData = data?.data?.map(item => ({
+        ...item,
+        name: item.name?.[i18next.language]
+    }));
+
     return (
         <div>
             <Table
                 title={t('table_titles.session_periods')}
                 refresh={refresh}
                 loading={isLoading}
-                data={data?.data}
+                data={tableData}
                 serverPagination={true}
                 totalCount={data?.meta?.total}
                 columns={sessionPeriodsColumns}
@@ -33,7 +40,7 @@ export default function SessionPeriods() {
             {isOpen.edit && (
                 <EditSessionPeriod
                     onClose={toggle.edit}
-                    oldData={isOpen.edit}
+                    oldData={getOriginalObject(isOpen.edit, data?.data)}
                 />
             )}
             {isOpen.delete && (

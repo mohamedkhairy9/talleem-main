@@ -8,6 +8,8 @@ import CreateLocationType from './CreateLocationType';
 import EditLocationType from './EditLocationType';
 import DeleteLocationType from './DeleteLocationType';
 import useLocale from '@/utils/hooks/global/useLocale';
+import i18next from 'i18next';
+import { getOriginalObject } from '@/utils/helpers/global.fns';
 
 export default function LocationTypes() {
     const { isOpen, toggle } = useIsOpen();
@@ -15,13 +17,18 @@ export default function LocationTypes() {
     const { data, isLoading, refresh } = useLocationTypesQuery(pagination);
     const { t } = useLocale();
 
+    const tableData = data?.data?.map(item => ({
+        ...item,
+        name: item.name?.[i18next.language]
+    }));
+
     return (
         <div>
             <Table
                 title={t('table_titles.location_types')}
                 refresh={refresh}
                 loading={isLoading}
-                data={data?.data}
+                data={tableData}
                 serverPagination={true}
                 totalCount={data?.meta?.total}
                 columns={locationTypesColumns}
@@ -31,7 +38,10 @@ export default function LocationTypes() {
             />
             {isOpen.add && <CreateLocationType onClose={toggle.add} />}
             {isOpen.edit && (
-                <EditLocationType onClose={toggle.edit} oldData={isOpen.edit} />
+                <EditLocationType
+                    onClose={toggle.edit}
+                    oldData={getOriginalObject(isOpen.edit, data?.data)}
+                />
             )}
             {isOpen.delete && (
                 <DeleteLocationType

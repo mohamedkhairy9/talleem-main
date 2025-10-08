@@ -8,6 +8,8 @@ import CreateAcademicLevel from './CreateAcademicLevel';
 import EditAcademicLevel from './EditAcademicLevel';
 import DeleteAcademicLevel from './DeleteAcademicLevel';
 import useLocale from '@/utils/hooks/global/useLocale';
+import i18next from 'i18next';
+import { getOriginalObject } from '@/utils/helpers/global.fns';
 
 export default function AcademicLevels() {
     const { isOpen, toggle } = useIsOpen();
@@ -15,13 +17,18 @@ export default function AcademicLevels() {
     const { data, isLoading, refresh } = useAcademicLevelsQuery(pagination);
     const { t } = useLocale();
 
+    const tableData = data?.data?.map(item => ({
+        ...item,
+        name: item.name?.[i18next.language]
+    }));
+
     return (
         <div>
             <Table
                 title={t('table_titles.academic_levels')}
                 refresh={refresh}
                 loading={isLoading}
-                data={data?.data}
+                data={tableData}
                 serverPagination={true}
                 totalCount={data?.meta?.total}
                 columns={academicLevelsColumns}
@@ -33,7 +40,7 @@ export default function AcademicLevels() {
             {isOpen.edit && (
                 <EditAcademicLevel
                     onClose={toggle.edit}
-                    oldData={isOpen.edit}
+                    oldData={getOriginalObject(isOpen.edit, data?.data)}
                 />
             )}
             {isOpen.delete && (

@@ -8,6 +8,8 @@ import CreateBranch from './CreateBranch';
 import EditBranch from './EditBranch';
 import DeleteBranch from './DeleteBranch';
 import useLocale from '@/utils/hooks/global/useLocale';
+import i18next from 'i18next';
+import { getOriginalObject } from '@/utils/helpers/global.fns';
 
 export default function Branches() {
     const { isOpen, toggle } = useIsOpen();
@@ -15,13 +17,24 @@ export default function Branches() {
     const { data, isLoading, refresh } = useBranchesQuery(pagination);
     const { t } = useLocale();
 
+    const tableData = data?.data?.map(item => ({
+        ...item,
+        name: item.name?.[i18next.language]
+    }));
+
+    const formData = data?.data?.map(item => ({
+        ...item,
+        city_id: item.city.id,
+        neighborhood_id: item.neighborhood.id
+    }));
+
     return (
         <div>
             <Table
                 title={t('table_titles.branches')}
                 refresh={refresh}
                 loading={isLoading}
-                data={data?.data}
+                data={tableData}
                 serverPagination={true}
                 totalCount={data?.meta?.total}
                 columns={branchesColumns}
@@ -31,7 +44,10 @@ export default function Branches() {
             />
             {isOpen.add && <CreateBranch onClose={toggle.add} />}
             {isOpen.edit && (
-                <EditBranch onClose={toggle.edit} oldData={isOpen.edit} />
+                <EditBranch
+                    onClose={toggle.edit}
+                    oldData={getOriginalObject(isOpen.edit, formData)}
+                />
             )}
             {isOpen.delete && (
                 <DeleteBranch onClose={toggle.delete} id={isOpen.delete?.id} />

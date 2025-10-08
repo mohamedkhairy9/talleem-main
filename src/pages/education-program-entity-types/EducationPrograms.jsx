@@ -8,6 +8,8 @@ import CreateEducationProgramEntityType from './CreateEducationProgramEntityType
 import EditEducationProgramEntityType from './EditEducationProgramEntityType';
 import DeleteEducationProgramEntityType from './DeleteEducationProgramEntityType';
 import useLocale from '@/utils/hooks/global/useLocale';
+import i18next from 'i18next';
+import { getOriginalObject } from '@/utils/helpers/global.fns';
 
 export default function EducationPrograms() {
     const { isOpen, toggle } = useIsOpen();
@@ -16,13 +18,21 @@ export default function EducationPrograms() {
         useEducationProgramEntityTypesQuery(pagination);
     const { t } = useLocale();
 
+    console.log('data', data);
+
+    const tableData = data?.data?.map(item => ({
+        ...item,
+        name: item.name?.[i18next.language],
+
+    }));
+
     return (
         <div>
             <Table
                 title={t('table_titles.education_programs')}
                 refresh={refresh}
                 loading={isLoading}
-                data={data?.data}
+                data={tableData}
                 serverPagination={true}
                 totalCount={data?.meta?.total}
                 columns={educationProgramEntityTypesColumns}
@@ -36,7 +46,7 @@ export default function EducationPrograms() {
             {isOpen.edit && (
                 <EditEducationProgramEntityType
                     onClose={toggle.edit}
-                    oldData={isOpen.edit}
+                    oldData={getOriginalObject(isOpen.edit, data?.data)}
                 />
             )}
             {isOpen.delete && (

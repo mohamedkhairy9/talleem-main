@@ -8,6 +8,8 @@ import CreateActivity from './CreateActivity';
 import EditActivity from './EditActivity';
 import DeleteActivity from './DeleteActivity';
 import useLocale from '@/utils/hooks/global/useLocale';
+import i18next from 'i18next';
+import { getOriginalObject } from '@/utils/helpers/global.fns';
 
 export default function Activities() {
     const { isOpen, toggle } = useIsOpen();
@@ -15,13 +17,18 @@ export default function Activities() {
     const { data, isLoading, refresh } = useActivitiesQuery(pagination);
     const { t } = useLocale();
 
+    const tableData = data?.data?.map(item => ({
+        ...item,
+        name: item.name?.[i18next.language]
+    }));
+
     return (
         <div>
             <Table
                 title={t('table_titles.activities')}
                 refresh={refresh}
                 loading={isLoading}
-                data={data?.data}
+                data={tableData}
                 serverPagination={true}
                 totalCount={data?.meta?.total}
                 columns={activitiesColumns}
@@ -31,7 +38,10 @@ export default function Activities() {
             />
             {isOpen.add && <CreateActivity onClose={toggle.add} />}
             {isOpen.edit && (
-                <EditActivity onClose={toggle.edit} oldData={isOpen.edit} />
+                <EditActivity
+                    onClose={toggle.edit}
+                    oldData={getOriginalObject(isOpen.edit, data?.data)}
+                />
             )}
             {isOpen.delete && (
                 <DeleteActivity

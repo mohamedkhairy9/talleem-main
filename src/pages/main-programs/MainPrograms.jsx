@@ -8,6 +8,8 @@ import CreateMainProgram from './CreateMainProgram';
 import EditMainProgram from './EditMainProgram';
 import DeleteMainProgram from './DeleteMainProgram';
 import useLocale from '@/utils/hooks/global/useLocale';
+import i18next from 'i18next';
+import { getOriginalObject } from '@/utils/helpers/global.fns';
 
 export default function MainPrograms() {
     const { isOpen, toggle } = useIsOpen();
@@ -15,13 +17,18 @@ export default function MainPrograms() {
     const { data, isLoading, refresh } = useMainProgramsQuery(pagination);
     const { t } = useLocale();
 
+    const tableData = data?.data?.map(item => ({
+        ...item,
+        name: item.name?.[i18next.language]
+    }));
+
     return (
         <div>
             <Table
                 title={t('table_titles.main_programs')}
                 refresh={refresh}
                 loading={isLoading}
-                data={data?.data}
+                data={tableData}
                 serverPagination={true}
                 totalCount={data?.meta?.total}
                 columns={mainProgramsColumns}
@@ -31,7 +38,10 @@ export default function MainPrograms() {
             />
             {isOpen.add && <CreateMainProgram onClose={toggle.add} />}
             {isOpen.edit && (
-                <EditMainProgram onClose={toggle.edit} oldData={isOpen.edit} />
+                <EditMainProgram
+                    onClose={toggle.edit}
+                    oldData={getOriginalObject(isOpen.edit, data?.data)}
+                />
             )}
             {isOpen.delete && (
                 <DeleteMainProgram

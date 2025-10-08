@@ -4,6 +4,7 @@ import DateCell from '@/components/common/table/cells/DateCell';
 import NameCell from '@/components/common/table/cells/NameCell';
 import { createColumnHelper } from '@tanstack/react-table';
 import React from 'react';
+import { enabledDisabledOptions } from '@/utils/constants/options';
 
 const columnHelper = createColumnHelper();
 
@@ -53,6 +54,15 @@ export const rolesFields = [
         label: 'validation.description.label.ar',
         type: 'textarea',
         placeholder: 'validation.description.placeholder.ar',
+        editMode: true,
+        viewMode: true
+    },
+    {
+        name: 'status',
+        label: 'validation.status.label',
+        type: 'select',
+        placeholder: 'validation.status.placeholder',
+        options: enabledDisabledOptions,
         editMode: true,
         viewMode: true
     }
