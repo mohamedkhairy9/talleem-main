@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react';
+import i18next from 'i18next';
 import {
     useReactTable,
     getCoreRowModel,
@@ -94,7 +95,7 @@ const Table = ({
                             input.indeterminate = table.getIsSomeRowsSelected();
                     }}
                     onChange={table.getToggleAllRowsSelectedHandler()}
-                    className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                    className="rounded border-gray-300 text-primary focus:ring-primary"
                 />
             </div>
         ),
@@ -104,7 +105,7 @@ const Table = ({
                     type="checkbox"
                     checked={row.getIsSelected()}
                     onChange={row.getToggleSelectedHandler()}
-                    className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                    className="rounded border-gray-300 text-primary focus:ring-primary"
                 />
             </div>
         )
@@ -121,7 +122,7 @@ const Table = ({
                         e.stopPropagation();
                         toggleModals.edit(row.original);
                     }}
-                    className="p-1 text-blue-600 hover:text-blue-800 hover:bg-blue-50 rounded transition-colors"
+                    className="p-1 text-primary-600 hover:text-primary-800 hover:bg-primary-50 rounded transition-colors"
                     title={t('table.edit')}
                 >
                     <MdEdit className="w-4 h-4" />
@@ -485,10 +486,14 @@ const Table = ({
 
         const uniqueValues = useMemo(() => {
             if (!data) return [];
+            
             try {
                 const values = data
                     .map(row => row[column.id])
-                    .filter(val => val != null && val !== '');
+                    .filter(val => val != null && val !== '').
+                    map(el=> el[i18next.language ] || el  )
+            console.log(values);
+
                 return [...new Set(values)].slice(0, 10);
             } catch (error) {
                 console.error('Filter error:', error);
@@ -511,7 +516,7 @@ const Table = ({
                     onClick={() => setIsOpen(!isOpen)}
                     className={`p-1 rounded transition-colors ${
                         column.getFilterValue()
-                            ? 'bg-blue-100 text-blue-600'
+                            ? 'bg-primary-100 text-primary-600'
                             : 'hover:bg-gray-100 text-gray-400'
                     }`}
                 >
@@ -524,7 +529,7 @@ const Table = ({
                             <input
                                 type="text"
                                 placeholder={t('table.filter_value')}
-                                className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
                                 value={filterValue}
                                 onChange={e => setFilterValue(e.target.value)}
                                 onKeyPress={e => {
@@ -643,7 +648,7 @@ const Table = ({
                                         {t('table.total')}
                                     </span>
                                     {selectedCount > 0 && (
-                                        <span className="text-sm text-blue-600 bg-blue-100 px-3 py-1 rounded-full font-medium">
+                                        <span className="text-sm text-primary-600 bg-primary-100 px-3 py-1 rounded-full font-medium">
                                             {selectedCount}{' '}
                                             {t('table.selected')}
                                         </span>
@@ -702,7 +707,7 @@ const Table = ({
                                     placeholder={t(
                                         'table.search_across_columns'
                                     )}
-                                    className="pl-10 pr-4 py-2 border border-gray-300 rounded-lg text-sm outline-none duration-200 focus:border-blue-500 w-80"
+                                    className="pl-10 pr-4 py-2 border border-gray-300 rounded-lg text-sm outline-none duration-200 focus:border-primary-500 w-80"
                                     value={globalFilter ?? ''}
                                     onChange={e =>
                                         setGlobalFilter(e.target.value)
@@ -723,7 +728,7 @@ const Table = ({
                                 {/* Add Button */}
                                 <button
                                     onClick={toggleModals.add}
-                                    className="flex items-center space-x-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
+                                    className="flex items-center space-x-2 px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary transition-colors"
                                 >
                                     <MdAdd className="w-4 h-4" />
                                     <span className="text-sm font-medium">
@@ -773,7 +778,7 @@ const Table = ({
                                                                     type="checkbox"
                                                                     checked={column.getIsVisible()}
                                                                     onChange={column.getToggleVisibilityHandler()}
-                                                                    className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                                                                    className="rounded border-gray-300 text-primary-600 focus:ring-primary-500"
                                                                 />
                                                                 <span className="text-sm text-gray-700">
                                                                     {
@@ -799,7 +804,7 @@ const Table = ({
                                                     !showExportMenu
                                                 )
                                             }
-                                            className="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                                            className="flex items-center space-x-2 px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors"
                                         >
                                             <MdDownload className="w-4 h-4" />
                                             <span className="text-sm font-medium">
@@ -815,7 +820,7 @@ const Table = ({
                                                         onClick={exportToCSV}
                                                         className="w-full flex items-center space-x-2 px-3 py-2 text-sm hover:bg-gray-50 rounded transition-colors"
                                                     >
-                                                        <MdTableChart className="w-4 h-4 text-green-600" />
+                                                        <MdTableChart className="w-4 h-4 text-primary-600" />
                                                         <span>
                                                             {t(
                                                                 'table.export_as_csv'
@@ -826,7 +831,7 @@ const Table = ({
                                                         onClick={exportToJSON}
                                                         className="w-full flex items-center space-x-2 px-3 py-2 text-sm hover:bg-gray-50 rounded transition-colors"
                                                     >
-                                                        <MdFileDownload className="w-4 h-4 text-blue-600" />
+                                                        <MdFileDownload className="w-4 h-4 text-primary-600" />
                                                         <span>
                                                             {t(
                                                                 'table.export_as_json'
@@ -868,9 +873,9 @@ const Table = ({
 
                         {/* Bulk Actions */}
                         {selectedCount > 0 && (
-                            <div className="flex items-center justify-between bg-blue-50 border border-blue-200 rounded-lg p-3">
+                            <div className="flex items-center justify-between bg-primary-50 border border-primary-200 rounded-lg p-3">
                                 <div className="flex items-center space-x-4">
-                                    <span className="text-sm font-medium text-blue-900">
+                                    <span className="text-sm font-medium text-primary-900">
                                         {selectedCount} {t('table.selected')}
                                     </span>
                                     <div className="flex items-center space-x-2">
@@ -881,7 +886,7 @@ const Table = ({
                                                         !showSelectedExportMenu
                                                     )
                                                 }
-                                                className="flex items-center space-x-1 px-3 py-1 bg-blue-600 text-white text-sm rounded hover:bg-blue-700 transition-colors"
+                                                className="flex items-center space-x-1 px-3 py-1 bg-primary-600 text-white text-sm rounded hover:bg-primary-700 transition-colors"
                                             >
                                                 <MdDownload className="w-4 h-4" />
                                                 <span>
@@ -959,7 +964,7 @@ const Table = ({
                                 </div>
                                 <button
                                     onClick={() => setRowSelection({})}
-                                    className="text-blue-600 hover:text-blue-800 text-sm font-medium"
+                                    className="text-primary-600 hover:text-primary-800 text-sm font-medium"
                                 >
                                     {t('table.clear_selection')}
                                 </button>
@@ -974,7 +979,7 @@ const Table = ({
                                     <span>{t('table.active_filters')}:</span>
                                 </span>
                                 {globalFilter && (
-                                    <span className="inline-flex items-center space-x-1 px-3 py-1 bg-blue-100 text-blue-800 text-sm rounded-full">
+                                    <span className="inline-flex items-center space-x-1 px-3 py-1 bg-primary-100 text-primary-800 text-sm rounded-full">
                                         <span>
                                             {t('table.search')}: "{globalFilter}
                                             "
@@ -982,7 +987,7 @@ const Table = ({
                                         <button
                                             onClick={() => setGlobalFilter('')}
                                         >
-                                            <MdClose className="w-3 h-3 hover:text-blue-900" />
+                                            <MdClose className="w-3 h-3 hover:text-primary-900" />
                                         </button>
                                     </span>
                                 )}
@@ -1076,10 +1081,10 @@ const Table = ({
                                                                 <div className="flex flex-col">
                                                                     {header.column.getIsSorted() ===
                                                                     'asc' ? (
-                                                                        <MdExpandLess className="w-4 h-4 text-blue-600" />
+                                                                        <MdExpandLess className="w-4 h-4 text-primary-600" />
                                                                     ) : header.column.getIsSorted() ===
                                                                       'desc' ? (
-                                                                        <MdExpandMore className="w-4 h-4 text-blue-600" />
+                                                                        <MdExpandMore className="w-4 h-4 text-primary-600" />
                                                                     ) : (
                                                                         <MdSwapVert className="w-4 h-4 text-gray-400 hover:text-gray-600" />
                                                                     )}
@@ -1109,19 +1114,19 @@ const Table = ({
                                         <div className="flex flex-col items-center justify-center space-y-3">
                                             <div className="flex space-x-1">
                                                 <div
-                                                    className="w-2 h-2 bg-blue-600 rounded-full animate-bounce"
+                                                    className="w-2 h-2 bg-primary-600 rounded-full animate-bounce"
                                                     style={{
                                                         animationDelay: '0ms'
                                                     }}
                                                 ></div>
                                                 <div
-                                                    className="w-2 h-2 bg-blue-600 rounded-full animate-bounce"
+                                                    className="w-2 h-2 bg-primary-600 rounded-full animate-bounce"
                                                     style={{
                                                         animationDelay: '150ms'
                                                     }}
                                                 ></div>
                                                 <div
-                                                    className="w-2 h-2 bg-blue-600 rounded-full animate-bounce"
+                                                    className="w-2 h-2 bg-primary-600 rounded-full animate-bounce"
                                                     style={{
                                                         animationDelay: '300ms'
                                                     }}
@@ -1155,7 +1160,7 @@ const Table = ({
                                                     setColumnFilters([]);
                                                     setGlobalFilter('');
                                                 }}
-                                                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                                                className="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors"
                                             >
                                                 Clear All Filters
                                             </button>
@@ -1167,10 +1172,10 @@ const Table = ({
                                     <tr
                                         key={row.id}
                                         className={`
-                      hover:bg-blue-50 transition-all duration-200 cursor-pointer group
+                      hover:bg-primary-50 transition-all duration-200 group
                       ${
                           row.getIsSelected()
-                              ? 'bg-blue-100 border-l-4 border-blue-500'
+                              ? 'bg-primary-100 border-l-4 border-primary-500'
                               : ''
                       }
                       ${index % 2 === 0 ? 'bg-gray-50/30' : 'bg-white'}
@@ -1182,7 +1187,7 @@ const Table = ({
                                         {row.getVisibleCells().map(cell => (
                                             <td
                                                 key={cell.id}
-                                                className={`${densityClasses[density]} whitespace-nowrap text-sm border-b border-gray-100 group-hover:border-blue-200 transition-colors`}
+                                                className={`${densityClasses[density]} whitespace-nowrap text-sm border-b border-gray-100 group-hover:border-primary-200 transition-colors`}
                                             >
                                                 {flexRender(
                                                     cell.column.columnDef.cell,
@@ -1217,7 +1222,7 @@ const Table = ({
                                             page: 1 // Reset to first page when changing page size
                                         });
                                     }}
-                                    className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
+                                    className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 bg-white"
                                 >
                                     {[10, 20, 30, 50, 100].map(pageSize => (
                                         <option key={pageSize} value={pageSize}>
@@ -1248,7 +1253,7 @@ const Table = ({
                             </div>
 
                             {selectedCount > 0 && (
-                                <div className="text-sm text-blue-600 bg-blue-100 px-3 py-1 rounded-full font-medium">
+                                <div className="text-sm text-primary-600 bg-primary-100 px-3 py-1 rounded-full font-medium">
                                     {selectedCount} {t('table.selected')}
                                 </div>
                             )}
@@ -1327,7 +1332,7 @@ const Table = ({
                                                 }
                                                 className={`px-3 py-2 text-sm rounded-lg transition-colors font-medium ${
                                                     displayPage === currentPage
-                                                        ? 'bg-blue-600 text-white shadow-lg'
+                                                        ? 'bg-primary-600 text-white shadow-lg'
                                                         : 'border border-gray-300 text-gray-700 hover:bg-gray-100'
                                                 }`}
                                             >

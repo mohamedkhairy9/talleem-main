@@ -48,16 +48,16 @@ export default function LanguageSwitcher() {
                     />
 
                     <div className="absolute right-0 mt-2 w-48 rounded-lg shadow-lg bg-white border border-gray-300 z-[51]">
-                        <div className="py-1">
+                        <div className="">
                             {languages.map(language => (
                                 <button
                                     key={language.code}
                                     onClick={() =>
                                         handleLanguageChange(language.code)
                                     }
-                                    className={`flex items-center justify-between w-full px-4 py-2 text-sm transition-colors duration-200 ${
+                                    className={`flex items-center rounded-lg justify-between w-full px-4 py-2 text-sm transition-colors duration-200 ${
                                         currentLocale === language.code
-                                            ? 'bg-blue-50 text-blue-700'
+                                            ? 'bg-primary-50 text-primary-700'
                                             : 'text-gray-700 hover:bg-gray-100'
                                     }`}
                                 >
@@ -65,7 +65,7 @@ export default function LanguageSwitcher() {
                                         {language.name}
                                     </span>
                                     {currentLocale === language.code && (
-                                        <span className=" text-blue-600">
+                                        <span className=" text-primary-600">
                                             ✓
                                         </span>
                                     )}

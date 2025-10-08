@@ -68,6 +68,8 @@ export default function SelectRFH({
                         options={options}
                         isDisabled={disabled}
                         placeholder={t(placeholder)}
+                        menuPortalTarget={document.body}
+                        menuPosition="fixed"
                         styles={{
                             control: (provided, state) => ({
                                 ...provided,
@@ -95,6 +97,10 @@ export default function SelectRFH({
                                 ...provided,
                                 margin: '0',
                                 color: '#9ca3af'
+                            }),
+                            menuPortal: provided => ({
+                                ...provided,
+                                zIndex: 9999
                             })
                         }}
                         onChange={selected => {

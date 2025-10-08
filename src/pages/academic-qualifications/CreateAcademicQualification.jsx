@@ -7,10 +7,22 @@ import { useCreateAcademicQualificationMutation } from '@/api/hooks/useAcademicQ
 export default function CreateAcademicQualification({ onClose }) {
     const { mutate, isPending } = useCreateAcademicQualificationMutation();
 
+    const defaultValues = {
+        status: true
+    };
+
     return (
         <Modal onClose={onClose}>
-            <ModalHeader onClose={onClose} header="academic_qualifications.create" />
-            <FormAcademicQualification mutate={mutate} isPending={isPending} onClose={onClose} />
+            <ModalHeader
+                onClose={onClose}
+                header="academic_qualifications.create"
+            />
+            <FormAcademicQualification
+                mutate={mutate}
+                isPending={isPending}
+                onClose={onClose}
+                oldData={defaultValues}
+            />
         </Modal>
     );
 }

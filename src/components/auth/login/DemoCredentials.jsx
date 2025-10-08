@@ -9,14 +9,14 @@ export default function DemoCredentials() {
             <p className="">
                 <span className="font-semibold text-indigo-700">Email : </span>
                 <span className="font-medium text-indigo-600">
-                    admin@example.com
+                admin@system.com
                 </span>
             </p>
             <p className="">
                 <span className="font-semibold text-indigo-700">
                     Password :{' '}
                 </span>
-                <span className="font-medium text-indigo-600">password123</span>
+                <span className="font-medium text-indigo-600">super123456</span>
             </p>
         </div>
     );

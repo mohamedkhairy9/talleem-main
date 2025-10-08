@@ -60,11 +60,38 @@
                 "en": "Enter educational entity classification in English",
                 "ar": "Enter educational entity classification in Arabic"
             }
+        },
+        "status": {
+            "label": "Status",
+            "placeholder": "Select status"
+        },
+        "enabled": {
+            "label": "Enabled"
+        },
+        "disabled": {
+            "label": "Disabled"
         }
+    },
+    "auth": {
+        "email": {
+            "label": "البريد الإلكتروني",
+            "placeholder": "أدخل بريدك الإلكتروني"
+        },
+        "password": {
+            "label": "كلمة المرور",
+            "placeholder": "أدخل كلمة المرور"
+        },
+        "login": "تسجيل الدخول",
+        "forgot_password": "هل نسيت كلمة المرور ؟",
+        "recover": "إستعادة",
+        "or": "أو",
+        "start_journey": "ابدأ رحلتك مع القرآن الكريم"
     },
     "common": {
         "close": "Close",
-        "submit": "Submit"
+        "submit": "Submit",
+        "yes": "Yes",
+        "no": "No"
     },
     "roles": {
         "create": "Create Role",
@@ -231,5 +258,27 @@
         "page": "Page",
         "page_size": "Page Size",
         "total": "Total"
+    },
+    "table_headers": {
+        "created_at": "Created Date",
+        "name": "Name",
+        "academic_qualifications": "Academic Qualifications",
+        "jobs": "Jobs",
+        "cities": "Cities",
+        "neighborhoods": "Neighborhoods",
+        "academic_years": "Academic Years",
+        "academic_levels": "Academic Levels",
+        "location_types": "Location Types",
+        "specifications": "Specifications",
+        "activities": "Activities",
+        "entity_categories": "Entity Categories",
+        "session_periods": "Session Periods",
+        "kinships": "Kinships",
+        "attendance_types": "Attendance Types",
+        "quoran_parts": "Quran Parts",
+        "main_programs": "Main Programs",
+        "memorization_programs": "Memorization Programs",
+        "education_programs": "Education Programs",
+        "branches": "Branches"
     }
 }

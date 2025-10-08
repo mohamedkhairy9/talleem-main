@@ -62,11 +62,38 @@
                 "en": "أدخل تصنيف الكيان التعليمي بالإنجليزية",
                 "ar": "أدخل تصنيف الكيان التعليمي بالعربية"
             }
+        },
+        "status": {
+            "label": "الحالة",
+            "placeholder": "اختر الحالة"
+        },
+        "enabled": {
+            "label": "مفعل"
+        },
+        "disabled": {
+            "label": "غير مفعل"
         }
+    },
+    "auth": {
+        "email": {
+            "label": "البريد الإلكتروني",
+            "placeholder": "أدخل بريدك الإلكتروني"
+        },
+        "password": {
+            "label": "كلمة المرور",
+            "placeholder": "أدخل كلمة المرور"
+        },
+        "login": "تسجيل الدخول",
+        "forgot_password": "هل نسيت كلمة المرور ؟",
+        "recover": "إستعادة",
+        "or": "أو",
+        "start_journey": "ابدأ رحلتك مع القرآن الكريم"
     },
     "common": {
         "close": "إغلاق",
-        "submit": "إرسال"
+        "submit": "إرسال",
+        "yes": "نعم",
+        "no": "لا"
     },
     "roles": {
         "create": "إنشاء دور",
@@ -233,5 +260,27 @@
         "page": "الصفحة",
         "page_size": "حجم الصفحة",
         "total": "الكل"
+    },
+    "table_headers": {
+        "created_at": "تاريخ الإنشاء",
+        "name": "الاسم",
+        "academic_qualifications": "المؤهلات الأكاديمية",
+        "jobs": "الوظائف",
+        "cities": "المدن",
+        "neighborhoods": "الأحياء",
+        "academic_years": "السنوات الأكاديمية",
+        "academic_levels": "المستويات الأكاديمية",
+        "location_types": "أنواع المواقع",
+        "specifications": "المواصفات",
+        "activities": "الأنشطة",
+        "entity_categories": "فئات الكيانات",
+        "session_periods": "فترات الجلسات",
+        "kinships": "صلة القرابة",
+        "attendance_types": "أنواع الحضور",
+        "quoran_parts": "أجزاء القرآن",
+        "main_programs": "البرامج الرئيسية",
+        "memorization_programs": "برامج الحفظ",
+        "education_programs": "البرامج التعليمية",
+        "branches": "الفروع"
     }
 }

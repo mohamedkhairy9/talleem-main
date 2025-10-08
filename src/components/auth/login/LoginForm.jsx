@@ -21,14 +21,7 @@ export default function LoginForm() {
         <div className="w-full max-w-md mx-auto">
             <div className="bg-white rounded-2xl shadow-lg p-8">
                 <form onSubmit={handleSubmit(mutate)} className="space-y-2">
-                    {loginFields.map(field => (
-                        <InputRFH
-                            key={field.name}
-                            register={register}
-                            error={errors[field.name]?.message}
-                            {...field}
-                        />
-                    ))}
+                    
 
                     <Btn
                         className="py-2 w-full"

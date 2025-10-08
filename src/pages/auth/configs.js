@@ -2,18 +2,18 @@ export const loginFields = [
     {
         type: 'email',
         name: 'email',
-        label: 'Email Address',
-        placeholder: 'Enter your email'
+        label: 'auth.email.label',
+        placeholder: 'auth.email.placeholder'
     },
     {
         type: 'password',
         name: 'password',
-        label: 'Password',
-        placeholder: 'Enter your password'
+        label: 'auth.password.label',
+        placeholder: 'auth.password.placeholder'
     }
 ];
 
 export const loginDefaultValues = {
-    email: 'admin@admin.com',
-    password: '12345678'
+    email: 'admin@system.com',
+    password: 'super123456'
 };

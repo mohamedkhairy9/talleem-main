@@ -7,7 +7,7 @@ export default function Home() {
             title: 'Total Roles',
             value: '12',
             icon: HiUsers,
-            color: 'bg-blue-500'
+            color: 'bg-primary-500'
         },
         {
             title: 'Permissions',

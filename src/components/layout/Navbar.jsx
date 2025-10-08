@@ -35,7 +35,7 @@ export default function Navbar() {
                             onClick={toggleDropdown}
                             className="flex items-center space-x-3 rounded-full rounded-r-lg hover:bg-gray-100 transition-colors duration-200 focus:outline-none "
                         >
-                            <div className="size-10 rounded-full bg-blue-600 flex items-center justify-center">
+                            <div className="size-10 rounded-full bg-accent flex items-center justify-center">
                                 <span className="text-base font-medium text-white">
                                     {user?.name?.charAt(0).toUpperCase() || 'U'}
                                 </span>

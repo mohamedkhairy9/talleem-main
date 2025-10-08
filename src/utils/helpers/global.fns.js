@@ -1,3 +1,5 @@
+import i18next from 'i18next';
+
 export const prepareFormData = data => {
     const formData = new FormData();
 
@@ -28,7 +30,11 @@ export function generateOptions(arr = [], valueKey, labelKey) {
     if (arr?.length > 0) {
         return arr
             .map(opt => ({
-                label: opt.name || opt.label || opt[labelKey],
+                label:
+                    opt.name?.[i18next.language] ||
+                    opt.name ||
+                    opt.label ||
+                    opt[labelKey],
                 value: opt.id || opt.value || opt[valueKey]
             }))
             .reverse();
@@ -61,4 +67,23 @@ export function generateBilingualOptions(
             .reverse();
     }
     return [];
+}
+
+export function generateTableData(data = []) {
+    const lang = i18next.language;
+
+    function check(field) {
+        if (field && typeof field === 'object' && field[lang]) {
+            return field[lang];
+        }
+        return field;
+    }
+
+    return data.map(el => {
+        const obj = {};
+        for (const [key, value] of Object.entries(el)) {
+            obj[key] = check(value);
+        }
+        return obj;
+    });
 }

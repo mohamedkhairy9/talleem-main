@@ -26,17 +26,17 @@ export const rolesColumns = [
 export const rolesFields = [
     {
         name: 'display_name.en',
-        label: 'validation.display_name.label.en',
+        label: 'validation.name.label.en',
         type: 'text',
-        placeholder: 'validation.display_name.placeholder.en',
+        placeholder: 'validation.name.placeholder.en',
         editMode: true,
         viewMode: true
     },
     {
         name: 'display_name.ar',
-        label: 'validation.display_name.label.ar',
+        label: 'validation.name.label.ar',
         type: 'text',
-        placeholder: 'validation.display_name.placeholder.ar',
+        placeholder: 'validation.name.placeholder.ar',
         editMode: true,
         viewMode: true
     },

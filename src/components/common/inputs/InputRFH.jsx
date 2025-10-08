@@ -29,12 +29,13 @@ export default function InputRFH({
             />
         );
     }
+
     return (
         <div>
             {label && (
                 <label
                     htmlFor={name}
-                    className="block  font-medium text-gray-700 mb-1 font-montserrat"
+                    className="block font-medium text-gray-700 mb-1 "
                 >
                     {t(label)}
                 </label>
@@ -43,7 +44,7 @@ export default function InputRFH({
                 {...register(name)}
                 type={type}
                 id={name || ''}
-                className={`w-full ${p} border outline-none rounded-lg focus:border-blue-500 transition-colors duration-200 font-montserrat ${
+                className={`w-full ${p} border outline-none rounded-lg focus:border-accent transition-colors duration-200  ${
                     error
                         ? 'border-red-300  focus:border-red-500'
                         : 'border-gray-300'
@@ -53,7 +54,7 @@ export default function InputRFH({
             {
                 <p
                     id="password-error"
-                    className="mt-1 h-4 text-xs text-red-600 font-montserrat"
+                    className="mt-1 h-4 text-xs text-red-600 "
                     role="alert"
                 >
                     {t(error) || ''}

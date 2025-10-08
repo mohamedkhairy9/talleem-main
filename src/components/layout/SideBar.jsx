@@ -69,7 +69,7 @@ export default function SideBar() {
             {isMobile && !isOpen && (
                 <button
                     onClick={toggleSidebar}
-                    className={`fixed top-4 z-50 p-2 bg-blue-600 text-white rounded-lg shadow-lg hover:bg-blue-700 transition-colors duration-200 ${
+                    className={`fixed top-4 z-50 p-2 bg-accent text-white rounded-lg shadow-lg hover:bg-primary-500 transition-colors duration-200 ${
                         isRTL ? 'right-4' : 'left-4'
                     }`}
                     aria-label="Toggle menu"
@@ -151,8 +151,8 @@ export default function SideBar() {
                                     }
                                     ${
                                         active
-                                            ? 'bg-gradient-to-br from-[#667eea] to-[#764ba2] text-white shadow-sm'
-                                            : 'text-gray-500 hover:gap-2 hover:text-indigo-600 hover:bg-gray-100'
+                                            ? 'bg-gradient-to-br from-primary-500 to-accent text-white shadow-sm'
+                                            : 'text-gray-500 hover:gap-2 hover:text-primary hover:bg-gray-100'
                                     }
                                 `}
                                 aria-label={title}
@@ -200,7 +200,7 @@ export default function SideBar() {
                         }
                     `}
                     >
-                        <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse shrink-0" />
+                        <div className="w-2 h-2 bg-primary-500 rounded-full animate-pulse shrink-0" />
                         <span className="text-sm font-medium whitespace-nowrap">
                             {t('sidebar.system_online')}
                         </span>
