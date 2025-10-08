@@ -18,34 +18,46 @@ export default function SelectRFH({
 }) {
     const { t } = useLocale();
     const getDefaultValue = () => {
-        if (defaultValue) {
+        if (defaultValue !== undefined && defaultValue !== null) {
             if (isMulti) {
                 return options
                     ?.filter(item =>
                         defaultValue
-                            ?.map(el => el.id || el.value || el)
-                            .includes(item.id || item.value)
+                            ?.map(el =>
+                                el.id !== undefined
+                                    ? el.id
+                                    : el.value !== undefined
+                                    ? el.value
+                                    : el
+                            )
+                            .includes(
+                                item.id !== undefined ? item.id : item.value
+                            )
                     )
                     .map(option => ({
-                        value: option.id || option.value,
+                        value:
+                            option.id !== undefined ? option.id : option.value,
                         label: option.name || option.label
                     }));
             } else {
                 const x = options?.find(
                     el =>
-                        Number(el.id) === Number(defaultValue) ||
+                        (el.id !== undefined &&
+                            Number(el.id) === Number(defaultValue)) ||
                         el.value === defaultValue
                 );
                 return x
-                    ? { label: x.name || x.label, value: x.id || x.value }
+                    ? {
+                          label: x.name || x.label,
+                          value: x.id !== undefined ? x.id : x.value
+                      }
                     : null;
             }
         }
         return null;
     };
 
-    console.log('defaultValue',defaultValue);
-    
+    console.log('defaultValue', defaultValue);
 
     return (
         <div className="flex flex-col gap-px">
@@ -108,10 +120,14 @@ export default function SelectRFH({
                         }}
                         onChange={selected => {
                             const newValue = isMulti
-                                ? selected.map(
-                                      option => option.value || option.id
+                                ? selected.map(option =>
+                                      option.value !== undefined
+                                          ? option.value
+                                          : option.id
                                   )
-                                : selected?.value || selected?.id;
+                                : selected?.value !== undefined
+                                ? selected?.value
+                                : selected?.id;
 
                             field.onChange(newValue);
                         }}

@@ -3,6 +3,7 @@ import FormAcademicYear from './FormAcademicYear';
 import Modal from '@/components/common/form/Modal';
 import ModalHeader from '@/components/common/form/ModalHeader';
 import { useCreateAcademicYearMutation } from '@/api/hooks/useAcademicYears';
+import { enabledDisabledOptions } from '@/utils/constants/options';
 
 export default function CreateAcademicYear({ onClose }) {
     const { mutate, isPending } = useCreateAcademicYearMutation();
@@ -14,6 +15,9 @@ export default function CreateAcademicYear({ onClose }) {
                 mutate={mutate}
                 isPending={isPending}
                 onClose={onClose}
+                options={{
+                    status: enabledDisabledOptions
+                }}
             />
         </Modal>
     );

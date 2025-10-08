@@ -70,6 +70,19 @@
         },
         "disabled": {
             "label": "Disabled"
+        },
+        "start_date": {
+            "label": "Start Date",
+            "placeholder": "Select start date",
+            "required": "Start date is required",
+            "invalid": "Please enter a valid start date"
+        },
+        "end_date": {
+            "label": "End Date",
+            "placeholder": "Select end date",
+            "required": "End date is required",
+            "invalid": "Please enter a valid end date",
+            "after_start": "End date must be after start date"
         }
     },
     "auth": {

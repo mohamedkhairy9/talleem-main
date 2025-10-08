@@ -7,6 +7,7 @@ import { academicYearsFields } from './configs';
 import InputRFH from '@/components/common/inputs/InputRFH';
 import Btn from '@/components/common/buttons/Btn';
 import { getNestedError } from '@/utils/helpers/getNestedError';
+import { generateOptions } from '@/utils/helpers/global.fns';
 
 export default function FormAcademicYear({
     onClose,
@@ -14,9 +15,10 @@ export default function FormAcademicYear({
     editMode,
     viewMode,
     isPending,
-    mutate
+    mutate,
+    options
 }) {
-    const { register, errors, handleSubmit, control } = useRFH({
+    const { register, errors, handleSubmit, control, watch } = useRFH({
         schema,
         defaultValues: oldData
     });
@@ -29,6 +31,11 @@ export default function FormAcademicYear({
             }
         });
     }
+
+    const status = watch('status');
+
+    console.log('errors', errors);
+    console.log('status', status);
 
     return (
         <form onSubmit={handleSubmit(onSubmit)} className="p-4 space-y-2">
@@ -51,6 +58,7 @@ export default function FormAcademicYear({
                         label={field.label}
                         name={field.name}
                         defaultValue={oldData?.[field.name]}
+                        options={generateOptions(options?.[field.name])}
                     />
                 ))}
             <Btn

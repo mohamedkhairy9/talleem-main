@@ -27,18 +27,27 @@ export const prepareFormData = data => {
 };
 
 export function generateOptions(arr = [], valueKey, labelKey) {
+    console.log('arr', arr);
+
+    console.log(arr.map(opt => opt.id ?? opt.value ?? opt[valueKey] ?? 222));
+
     if (arr?.length > 0) {
-        return arr
-            .map(opt => ({
-                label:
-                    opt.name?.[i18next.language] ||
-                    opt.label?.[i18next.language] ||
-                    opt.name ||
-                    opt.label ||
-                    opt[labelKey],
-                value: opt.id || opt.value || opt[valueKey]
-            }))
-            .reverse();
+        return arr.map(opt => ({
+            label:
+                opt.name?.[i18next.language] ||
+                opt.label?.[i18next.language] ||
+                opt.name ||
+                opt.label ||
+                opt[labelKey],
+            value:
+                opt.id !== undefined
+                    ? opt.id
+                    : opt.value !== undefined
+                    ? opt.value
+                    : opt[valueKey] !== undefined
+                    ? opt[valueKey]
+                    : false
+        }));
     }
     return [];
 }

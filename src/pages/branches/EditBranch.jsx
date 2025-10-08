@@ -7,6 +7,7 @@ import { useCitiesQuery } from '@/api/hooks/useCities';
 import { useNeighborhoodsQuery } from '@/api/hooks/useNeighborhoods';
 import Loader from '@/components/common/Loader';
 import { allData } from '@/utils/constants/global.constants';
+import { enabledDisabledOptions } from '@/utils/constants/options';
 
 export default function EditBranch({ onClose, oldData }) {
     console.log('oldData', oldData);
@@ -30,7 +31,8 @@ export default function EditBranch({ onClose, oldData }) {
                 editMode={true}
                 options={{
                     city_id: citiesData?.data,
-                    neighborhood_id: neighborhoodsData?.data
+                    neighborhood_id: neighborhoodsData?.data,
+                    status: enabledDisabledOptions
                 }}
             />
         </Modal>

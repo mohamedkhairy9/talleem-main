@@ -3,6 +3,7 @@ import FormAcademicQualification from './FormAcademicQualification';
 import Modal from '@/components/common/form/Modal';
 import ModalHeader from '@/components/common/form/ModalHeader';
 import { useCreateAcademicQualificationMutation } from '@/api/hooks/useAcademicQualifications';
+import { enabledDisabledOptions } from '@/utils/constants/options';
 
 export default function CreateAcademicQualification({ onClose }) {
     const { mutate, isPending } = useCreateAcademicQualificationMutation();
@@ -22,6 +23,9 @@ export default function CreateAcademicQualification({ onClose }) {
                 isPending={isPending}
                 onClose={onClose}
                 oldData={defaultValues}
+                options={{
+                    status: enabledDisabledOptions
+                }}
             />
         </Modal>
     );

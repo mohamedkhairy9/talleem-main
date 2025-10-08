@@ -12,6 +12,16 @@ export const academicYearsColumns = [
         header: 'Academic Year',
         cell: info => <NameCell directValue={info.row.original.name} />
     }),
+    columnHelper.accessor('start_date', {
+        header: 'Start Date',
+        cell: info => <DateCell value={info.getValue()} />,
+        enableColumnFilter: false
+    }),
+    columnHelper.accessor('end_date', {
+        header: 'End Date',
+        cell: info => <DateCell value={info.getValue()} />,
+        enableColumnFilter: false
+    }),
     columnHelper.accessor('created_at', {
         header: 'Created At',
         cell: info => <DateCell fullDate value={info.getValue()} />,
@@ -33,6 +43,22 @@ export const academicYearsFields = [
         label: 'validation.name.label.ar',
         type: 'text',
         placeholder: 'validation.name.placeholder.ar',
+        editMode: true,
+        viewMode: true
+    },
+    {
+        name: 'start_date',
+        label: 'validation.start_date.label',
+        type: 'date',
+        placeholder: 'validation.start_date.placeholder',
+        editMode: true,
+        viewMode: true
+    },
+    {
+        name: 'end_date',
+        label: 'validation.end_date.label',
+        type: 'date',
+        placeholder: 'validation.end_date.placeholder',
         editMode: true,
         viewMode: true
     },

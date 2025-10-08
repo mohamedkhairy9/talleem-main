@@ -7,6 +7,7 @@ import { academicLevelsFields } from './configs';
 import InputRFH from '@/components/common/inputs/InputRFH';
 import Btn from '@/components/common/buttons/Btn';
 import { getNestedError } from '@/utils/helpers/getNestedError';
+import { generateOptions } from '@/utils/helpers/global.fns';
 
 export default function FormAcademicLevel({
     onClose,
@@ -14,7 +15,8 @@ export default function FormAcademicLevel({
     editMode,
     viewMode,
     isPending,
-    mutate
+    mutate,
+    options
 }) {
     const { register, errors, handleSubmit, control } = useRFH({
         schema,
@@ -51,6 +53,7 @@ export default function FormAcademicLevel({
                         label={field.label}
                         name={field.name}
                         defaultValue={oldData?.[field.name]}
+                        options={generateOptions(options?.[field.name])}
                     />
                 ))}
             <Btn

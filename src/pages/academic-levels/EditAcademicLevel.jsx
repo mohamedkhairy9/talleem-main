@@ -3,6 +3,7 @@ import Modal from '@/components/common/form/Modal';
 import ModalHeader from '@/components/common/form/ModalHeader';
 import React from 'react';
 import FormAcademicLevel from './FormAcademicLevel';
+import { enabledDisabledOptions } from '@/utils/constants/options';
 
 export default function EditAcademicLevel({ onClose, oldData }) {
     console.log('oldData', oldData);
@@ -17,6 +18,9 @@ export default function EditAcademicLevel({ onClose, oldData }) {
                 isPending={isPending}
                 onClose={onClose}
                 editMode={true}
+                options={{
+                    status: enabledDisabledOptions
+                }}
             />
         </Modal>
     );

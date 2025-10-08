@@ -9,8 +9,10 @@ import {
 import { useUserStore } from '@/utils/stores/user.store';
 import { useLogoutMutation } from '@/api/hooks/useAuth';
 import LanguageSwitcher from '@/components/common/LanguageSwitcher';
+import useLocale from '@/utils/hooks/global/useLocale';
 
 export default function Navbar() {
+    const {isRTL} = useLocale()
     const user = useUserStore(state => state.user);
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
     const { mutate: logout } = useLogoutMutation();
@@ -64,7 +66,7 @@ export default function Navbar() {
                                     onClick={() => setIsDropdownOpen(false)}
                                 />
 
-                                <div className="absolute right-0 mt-2 w-56 rounded-lg shadow-lg bg-white border border-gray-300 z-[51]">
+                                <div className={`absolute ${isRTL ? 'left-0' : 'right-0'}  mt-2 w-56 rounded-lg shadow-lg bg-white border border-gray-300 z-[51]`}>
                                     <div className="">
                                         <div className="px-4 py-3 border-b border-gray-100">
                                             <p className="text-sm font-medium text-gray-900">
