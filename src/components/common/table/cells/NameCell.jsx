@@ -2,6 +2,9 @@ import useLocale from '@/utils/hooks/global/useLocale';
 import React from 'react';
 
 export default function NameCell({ info, directValue }) {
+    console.log('directValue', directValue);
+    console.log('info', info);
+
     const { currentLocale } = useLocale();
     return (
         <div className="flex items-center space-x-3">
@@ -16,7 +19,7 @@ export default function NameCell({ info, directValue }) {
             </div>
             <div>
                 <div className="font-semibold text-gray-900">
-                    {directValue ? directValue[currentLocale] : info.getValue()}
+                    {directValue ? directValue : info.getValue()}
                 </div>
             </div>
         </div>

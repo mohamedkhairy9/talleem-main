@@ -30,6 +30,9 @@ export default function FormRole({
         });
     }
 
+    console.log('oldData', oldData);
+    console.log('errors', errors);
+
     return (
         <form onSubmit={handleSubmit(onSubmit)} className="p-4 space-y-2">
             {rolesFields

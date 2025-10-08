@@ -1,7 +1,7 @@
+import i18next from 'i18next';
 import Cell from '@/components/common/table/cells/Cell';
 import DateCell from '@/components/common/table/cells/DateCell';
 import NameCell from '@/components/common/table/cells/NameCell';
-import RoleCell from '@/components/common/table/cells/RoleCell';
 import { createColumnHelper } from '@tanstack/react-table';
 import React from 'react';
 

@@ -1,9 +1,9 @@
 export const yesNoOptions = [
-    { label: 'yes', value: true },
-    { label: 'no', value: false }
+    { label: {ar : 'نعم', en : 'yes'}, value: true },
+    { label: {ar : 'لا', en : 'no'}, value: false }
 ];
 
 export const enabledDisabledOptions = [
-    { label: 'enabled', value: true },
-    { label: 'disabled', value: false }
+    { label: {ar : 'مفعل', en : 'enabled'}, value: true },
+    { label: {ar : 'غير مفعل', en : 'disabled'}, value: false }
 ];

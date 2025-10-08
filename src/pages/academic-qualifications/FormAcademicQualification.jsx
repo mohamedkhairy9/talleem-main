@@ -7,6 +7,7 @@ import { academicQualificationsFields } from './configs';
 import InputRFH from '@/components/common/inputs/InputRFH';
 import Btn from '@/components/common/buttons/Btn';
 import { getNestedError } from '@/utils/helpers/getNestedError';
+import { generateOptions } from '@/utils/helpers/global.fns';
 
 export default function FormAcademicQualification({
     onClose,
@@ -51,7 +52,7 @@ export default function FormAcademicQualification({
                         label={field.label}
                         name={field.name}
                         defaultValue={oldData?.[field.name]}
-                        options={field.options}
+                        options={generateOptions(field.options)}
                     />
                 ))}
             <Btn

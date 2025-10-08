@@ -624,7 +624,7 @@ const Table = ({
 
     return (
         <div
-            className={`${
+            className={`text-lg ${
                 isFullscreen ? 'fixed inset-0 z-50 bg-white' : ''
             } ${className}`}
         >
@@ -1038,7 +1038,7 @@ const Table = ({
                                     {headerGroup.headers.map((header, idx) => (
                                         <th
                                             key={header.id}
-                                            className={`${densityClasses[density]} text-left text-xs font-semibold text-gray-900 uppercase tracking-wider border-b-2 border-gray-200`}
+                                            className={`${densityClasses[density]} text-left text-sm font-semibold text-gray-900 uppercase tracking-wider border-b-2 border-gray-200`}
                                             style={{ width: header.getSize() }}
                                         >
                                             <div

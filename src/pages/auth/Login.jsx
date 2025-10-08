@@ -45,7 +45,7 @@ export default function Login() {
     }
 
     return (
-        <div className="min-h-screen font-islamic bg-gradient-to-tr from-primary to-primary-900 relative overflow-hidden">
+        <div dir="ltr" className="min-h-screen font-islamic bg-gradient-to-tr from-primary to-primary-900 relative overflow-hidden">
             {/* Background Pattern */}
             <div
                 className="absolute inset-0 opacity-10"

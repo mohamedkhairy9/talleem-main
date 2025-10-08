@@ -32,6 +32,7 @@ export function generateOptions(arr = [], valueKey, labelKey) {
             .map(opt => ({
                 label:
                     opt.name?.[i18next.language] ||
+                    opt.label?.[i18next.language] ||
                     opt.name ||
                     opt.label ||
                     opt[labelKey],
@@ -87,3 +88,11 @@ export function generateTableData(data = []) {
         return obj;
     });
 }
+
+export const getOriginalObject = (identfier, arr = []) => {
+    let id = identfier;
+    if (typeof identfier === 'object') {
+        id = identfier.id;
+    }
+    return arr.find(el => el.id == id);
+};
