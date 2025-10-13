@@ -171,6 +171,28 @@ export const API_URLS = {
         DETAILS: id => `/session-periods/${id}`,
         UPDATE: id => `/session-periods/${id}`,
         DELETE: id => `/session-periods/${id}`
+    },
+    ABOUT_US: {
+        GET: '/about-us',
+        UPDATE: '/about-us',
+        DELETE: '/about-us'
+    },
+    TERMS_AND_CONDITIONS: {
+        GET: '/term-and-condition',
+        UPDATE: '/term-and-condition',
+        DELETE: '/term-and-condition'
+    },
+    PRIVACY_POLICIES: {
+        GET: '/privacy-and-policy',
+        UPDATE: '/privacy-and-policy',
+        DELETE: '/privacy-and-policy'
+    },
+    GENERAL_BANNERS: {
+        CREATE: '/banners',
+        LIST: '/banners',
+        DETAILS: id => `/banners/${id}`,
+        UPDATE: id => `/banners/${id}`,
+        DELETE: id => `/banners/${id}`
     }
 };
 
@@ -204,5 +226,9 @@ export const API_KEYS = {
     SPECIFICATIONS: 'specifications',
     ACTIVITIES: 'activities',
     ENTITY_CATEGORIES: 'entity-categories',
-    SESSION_PERIODS: 'session-periods'
+    SESSION_PERIODS: 'session-periods',
+    ABOUT_US: 'about-us',
+    TERMS_AND_CONDITIONS: 'term-and-condition',
+    PRIVACY_POLICIES: 'privacy-and-policy',
+    GENERAL_BANNERS: 'general-banners'
 };

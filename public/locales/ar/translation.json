@@ -85,6 +85,17 @@
             "required": "تاريخ النهاية مطلوب",
             "invalid": "الرجاء إدخال تاريخ نهاية صحيح",
             "after_start": "يجب أن يكون تاريخ النهاية بعد تاريخ البداية"
+        },
+        "link": {
+            "label": "الرابط",
+            "placeholder": "أدخل رابط URL",
+            "url": "الرجاء إدخال رابط صحيح"
+        },
+        "image": {
+            "label": "الصورة",
+            "placeholder": "رفع صورة",
+            "size": "يجب أن يكون حجم الصورة أقل من 5 ميجابايت",
+            "type": "يجب أن تكون الصورة بصيغة JPEG أو PNG أو WEBP"
         }
     },
     "auth": {
@@ -185,6 +196,19 @@
         "create": "إنشاء فترة جلسة",
         "update": "تحديث فترة الجلسة"
     },
+    "about_us": {
+        "description": "إدارة محتوى وظهور صفحة من نحن"
+    },
+    "terms_and_conditions": {
+        "description": "إدارة محتوى وظهور صفحة الشروط والأحكام"
+    },
+    "privacy_policies": {
+        "description": "إدارة محتوى وظهور صفحة سياسات الخصوصية"
+    },
+    "general_banners": {
+        "create": "إنشاء بانر",
+        "update": "تحديث البانر"
+    },
     "sidebar": {
         "home": "الرئيسية",
         "roles": "الأدوار",
@@ -210,9 +234,16 @@
         "memorization_programs": "برامج الحفظ",
         "education_programs": "البرامج التعليمية",
         "branches": "الفروع",
+        "security_system": "نظام الأمان",
+        "system_settings": "إعدادات النظام",
+        "about_us": "من نحن",
+        "terms_and_conditions": "الشروط والأحكام",
+        "privacy_policies": "سياسات الخصوصية",
+        "general_banners": "البانرات العامة",
         "system_online": "النظام متصل"
     },
     "table_titles": {
+        "general_banners": "البانرات العامة",
         "roles": "الأدوار",
         "academic_qualifications": "المؤهلات الأكاديمية",
         "jobs": "الوظائف",

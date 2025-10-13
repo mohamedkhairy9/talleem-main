@@ -83,6 +83,17 @@
             "required": "End date is required",
             "invalid": "Please enter a valid end date",
             "after_start": "End date must be after start date"
+        },
+        "link": {
+            "label": "Link",
+            "placeholder": "Enter link URL",
+            "url": "Please enter a valid URL"
+        },
+        "image": {
+            "label": "Image",
+            "placeholder": "Upload image",
+            "size": "Image size must be less than 5MB",
+            "type": "Image must be JPEG, PNG, or WEBP format"
         }
     },
     "auth": {
@@ -124,8 +135,8 @@
         "update": "Update City"
     },
     "kinships": {
-        "create": "Create Kinship",
-        "update": "Update Kinship"
+        "create": "Create Relationship",
+        "update": "Update Relationship"
     },
     "attendance_types": {
         "create": "Create Attendance Type",
@@ -183,6 +194,19 @@
         "create": "Create Session Period",
         "update": "Update Session Period"
     },
+    "about_us": {
+        "description": "Manage the About Us page content and visibility"
+    },
+    "terms_and_conditions": {
+        "description": "Manage the Terms and Conditions page content and visibility"
+    },
+    "privacy_policies": {
+        "description": "Manage the Privacy Policies page content and visibility"
+    },
+    "general_banners": {
+        "create": "Create Banner",
+        "update": "Update Banner"
+    },
     "sidebar": {
         "home": "Home",
         "roles": "Roles",
@@ -201,16 +225,23 @@
         "activities": "Activities",
         "entity_categories": "Entity Categories",
         "session_periods": "Session Periods",
-        "kinships": "Kinships",
+        "kinships": "Relationships",
         "attendance_types": "Attendance Types",
         "quoran_parts": "Quran Parts",
         "main_programs": "Main Programs",
         "memorization_programs": "Memorization Programs",
         "education_programs": "Education Programs",
         "branches": "Branches",
+        "security_system": "Security System",
+        "system_settings": "System Settings",
+        "about_us": "About Us",
+        "terms_and_conditions": "Terms and Conditions",
+        "privacy_policies": "Privacy Policies",
+        "general_banners": "General Banners",
         "system_online": "System Online"
     },
     "table_titles": {
+        "general_banners": "General Banners",
         "roles": "Roles",
         "academic_qualifications": "Academic Qualifications",
         "jobs": "Jobs",
@@ -223,7 +254,7 @@
         "activities": "Activities",
         "entity_categories": "Entity Categories",
         "session_periods": "Session Periods",
-        "kinships": "Kinships",
+        "kinships": "Relationships",
         "attendance_types": "Attendance Types",
         "quoran_parts": "Quran Parts",
         "main_programs": "Main Programs",
@@ -286,7 +317,7 @@
         "activities": "Activities",
         "entity_categories": "Entity Categories",
         "session_periods": "Session Periods",
-        "kinships": "Kinships",
+        "kinships": "Relationships",
         "attendance_types": "Attendance Types",
         "quoran_parts": "Quran Parts",
         "main_programs": "Main Programs",

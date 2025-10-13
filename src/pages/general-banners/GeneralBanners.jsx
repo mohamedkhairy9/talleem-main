@@ -1,59 +1,50 @@
 import React from 'react';
-import { useRolesQuery } from '@/api/hooks/useRoles';
+import { useGeneralBannersQuery } from '@/api/hooks/useGeneralBanners';
 import Table from '@/components/common/table/Table';
-import { rolesColumns } from './configs';
+import { generalBannersColumns } from './configs';
 import useIsOpen from '@/utils/hooks/global/useIsOpen';
 import usePagination from '@/utils/hooks/global/usePagination';
-import CreateRole from './CreateRole';
-import EditRole from './EditRole';
+import CreateGeneralBanner from './CreateGeneralBanner';
+import EditGeneralBanner from './EditGeneralBanner';
+import DeleteGeneralBanner from './DeleteGeneralBanner';
 import useLocale from '@/utils/hooks/global/useLocale';
-import i18next from 'i18next';
 import { getOriginalObject } from '@/utils/helpers/global.fns';
 
-export default function Roles() {
+export default function GeneralBanners() {
     const { isOpen, toggle } = useIsOpen();
     const { pagination, setPagination } = usePagination();
-    const { data, isLoading, refresh } = useRolesQuery(pagination);
+    const { data, isLoading, refresh } = useGeneralBannersQuery(pagination);
     const { t } = useLocale();
 
-    console.log('data', data);
-
-    const tableData = data?.data?.map(item => ({
-        ...item,
-        display_name: item.display_name?.[i18next.language]
-    }));
-
-    const formData = data?.data?.map(item => ({
-        display_name: item.display_name,
-        description: item.description,
-        id: item.id
-    }));
-
-    console.log('formData', formData);
+    const tableData = data?.data;
+    const formData = data?.data;
 
     return (
         <div>
             <Table
-                title={t('table_titles.roles')}
+                title={t('table_titles.general_banners')}
                 refresh={refresh}
                 loading={isLoading}
                 data={tableData}
                 serverPagination={true}
                 totalCount={data?.meta?.total}
-                columns={rolesColumns}
+                columns={generalBannersColumns}
                 toggleModals={toggle}
                 pagination={pagination}
                 setPagination={setPagination}
             />
-            {isOpen.add && <CreateRole onClose={toggle.add} />}
+            {isOpen.add && <CreateGeneralBanner onClose={toggle.add} />}
             {isOpen.edit && (
-                <EditRole
+                <EditGeneralBanner
                     onClose={toggle.edit}
                     oldData={getOriginalObject(isOpen.edit, formData)}
                 />
             )}
             {isOpen.delete && (
-                <DeleteRole onClose={toggle.delete} id={isOpen.delete?.id} />
+                <DeleteGeneralBanner
+                    onClose={toggle.delete}
+                    id={isOpen.delete?.id}
+                />
             )}
         </div>
     );

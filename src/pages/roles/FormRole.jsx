@@ -7,6 +7,7 @@ import { rolesFields } from './configs';
 import InputRFH from '@/components/common/inputs/InputRFH';
 import Btn from '@/components/common/buttons/Btn';
 import { getNestedError } from '@/utils/helpers/getNestedError';
+import { generateOptions } from '@/utils/helpers/global.fns';
 
 export default function FormRole({
     onClose,
@@ -14,7 +15,8 @@ export default function FormRole({
     editMode,
     viewMode,
     isPending,
-    mutate
+    mutate,
+    options
 }) {
     const { register, errors, handleSubmit, control } = useRFH({
         schema,
@@ -54,6 +56,7 @@ export default function FormRole({
                         label={field.label}
                         name={field.name}
                         defaultValue={oldData?.[field.name]}
+                        options={generateOptions(options?.[field.name])}
                     />
                 ))}
             <Btn

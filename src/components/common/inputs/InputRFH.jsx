@@ -40,17 +40,31 @@ export default function InputRFH({
                     {t(label)}
                 </label>
             )}
-            <input
-                {...register(name)}
-                type={type}
-                id={name || ''}
-                className={`w-full ${p} border outline-none rounded-lg focus:border-accent transition-colors duration-200  ${
-                    error
-                        ? 'border-red-300  focus:border-red-500'
-                        : 'border-gray-300'
-                }`}
-                placeholder={t(placeholder) || ''}
-            />
+            {type !== 'textarea' && (
+                <input
+                    {...register(name)}
+                    type={type}
+                    id={name || ''}
+                    className={`w-full ${p} border outline-none rounded-lg focus:border-accent transition-colors duration-200  ${
+                        error
+                            ? 'border-red-300  focus:border-red-500'
+                            : 'border-gray-300'
+                        }`}
+                    placeholder={t(placeholder) || ''}
+                />
+            )}
+            {type === 'textarea' && (
+                <textarea
+                    {...register(name)}
+                    id={name || ''}
+                    className={`w-full ${p} border outline-none rounded-lg focus:border-accent transition-colors duration-200  ${
+                        error
+                            ? 'border-red-300  focus:border-red-500'
+                            : 'border-gray-300'
+                        }`}
+                    placeholder={t(placeholder) || ''}
+                />
+            )}
             {
                 <p
                     id="password-error"

@@ -6,15 +6,31 @@ export const prepareFormData = data => {
     const appendToFormData = (key, value) => {
         if (value === null || value === undefined) return;
 
-        if (Array.isArray(value)) {
+        // Handle File instances (including from file inputs)
+        if (value instanceof File) {
+            formData.append(key, value);
+        }
+        // Handle FileList (from file inputs)
+        else if (value instanceof FileList) {
+            // Append first file if exists (for single file upload)
+            if (value.length > 0) {
+                formData.append(key, value[0]);
+            }
+        }
+        // Handle Arrays
+        else if (Array.isArray(value)) {
             value.forEach((item, idx) => {
                 appendToFormData(`${key}[${idx}]`, item);
             });
-        } else if (typeof value === 'object' && !(value instanceof File)) {
+        }
+        // Handle nested objects (but not File or FileList)
+        else if (typeof value === 'object') {
             Object.entries(value).forEach(([subKey, subValue]) => {
                 appendToFormData(`${key}.${subKey}`, subValue);
             });
-        } else {
+        }
+        // Handle primitives (string, number, boolean)
+        else {
             formData.append(key, value);
         }
     };

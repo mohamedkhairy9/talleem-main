@@ -23,6 +23,10 @@ import Specifications from '@/pages/specifications/Specifications';
 import Activities from '@/pages/activities/Activities';
 import EntityCategories from '@/pages/entity-categories/EntityCategories';
 import SessionPeriods from '@/pages/session-periods/SessionPeriods';
+import AboutUs from '@/pages/about-us/AboutUs';
+import TermsAndConditions from '@/pages/terms-and-conditions/TermsAndConditions';
+import PrivacyPolicies from '@/pages/privacy-policies/PrivacyPolicies';
+import GeneralBanners from '@/pages/general-banners/GeneralBanners';
 
 export const routes = [
     {
@@ -124,5 +128,21 @@ export const routes = [
     {
         path: '/neighborhoods',
         element: <Neighborhoods />
+    },
+    {
+        path: '/about-us',
+        element: <AboutUs />
+    },
+    {
+        path: '/term-and-condition',
+        element: <TermsAndConditions />
+    },
+    {
+        path: '/privacy-policies',
+        element: <PrivacyPolicies />
+    },
+    {
+        path: '/general-banners',
+        element: <GeneralBanners />
     }
 ];

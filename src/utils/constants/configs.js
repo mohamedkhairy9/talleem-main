@@ -17,12 +17,59 @@ import {
     HiTag,
     HiLightningBolt,
     HiFolder,
-    HiClock
+    HiClock,
+    HiCog,
+    HiInformationCircle,
+    HiDocumentText,
+    HiShieldExclamation,
+    HiPhotograph
 } from 'react-icons/hi';
+import { VscDebugBreakpointLog } from 'react-icons/vsc';
 
 export const sideMenuTabs = [
     { titleKey: 'sidebar.home', path: '/', icon: HiHome },
-    { titleKey: 'sidebar.roles', path: '/roles', icon: HiUsers },
+    {
+        titleKey: 'sidebar.security_system',
+        icon: HiShieldCheck,
+        subMenu: [
+            {
+                titleKey: 'sidebar.roles',
+                path: '/roles',
+                icon: VscDebugBreakpointLog
+            },
+            {
+                titleKey: 'sidebar.permissions',
+                path: '/permissions',
+                icon: VscDebugBreakpointLog
+            }
+        ]
+    },
+    {
+        titleKey: 'sidebar.system_settings',
+        icon: HiCog,
+        subMenu: [
+            {
+                titleKey: 'sidebar.about_us',
+                path: '/about-us',
+                icon: VscDebugBreakpointLog
+            },
+            {
+                titleKey: 'sidebar.terms_and_conditions',
+                path: '/term-and-condition',
+                icon: VscDebugBreakpointLog
+            },
+            {
+                titleKey: 'sidebar.privacy_policies',
+                path: '/privacy-policies',
+                icon: VscDebugBreakpointLog
+            },
+            {
+                titleKey: 'sidebar.general_banners',
+                path: '/general-banners',
+                icon: VscDebugBreakpointLog
+            }
+        ]
+    },
     // { titleKey: 'sidebar.permissions', path: '/permissions', icon: HiShieldCheck },
     // { titleKey: 'sidebar.resources', path: '/resources', icon: HiCollection },
     // { titleKey: 'sidebar.notifications', path: '/notifications', icon: HiBell },
