@@ -6,6 +6,7 @@ import InputRFH from '@/components/common/inputs/InputRFH';
 import Btn from '@/components/common/buttons/Btn';
 import { getNestedError } from '@/utils/helpers/getNestedError';
 import { generateOptions } from '@/utils/helpers/global.fns';
+import { onlyDate } from '@/utils/helpers/global.fns';
 
 export default function FormGeneralBanner({
     onClose,
@@ -16,15 +17,31 @@ export default function FormGeneralBanner({
     mutate,
     options
 }) {
-    const { register, errors, handleSubmit, control, setValue } = useRFH({
+    const { register, errors, handleSubmit, control } = useRFH({
         schema,
-        defaultValues: oldData
+        defaultValues: {
+            ...oldData,
+            start_date: onlyDate(oldData?.start_date),
+            end_date: onlyDate(oldData?.end_date)
+        }
     });
     const [imagePreview, setImagePreview] = useState(oldData?.image || null);
+    const [imageChanged, setImageChanged] = useState(false);
 
     function onSubmit(data) {
         console.log('data', data);
-        mutate(data, {
+
+        const submissionData = { ...data, status: data.status ? 1 : 0 };
+
+        console.log('imageChanged', imageChanged);
+        if (editMode && !imageChanged) {
+            console.log('submissionData', submissionData);
+            delete submissionData.image;
+        }
+
+        console.log('submissionData', submissionData);
+
+        mutate(submissionData, {
             onSuccess: () => {
                 onClose();
             }
@@ -32,9 +49,14 @@ export default function FormGeneralBanner({
     }
 
     const handleImageChange = (e, field) => {
+        console.log('field', field);
+
         const file = e.target.files?.[0];
+        console.log('file', file);
         if (file) {
-            setValue(field.name, file);
+            // react-hook-form will handle the file registration
+            // We just need to track the change and update preview
+            setImageChanged(true);
             const reader = new FileReader();
             reader.onloadend = () => {
                 setImagePreview(reader.result);

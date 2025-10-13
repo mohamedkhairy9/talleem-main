@@ -8,6 +8,8 @@ import CreateJob from './CreateJob';
 import EditJob from './EditJob';
 import DeleteJob from './DeleteJob';
 import useLocale from '@/utils/hooks/global/useLocale';
+import i18next from 'i18next';
+import { getOriginalObject } from '@/utils/helpers/global.fns';
 
 export default function Jobs() {
     const { isOpen, toggle } = useIsOpen();
@@ -15,13 +17,18 @@ export default function Jobs() {
     const { data, isLoading, refresh } = useJobsQuery(pagination);
     const { t } = useLocale();
 
+    const tableData = data?.data?.map(item => ({
+        ...item,
+        name: item.name?.[i18next.language]
+    }));
+
     return (
         <div>
             <Table
                 title={t('table_titles.jobs')}
                 refresh={refresh}
                 loading={isLoading}
-                data={data?.data}
+                data={tableData}
                 serverPagination={true}
                 totalCount={data?.meta?.total}
                 columns={jobsColumns}
@@ -31,7 +38,10 @@ export default function Jobs() {
             />
             {isOpen.add && <CreateJob onClose={toggle.add} />}
             {isOpen.edit && (
-                <EditJob onClose={toggle.edit} oldData={isOpen.edit} />
+                <EditJob
+                    onClose={toggle.edit}
+                    oldData={getOriginalObject(isOpen.edit, data?.data)}
+                />
             )}
             {isOpen.delete && (
                 <DeleteJob onClose={toggle.delete} id={isOpen.delete?.id} />

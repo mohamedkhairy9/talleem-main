@@ -8,6 +8,8 @@ import CreateCity from './CreateCity';
 import EditCity from './EditCity';
 import DeleteCity from './DeleteCity';
 import useLocale from '@/utils/hooks/global/useLocale';
+import i18next from 'i18next';
+import { getOriginalObject } from '@/utils/helpers/global.fns';
 
 export default function Cities() {
     const { isOpen, toggle } = useIsOpen();
@@ -15,13 +17,18 @@ export default function Cities() {
     const { data, isLoading, refresh } = useCitiesQuery(pagination);
     const { t } = useLocale();
 
+    const tableData = data?.data?.map(item => ({
+        ...item,
+        name: item.name?.[i18next.language]
+    }));
+
     return (
         <div>
             <Table
                 title={t('table_titles.cities')}
                 refresh={refresh}
                 loading={isLoading}
-                data={data?.data}
+                data={tableData}
                 serverPagination={true}
                 totalCount={data?.meta?.total}
                 columns={citiesColumns}
@@ -31,7 +38,10 @@ export default function Cities() {
             />
             {isOpen.add && <CreateCity onClose={toggle.add} />}
             {isOpen.edit && (
-                <EditCity onClose={toggle.edit} oldData={isOpen.edit} />
+                <EditCity
+                    onClose={toggle.edit}
+                    oldData={getOriginalObject(isOpen.edit, data?.data)}
+                />
             )}
             {isOpen.delete && (
                 <DeleteCity onClose={toggle.delete} id={isOpen.delete?.id} />

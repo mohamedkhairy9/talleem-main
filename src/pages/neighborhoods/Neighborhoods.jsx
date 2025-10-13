@@ -19,7 +19,11 @@ export default function Neighborhoods() {
 
     const tableData = data?.data?.map(item => ({
         ...item,
-        name: item.name?.[i18next.language]
+        name: item.name?.[i18next.language],
+        city: {
+            ...item.city,
+            name: item.city?.name?.[i18next.language]
+        }
     }));
 
     const formData = data?.data?.map(item => ({

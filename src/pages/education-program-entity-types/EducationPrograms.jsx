@@ -23,8 +23,11 @@ export default function EducationPrograms() {
     const tableData = data?.data?.map(item => ({
         ...item,
         name: item.name?.[i18next.language],
-
+        educational_entity_classification:
+            item.educational_entity_classification?.[i18next.language]
     }));
+
+    console.log('tableData', tableData);
 
     return (
         <div>

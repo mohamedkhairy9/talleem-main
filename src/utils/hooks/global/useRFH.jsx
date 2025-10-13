@@ -8,7 +8,8 @@ export default function useRFH({ schema, defaultValues = {} }) {
         formState: { errors, isSubmitting },
         control,
         reset,
-        watch
+        watch,
+        setValue
     } = useForm({
         resolver: yupResolver(schema),
         defaultValues
@@ -21,6 +22,7 @@ export default function useRFH({ schema, defaultValues = {} }) {
         isSubmitting,
         control,
         reset,
-        watch
+        watch,
+        setValue
     };
 }

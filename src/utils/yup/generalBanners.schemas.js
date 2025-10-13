@@ -9,9 +9,6 @@ export const generalBannersSchema = yup.object({
     start_date: yup
         .string()
         .required(t('validation.start_date.required')),
-    end_date: yup
-        .string()
-        .required(t('validation.end_date.required')),
     status: yup.boolean().required(t('validation.required')),
     image: yup.mixed().required(t('validation.required'))
 });

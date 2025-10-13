@@ -28,13 +28,12 @@ export const generalBannersService = {
     },
 
     updateGeneralBanner: async (id, data) => {
-        // Remove id from data before preparing FormData
         const { id: _, ...dataWithoutId } = data;
 
         // Prepare FormData with _method for Laravel
         const formData = prepareFormData({
             ...dataWithoutId,
-            _method: 'PUT'
+            _method: 'POST'
         });
 
         return await axiosInstance.post(

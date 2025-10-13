@@ -121,3 +121,8 @@ export const getOriginalObject = (identfier, arr = []) => {
     }
     return arr.find(el => el.id == id);
 };
+
+
+export function onlyDate(date) {
+    return date ? date.split('T')[0] : null;
+}

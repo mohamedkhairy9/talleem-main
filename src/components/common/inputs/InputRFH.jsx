@@ -11,7 +11,9 @@ export default function InputRFH({
     options,
     control,
     defaultValue,
-    p = 'px-4 py-3'
+    p = 'px-4 py-3',
+    onChange,
+    accept
 }) {
     const { t } = useLocale();
 
@@ -30,6 +32,25 @@ export default function InputRFH({
         );
     }
 
+    // For file inputs, we need to merge the onChange handlers
+    const getInputProps = () => {
+        const registered = register(name);
+
+        if (type === 'file' && onChange) {
+            return {
+                ...registered,
+                onChange: e => {
+                    // Call react-hook-form's onChange first
+                    registered.onChange(e);
+                    // Then call custom onChange
+                    onChange(e);
+                }
+            };
+        }
+
+        return registered;
+    };
+
     return (
         <div>
             {label && (
@@ -42,15 +63,16 @@ export default function InputRFH({
             )}
             {type !== 'textarea' && (
                 <input
-                    {...register(name)}
+                    {...getInputProps()}
                     type={type}
                     id={name || ''}
                     className={`w-full ${p} border outline-none rounded-lg focus:border-accent transition-colors duration-200  ${
                         error
                             ? 'border-red-300  focus:border-red-500'
                             : 'border-gray-300'
-                        }`}
+                    }`}
                     placeholder={t(placeholder) || ''}
+                    accept={accept}
                 />
             )}
             {type === 'textarea' && (
@@ -61,7 +83,7 @@ export default function InputRFH({
                         error
                             ? 'border-red-300  focus:border-red-500'
                             : 'border-gray-300'
-                        }`}
+                    }`}
                     placeholder={t(placeholder) || ''}
                 />
             )}
