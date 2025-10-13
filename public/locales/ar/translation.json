@@ -244,6 +244,7 @@
     },
     "table_titles": {
         "general_banners": "البانرات العامة",
+        "permissions": "الصلاحيات",
         "roles": "الأدوار",
         "academic_qualifications": "المؤهلات الأكاديمية",
         "jobs": "الوظائف",
@@ -266,6 +267,7 @@
     },
     "table": {
         "actions": "الإجراءات",
+        "view": "عرض",
         "edit": "تعديل",
         "copy": "نسخ",
         "delete": "حذف",

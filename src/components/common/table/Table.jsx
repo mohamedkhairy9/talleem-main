@@ -55,6 +55,11 @@ const Table = ({
     title = 'Data Table',
     enableRowSelection = true,
     enableExport = true,
+    enableAdd = true,
+    enableEdit = true,
+    enableDelete = true,
+    enableCopy = true,
+    enableView = false,
     onRowClick,
     customActions = [],
     refresh,
@@ -117,47 +122,72 @@ const Table = ({
         size: 120,
         cell: ({ row }) => (
             <div className="flex items-center space-x-1">
-                <button
-                    onClick={e => {
-                        e.stopPropagation();
-                        toggleModals.edit(row.original);
-                    }}
-                    className="p-1 text-primary-600 hover:text-primary-800 hover:bg-primary-50 rounded transition-colors"
-                    title={t('table.edit')}
-                >
-                    <MdEdit className="w-4 h-4" />
-                </button>
-                <button
-                    onClick={e => {
-                        e.stopPropagation();
-                        try {
-                            navigator.clipboard.writeText(
-                                JSON.stringify(row.original, null, 2)
-                            );
-                        } catch (err) {
-                            console.log('Copy failed:', err);
-                        }
-                    }}
-                    className="p-1 text-gray-600 hover:text-gray-800 hover:bg-gray-50 rounded transition-colors"
-                    title={t('table.copy')}
-                >
-                    <MdContentCopy className="w-4 h-4" />
-                </button>
-                <button
-                    onClick={e => {
-                        e.stopPropagation();
-                        toggleModals.delete(row.original);
-                    }}
-                    className="p-1 text-red-600 hover:text-red-800 hover:bg-red-50 rounded transition-colors"
-                    title={t('table.delete')}
-                >
-                    <MdDelete className="w-4 h-4" />
-                </button>
+                {enableView && (
+                    <button
+                        onClick={e => {
+                            e.stopPropagation();
+                            toggleModals.view(row.original);
+                        }}
+                        className="p-1 text-blue-600 hover:text-blue-800 hover:bg-blue-50 rounded transition-colors"
+                        title={t('table.view')}
+                    >
+                        <MdInfo className="w-4 h-4" />
+                    </button>
+                )}
+                {enableEdit && (
+                    <button
+                        onClick={e => {
+                            e.stopPropagation();
+                            toggleModals.edit(row.original);
+                        }}
+                        className="p-1 text-primary-600 hover:text-primary-800 hover:bg-primary-50 rounded transition-colors"
+                        title={t('table.edit')}
+                    >
+                        <MdEdit className="w-4 h-4" />
+                    </button>
+                )}
+                {enableCopy && (
+                    <button
+                        onClick={e => {
+                            e.stopPropagation();
+                            try {
+                                navigator.clipboard.writeText(
+                                    JSON.stringify(row.original, null, 2)
+                                );
+                            } catch (err) {
+                                console.log('Copy failed:', err);
+                            }
+                        }}
+                        className="p-1 text-gray-600 hover:text-gray-800 hover:bg-gray-50 rounded transition-colors"
+                        title={t('table.copy')}
+                    >
+                        <MdContentCopy className="w-4 h-4" />
+                    </button>
+                )}
+                {enableDelete && (
+                    <button
+                        onClick={e => {
+                            e.stopPropagation();
+                            toggleModals.delete(row.original);
+                        }}
+                        className="p-1 text-red-600 hover:text-red-800 hover:bg-red-50 rounded transition-colors"
+                        title={t('table.delete')}
+                    >
+                        <MdDelete className="w-4 h-4" />
+                    </button>
+                )}
             </div>
         )
     });
 
-    const columns = [SELECT, ...externalColumns, ACTIONS];
+    // Check if any action is enabled
+    const hasAnyAction = enableEdit || enableDelete || enableCopy || enableView;
+
+    const columns = [
+        ...(enableRowSelection ? [SELECT] : []),
+        ...externalColumns,
+        ...(hasAnyAction ? [ACTIONS] : [])
+    ];
 
     // Convert pagination from {page, per_page} to {pageIndex, pageSize} for TanStack Table
     const tanstackPagination = {
@@ -486,13 +516,13 @@ const Table = ({
 
         const uniqueValues = useMemo(() => {
             if (!data) return [];
-            
+
             try {
                 const values = data
                     .map(row => row[column.id])
-                    .filter(val => val != null && val !== '').
-                    map(el=> el[i18next.language ] || el  )
-            console.log(values);
+                    .filter(val => val != null && val !== '')
+                    .map(el => el[i18next.language] || el);
+                console.log(values);
 
                 return [...new Set(values)].slice(0, 10);
             } catch (error) {
@@ -726,15 +756,17 @@ const Table = ({
                             {/* Action Buttons */}
                             <div className="flex items-center space-x-2">
                                 {/* Add Button */}
-                                <button
-                                    onClick={toggleModals.add}
-                                    className="flex items-center space-x-2 px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary transition-colors"
-                                >
-                                    <MdAdd className="w-4 h-4" />
-                                    <span className="text-sm font-medium">
-                                        {t('table.add_new')}
-                                    </span>
-                                </button>
+                                {enableAdd && (
+                                    <button
+                                        onClick={toggleModals.add}
+                                        className="flex items-center space-x-2 px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary transition-colors"
+                                    >
+                                        <MdAdd className="w-4 h-4" />
+                                        <span className="text-sm font-medium">
+                                            {t('table.add_new')}
+                                        </span>
+                                    </button>
+                                )}
 
                                 {/* Column Settings */}
                                 <div className="relative column-settings">
@@ -1043,7 +1075,8 @@ const Table = ({
                                         >
                                             <div
                                                 className={`flex items-center ${
-                                                    idx === 0
+                                                    idx === 0 &&
+                                                    enableRowSelection
                                                         ? 'justify-center'
                                                         : 'justify-between'
                                                 } `}
@@ -1059,7 +1092,8 @@ const Table = ({
                                                             onClick={header.column.getToggleSortingHandler()}
                                                         >
                                                             <span>
-                                                                {idx === 0
+                                                                {idx === 0 &&
+                                                                enableRowSelection
                                                                     ? flexRender(
                                                                           header
                                                                               .column

@@ -242,6 +242,7 @@
     },
     "table_titles": {
         "general_banners": "General Banners",
+        "permissions": "Permissions",
         "roles": "Roles",
         "academic_qualifications": "Academic Qualifications",
         "jobs": "Jobs",
@@ -264,6 +265,7 @@
     },
     "table": {
         "actions": "Actions",
+        "view": "View",
         "edit": "Edit",
         "copy": "Copy",
         "delete": "Delete",
