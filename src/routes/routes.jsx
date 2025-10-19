@@ -27,6 +27,7 @@ import AboutUs from '@/pages/about-us/AboutUs';
 import TermsAndConditions from '@/pages/terms-and-conditions/TermsAndConditions';
 import PrivacyPolicies from '@/pages/privacy-policies/PrivacyPolicies';
 import GeneralBanners from '@/pages/general-banners/GeneralBanners';
+import Employees from '@/pages/employees/Employees';
 
 export const routes = [
     {
@@ -144,5 +145,9 @@ export const routes = [
     {
         path: '/general-banners',
         element: <GeneralBanners />
+    },
+    {
+        path: '/employees',
+        element: <Employees />
     }
 ];

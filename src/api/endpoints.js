@@ -193,6 +193,13 @@ export const API_URLS = {
         DETAILS: id => `/banners/${id}`,
         UPDATE: id => `/banners/${id}`,
         DELETE: id => `/banners/${id}`
+    },
+    EMPLOYEES: {
+        CREATE: '/employees',
+        LIST: '/employees',
+        DETAILS: id => `/employees/${id}`,
+        UPDATE: id => `/employees/${id}`,
+        DELETE: id => `/employees/${id}`
     }
 };
 
@@ -230,5 +237,6 @@ export const API_KEYS = {
     ABOUT_US: 'about-us',
     TERMS_AND_CONDITIONS: 'term-and-condition',
     PRIVACY_POLICIES: 'privacy-and-policy',
-    GENERAL_BANNERS: 'general-banners'
+    GENERAL_BANNERS: 'general-banners',
+    EMPLOYEES: 'employees'
 };

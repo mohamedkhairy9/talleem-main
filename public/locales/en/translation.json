@@ -94,6 +94,82 @@
             "placeholder": "Upload image",
             "size": "Image size must be less than 5MB",
             "type": "Image must be JPEG, PNG, or WEBP format"
+        },
+        "user_id": {
+            "label": "User",
+            "placeholder": "Select user",
+            "integer": "User must be selected",
+            "min": "Please select a valid user"
+        },
+        "job_id": {
+            "label": "Job",
+            "placeholder": "Select job",
+            "integer": "Job must be selected",
+            "min": "Please select a valid job"
+        },
+        "branch_id": {
+            "label": "Branch",
+            "placeholder": "Select branch",
+            "integer": "Branch must be selected",
+            "min": "Please select a valid branch"
+        },
+        "entity_id": {
+            "label": "Entity",
+            "placeholder": "Select entity",
+            "integer": "Entity must be selected",
+            "min": "Please select a valid entity"
+        },
+        "nationality_id": {
+            "label": "Nationality",
+            "placeholder": "Select nationality",
+            "integer": "Nationality must be selected",
+            "min": "Please select a valid nationality"
+        },
+        "academic_qualification_id": {
+            "label": "Academic Qualification",
+            "placeholder": "Select academic qualification",
+            "integer": "Academic qualification must be selected",
+            "min": "Please select a valid academic qualification"
+        },
+        "specification_id": {
+            "label": "Specification",
+            "placeholder": "Select specification",
+            "integer": "Specification must be selected",
+            "min": "Please select a valid specification"
+        },
+        "national_id": {
+            "label": "National ID",
+            "placeholder": "Enter national ID",
+            "numeric": "National ID must contain only numbers",
+            "min": "National ID must be at least 10 characters",
+            "max": "National ID must not exceed 20 characters"
+        },
+        "phone": {
+            "label": "Phone",
+            "placeholder": "Enter phone number",
+            "invalid": "Please enter a valid phone number"
+        },
+        "email": {
+            "label": "Email",
+            "placeholder": "Enter email address",
+            "invalid": "Please enter a valid email address"
+        },
+        "date_of_birth": {
+            "label": "Date of Birth",
+            "placeholder": "Select date of birth",
+            "required": "Date of birth is required",
+            "invalid": "Please enter a valid date of birth"
+        },
+        "years_of_experience": {
+            "label": "Years of Experience",
+            "placeholder": "Enter years of experience",
+            "integer": "Years of experience must be a number",
+            "min": "Years of experience cannot be negative"
+        },
+        "address": {
+            "label": "Address",
+            "placeholder": "Enter address",
+            "min": "Address must be at least 5 characters"
         }
     },
     "auth": {
@@ -238,7 +314,8 @@
         "terms_and_conditions": "Terms and Conditions",
         "privacy_policies": "Privacy Policies",
         "general_banners": "General Banners",
-        "system_online": "System Online"
+        "system_online": "System Online",
+        "employees": "Employees"
     },
     "table_titles": {
         "general_banners": "General Banners",
@@ -261,7 +338,8 @@
         "main_programs": "Main Programs",
         "memorization_programs": "Memorization Programs",
         "education_programs": "Education Programs",
-        "branches": "Branches"
+        "branches": "Branches",
+        "employees": "Employees"
     },
     "table": {
         "actions": "Actions",

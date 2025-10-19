@@ -22,7 +22,8 @@ import {
     HiInformationCircle,
     HiDocumentText,
     HiShieldExclamation,
-    HiPhotograph
+    HiPhotograph,
+    HiIdentification
 } from 'react-icons/hi';
 import { VscDebugBreakpointLog } from 'react-icons/vsc';
 
@@ -147,5 +148,10 @@ export const sideMenuTabs = [
         titleKey: 'sidebar.session_periods',
         path: '/session-periods',
         icon: HiClock
+    },
+    {
+        titleKey: 'sidebar.employees',
+        path: '/employees',
+        icon: HiIdentification
     }
 ];
