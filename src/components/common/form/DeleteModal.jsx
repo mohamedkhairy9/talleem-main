@@ -13,7 +13,7 @@ export default function DeleteModal({ deleteFn, onClose, loading = false }) {
                 </p>
                 <div className="flex justify-center gap-4">
                     <button
-                        onClick={onClose}
+                        onClick={() => onClose(false)}
                         className="bg-gray-600 hover:bg-gray-700 text-white px-8 py-2 rounded "
                     >
                         Cancel
