@@ -9,7 +9,7 @@ const columnHelper = createColumnHelper();
 
 export const citiesColumns = [
     columnHelper.accessor('name', {
-        header: 'City',
+        header: 'table_headers.city',
         cell: info => <NameCell directValue={info.row.original.name} />
     })
 ];
@@ -39,6 +39,6 @@ export const citiesFields = [
         defaultValue: true,
         options: enabledDisabledOptions,
         editMode: true,
-        viewMode: true,
+        viewMode: true
     }
 ];

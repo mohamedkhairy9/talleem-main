@@ -9,11 +9,11 @@ const columnHelper = createColumnHelper();
 
 export const jobsColumns = [
     columnHelper.accessor('name', {
-        header: 'Job',
+        header: 'table_headers.job',
         cell: info => <NameCell directValue={info.row.original.name} />
     }),
     columnHelper.accessor('created_at', {
-        header: 'Created At',
+        header: 'table_headers.created_at',
         cell: info => <DateCell fullDate value={info.getValue()} />,
         enableColumnFilter: false
     })

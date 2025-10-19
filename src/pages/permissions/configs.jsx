@@ -8,19 +8,19 @@ const columnHelper = createColumnHelper();
 
 export const permissionsColumns = [
     columnHelper.accessor('display_name', {
-        header: 'Name',
+        header: 'table_headers.name',
         cell: info => <Cell value={info.getValue()} />
     }),
     columnHelper.accessor('name', {
-        header: 'Permission',
+        header: 'table_headers.permissions',
         cell: info => <NameCell directValue={info.getValue()} />
     }),
     columnHelper.accessor('guard_name', {
-        header: 'Guard',
+        header: 'table_headers.guard',
         cell: info => <Cell value={info.getValue()} />
     }),
     columnHelper.accessor('created_at', {
-        header: 'Created At',
+        header: 'table_headers.created_at',
         cell: info => <DateCell fullDate value={info.getValue()} />,
         enableColumnFilter: false
     })

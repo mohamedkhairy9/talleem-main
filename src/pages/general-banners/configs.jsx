@@ -8,7 +8,7 @@ const columnHelper = createColumnHelper();
 
 export const generalBannersColumns = [
     columnHelper.accessor('image', {
-        header: 'Image',
+        header: 'table_headers.image',
         cell: info => (
             <div className="flex justify-center">
                 {info.getValue() ? (
@@ -28,7 +28,7 @@ export const generalBannersColumns = [
         enableSorting: false
     }),
     columnHelper.accessor('link', {
-        header: 'Link',
+        header: 'table_headers.link',
         cell: info => (
             <a
                 href={info.getValue()}
@@ -41,17 +41,17 @@ export const generalBannersColumns = [
         )
     }),
     columnHelper.accessor('start_date', {
-        header: 'Start Date',
+        header: 'table_headers.start_date',
         cell: info => <DateCell value={info.getValue()} />,
         enableColumnFilter: false
     }),
     columnHelper.accessor('end_date', {
-        header: 'End Date',
+        header: 'table_headers.end_date',
         cell: info => <DateCell value={info.getValue()} />,
         enableColumnFilter: false
     }),
     columnHelper.accessor('status', {
-        header: 'Status',
+        header: 'table_headers.status',
         cell: info => (
             <Cell
                 value={
@@ -69,7 +69,7 @@ export const generalBannersColumns = [
         )
     }),
     columnHelper.accessor('created_at', {
-        header: 'Created At',
+        header: 'table_headers.created_at',
         cell: info => <DateCell fullDate value={info.getValue()} />,
         enableColumnFilter: false
     })

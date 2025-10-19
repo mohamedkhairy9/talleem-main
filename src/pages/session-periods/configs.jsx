@@ -9,11 +9,11 @@ const columnHelper = createColumnHelper();
 
 export const sessionPeriodsColumns = [
     columnHelper.accessor('name', {
-        header: 'Session Period',
+        header: 'table_headers.session_periods',
         cell: info => <NameCell directValue={info.row.original.name} />
     }),
     columnHelper.accessor('created_at', {
-        header: 'Created At',
+        header: 'table_headers.created_at',
         cell: info => <DateCell fullDate value={info.getValue()} />,
         enableColumnFilter: false
     })

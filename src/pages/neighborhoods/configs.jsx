@@ -9,11 +9,11 @@ const columnHelper = createColumnHelper();
 
 export const neighborhoodsColumns = [
     columnHelper.accessor('name', {
-        header: 'Neighborhood',
+        header: 'table_headers.neighborhood',
         cell: info => <NameCell directValue={info.row.original.name} />
     }),
     columnHelper.accessor('city', {
-        header: 'City',
+        header: 'table_headers.city',
         cell: info => <NameCell directValue={info.row.original.city?.name} />
     })
 ];

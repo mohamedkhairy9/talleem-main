@@ -9,15 +9,15 @@ const columnHelper = createColumnHelper();
 
 export const educationProgramEntityTypesColumns = [
     columnHelper.accessor('name', {
-        header: 'Education Program',
+        header: 'table_headers.education_programs',
         cell: info => <NameCell directValue={info.row.original.name} />
     }),
     columnHelper.accessor('code', {
-        header: 'Code',
+        header: 'table_headers.code',
         cell: info => <Cell value={info.getValue()} />
     }),
     columnHelper.accessor('educational_entity_classification', {
-        header: 'Educational Entity Classification',
+        header: 'table_headers.entity_categories',
         cell: info => (
             <NameCell
                 directValue={
@@ -27,7 +27,7 @@ export const educationProgramEntityTypesColumns = [
         )
     }),
     columnHelper.accessor('created_at', {
-        header: 'Created At',
+        header: 'table_headers.created_at',
         cell: info => <DateCell fullDate value={info.getValue()} />,
         enableColumnFilter: false
     })

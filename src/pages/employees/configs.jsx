@@ -9,27 +9,27 @@ const columnHelper = createColumnHelper();
 
 export const employeesColumns = [
     columnHelper.accessor('email', {
-        header: 'Email',
+        header: 'table_headers.email',
         cell: info => <Cell value={info.getValue()} />
     }),
     columnHelper.accessor('phone', {
-        header: 'Phone',
+        header: 'table_headers.phone',
         cell: info => <Cell value={info.getValue()} />
     }),
     columnHelper.accessor('national_id', {
-        header: 'National ID',
+        header: 'table_headers.national_id',
         cell: info => <Cell value={info.getValue()} />
     }),
     columnHelper.accessor('job', {
-        header: 'Job',
+        header: 'table_headers.job',
         cell: info => <NameCell directValue={info.row.original.job?.name} />
     }),
     columnHelper.accessor('branch', {
-        header: 'Branch',
+        header: 'table_headers.branch',
         cell: info => <NameCell directValue={info.row.original.branch?.name} />
     }),
     columnHelper.accessor('status', {
-        header: 'Status',
+        header: 'table_headers.status',
         cell: info => {
             const status = info.getValue();
             const isEnabled = status === 1 || status === true;
@@ -54,7 +54,7 @@ export const employeesColumns = [
         }
     }),
     columnHelper.accessor('created_at', {
-        header: 'Created At',
+        header: 'table_headers.created_at',
         cell: info => <DateCell fullDate value={info.getValue()} />,
         enableColumnFilter: false
     })

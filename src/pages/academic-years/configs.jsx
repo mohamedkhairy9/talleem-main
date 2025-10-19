@@ -9,21 +9,21 @@ const columnHelper = createColumnHelper();
 
 export const academicYearsColumns = [
     columnHelper.accessor('name', {
-        header: 'Academic Year',
+        header: 'table_headers.academic_years',
         cell: info => <NameCell directValue={info.row.original.name} />
     }),
     columnHelper.accessor('start_date', {
-        header: 'Start Date',
+        header: 'table_headers.start_date',
         cell: info => <DateCell value={info.getValue()} />,
         enableColumnFilter: false
     }),
     columnHelper.accessor('end_date', {
-        header: 'End Date',
+        header: 'table_headers.end_date',
         cell: info => <DateCell value={info.getValue()} />,
         enableColumnFilter: false
     }),
     columnHelper.accessor('created_at', {
-        header: 'Created At',
+        header: 'table_headers.created_at',
         cell: info => <DateCell fullDate value={info.getValue()} />,
         enableColumnFilter: false
     })

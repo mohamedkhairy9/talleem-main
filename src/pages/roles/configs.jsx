@@ -10,15 +10,15 @@ const columnHelper = createColumnHelper();
 
 export const rolesColumns = [
     columnHelper.accessor('name', {
-        header: 'Role',
+        header: 'table_headers.role',
         cell: info => <NameCell directValue={info.row.original.display_name} />
     }),
     columnHelper.accessor('guard_name', {
-        header: 'Guard',
+        header: 'table_headers.guard',
         cell: info => <Cell value={info.getValue()} />
     }),
     columnHelper.accessor('created_at', {
-        header: 'Created At',
+        header: 'table_headers.created_at',
         cell: info => <DateCell fullDate value={info.getValue()} />,
         enableColumnFilter: false
     })
@@ -56,7 +56,7 @@ export const rolesFields = [
         placeholder: 'validation.description.placeholder.ar',
         editMode: true,
         viewMode: true
-    },
+    }
     // {
     //     name: 'status',
     //     label: 'validation.status.label',

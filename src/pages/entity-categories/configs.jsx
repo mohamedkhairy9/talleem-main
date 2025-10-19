@@ -9,15 +9,15 @@ const columnHelper = createColumnHelper();
 
 export const entityCategoriesColumns = [
     columnHelper.accessor('name', {
-        header: 'Entity Category',
+        header: 'table_headers.entity_categories',
         cell: info => <NameCell directValue={info.row.original.name} />
     }),
     columnHelper.accessor('code', {
-        header: 'Code',
+        header: 'table_headers.code',
         cell: info => <Cell value={info.getValue()} />
     }),
     columnHelper.accessor('created_at', {
-        header: 'Created At',
+        header: 'table_headers.created_at',
         cell: info => <DateCell fullDate value={info.getValue()} />,
         enableColumnFilter: false
     })
