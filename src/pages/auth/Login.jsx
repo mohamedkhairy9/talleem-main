@@ -13,6 +13,9 @@ import { loginSchema } from '../../utils/yup/loginSchema';
 import { loginDefaultValues, loginFields } from './configs';
 import InputRFH from '@/components/common/inputs/InputRFH';
 
+import logo from '../../assets/images/logo.svg';
+import bgLayer from '../../assets/images/bg-layer.png';
+
 export default function Login() {
     const isAuthenticated = useUserStore(state => state.isAuthenticated);
     const [isVisible, setIsVisible] = useState(false);
@@ -50,7 +53,7 @@ export default function Login() {
             <div
                 className="absolute inset-0 opacity-10"
                 style={{
-                    backgroundImage: `url('/src/assets/images/bg-layer.png')`,
+                    backgroundImage: `url(${bgLayer})`,
                     backgroundSize: 'cover'
                 }}
             />
@@ -158,7 +161,7 @@ export default function Login() {
                         {/* Logo */}
                         <div className="mb-8">
                             <img
-                                src="/src/assets/images/logo.svg"
+                                src={logo}
                                 alt="Tallam Logo"
                                 className=" mx-auto object-contain"
                             />
