@@ -1,14 +1,13 @@
 import useRFH from '@/utils/hooks/global/useRFH';
-import { employeesSchema as schema } from '@/utils/yup/employees.schemas';
+import { usersSchema as schema } from '@/utils/yup/users.schemas';
 import React from 'react';
-import { employeesFields } from './configs';
+import { usersFields } from './configs';
 import InputRFH from '@/components/common/inputs/InputRFH';
 import Btn from '@/components/common/buttons/Btn';
 import { getNestedError } from '@/utils/helpers/getNestedError';
-import { generateOptions } from '@/utils/helpers/global.fns';
-import { onlyDate } from '@/utils/helpers/global.fns';
+import { generateOptions, prepareFormData } from '@/utils/helpers/global.fns';
 
-export default function FormEmployee({
+export default function FormUser({
     onClose,
     oldData,
     editMode,
@@ -19,15 +18,19 @@ export default function FormEmployee({
 }) {
     const { register, errors, handleSubmit, control } = useRFH({
         schema,
-        defaultValues: {
-            ...oldData,
-            date_of_birth: onlyDate(oldData?.date_of_birth)
-        }
+        defaultValues: oldData
     });
 
     function onSubmit(data) {
         console.log('data', data);
-        mutate(data, {
+
+        // Add static user_type for all requests
+        const userData = {
+            ...data,
+            user_type: 'employee' // Static constant as specified
+        };
+
+        mutate(userData, {
             onSuccess: () => {
                 onClose();
             }
@@ -37,7 +40,7 @@ export default function FormEmployee({
     return (
         <form onSubmit={handleSubmit(onSubmit)} className="p-4 space-y-2">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {employeesFields
+                {usersFields
                     .filter(
                         field =>
                             (editMode && field.editMode) ||

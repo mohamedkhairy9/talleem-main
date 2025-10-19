@@ -6,6 +6,7 @@ import useIsOpen from '@/utils/hooks/global/useIsOpen';
 import usePagination from '@/utils/hooks/global/usePagination';
 import CreateRole from './CreateRole';
 import EditRole from './EditRole';
+import DeleteRole from './DeleteRole';
 import useLocale from '@/utils/hooks/global/useLocale';
 import i18next from 'i18next';
 import { getOriginalObject } from '@/utils/helpers/global.fns';

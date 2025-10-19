@@ -28,6 +28,8 @@ import TermsAndConditions from '@/pages/terms-and-conditions/TermsAndConditions'
 import PrivacyPolicies from '@/pages/privacy-policies/PrivacyPolicies';
 import GeneralBanners from '@/pages/general-banners/GeneralBanners';
 import Employees from '@/pages/employees/Employees';
+import Nationalities from '@/pages/nationalities/Nationalities';
+import Users from '@/pages/users/Users';
 
 export const routes = [
     {
@@ -149,5 +151,13 @@ export const routes = [
     {
         path: '/employees',
         element: <Employees />
+    },
+    {
+        path: '/nationalities',
+        element: <Nationalities />
+    },
+    {
+        path: '/users',
+        element: <Users />
     }
 ];

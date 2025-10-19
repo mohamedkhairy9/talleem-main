@@ -1,29 +1,25 @@
 import React from 'react';
-import { useEmployeesQuery } from '@/api/hooks/useEmployees';
+import { useUsersQuery } from '@/api/hooks/useUsers';
 import Table from '@/components/common/table/Table';
-import { employeesColumns } from './configs';
+import { usersColumns } from './configs';
 import useIsOpen from '@/utils/hooks/global/useIsOpen';
 import usePagination from '@/utils/hooks/global/usePagination';
-import CreateEmployee from './CreateEmployee';
-import EditEmployee from './EditEmployee';
-import DeleteEmployee from './DeleteEmployee';
-import ViewEmployee from './ViewEmployee';
+import CreateUser from './CreateUser';
+import EditUser from './EditUser';
+import DeleteUser from './DeleteUser';
+import ViewUser from './ViewUser';
 import useLocale from '@/utils/hooks/global/useLocale';
 import i18next from 'i18next';
 import { getOriginalObject } from '@/utils/helpers/global.fns';
 
-export default function Employees() {
+export default function Users() {
     const { isOpen, toggle } = useIsOpen();
     const { pagination, setPagination } = usePagination();
-    const { data, isLoading, refresh } = useEmployeesQuery(pagination);
+    const { data, isLoading, refresh } = useUsersQuery(pagination);
     const { t } = useLocale();
 
     const tableData = data?.data?.map(item => ({
         ...item,
-        job: {
-            ...item.job,
-            name: item.job?.name?.[i18next.language]
-        },
         branch: {
             ...item.branch,
             name: item.branch?.name?.[i18next.language]
@@ -32,48 +28,38 @@ export default function Employees() {
 
     const formData = data?.data?.map(item => ({
         ...item,
-        user_id: item.user?.id,
-        job_id: item.job?.id,
-        branch_id: item.branch?.id,
-        entity_id: item.entity?.id,
-        nationality_id: item.nationality?.id,
-        academic_qualification_id: item.academic_qualification?.id,
-        specification_id: item.specification?.id,
-        city_id: item.city?.id
+        branch_id: item.branch?.id
     }));
 
     return (
         <div>
             <Table
-                title={t('table_titles.employees')}
+                title={t('table_titles.users')}
                 refresh={refresh}
                 loading={isLoading}
                 data={tableData}
                 serverPagination={true}
                 totalCount={data?.meta?.total}
-                columns={employeesColumns}
+                columns={usersColumns}
                 toggleModals={toggle}
                 pagination={pagination}
                 setPagination={setPagination}
             />
-            {isOpen.add && <CreateEmployee onClose={toggle.add} />}
+            {isOpen.add && <CreateUser onClose={toggle.add} />}
             {isOpen.edit && (
-                <EditEmployee
+                <EditUser
                     onClose={toggle.edit}
                     oldData={getOriginalObject(isOpen.edit, formData)}
                 />
             )}
             {isOpen.view && (
-                <ViewEmployee
+                <ViewUser
                     onClose={toggle.view}
                     oldData={getOriginalObject(isOpen.view, formData)}
                 />
             )}
             {isOpen.delete && (
-                <DeleteEmployee
-                    onClose={toggle.delete}
-                    id={isOpen.delete?.id}
-                />
+                <DeleteUser onClose={toggle.delete} id={isOpen.delete?.id} />
             )}
         </div>
     );

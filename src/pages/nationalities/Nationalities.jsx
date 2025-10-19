@@ -1,76 +1,64 @@
 import React from 'react';
-import { useEmployeesQuery } from '@/api/hooks/useEmployees';
+import { useNationalitiesQuery } from '@/api/hooks/useNationalities';
 import Table from '@/components/common/table/Table';
-import { employeesColumns } from './configs';
+import { nationalitiesColumns } from './configs';
 import useIsOpen from '@/utils/hooks/global/useIsOpen';
 import usePagination from '@/utils/hooks/global/usePagination';
-import CreateEmployee from './CreateEmployee';
-import EditEmployee from './EditEmployee';
-import DeleteEmployee from './DeleteEmployee';
-import ViewEmployee from './ViewEmployee';
+import CreateNationality from './CreateNationality';
+import EditNationality from './EditNationality';
+import DeleteNationality from './DeleteNationality';
+import ViewNationality from './ViewNationality';
 import useLocale from '@/utils/hooks/global/useLocale';
 import i18next from 'i18next';
 import { getOriginalObject } from '@/utils/helpers/global.fns';
 
-export default function Employees() {
+export default function Nationalities() {
     const { isOpen, toggle } = useIsOpen();
     const { pagination, setPagination } = usePagination();
-    const { data, isLoading, refresh } = useEmployeesQuery(pagination);
+    const { data, isLoading, refresh } = useNationalitiesQuery(pagination);
     const { t } = useLocale();
 
     const tableData = data?.data?.map(item => ({
         ...item,
-        job: {
-            ...item.job,
-            name: item.job?.name?.[i18next.language]
-        },
-        branch: {
-            ...item.branch,
-            name: item.branch?.name?.[i18next.language]
-        }
+        name: item.name?.[i18next.language]
     }));
 
     const formData = data?.data?.map(item => ({
         ...item,
-        user_id: item.user?.id,
-        job_id: item.job?.id,
-        branch_id: item.branch?.id,
-        entity_id: item.entity?.id,
-        nationality_id: item.nationality?.id,
-        academic_qualification_id: item.academic_qualification?.id,
-        specification_id: item.specification?.id,
-        city_id: item.city?.id
+        country_id: item.country_id,
+        'name.en': item.name?.en,
+        'name.ar': item.name?.ar
     }));
 
     return (
         <div>
             <Table
-                title={t('table_titles.employees')}
+                title={t('table_titles.nationalities')}
                 refresh={refresh}
                 loading={isLoading}
                 data={tableData}
                 serverPagination={true}
                 totalCount={data?.meta?.total}
-                columns={employeesColumns}
+                columns={nationalitiesColumns}
                 toggleModals={toggle}
                 pagination={pagination}
                 setPagination={setPagination}
             />
-            {isOpen.add && <CreateEmployee onClose={toggle.add} />}
+            {isOpen.add && <CreateNationality onClose={toggle.add} />}
             {isOpen.edit && (
-                <EditEmployee
+                <EditNationality
                     onClose={toggle.edit}
                     oldData={getOriginalObject(isOpen.edit, formData)}
                 />
             )}
             {isOpen.view && (
-                <ViewEmployee
+                <ViewNationality
                     onClose={toggle.view}
                     oldData={getOriginalObject(isOpen.view, formData)}
                 />
             )}
             {isOpen.delete && (
-                <DeleteEmployee
+                <DeleteNationality
                     onClose={toggle.delete}
                     id={isOpen.delete?.id}
                 />

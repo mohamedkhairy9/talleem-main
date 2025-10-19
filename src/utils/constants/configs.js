@@ -23,7 +23,9 @@ import {
     HiDocumentText,
     HiShieldExclamation,
     HiPhotograph,
-    HiIdentification
+    HiIdentification,
+    HiGlobe,
+    HiUser
 } from 'react-icons/hi';
 import { VscDebugBreakpointLog } from 'react-icons/vsc';
 
@@ -140,6 +142,20 @@ export const sideMenuTabs = [
         titleKey: 'sidebar.employees',
         path: '/employees',
         icon: HiIdentification
+    },
+
+    // الجنسيات
+    {
+        titleKey: 'sidebar.nationalities',
+        path: '/nationalities',
+        icon: HiGlobe
+    },
+
+    // المستخدمين
+    {
+        titleKey: 'sidebar.users',
+        path: '/users',
+        icon: HiUser
     },
 
     // إعداد السياسات واللافتات العامة

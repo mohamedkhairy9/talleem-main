@@ -47,6 +47,12 @@
             "integer": "يجب اختيار المدينة",
             "min": "يرجى اختيار مدينة صحيحة"
         },
+        "country_id": {
+            "label": "البلد",
+            "placeholder": "اختر البلد",
+            "integer": "يجب اختيار البلد",
+            "min": "يرجى اختيار بلد صحيح"
+        },
         "neighborhood_id": {
             "label": "الحي",
             "placeholder": "اختر الحي",
@@ -155,6 +161,60 @@
             "label": "البريد الإلكتروني",
             "placeholder": "أدخل البريد الإلكتروني",
             "invalid": "الرجاء إدخال بريد إلكتروني صحيح"
+        },
+        "password": {
+            "label": "كلمة المرور",
+            "placeholder": "أدخل كلمة المرور",
+            "min": "كلمة المرور يجب أن تكون على الأقل 6 أحرف"
+        },
+        "locale": {
+            "label": "اللغة",
+            "placeholder": "اختر اللغة",
+            "invalid": "يرجى اختيار لغة صحيحة"
+        },
+        "current_app_locale": {
+            "label": "لغة التطبيق",
+            "placeholder": "اختر لغة التطبيق",
+            "invalid": "يرجى اختيار لغة تطبيق صحيحة"
+        },
+        "user_type": {
+            "label": "نوع المستخدم",
+            "placeholder": "اختر نوع المستخدم",
+            "invalid": "يرجى اختيار نوع مستخدم صحيح"
+        },
+        "users": {
+            "name": {
+                "label": "الاسم",
+                "placeholder": "أدخل الاسم"
+            },
+            "email": {
+                "label": "البريد الإلكتروني",
+                "placeholder": "أدخل البريد الإلكتروني"
+            },
+            "password": {
+                "label": "كلمة المرور",
+                "placeholder": "أدخل كلمة المرور"
+            },
+            "phone": {
+                "label": "الهاتف",
+                "placeholder": "أدخل رقم الهاتف"
+            },
+            "branch_id": {
+                "label": "الفرع",
+                "placeholder": "اختر الفرع"
+            },
+            "locale": {
+                "label": "اللغة",
+                "placeholder": "اختر اللغة"
+            },
+            "current_app_locale": {
+                "label": "لغة التطبيق",
+                "placeholder": "اختر لغة التطبيق"
+            },
+            "status": {
+                "label": "الحالة",
+                "placeholder": "اختر الحالة"
+            }
         },
         "date_of_birth": {
             "label": "تاريخ الميلاد",
@@ -321,7 +381,9 @@
         "privacy_policies": "السياسات",
         "general_banners": "اللافتات العامة",
         "system_online": "النظام متصل",
-        "employees": "الموظفين"
+        "employees": "الموظفين",
+        "nationalities": "الجنسيات",
+        "users": "المستخدمين"
     },
     "table_titles": {
         "general_banners": "البانرات العامة",
@@ -346,7 +408,9 @@
         "memorization_programs": "برامج الحفظ",
         "education_programs": "البرامج التعليمية",
         "branches": "الفروع",
-        "employees": "الموظفون"
+        "employees": "الموظفون",
+        "nationalities": "الجنسيات",
+        "users": "المستخدمون"
     },
     "table": {
         "actions": "الإجراءات",
@@ -434,6 +498,7 @@
         "years_of_experience": "سنوات الخبرة",
         "date_of_birth": "تاريخ الميلاد",
         "nationality": "الجنسية",
+        "nationalities": "الجنسيات",
         "academic_qualification": "المؤهل الأكاديمي",
         "specification": "التخصص",
         "entity": "الكيان",
@@ -445,5 +510,17 @@
         "level": "المستوى",
         "permission": "الصلاحية",
         "permissions": "الصلاحيات"
+    },
+    "nationalities": {
+        "create": "إضافة جنسية",
+        "edit": "تعديل الجنسية",
+        "view": "عرض الجنسية",
+        "delete": "حذف الجنسية"
+    },
+    "users": {
+        "create": "إضافة مستخدم",
+        "edit": "تعديل المستخدم",
+        "view": "عرض المستخدم",
+        "delete": "حذف المستخدم"
     }
 }

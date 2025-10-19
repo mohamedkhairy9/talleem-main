@@ -2,8 +2,6 @@ import React from 'react';
 import FormEmployee from './FormEmployee';
 import Modal from '@/components/common/form/Modal';
 import ModalHeader from '@/components/common/form/ModalHeader';
-import { useCreateEmployeeMutation } from '@/api/hooks/useEmployees';
-import { employeesDefaultValues } from './configs';
 import { useJobsQuery } from '@/api/hooks/useJobs';
 import { useBranchesQuery } from '@/api/hooks/useBranches';
 import { useEntityCategoriesQuery } from '@/api/hooks/useEntityCategories';
@@ -16,9 +14,7 @@ import Loader from '@/components/common/Loader';
 import { allData } from '@/utils/constants/global.constants';
 import { enabledDisabledOptions } from '@/utils/constants/options';
 
-export default function CreateEmployee({ onClose }) {
-    const { mutate, isPending } = useCreateEmployeeMutation();
-
+export default function ViewEmployee({ onClose, oldData }) {
     // Fetch all available options
     const { data: jobsData, isLoading: jobsLoading } = useJobsQuery(allData);
     const { data: branchesData, isLoading: branchesLoading } =
@@ -51,12 +47,13 @@ export default function CreateEmployee({ onClose }) {
 
     return (
         <Modal onClose={onClose} size="4xl">
-            <ModalHeader onClose={onClose} header="employees.create" />
+            <ModalHeader onClose={onClose} header="employees.view" />
             <FormEmployee
                 onClose={onClose}
-                oldData={employeesDefaultValues}
-                mutate={mutate}
-                isPending={isPending}
+                oldData={oldData}
+                viewMode={true}
+                mutate={() => {}} // No mutation needed for view mode
+                isPending={false}
                 options={{
                     user_id: usersData?.data,
                     nationality_id: nationalitiesData?.data,

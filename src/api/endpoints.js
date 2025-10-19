@@ -200,6 +200,20 @@ export const API_URLS = {
         DETAILS: id => `/employees/${id}`,
         UPDATE: id => `/employees/${id}`,
         DELETE: id => `/employees/${id}`
+    },
+    NATIONALITIES: {
+        CREATE: '/nationalities',
+        LIST: '/nationalities',
+        DETAILS: id => `/nationalities/${id}`,
+        UPDATE: id => `/nationalities/${id}`,
+        DELETE: id => `/nationalities/${id}`
+    },
+    USERS: {
+        CREATE: '/users',
+        LIST: '/users',
+        DETAILS: id => `/users/${id}`,
+        UPDATE: id => `/users/${id}`,
+        DELETE: id => `/users/${id}`
     }
 };
 
@@ -238,5 +252,7 @@ export const API_KEYS = {
     TERMS_AND_CONDITIONS: 'term-and-condition',
     PRIVACY_POLICIES: 'privacy-and-policy',
     GENERAL_BANNERS: 'general-banners',
-    EMPLOYEES: 'employees'
+    EMPLOYEES: 'employees',
+    NATIONALITIES: 'nationalities',
+    USERS: 'users'
 };

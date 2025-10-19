@@ -54,8 +54,6 @@ export default function FormGeneralBanner({
         const file = e.target.files?.[0];
         console.log('file', file);
         if (file) {
-            // react-hook-form will handle the file registration
-            // We just need to track the change and update preview
             setImageChanged(true);
             const reader = new FileReader();
             reader.onloadend = () => {
