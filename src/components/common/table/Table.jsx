@@ -41,6 +41,7 @@ import {
 } from 'react-icons/md';
 import { useTranslation } from 'react-i18next';
 import useLanguageStore from '@/utils/stores/language.store';
+import { FaEye } from "react-icons/fa";
 
 const columnHelper = createColumnHelper();
 
@@ -59,7 +60,7 @@ const Table = ({
     enableEdit = true,
     enableDelete = true,
     enableCopy = true,
-    enableView = false,
+    enableView = true,
     onRowClick,
     customActions = [],
     refresh,
@@ -126,19 +127,19 @@ const Table = ({
                     <button
                         onClick={e => {
                             e.stopPropagation();
-                            toggleModals.view(row.original);
+                            toggleModals?.view(row.original);
                         }}
                         className="p-1 text-blue-600 hover:text-blue-800 hover:bg-blue-50 rounded transition-colors"
                         title={t('table.view')}
                     >
-                        <MdInfo className="w-4 h-4" />
+                        <FaEye className="w-4 h-4" />
                     </button>
                 )}
                 {enableEdit && (
                     <button
                         onClick={e => {
                             e.stopPropagation();
-                            toggleModals.edit(row.original);
+                            toggleModals?.edit(row.original);
                         }}
                         className="p-1 text-primary-600 hover:text-primary-800 hover:bg-primary-50 rounded transition-colors"
                         title={t('table.edit')}
@@ -168,7 +169,7 @@ const Table = ({
                     <button
                         onClick={e => {
                             e.stopPropagation();
-                            toggleModals.delete(row.original);
+                            toggleModals?.delete(row.original);
                         }}
                         className="p-1 text-red-600 hover:text-red-800 hover:bg-red-50 rounded transition-colors"
                         title={t('table.delete')}
@@ -758,7 +759,7 @@ const Table = ({
                                 {/* Add Button */}
                                 {enableAdd && (
                                     <button
-                                        onClick={toggleModals.add}
+                                        onClick={toggleModals?.add}
                                         className="flex items-center space-x-2 px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary transition-colors"
                                     >
                                         <MdAdd className="w-4 h-4" />
