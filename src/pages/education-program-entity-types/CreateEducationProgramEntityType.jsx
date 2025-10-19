@@ -3,6 +3,7 @@ import FormEducationProgramEntityType from './FormEducationProgramEntityType';
 import Modal from '@/components/common/form/Modal';
 import ModalHeader from '@/components/common/form/ModalHeader';
 import { useCreateEducationProgramEntityTypeMutation } from '@/api/hooks/useEducationProgramEntityTypes';
+import { enabledDisabledOptions } from '@/utils/constants/options';
 
 export default function CreateEducationProgramEntityType({ onClose }) {
     const { mutate, isPending } = useCreateEducationProgramEntityTypeMutation();
@@ -17,6 +18,9 @@ export default function CreateEducationProgramEntityType({ onClose }) {
                 mutate={mutate}
                 isPending={isPending}
                 onClose={onClose}
+                options={{
+                    status: enabledDisabledOptions
+                }}
             />
         </Modal>
     );

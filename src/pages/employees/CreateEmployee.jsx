@@ -3,6 +3,7 @@ import FormEmployee from './FormEmployee';
 import { useCreateEmployeeMutation } from '@/api/hooks/useEmployees';
 import { employeesDefaultValues } from './configs';
 import useCustomQueries from '@/utils/hooks/global/useCustomQueries';
+import { enabledDisabledOptions } from '@/utils/constants/options';
 
 export default function CreateEmployee({ onClose }) {
     const { mutate, isPending } = useCreateEmployeeMutation();
@@ -23,8 +24,10 @@ export default function CreateEmployee({ onClose }) {
             oldData={employeesDefaultValues}
             mutate={mutate}
             isPending={isPending}
-            options={options}
+            options={{
+                ...options,
+                status: enabledDisabledOptions
+            }}
         />
     );
 }
-

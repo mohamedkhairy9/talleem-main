@@ -41,7 +41,7 @@ export const locationTypesFields = [
         label: 'validation.status.label',
         type: 'select',
         placeholder: 'validation.status.placeholder',
-        options: enabledDisabledOptions,
+        defaultValue: true,
         editMode: true,
         viewMode: true
     }

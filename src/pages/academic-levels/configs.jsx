@@ -41,6 +41,7 @@ export const academicLevelsFields = [
         label: 'validation.status.label',
         type: 'select',
         placeholder: 'validation.status.placeholder',
+        defaultValue: true,
         editMode: true,
         viewMode: true
     }

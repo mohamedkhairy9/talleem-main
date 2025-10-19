@@ -1,6 +1,7 @@
 import Cell from '@/components/common/table/cells/Cell';
 import DateCell from '@/components/common/table/cells/DateCell';
 import NameCell from '@/components/common/table/cells/NameCell';
+import StatusCell from '@/components/common/table/cells/StatusCell';
 import { createColumnHelper } from '@tanstack/react-table';
 import React from 'react';
 import { enabledDisabledOptions } from '@/utils/constants/options';
@@ -53,6 +54,7 @@ export const attendanceTypesFields = [
         label: 'validation.status.label',
         type: 'select',
         placeholder: 'validation.status.placeholder',
+        defaultValue: true,
         options: enabledDisabledOptions,
         editMode: true,
         viewMode: true

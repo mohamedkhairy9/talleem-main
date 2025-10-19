@@ -8,10 +8,6 @@ import { enabledDisabledOptions } from '@/utils/constants/options';
 export default function CreateAcademicQualification({ onClose }) {
     const { mutate, isPending } = useCreateAcademicQualificationMutation();
 
-    const defaultValues = {
-        status: true
-    };
-
     return (
         <Modal onClose={onClose}>
             <ModalHeader
@@ -22,7 +18,6 @@ export default function CreateAcademicQualification({ onClose }) {
                 mutate={mutate}
                 isPending={isPending}
                 onClose={onClose}
-                oldData={defaultValues}
                 options={{
                     status: enabledDisabledOptions
                 }}

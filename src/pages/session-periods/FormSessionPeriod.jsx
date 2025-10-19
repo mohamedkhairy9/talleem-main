@@ -7,6 +7,7 @@ import { sessionPeriodsFields } from './configs';
 import InputRFH from '@/components/common/inputs/InputRFH';
 import Btn from '@/components/common/buttons/Btn';
 import { getNestedError } from '@/utils/helpers/getNestedError';
+import { generateOptions } from '@/utils/helpers/global.fns';
 
 export default function FormSessionPeriod({
     onClose,
@@ -14,7 +15,8 @@ export default function FormSessionPeriod({
     editMode,
     viewMode,
     isPending,
-    mutate
+    mutate,
+    options
 }) {
     const { register, errors, handleSubmit, control } = useRFH({
         schema,
@@ -50,7 +52,10 @@ export default function FormSessionPeriod({
                         placeholder={field.placeholder}
                         label={field.label}
                         name={field.name}
-                        defaultValue={oldData?.[field.name]}
+                        defaultValue={
+                            oldData?.[field.name] || field.defaultValue
+                        }
+                        options={generateOptions(options?.[field.name])}
                     />
                 ))}
             <Btn

@@ -3,6 +3,7 @@ import FormEntityCategory from './FormEntityCategory';
 import Modal from '@/components/common/form/Modal';
 import ModalHeader from '@/components/common/form/ModalHeader';
 import { useCreateEntityCategoryMutation } from '@/api/hooks/useEntityCategories';
+import { enabledDisabledOptions } from '@/utils/constants/options';
 
 export default function CreateEntityCategory({ onClose }) {
     const { mutate, isPending } = useCreateEntityCategoryMutation();
@@ -14,6 +15,9 @@ export default function CreateEntityCategory({ onClose }) {
                 mutate={mutate}
                 isPending={isPending}
                 onClose={onClose}
+                options={{
+                    status: enabledDisabledOptions
+                }}
             />
         </Modal>
     );

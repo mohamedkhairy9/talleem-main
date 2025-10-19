@@ -1,7 +1,7 @@
 import React from 'react';
 
-export default function StatusCell({ info }) {
-    const status = info.getValue();
+export default function StatusCell({ info = null, value = null }) {
+    const status = value || info.getValue();
     const statusColors = {
         active: 'bg-green-100 text-green-800 border-green-200',
         inactive: 'bg-red-100 text-red-800 border-red-200',

@@ -3,6 +3,7 @@ import DateCell from '@/components/common/table/cells/DateCell';
 import NameCell from '@/components/common/table/cells/NameCell';
 import { createColumnHelper } from '@tanstack/react-table';
 import React from 'react';
+import { enabledDisabledOptions } from '@/utils/constants/options';
 
 const columnHelper = createColumnHelper();
 
@@ -72,6 +73,16 @@ export const educationProgramEntityTypesFields = [
         type: 'text',
         placeholder:
             'validation.educational_entity_classification.placeholder.ar',
+        editMode: true,
+        viewMode: true
+    },
+    {
+        name: 'status',
+        label: 'validation.status.label',
+        type: 'select',
+        placeholder: 'validation.status.placeholder',
+        defaultValue: true,
+        options: enabledDisabledOptions,
         editMode: true,
         viewMode: true
     }

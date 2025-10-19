@@ -95,7 +95,7 @@ export default function Login() {
                                 <button
                                     type="submit"
                                     disabled={isPending}
-                                    className={`w-full py-3 rounded-lg font-medium transition-colors duration-200 ${
+                                    className={`w-full py-3 mb-32 rounded-lg font-medium transition-colors duration-200 ${
                                         isPending
                                             ? 'bg-gray-400 cursor-not-allowed'
                                             : 'bg-primary-600 hover:bg-primary-700'
@@ -110,40 +110,6 @@ export default function Login() {
                                     )}
                                 </button>
 
-                                {/* Divider */}
-                                <div className="relative">
-                                    <div className="absolute inset-0 flex items-center">
-                                        <div className="w-full border-t border-gray-300"></div>
-                                    </div>
-                                    <div className="relative flex justify-center text-sm">
-                                        <span className="px-2 bg-white text-gray-500">
-                                            {t('auth.or')}
-                                        </span>
-                                    </div>
-                                </div>
-
-                                {/* Social Login */}
-                                <div className="flex justify-center space-x-4">
-                                    <button className="w-12 h-12 bg-white border border-gray-300 rounded-full flex items-center justify-center hover:bg-gray-50 transition-colors">
-                                        <FaGoogle className="w-5 h-5 text-red-500" />
-                                    </button>
-                                    <button className="w-12 h-12 bg-white border border-gray-300 rounded-full flex items-center justify-center hover:bg-gray-50 transition-colors">
-                                        <FaApple className="w-5 h-5 text-black" />
-                                    </button>
-                                    <button className="w-12 h-12 bg-white border border-gray-300 rounded-full flex items-center justify-center hover:bg-gray-50 transition-colors">
-                                        <FaFacebook className="w-5 h-5 text-blue-600" />
-                                    </button>
-                                </div>
-
-                                {/* Forgot Password */}
-                                <div className="text-center">
-                                    <span className="text-gray-600">
-                                        {t('auth.forgot_password')}{' '}
-                                        <button className="text-primary-600 hover:text-primary-700 font-medium">
-                                            {t('auth.recover')}
-                                        </button>
-                                    </span>
-                                </div>
                             </form>
                         </div>
                     </div>

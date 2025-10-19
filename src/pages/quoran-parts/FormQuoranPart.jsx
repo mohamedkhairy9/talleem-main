@@ -50,7 +50,9 @@ export default function FormQuoranPart({
                         placeholder={field.placeholder}
                         label={field.label}
                         name={field.name}
-                        defaultValue={oldData?.[field.name]}
+                        defaultValue={
+                            oldData?.[field.name] || field.defaultValue
+                        }
                     />
                 ))}
             <Btn

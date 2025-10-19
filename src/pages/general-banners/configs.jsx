@@ -114,6 +114,7 @@ export const generalBannersFields = [
         label: 'validation.status.label',
         type: 'select',
         placeholder: 'validation.status.placeholder',
+        defaultValue: true,
         options: enabledDisabledOptions,
         editMode: true,
         viewMode: true

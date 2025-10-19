@@ -2,6 +2,7 @@ import React from 'react';
 import FormEmployee from './FormEmployee';
 import { useUpdateEmployeeMutation } from '@/api/hooks/useEmployees';
 import useCustomQueries from '@/utils/hooks/global/useCustomQueries';
+import { enabledDisabledOptions } from '@/utils/constants/options';
 
 export default function EditEmployee({ onClose, oldData }) {
     const { mutate, isPending } = useUpdateEmployeeMutation();
@@ -23,8 +24,10 @@ export default function EditEmployee({ onClose, oldData }) {
             editMode={true}
             mutate={mutate}
             isPending={isPending}
-            options={options}
+            options={{
+                ...options,
+                status: enabledDisabledOptions
+            }}
         />
     );
 }
-

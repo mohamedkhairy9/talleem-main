@@ -52,7 +52,9 @@ export default function FormAcademicLevel({
                         placeholder={field.placeholder}
                         label={field.label}
                         name={field.name}
-                        defaultValue={oldData?.[field.name]}
+                        defaultValue={
+                            oldData?.[field.name] || field.defaultValue
+                        }
                         options={generateOptions(options?.[field.name])}
                     />
                 ))}

@@ -7,5 +7,6 @@ export const activitiesSchema = yup.object({
             en: yup.string().required(t('validation.required')).min(1),
             ar: yup.string().required(t('validation.required')).min(1)
         })
-        .required(t('validation.required'))
+        .required(t('validation.required')),
+    status: yup.boolean().required(t('validation.required'))
 });

@@ -35,5 +35,14 @@ export const jobsFields = [
         placeholder: 'validation.name.placeholder.ar',
         editMode: true,
         viewMode: true
+    },
+    {
+        name: 'status',
+        label: 'validation.status.label',
+        type: 'select',
+        placeholder: 'validation.status.placeholder',
+        defaultValue: true,
+        editMode: true,
+        viewMode: true
     }
 ];
