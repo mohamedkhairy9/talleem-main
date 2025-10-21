@@ -61,6 +61,7 @@ export default function FormUser({
                                 error={getNestedError(errors, field.name)}
                                 type={field.type}
                                 placeholder={field.placeholder}
+                                disabled={viewMode}
                                 label={field.label}
                                 name={field.name}
                                 defaultValue={
@@ -71,12 +72,12 @@ export default function FormUser({
                         </div>
                     ))}
             </div>
-            <Btn
+            {!viewMode && (<Btn
                 loading={isPending}
                 className="py-[10px] w-full"
                 type="submit"
                 label="common.submit"
-            />
+            />)}
         </form>
     );
 }
