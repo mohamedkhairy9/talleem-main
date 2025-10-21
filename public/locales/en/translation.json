@@ -345,7 +345,8 @@
     },
     "session_periods": {
         "create": "Create Session Period",
-        "update": "Update Session Period"
+        "update": "Update Session Period",
+        "view": "View Session Period"
     },
     "about_us": {
         "description": "Manage the About Us page content and visibility"
