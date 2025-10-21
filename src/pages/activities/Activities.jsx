@@ -10,6 +10,7 @@ import DeleteActivity from './DeleteActivity';
 import useLocale from '@/utils/hooks/global/useLocale';
 import i18next from 'i18next';
 import { getOriginalObject } from '@/utils/helpers/global.fns';
+import ViewActivity from './ViewActivity';
 
 export default function Activities() {
     const { isOpen, toggle } = useIsOpen();
@@ -41,6 +42,12 @@ export default function Activities() {
                 <EditActivity
                     onClose={toggle.edit}
                     oldData={getOriginalObject(isOpen.edit, data?.data)}
+                />
+            )}
+            {isOpen.view && (
+                <ViewActivity
+                    onClose={toggle.view}
+                    oldData={getOriginalObject(isOpen.view, data?.data)}
                 />
             )}
             {isOpen.delete && (

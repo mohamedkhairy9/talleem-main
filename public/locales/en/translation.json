@@ -315,7 +315,8 @@
     },
     "activities": {
         "create": "Create Activity",
-        "update": "Update Activity"
+        "update": "Update Activity",
+        "view": "View Activity"
     },
     "entity_categories": {
         "create": "Create Entity Category",

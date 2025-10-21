@@ -317,7 +317,8 @@
     },
     "activities": {
         "create": "إنشاء نشاط",
-        "update": "تحديث النشاط"
+        "update": "تحديث النشاط",
+        "view": "عرض النشاط"
     },
     "entity_categories": {
         "create": "إنشاء فئة كيان",
