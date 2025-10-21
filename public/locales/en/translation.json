@@ -277,7 +277,8 @@
     },
     "attendance_types": {
         "create": "Create Attendance Type",
-        "update": "Update Attendance Type"
+        "update": "Update Attendance Type",
+        "view": "View Attendance Type"
     },
     "quoran_parts": {
         "create": "Create Quoran Part",
