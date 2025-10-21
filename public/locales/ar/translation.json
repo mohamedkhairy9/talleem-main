@@ -325,7 +325,8 @@
     },
     "entity_categories": {
         "create": "إنشاء فئة كيان",
-        "update": "تحديث فئة الكيان"
+        "update": "تحديث فئة الكيان",
+        "view": "عرض فئة الكيان"
     },
     "neighborhoods": {
         "create": "إنشاء حي",

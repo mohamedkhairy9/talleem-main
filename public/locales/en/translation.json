@@ -323,7 +323,8 @@
     },
     "entity_categories": {
         "create": "Create Entity Category",
-        "update": "Update Entity Category"
+        "update": "Update Entity Category",
+        "view": "View Entity Category"
     },
     "neighborhoods": {
         "create": "Create Neighborhood",
