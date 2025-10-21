@@ -285,7 +285,8 @@
     },
     "quoran_parts": {
         "create": "Create Quoran Part",
-        "update": "Update Quoran Part"
+        "update": "Update Quoran Part",
+        "view": "View Quoran Part"
     },
     "main_programs": {
         "create": "Create Main Program",

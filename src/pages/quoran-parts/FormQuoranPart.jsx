@@ -48,6 +48,7 @@ export default function FormQuoranPart({
                         key={field.name}
                         type={field.type}
                         placeholder={field.placeholder}
+                        disabled={viewMode}
                         label={field.label}
                         name={field.name}
                         defaultValue={
@@ -55,12 +56,12 @@ export default function FormQuoranPart({
                         }
                     />
                 ))}
-            <Btn
+            {!viewMode && (<Btn
                 loading={isPending}
                 className="py-[10px] w-full"
                 type="submit"
                 label="common.submit"
-            />
+            />)}
         </form>
     );
 }
