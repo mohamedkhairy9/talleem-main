@@ -350,7 +350,8 @@
     },
     "general_banners": {
         "create": "Create Banner",
-        "update": "Update Banner"
+        "update": "Update Banner",
+        "view": "View Banner"
     },
     "sidebar": {
         "home": "Home",

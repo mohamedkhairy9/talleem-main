@@ -352,7 +352,8 @@
     },
     "general_banners": {
         "create": "إنشاء بانر",
-        "update": "تحديث البانر"
+        "update": "تحديث البانر",
+        "view": "عرض البانر"
     },
     "sidebar": {
         "home": "الرئيسية",

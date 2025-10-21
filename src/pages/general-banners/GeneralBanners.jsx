@@ -9,6 +9,7 @@ import EditGeneralBanner from './EditGeneralBanner';
 import DeleteGeneralBanner from './DeleteGeneralBanner';
 import useLocale from '@/utils/hooks/global/useLocale';
 import { getOriginalObject } from '@/utils/helpers/global.fns';
+import ViewGeneralBanner from './ViewGeneralBanner';
 
 export default function GeneralBanners() {
     const { isOpen, toggle } = useIsOpen();
@@ -38,6 +39,12 @@ export default function GeneralBanners() {
                 <EditGeneralBanner
                     onClose={toggle.edit}
                     oldData={getOriginalObject(isOpen.edit, formData)}
+                />
+            )}
+            {isOpen.view && (
+                <ViewGeneralBanner
+                    onClose={toggle.view}
+                    oldData={getOriginalObject(isOpen.view, formData)}
                 />
             )}
             {isOpen.delete && (
