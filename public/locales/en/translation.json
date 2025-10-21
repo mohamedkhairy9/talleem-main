@@ -264,7 +264,8 @@
     },
     "jobs": {
         "create": "Create Job",
-        "update": "Update Job"
+        "update": "Update Job",
+        "view": "View Job"
     },
     "cities": {
         "create": "Create City",

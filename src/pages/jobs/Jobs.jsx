@@ -10,6 +10,7 @@ import DeleteJob from './DeleteJob';
 import useLocale from '@/utils/hooks/global/useLocale';
 import i18next from 'i18next';
 import { getOriginalObject } from '@/utils/helpers/global.fns';
+import ViewJob from './ViewJob';
 
 export default function Jobs() {
     const { isOpen, toggle } = useIsOpen();
@@ -41,6 +42,12 @@ export default function Jobs() {
                 <EditJob
                     onClose={toggle.edit}
                     oldData={getOriginalObject(isOpen.edit, data?.data)}
+                />
+            )}
+            {isOpen.view && (
+                <ViewJob
+                    onClose={toggle.view}
+                    oldData={getOriginalObject(isOpen.view, data?.data)}
                 />
             )}
             {isOpen.delete && (
