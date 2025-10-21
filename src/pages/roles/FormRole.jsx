@@ -53,6 +53,7 @@ export default function FormRole({
                         key={field.name}
                         type={field.type}
                         placeholder={field.placeholder}
+                        disabled={viewMode}
                         label={field.label}
                         name={field.name}
                         defaultValue={
@@ -61,12 +62,12 @@ export default function FormRole({
                         options={generateOptions(options?.[field.name])}
                     />
                 ))}
-            <Btn
+            {!viewMode && (<Btn
                 loading={isPending}
                 className="py-[10px] w-full"
                 type="submit"
                 label="common.submit"
-            />
+            />)}
         </form>
     );
 }

@@ -257,7 +257,8 @@
     },
     "roles": {
         "create": "إنشاء دور",
-        "update": "تحديث الدور"
+        "update": "تحديث الدور",
+        "view": "عرض الدور"
     },
     "academic_qualifications": {
         "create": "إنشاء مؤهل أكاديمي",

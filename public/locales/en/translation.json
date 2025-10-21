@@ -255,7 +255,8 @@
     },
     "roles": {
         "create": "Create Role",
-        "update": "Update Role"
+        "update": "Update Role",
+        "view": "View Role"
     },
     "academic_qualifications": {
         "create": "Create Academic Qualification",
