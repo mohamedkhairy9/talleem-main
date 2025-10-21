@@ -275,7 +275,8 @@
     },
     "kinships": {
         "create": "Create Relationship",
-        "update": "Update Relationship"
+        "update": "Update Relationship",
+        "view": "View Relationship"
     },
     "attendance_types": {
         "create": "Create Attendance Type",
