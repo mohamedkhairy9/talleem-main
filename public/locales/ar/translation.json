@@ -305,7 +305,8 @@
     },
     "location_types": {
         "create": "إنشاء نوع موقع",
-        "update": "تحديث نوع الموقع"
+        "update": "تحديث نوع الموقع",
+        "view": "عرض نوع الموقع"
     },
     "memorization_program_entity_types": {
         "create": "إنشاء برنامج حفظ",

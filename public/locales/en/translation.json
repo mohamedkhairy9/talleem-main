@@ -303,7 +303,8 @@
     },
     "location_types": {
         "create": "Create Location Type",
-        "update": "Update Location Type"
+        "update": "Update Location Type",
+        "view": "View Location Type"
     },
     "memorization_program_entity_types": {
         "create": "Create Memorization Program",
