@@ -323,7 +323,8 @@
     },
     "specifications": {
         "create": "إنشاء تخصص",
-        "update": "تحديث التخصص"
+        "update": "تحديث التخصص",
+        "view": "عرض التخصص"
     },
     "activities": {
         "create": "إنشاء نشاط",

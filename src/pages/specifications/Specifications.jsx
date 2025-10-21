@@ -10,6 +10,7 @@ import DeleteSpecification from './DeleteSpecification';
 import useLocale from '@/utils/hooks/global/useLocale';
 import i18next from 'i18next';
 import { getOriginalObject } from '@/utils/helpers/global.fns';
+import ViewSpecification from './ViewSpecifications';
 
 export default function Specifications() {
     const { isOpen, toggle } = useIsOpen();
@@ -41,6 +42,12 @@ export default function Specifications() {
                 <EditSpecification
                     onClose={toggle.edit}
                     oldData={getOriginalObject(isOpen.edit, data?.data)}
+                />
+            )}
+            {isOpen.view && (
+                <ViewSpecification
+                    onClose={toggle.view}
+                    oldData={getOriginalObject(isOpen.view, data?.data)}
                 />
             )}
             {isOpen.delete && (

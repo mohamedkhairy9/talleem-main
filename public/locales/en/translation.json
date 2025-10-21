@@ -321,7 +321,8 @@
     },
     "specifications": {
         "create": "Create Specification",
-        "update": "Update Specification"
+        "update": "Update Specification",
+        "view": "View Specification"
     },
     "activities": {
         "create": "Create Activity",
