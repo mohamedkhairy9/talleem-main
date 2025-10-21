@@ -39,13 +39,13 @@ export default function Navbar() {
                         >
                             <div className="size-10 rounded-full bg-accent flex items-center justify-center">
                                 <span className="text-base font-medium text-white">
-                                    {user?.name?.charAt(0).toUpperCase() || 'U'}
+                                    {/* {user?.name?.charAt(0).toUpperCase() || 'U'} */}
                                 </span>
                             </div>
 
                             <div className="hidden md:block text-left">
                                 <p className="text-sm font-medium text-gray-900">
-                                    {user?.name || 'User'}
+                                    {/* {user?.name || 'User'} */}
                                 </p>
                                 <p className="text-xs text-gray-500 capitalize">
                                     {user?.user_type || 'Member'}
@@ -70,7 +70,7 @@ export default function Navbar() {
                                     <div className="">
                                         <div className="px-4 py-3 border-b border-gray-100">
                                             <p className="text-sm font-medium text-gray-900">
-                                                {user?.name || 'User'}
+                                                {/* {user?.name || 'User'} */}
                                             </p>
                                             <p className="text-sm text-gray-500">
                                                 {user?.email ||
