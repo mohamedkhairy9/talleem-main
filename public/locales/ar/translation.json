@@ -311,7 +311,8 @@
     },
     "education_program_entity_types": {
         "create": "إنشاء برنامج تعليمي",
-        "update": "تحديث البرنامج التعليمي"
+        "update": "تحديث البرنامج التعليمي",
+        "view": "عرض البرنامج التعليمي"
     },
     "specifications": {
         "create": "إنشاء تخصص",

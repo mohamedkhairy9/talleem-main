@@ -309,7 +309,8 @@
     },
     "education_program_entity_types": {
         "create": "Create Education Program",
-        "update": "Update Education Program"
+        "update": "Update Education Program",
+        "view": "View Education Program"
     },
     "specifications": {
         "create": "Create Specification",
