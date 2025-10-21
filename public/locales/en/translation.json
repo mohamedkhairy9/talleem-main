@@ -294,7 +294,8 @@
     },
     "academic_years": {
         "create": "Create Academic Year",
-        "update": "Update Academic Year"
+        "update": "Update Academic Year",
+        "view": "View Academic Year"
     },
     "location_types": {
         "create": "Create Location Type",

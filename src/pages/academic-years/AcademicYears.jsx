@@ -10,6 +10,7 @@ import DeleteAcademicYear from './DeleteAcademicYear';
 import useLocale from '@/utils/hooks/global/useLocale';
 import i18next from 'i18next';
 import { getOriginalObject } from '@/utils/helpers/global.fns';
+import ViewAcademicYear from './ViewAcademicYear';
 
 export default function AcademicYears() {
     const { isOpen, toggle } = useIsOpen();
@@ -41,6 +42,12 @@ export default function AcademicYears() {
                 <EditAcademicYear
                     onClose={toggle.edit}
                     oldData={getOriginalObject(isOpen.edit, data?.data)}
+                />
+            )}
+            {isOpen.view && (
+                <ViewAcademicYear
+                    onClose={toggle.view}
+                    oldData={getOriginalObject(isOpen.view, data?.data)}
                 />
             )}
             {isOpen.delete && (
