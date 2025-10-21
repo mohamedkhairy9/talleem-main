@@ -52,18 +52,19 @@ export default function FormAcademicLevel({
                         placeholder={field.placeholder}
                         label={field.label}
                         name={field.name}
+                        disabled={viewMode}
                         defaultValue={
                             oldData?.[field.name] || field.defaultValue
                         }
                         options={generateOptions(options?.[field.name])}
                     />
                 ))}
-            <Btn
+            {!viewMode&& (<Btn
                 loading={isPending}
                 className="py-[10px] w-full"
                 type="submit"
                 label="common.submit"
-            />
+            />)}
         </form>
     );
 }

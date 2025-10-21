@@ -288,7 +288,8 @@
     },
     "academic_levels": {
         "create": "Create Academic Level",
-        "update": "Update Academic Level"
+        "update": "Update Academic Level",
+        "view": "View Academic Level"
     },
     "academic_years": {
         "create": "Create Academic Year",
