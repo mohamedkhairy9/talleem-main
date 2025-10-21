@@ -10,7 +10,7 @@ export default function ViewAcademicQualification({ onClose, oldData }) {
 
     return (
         <Modal onClose={onClose}>
-            <ModalHeader onClose={onClose} header="academic_qualifications.update" />
+            <ModalHeader onClose={onClose} header="academic_qualifications.view" />
             <FormAcademicQualification
                 oldData={oldData}
                 onClose={onClose}
