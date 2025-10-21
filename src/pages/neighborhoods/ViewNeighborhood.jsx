@@ -1,0 +1,25 @@
+import { useUpdateNeighborhoodMutation } from '@/api/hooks/useNeighborhoods';
+import Modal from '@/components/common/form/Modal';
+import ModalHeader from '@/components/common/form/ModalHeader';
+import React from 'react';
+import FormNeighborhood from './FormNeighborhood';
+import { useCitiesQuery } from '@/api/hooks/useCities';
+import Loader from '@/components/common/Loader';
+import { allData } from '@/utils/constants/global.constants';
+
+export default function ViewNeighborhood({ onClose, oldData }) {
+    const { data: citiesData, isLoading } = useCitiesQuery(allData);
+    if (isLoading) return <Loader />;
+    return (
+        <Modal onClose={onClose}>
+            <ModalHeader onClose={onClose} header="neighborhoods.view" />
+            <FormNeighborhood
+                oldData={oldData}
+                onClose={onClose}
+                editMode={false}
+                viewMode={true}
+                options={{ city_id: citiesData?.data }}
+            />
+        </Modal>
+    );
+}

@@ -10,6 +10,7 @@ import DeleteNeighborhood from './DeleteNeighborhood';
 import useLocale from '@/utils/hooks/global/useLocale';
 import i18next from 'i18next';
 import { getOriginalObject } from '@/utils/helpers/global.fns';
+import ViewNeighborhood from './ViewNeighborhood';
 
 export default function Neighborhoods() {
     const { isOpen, toggle } = useIsOpen();
@@ -50,6 +51,12 @@ export default function Neighborhoods() {
                 <EditNeighborhood
                     onClose={toggle.edit}
                     oldData={getOriginalObject(isOpen.edit, formData)}
+                />
+            )}
+            {isOpen.view && (
+                <ViewNeighborhood
+                    onClose={toggle.view}
+                    oldData={getOriginalObject(isOpen.view, formData)}
                 />
             )}
             {isOpen.delete && (

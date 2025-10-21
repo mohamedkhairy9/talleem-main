@@ -311,7 +311,8 @@
     },
     "memorization_program_entity_types": {
         "create": "إنشاء برنامج حفظ",
-        "update": "تحديث برنامج الحفظ"
+        "update": "تحديث برنامج الحفظ",
+        "view": "عرض برنامج الحفظ"
     },
     "education_program_entity_types": {
         "create": "إنشاء برنامج تعليمي",
@@ -334,7 +335,8 @@
     },
     "neighborhoods": {
         "create": "إنشاء حي",
-        "update": "تحديث الحي"
+        "update": "تحديث الحي",
+        "view": "عرض الحي"
     },
     "branches": {
         "create": "إنشاء فرع",
