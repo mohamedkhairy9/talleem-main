@@ -269,7 +269,8 @@
     "cities": {
         "create": "Create City",
         "edit": "Edit City",
-        "update": "Update City"
+        "update": "Update City",
+        "view": "View City"
     },
     "kinships": {
         "create": "Create Relationship",

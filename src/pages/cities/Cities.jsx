@@ -10,6 +10,7 @@ import DeleteCity from './DeleteCity';
 import useLocale from '@/utils/hooks/global/useLocale';
 import i18next from 'i18next';
 import { getOriginalObject } from '@/utils/helpers/global.fns';
+import ViewCity from './ViewCity';
 
 export default function Cities() {
     const { isOpen, toggle } = useIsOpen();
@@ -41,6 +42,12 @@ export default function Cities() {
                 <EditCity
                     onClose={toggle.edit}
                     oldData={getOriginalObject(isOpen.edit, data?.data)}
+                />
+            )}
+            {isOpen.view && (
+                <ViewCity
+                    onClose={toggle.view}
+                    oldData={getOriginalObject(isOpen.view, data?.data)}
                 />
             )}
             {isOpen.delete && (
