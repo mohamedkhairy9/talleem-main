@@ -26,7 +26,6 @@ export default function ViewBranch({ onClose, oldData }) {
                 onClose={onClose}
                 editMode={false}
                 viewMode={true}
-                disabled={true}
                 options={{
                     city_id: citiesData?.data,
                     neighborhood_id: neighborhoodsData?.data,

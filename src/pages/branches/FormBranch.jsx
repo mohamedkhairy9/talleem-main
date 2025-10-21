@@ -14,7 +14,6 @@ export default function FormBranch({
     viewMode,
     isPending,
     mutate,
-    disabled,
     options
 }) {
     const { register, errors, handleSubmit, control, reset } = useRFH({
@@ -50,7 +49,7 @@ export default function FormBranch({
                         error={getNestedError(errors, field.name)}
                         key={field.name}
                         type={field.type}
-                        disabled={disabled}
+                        disabled={viewMode}
                         placeholder={field.placeholder}
                         label={field.label}
                         name={field.name}
