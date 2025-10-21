@@ -259,7 +259,8 @@
     },
     "academic_qualifications": {
         "create": "Create Academic Qualification",
-        "update": "Update Academic Qualification"
+        "update": "Update Academic Qualification",
+        "view": "View Academic Qualification"
     },
     "jobs": {
         "create": "Create Job",

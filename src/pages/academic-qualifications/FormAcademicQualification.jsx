@@ -51,17 +51,18 @@ export default function FormAcademicQualification({
                         type={field.type}
                         placeholder={field.placeholder}
                         label={field.label}
+                        disabled={viewMode}
                         name={field.name}
                         defaultValue={oldData?.[field.name] || field.defaultValue}
                         options={generateOptions(options?.[field.name])}
                     />
                 ))}
-            <Btn
+            {!viewMode && (<Btn
                 loading={isPending}
                 className="py-[10px] w-full"
                 type="submit"
                 label="common.submit"
-            />
+            />)}
         </form>
     );
 }
