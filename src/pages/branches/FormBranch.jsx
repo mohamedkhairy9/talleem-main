@@ -14,6 +14,7 @@ export default function FormBranch({
     viewMode,
     isPending,
     mutate,
+    disabled,
     options
 }) {
     const { register, errors, handleSubmit, control, reset } = useRFH({
@@ -49,6 +50,7 @@ export default function FormBranch({
                         error={getNestedError(errors, field.name)}
                         key={field.name}
                         type={field.type}
+                        disabled={disabled}
                         placeholder={field.placeholder}
                         label={field.label}
                         name={field.name}
@@ -58,12 +60,12 @@ export default function FormBranch({
                         options={generateOptions(options?.[field.name])}
                     />
                 ))}
-            <Btn
+            {!viewMode && (<Btn
                 loading={isPending}
                 className="py-[10px] w-full"
                 type="submit"
                 label="common.submit"
-            />
+            />)}
         </form>
     );
 }

@@ -326,7 +326,8 @@
     },
     "branches": {
         "create": "إنشاء فرع",
-        "update": "تحديث الفرع"
+        "update": "تحديث الفرع",
+        "view": "عرض الفرع"
     },
     "session_periods": {
         "create": "إنشاء فترة جلسة",
