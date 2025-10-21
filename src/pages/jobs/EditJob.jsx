@@ -11,7 +11,7 @@ export default function EditJob({ onClose, oldData }) {
     const { mutate, isPending } = useUpdateJobMutation();
     return (
         <Modal onClose={onClose}>
-            <ModalHeader onClose={onClose} header="jobs.create" />
+            <ModalHeader onClose={onClose} header="jobs.update" />
             <FormJob
                 oldData={oldData}
                 mutate={mutate}
