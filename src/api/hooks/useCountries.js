@@ -36,7 +36,7 @@ export const useCreateCountryMutation = () => {
 export const useUpdateCountryMutation = () => {
     const queryClient = useQueryClient();
     return useCustomMutation({
-        mutationFn: ({ id, data }) => countriesService.updateCountry(id, data),
+        mutationFn: (data) => countriesService.updateCountry(data.id, data),
         onSuccess: () => {
             queryClient.invalidateQueries({
                 queryKey: [API_KEYS.COUNTRIES]

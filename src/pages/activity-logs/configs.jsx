@@ -4,6 +4,7 @@ import DateCell from '@/components/common/table/cells/DateCell';
 import EventTypeCell from '@/components/common/table/cells/EventTypeCell';
 import ModelNameCell from '@/components/common/table/cells/ModelNameCell';
 import React from 'react';
+import NameCell from '@/components/common/table/cells/NameCell';
 
 const columnHelper = createColumnHelper();
 
@@ -13,24 +14,16 @@ export const activityLogsColumns = [
         cell: info => <Cell value={info.getValue()} />,
         enableColumnFilter: true
     }),
-    columnHelper.accessor('event', {
-        header: 'table_headers.event_type',
-        cell: info => <EventTypeCell value={info.getValue()} />,
-        enableColumnFilter: true
-    }),
-    columnHelper.accessor('subject_type', {
+    columnHelper.accessor('subject.type', {
         header: 'table_headers.subject_type',
         cell: info => <ModelNameCell value={info.getValue()} />,
         enableColumnFilter: true
     }),
-    columnHelper.accessor('subject_id', {
-        header: 'table_headers.subject_id',
-        cell: info => <Cell value={info.getValue()} />,
-        enableColumnFilter: false
-    }),
     columnHelper.accessor('causer.name', {
         header: 'table_headers.user',
-        cell: info => <Cell value={info.getValue()} />,
+        cell: info => {
+            return <NameCell directValue={info.row.original?.causer?.name} />;
+        },
         enableColumnFilter: true
     }),
     columnHelper.accessor('created_at', {

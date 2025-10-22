@@ -37,8 +37,8 @@ export const useCreateOnlineAttendanceMutation = () => {
 export const useUpdateOnlineAttendanceMutation = () => {
     const queryClient = useQueryClient();
     return useCustomMutation({
-        mutationFn: ({ id, data }) =>
-            onlineAttendancesService.updateOnlineAttendance(id, data),
+        mutationFn: (data) =>
+            onlineAttendancesService.updateOnlineAttendance(data.id, data),
         onSuccess: () => {
             queryClient.invalidateQueries({
                 queryKey: [API_KEYS.ONLINE_ATTENDANCES]

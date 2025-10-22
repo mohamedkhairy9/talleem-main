@@ -285,7 +285,26 @@
         "yes": "Yes",
         "no": "No",
         "cancel": "Cancel",
-        "delete": "Delete"
+        "delete": "Delete",
+        "back": "Back"
+    },
+    "activity_logs": {
+        "view_title": "Activity Log Details",
+        "basic_info": "Basic Information",
+        "description": "Description",
+        "log_name": "Log Name",
+        "created_at": "Created At",
+        "user_info": "User Information",
+        "user_name": "User Name",
+        "user_email": "User Email",
+        "user_id": "User ID",
+        "no_user_info": "No user information available",
+        "subject_info": "Subject Information",
+        "subject_type": "Subject Type",
+        "subject_id": "Subject ID",
+        "subject_name": "Subject Name",
+        "no_subject_info": "No subject information available",
+        "properties": "Properties"
     },
     "roles": {
         "create": "Create Role",

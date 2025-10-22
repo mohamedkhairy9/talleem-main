@@ -287,7 +287,26 @@
         "yes": "نعم",
         "no": "لا",
         "cancel": "إلغاء",
-        "delete": "حذف"
+        "delete": "حذف",
+        "back": "رجوع"
+    },
+    "activity_logs": {
+        "view_title": "تفاصيل سجل النشاط",
+        "basic_info": "المعلومات الأساسية",
+        "description": "الوصف",
+        "log_name": "اسم السجل",
+        "created_at": "تاريخ الإنشاء",
+        "user_info": "معلومات المستخدم",
+        "user_name": "اسم المستخدم",
+        "user_email": "بريد المستخدم الإلكتروني",
+        "user_id": "معرف المستخدم",
+        "no_user_info": "لا توجد معلومات مستخدم متاحة",
+        "subject_info": "معلومات الموضوع",
+        "subject_type": "نوع الموضوع",
+        "subject_id": "معرف الموضوع",
+        "subject_name": "اسم الموضوع",
+        "no_subject_info": "لا توجد معلومات موضوع متاحة",
+        "properties": "الخصائص"
     },
     "roles": {
         "create": "إنشاء دور",
