@@ -1,16 +1,16 @@
-import { useUpdateRoleMutation } from '@/api/hooks/useRoles';
+import { useUpdateSessionPeriodMutation } from '@/api/hooks/useSessionPeriods';
 import Modal from '@/components/common/form/Modal';
 import ModalHeader from '@/components/common/form/ModalHeader';
 import React from 'react';
-import FormRole from './FormRole';
+import FormSessionPeriod from './FormSessionPeriod';
 import { enabledDisabledOptions } from '@/utils/constants/options';
 
-export default function ViewRole({ onClose, oldData }) {
+export default function ViewSessionPeriod({ onClose, oldData }) {
     console.log('oldData', oldData);
     return (
         <Modal onClose={onClose}>
-            <ModalHeader onClose={onClose} header="roles.view" />
-            <FormRole
+            <ModalHeader onClose={onClose} header="session_periods.view" />
+            <FormSessionPeriod
                 oldData={oldData}
                 onClose={onClose}
                 editMode={false}

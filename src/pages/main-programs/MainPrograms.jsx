@@ -10,6 +10,7 @@ import DeleteMainProgram from './DeleteMainProgram';
 import useLocale from '@/utils/hooks/global/useLocale';
 import i18next from 'i18next';
 import { getOriginalObject } from '@/utils/helpers/global.fns';
+import ViewMainProgram from './ViewMainProgram';
 
 export default function MainPrograms() {
     const { isOpen, toggle } = useIsOpen();
@@ -41,6 +42,12 @@ export default function MainPrograms() {
                 <EditMainProgram
                     onClose={toggle.edit}
                     oldData={getOriginalObject(isOpen.edit, data?.data)}
+                />
+            )}
+            {isOpen.view && (
+                <ViewMainProgram
+                    onClose={toggle.view}
+                    oldData={getOriginalObject(isOpen.view, data?.data)}
                 />
             )}
             {isOpen.delete && (

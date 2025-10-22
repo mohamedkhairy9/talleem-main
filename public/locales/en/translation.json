@@ -255,80 +255,99 @@
     },
     "roles": {
         "create": "Create Role",
-        "update": "Update Role"
+        "update": "Update Role",
+        "view": "View Role"
     },
     "academic_qualifications": {
         "create": "Create Academic Qualification",
-        "update": "Update Academic Qualification"
+        "update": "Update Academic Qualification",
+        "view": "View Academic Qualification"
     },
     "jobs": {
         "create": "Create Job",
-        "update": "Update Job"
+        "update": "Update Job",
+        "view": "View Job"
     },
     "cities": {
         "create": "Create City",
         "edit": "Edit City",
-        "update": "Update City"
+        "update": "Update City",
+        "view": "View City"
     },
     "kinships": {
         "create": "Create Relationship",
-        "update": "Update Relationship"
+        "update": "Update Relationship",
+        "view": "View Relationship"
     },
     "attendance_types": {
         "create": "Create Attendance Type",
-        "update": "Update Attendance Type"
+        "update": "Update Attendance Type",
+        "view": "View Attendance Type"
     },
     "quoran_parts": {
         "create": "Create Quoran Part",
-        "update": "Update Quoran Part"
+        "update": "Update Quoran Part",
+        "view": "View Quoran Part"
     },
     "main_programs": {
         "create": "Create Main Program",
-        "update": "Update Main Program"
+        "update": "Update Main Program",
+        "view": "View Main Program"
     },
     "academic_levels": {
         "create": "Create Academic Level",
-        "update": "Update Academic Level"
+        "update": "Update Academic Level",
+        "view": "View Academic Level"
     },
     "academic_years": {
         "create": "Create Academic Year",
-        "update": "Update Academic Year"
+        "update": "Update Academic Year",
+        "view": "View Academic Year"
     },
     "location_types": {
         "create": "Create Location Type",
-        "update": "Update Location Type"
+        "update": "Update Location Type",
+        "view": "View Location Type"
     },
     "memorization_program_entity_types": {
         "create": "Create Memorization Program",
-        "update": "Update Memorization Program"
+        "update": "Update Memorization Program",
+        "view": "View Memorization Program"
     },
     "education_program_entity_types": {
         "create": "Create Education Program",
-        "update": "Update Education Program"
+        "update": "Update Education Program",
+        "view": "View Education Program"
     },
     "specifications": {
         "create": "Create Specification",
-        "update": "Update Specification"
+        "update": "Update Specification",
+        "view": "View Specification"
     },
     "activities": {
         "create": "Create Activity",
-        "update": "Update Activity"
+        "update": "Update Activity",
+        "view": "View Activity"
     },
     "entity_categories": {
         "create": "Create Entity Category",
-        "update": "Update Entity Category"
+        "update": "Update Entity Category",
+        "view": "View Entity Category"
     },
     "neighborhoods": {
         "create": "Create Neighborhood",
-        "update": "Update Neighborhood"
+        "update": "Update Neighborhood",
+        "view": "View Neighborhood"
     },
     "branches": {
         "create": "Create Branch",
-        "update": "Update Branch"
+        "update": "Update Branch",
+        "view": "View Branch"
     },
     "session_periods": {
         "create": "Create Session Period",
-        "update": "Update Session Period"
+        "update": "Update Session Period",
+        "view": "View Session Period"
     },
     "about_us": {
         "description": "Manage the About Us page content and visibility"
@@ -341,7 +360,8 @@
     },
     "general_banners": {
         "create": "Create Banner",
-        "update": "Update Banner"
+        "update": "Update Banner",
+        "view": "View Banner"
     },
     "sidebar": {
         "home": "Home",

@@ -13,6 +13,7 @@ export default function InputRFH({
     defaultValue,
     p = 'px-4 py-3',
     onChange,
+    disabled,
     accept
 }) {
     const { t } = useLocale();
@@ -27,6 +28,7 @@ export default function InputRFH({
                 label={label}
                 name={name}
                 options={options}
+                disabled={disabled}
                 placeholder={placeholder}
             />
         );
@@ -72,6 +74,7 @@ export default function InputRFH({
                             : 'border-gray-300'
                     }`}
                     placeholder={t(placeholder) || ''}
+                    disabled={disabled}
                     accept={accept}
                 />
             )}
@@ -79,6 +82,7 @@ export default function InputRFH({
                 <textarea
                     {...register(name)}
                     id={name || ''}
+                    disabled={disabled}
                     className={`w-full ${p} border outline-none rounded-lg focus:border-accent transition-colors duration-200  ${
                         error
                             ? 'border-red-300  focus:border-red-500'

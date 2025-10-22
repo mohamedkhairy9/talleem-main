@@ -54,6 +54,7 @@ export default function FormAcademicYear({
                         error={getNestedError(errors, field.name)}
                         key={field.name}
                         type={field.type}
+                        disabled={viewMode}
                         placeholder={field.placeholder}
                         label={field.label}
                         name={field.name}
@@ -63,12 +64,12 @@ export default function FormAcademicYear({
                         options={generateOptions(options?.[field.name])}
                     />
                 ))}
-            <Btn
+            {!viewMode && (<Btn
                 loading={isPending}
                 className="py-[10px] w-full"
                 type="submit"
                 label="common.submit"
-            />
+            />)}
         </form>
     );
 }

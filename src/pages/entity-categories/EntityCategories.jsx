@@ -10,6 +10,7 @@ import DeleteEntityCategory from './DeleteEntityCategory';
 import useLocale from '@/utils/hooks/global/useLocale';
 import i18next from 'i18next';
 import { getOriginalObject } from '@/utils/helpers/global.fns';
+import ViewEntityCategory from './ViewEntityCategory';
 
 export default function EntityCategories() {
     const { isOpen, toggle } = useIsOpen();
@@ -41,6 +42,12 @@ export default function EntityCategories() {
                 <EditEntityCategory
                     onClose={toggle.edit}
                     oldData={getOriginalObject(isOpen.edit, data?.data)}
+                />
+            )}
+            {isOpen.view && (
+                <ViewEntityCategory
+                    onClose={toggle.view}
+                    oldData={getOriginalObject(isOpen.view, data?.data)}
                 />
             )}
             {isOpen.delete && (

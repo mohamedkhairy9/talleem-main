@@ -10,6 +10,7 @@ import DeleteBranch from './DeleteBranch';
 import useLocale from '@/utils/hooks/global/useLocale';
 import i18next from 'i18next';
 import { getOriginalObject } from '@/utils/helpers/global.fns';
+import ViewBranch from './ViewBranch';
 
 export default function Branches() {
     const { isOpen, toggle } = useIsOpen();
@@ -47,6 +48,12 @@ export default function Branches() {
                 <EditBranch
                     onClose={toggle.edit}
                     oldData={getOriginalObject(isOpen.edit, formData)}
+                />
+            )}
+            {isOpen.view && (
+                <ViewBranch
+                    onClose={toggle.view}
+                    oldData={getOriginalObject(isOpen.view, formData)}
                 />
             )}
             {isOpen.delete && (

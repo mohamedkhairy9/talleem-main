@@ -10,6 +10,7 @@ import DeleteAttendanceType from './DeleteAttendanceType';
 import useLocale from '@/utils/hooks/global/useLocale';
 import i18next from 'i18next';
 import { getOriginalObject } from '@/utils/helpers/global.fns';
+import ViewAttendanceType from './ViewAttendanceTypes';
 
 export default function AttendanceTypes() {
     const { isOpen, toggle } = useIsOpen();
@@ -41,6 +42,12 @@ export default function AttendanceTypes() {
                 <EditAttendanceType
                     onClose={toggle.edit}
                     oldData={getOriginalObject(isOpen.edit, data?.data)}
+                />
+            )}
+            {isOpen.view && (
+                <ViewAttendanceType
+                    onClose={toggle.view}
+                    oldData={getOriginalObject(isOpen.view, data?.data)}
                 />
             )}
             {isOpen.delete && (

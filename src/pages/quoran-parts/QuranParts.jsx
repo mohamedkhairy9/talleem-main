@@ -9,6 +9,7 @@ import EditQuoranPart from './EditQuoranPart';
 import DeleteQuoranPart from './DeleteQuoranPart';
 import useLocale from '@/utils/hooks/global/useLocale';
 import i18next from 'i18next';
+import ViewQuoranPart from './ViewQuoranPart';
 
 export default function QuranParts() {
     const { isOpen, toggle } = useIsOpen();
@@ -41,6 +42,9 @@ export default function QuranParts() {
             {isOpen.add && <CreateQuoranPart onClose={toggle.add} />}
             {isOpen.edit && (
                 <EditQuoranPart onClose={toggle.edit} oldData={isOpen.edit} />
+            )}
+            {isOpen.view && (
+                <ViewQuoranPart onClose={toggle.view} oldData={isOpen.view} />
             )}
             {isOpen.delete && (
                 <DeleteQuoranPart

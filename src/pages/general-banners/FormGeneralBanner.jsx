@@ -83,6 +83,7 @@ export default function FormGeneralBanner({
                                     error={getNestedError(errors, field.name)}
                                     type={field.type}
                                     placeholder={field.placeholder}
+                                    disabled={viewMode}
                                     label={field.label}
                                     name={field.name}
                                     accept={field.accept}
@@ -110,6 +111,7 @@ export default function FormGeneralBanner({
                             key={field.name}
                             type={field.type}
                             placeholder={field.placeholder}
+                            disabled={viewMode}
                             label={field.label}
                             name={field.name}
                             defaultValue={
@@ -119,12 +121,12 @@ export default function FormGeneralBanner({
                         />
                     );
                 })}
-            <Btn
+            {!viewMode && (<Btn
                 loading={isPending}
                 className="py-[10px] w-full"
                 type="submit"
                 label="common.submit"
-            />
+            />)}
         </form>
     );
 }

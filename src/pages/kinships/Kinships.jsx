@@ -10,6 +10,7 @@ import DeleteKinship from './DeleteKinship';
 import useLocale from '@/utils/hooks/global/useLocale';
 import i18next from 'i18next';
 import { getOriginalObject } from '@/utils/helpers/global.fns';
+import ViewKinship from './ViewKinship';
 
 export default function Kinships() {
     const { isOpen, toggle } = useIsOpen();
@@ -41,6 +42,12 @@ export default function Kinships() {
                 <EditKinship
                     onClose={toggle.edit}
                     oldData={getOriginalObject(isOpen.edit, data?.data)}
+                />
+            )}
+            {isOpen.view && (
+                <ViewKinship
+                    onClose={toggle.view}
+                    oldData={getOriginalObject(isOpen.view, data?.data)}
                 />
             )}
             {isOpen.delete && (
