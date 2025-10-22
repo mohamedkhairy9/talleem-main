@@ -235,6 +235,13 @@ export const API_URLS = {
         DETAILS: id => `/online-attendances/${id}`,
         UPDATE: id => `/online-attendances/${id}`,
         DELETE: id => `/online-attendances/${id}`
+    },
+    ENTITIES: {
+        CREATE: '/entities',
+        LIST: '/entities',
+        DETAILS: id => `/entities/${id}`,
+        UPDATE: id => `/entities/${id}`,
+        DELETE: id => `/entities/${id}`
     }
 };
 
@@ -278,5 +285,6 @@ export const API_KEYS = {
     USERS: 'users',
     STUDENTS: 'students',
     COUNTRIES: 'countries',
-    ONLINE_ATTENDANCES: 'online-attendances'
+    ONLINE_ATTENDANCES: 'online-attendances',
+    ENTITIES:'entities'
 };
