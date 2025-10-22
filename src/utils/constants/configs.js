@@ -71,6 +71,11 @@ export const sideMenuTabs = [
                 icon: HiBriefcase
             },
             {
+                titleKey: 'sidebar.countries',
+                path: '/countries',
+                icon: HiGlobe
+            },
+            {
                 titleKey: 'sidebar.cities',
                 path: '/cities',
                 icon: HiLocationMarker

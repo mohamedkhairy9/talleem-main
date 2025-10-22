@@ -30,6 +30,7 @@ import GeneralBanners from '@/pages/general-banners/GeneralBanners';
 import Employees from '@/pages/employees/Employees';
 import Nationalities from '@/pages/nationalities/Nationalities';
 import Users from '@/pages/users/Users';
+import Countries from '@/pages/countries/Countries';
 
 export const routes = [
     {
@@ -159,5 +160,9 @@ export const routes = [
     {
         path: '/users',
         element: <Users />
+    },
+    {
+        path: '/countries',
+        element: <Countries />
     }
 ];

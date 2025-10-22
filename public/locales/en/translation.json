@@ -230,6 +230,17 @@
             "label": "Address",
             "placeholder": "Enter address",
             "min": "Address must be at least 5 characters"
+        },
+        "short_name": {
+            "label": "Short Name",
+            "placeholder": "Enter short name (e.g., USA, ITA)",
+            "min": "Short name must be at least 2 characters",
+            "max": "Short name must not exceed 10 characters"
+        },
+        "phone_code": {
+            "label": "Phone Code",
+            "placeholder": "Enter phone code (e.g., +1, +39)",
+            "pattern": "Phone code must start with + followed by numbers"
         }
     },
     "auth": {
@@ -251,7 +262,9 @@
         "close": "Close",
         "submit": "Submit",
         "yes": "Yes",
-        "no": "No"
+        "no": "No",
+        "cancel": "Cancel",
+        "delete": "Delete"
     },
     "roles": {
         "create": "Create Role",
@@ -372,6 +385,7 @@
         "activity_logs": "Activity Log",
         "academic_qualifications": "Academic Qualifications",
         "jobs": "Jobs",
+        "countries": "Countries",
         "cities": "Cities",
         "neighborhoods": "Neighborhoods",
         "academic_years": "Academic Years",
@@ -410,6 +424,7 @@
         "activity_logs": "Activity Logs",
         "academic_qualifications": "Academic Qualifications",
         "jobs": "Jobs",
+        "countries": "Countries",
         "cities": "Cities",
         "neighborhoods": "Neighborhoods",
         "academic_years": "Academic Years",
@@ -479,6 +494,8 @@
         "role": "Role",
         "guard": "Guard",
         "guard_name": "Guard Name",
+        "country": "Country",
+        "countries": "Countries",
         "city": "City",
         "neighborhood": "Neighborhood",
         "job": "Job",
@@ -527,13 +544,21 @@
         "code": "Code",
         "level": "Level",
         "permission": "Permission",
-        "permissions": "Permissions"
+        "permissions": "Permissions",
+        "short_name": "Short Name",
+        "phone_code": "Phone Code"
     },
     "nationalities": {
         "create": "Create Nationality",
         "edit": "Edit Nationality",
         "view": "View Nationality",
         "delete": "Delete Nationality"
+    },
+    "countries": {
+        "create": "Create Country",
+        "edit": "Edit Country",
+        "view": "View Country",
+        "delete": "Delete Country"
     },
     "users": {
         "create": "Create User",

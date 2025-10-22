@@ -21,7 +21,6 @@ export default function useCustomMutation({
             console.log('data', data);
             
             if (queryKeys && queryKeys.length > 0) {
-                console.log('queryKeys', queryKeys);
                 queryKeys.forEach(key => {
                     queryClient.invalidateQueries({ queryKey: [key] });
                 });

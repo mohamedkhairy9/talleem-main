@@ -221,6 +221,13 @@ export const API_URLS = {
         DETAILS: id => `/students/${id}`,
         UPDATE: id => `/students/${id}`,
         DELETE: id => `/students/${id}`
+    },
+    COUNTRIES: {
+        CREATE: '/countries',
+        LIST: '/countries',
+        DETAILS: id => `/countries/${id}`,
+        UPDATE: id => `/countries/${id}`,
+        DELETE: id => `/countries/${id}`
     }
 };
 
@@ -262,5 +269,6 @@ export const API_KEYS = {
     EMPLOYEES: 'employees',
     NATIONALITIES: 'nationalities',
     USERS: 'users',
-    STUDENTS: 'students'
+    STUDENTS: 'students',
+    COUNTRIES: 'countries'
 };

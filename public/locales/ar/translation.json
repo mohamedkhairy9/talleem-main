@@ -232,6 +232,17 @@
             "label": "العنوان",
             "placeholder": "أدخل العنوان",
             "min": "يجب أن يكون العنوان على الأقل 5 أحرف"
+        },
+        "short_name": {
+            "label": "الاسم المختصر",
+            "placeholder": "أدخل الاسم المختصر (مثال: USA، ITA)",
+            "min": "يجب أن يكون الاسم المختصر على الأقل حرفين",
+            "max": "يجب ألا يتجاوز الاسم المختصر 10 أحرف"
+        },
+        "phone_code": {
+            "label": "رمز الهاتف",
+            "placeholder": "أدخل رمز الهاتف (مثال: +1، +39)",
+            "pattern": "يجب أن يبدأ رمز الهاتف بعلامة + متبوعة بأرقام"
         }
     },
     "auth": {
@@ -253,7 +264,9 @@
         "close": "إغلاق",
         "submit": "إرسال",
         "yes": "نعم",
-        "no": "لا"
+        "no": "لا",
+        "cancel": "إلغاء",
+        "delete": "حذف"
     },
     "roles": {
         "create": "إنشاء دور",
@@ -374,6 +387,7 @@
         "activity_logs": "سجل الحركات",
         "academic_qualifications": "المؤهلات الأكاديمية",
         "jobs": "الوظائف",
+        "countries": "الدول",
         "cities": "المدن",
         "neighborhoods": "الأحياء",
         "academic_years": "الفصول الدراسية",
@@ -412,6 +426,7 @@
         "activity_logs": "سجل الحركات",
         "academic_qualifications": "المؤهلات الأكاديمية",
         "jobs": "الوظائف",
+        "countries": "الدول",
         "cities": "المدن",
         "neighborhoods": "الأحياء",
         "academic_years": "السنوات الأكاديمية",
@@ -481,6 +496,8 @@
         "role": "الدور",
         "guard": "الحارس",
         "guard_name": "اسم الحارس",
+        "country": "الدولة",
+        "countries": "الدول",
         "city": "المدينة",
         "neighborhood": "الحي",
         "job": "الوظيفة",
@@ -529,13 +546,21 @@
         "code": "الكود",
         "level": "المستوى",
         "permission": "الصلاحية",
-        "permissions": "الصلاحيات"
+        "permissions": "الصلاحيات",
+        "short_name": "الاسم المختصر",
+        "phone_code": "رمز الهاتف"
     },
     "nationalities": {
         "create": "إضافة جنسية",
         "edit": "تعديل الجنسية",
         "view": "عرض الجنسية",
         "delete": "حذف الجنسية"
+    },
+    "countries": {
+        "create": "إضافة دولة",
+        "edit": "تعديل الدولة",
+        "view": "عرض الدولة",
+        "delete": "حذف الدولة"
     },
     "users": {
         "create": "إضافة مستخدم",
