@@ -214,6 +214,13 @@ export const API_URLS = {
         DETAILS: id => `/users/${id}`,
         UPDATE: id => `/users/${id}`,
         DELETE: id => `/users/${id}`
+    },
+    STUDENTS: {
+        CREATE: '/students',
+        LIST: '/students',
+        DETAILS: id => `/students/${id}`,
+        UPDATE: id => `/students/${id}`,
+        DELETE: id => `/students/${id}`
     }
 };
 
@@ -254,5 +261,6 @@ export const API_KEYS = {
     GENERAL_BANNERS: 'general-banners',
     EMPLOYEES: 'employees',
     NATIONALITIES: 'nationalities',
-    USERS: 'users'
+    USERS: 'users',
+    STUDENTS: 'students'
 };
