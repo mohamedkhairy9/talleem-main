@@ -57,8 +57,5 @@ export const nationalitiesFields = [
 ];
 
 export const nationalitiesDefaultValues = {
-    country_id: '',
-    'name.en': '',
-    'name.ar': '',
-    status: true
+    status: true,
 };
