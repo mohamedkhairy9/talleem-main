@@ -25,7 +25,8 @@ import {
     HiPhotograph,
     HiIdentification,
     HiGlobe,
-    HiUser
+    HiUser,
+    HiClipboardCheck
 } from 'react-icons/hi';
 import { VscDebugBreakpointLog } from 'react-icons/vsc';
 
@@ -161,6 +162,13 @@ export const sideMenuTabs = [
         titleKey: 'sidebar.users',
         path: '/users',
         icon: HiUser
+    },
+
+    // الحضور الإلكتروني
+    {
+        titleKey: 'sidebar.online_attendances',
+        path: '/online-attendances',
+        icon: HiClipboardCheck
     },
 
     // إعداد السياسات واللافتات العامة

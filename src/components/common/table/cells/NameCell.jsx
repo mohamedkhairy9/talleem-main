@@ -19,7 +19,11 @@ export default function NameCell({ info, directValue }) {
             </div>
             <div>
                 <div className="font-semibold text-gray-900">
-                    {directValue ? directValue : info.getValue()}
+                    {directValue
+                        ? typeof directValue === 'string'
+                            ? directValue
+                            : directValue[currentLocale]
+                        : info.getValue()[currentLocale] || ''}
                 </div>
             </div>
         </div>

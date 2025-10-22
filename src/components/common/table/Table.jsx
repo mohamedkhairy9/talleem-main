@@ -523,7 +523,6 @@ const Table = ({
                     .map(row => row[column.id])
                     .filter(val => val != null && val !== '')
                     .map(el => el[i18next.language] || el);
-                console.log(values);
 
                 return [...new Set(values)].slice(0, 10);
             } catch (error) {

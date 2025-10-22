@@ -243,6 +243,27 @@
             "label": "رمز الهاتف",
             "placeholder": "أدخل رمز الهاتف (مثال: +1، +39)",
             "pattern": "يجب أن يبدأ رمز الهاتف بعلامة + متبوعة بأرقام"
+        },
+        "check_out": {
+            "label": "تاريخ ووقت المغادرة",
+            "placeholder": "اختر تاريخ ووقت المغادرة"
+        },
+        "attendance_type": {
+            "label": "نوع الحضور",
+            "placeholder": "اختر نوع الحضور)",
+            "invalid": "يرجى اختيار تسجيل دخول أو تسجيل خروج"
+        },
+        "attendance_date": {
+            "label": "تاريخ الحضور",
+            "placeholder": "اختر تاريخ الحضور"
+        },
+        "attendance_time": {
+            "label": "وقت الحضور",
+            "placeholder": "اختر وقت الحضور"
+        },
+        "attendance_datetime": {
+            "label": "التاريخ والوقت",
+            "placeholder": "اختر التاريخ والوقت"
         }
     },
     "auth": {
@@ -417,7 +438,8 @@
         "system_online": "النظام متصل",
         "employees": "الموظفين",
         "nationalities": "الجنسيات",
-        "users": "المستخدمين"
+        "users": "المستخدمين",
+        "online_attendances": "الحضور الإلكتروني"
     },
     "table_titles": {
         "general_banners": "البانرات العامة",
@@ -445,7 +467,8 @@
         "branches": "الفروع",
         "employees": "الموظفون",
         "nationalities": "الجنسيات",
-        "users": "المستخدمون"
+        "users": "المستخدمون",
+        "online_attendances": "الحضور الإلكتروني"
     },
     "table": {
         "actions": "الإجراءات",
@@ -548,7 +571,9 @@
         "permission": "الصلاحية",
         "permissions": "الصلاحيات",
         "short_name": "الاسم المختصر",
-        "phone_code": "رمز الهاتف"
+        "phone_code": "رمز الهاتف",
+        "check_in": "تسجيل الدخول",
+        "check_out": "تسجيل الخروج"
     },
     "nationalities": {
         "create": "إضافة جنسية",
@@ -561,6 +586,12 @@
         "edit": "تعديل الدولة",
         "view": "عرض الدولة",
         "delete": "حذف الدولة"
+    },
+    "online_attendances": {
+        "create": "إضافة حضور إلكتروني",
+        "edit": "تعديل الحضور الإلكتروني",
+        "view": "عرض الحضور الإلكتروني",
+        "delete": "حذف الحضور الإلكتروني"
     },
     "users": {
         "create": "إضافة مستخدم",

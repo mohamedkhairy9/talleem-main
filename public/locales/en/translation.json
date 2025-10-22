@@ -241,6 +241,27 @@
             "label": "Phone Code",
             "placeholder": "Enter phone code (e.g., +1, +39)",
             "pattern": "Phone code must start with + followed by numbers"
+        },
+        "check_out": {
+            "label": "Check Out Date & Time",
+            "placeholder": "Select check out date and time"
+        },
+        "attendance_type": {
+            "label": "Attendance Type",
+            "placeholder": "Select attendance type",
+            "invalid": "Please select either Check In or Check Out"
+        },
+        "attendance_date": {
+            "label": "Attendance Date",
+            "placeholder": "Select attendance date"
+        },
+        "attendance_time": {
+            "label": "Attendance Time",
+            "placeholder": "Select attendance time"
+        },
+        "attendance_datetime": {
+            "label": "Date & Time",
+            "placeholder": "Select date and time"
         }
     },
     "auth": {
@@ -415,7 +436,8 @@
         "system_online": "System Online",
         "employees": "Employees",
         "nationalities": "Nationalities",
-        "users": "Users"
+        "users": "Users",
+        "online_attendances": "Online Attendances"
     },
     "table_titles": {
         "general_banners": "General Banners",
@@ -443,7 +465,8 @@
         "branches": "Branches",
         "employees": "Employees",
         "nationalities": "Nationalities",
-        "users": "Users"
+        "users": "Users",
+        "online_attendances": "Online Attendances"
     },
     "table": {
         "actions": "Actions",
@@ -546,7 +569,9 @@
         "permission": "Permission",
         "permissions": "Permissions",
         "short_name": "Short Name",
-        "phone_code": "Phone Code"
+        "phone_code": "Phone Code",
+        "check_in": "Check In",
+        "check_out": "Check Out"
     },
     "nationalities": {
         "create": "Create Nationality",
@@ -559,6 +584,12 @@
         "edit": "Edit Country",
         "view": "View Country",
         "delete": "Delete Country"
+    },
+    "online_attendances": {
+        "create": "Create Online Attendance",
+        "edit": "Edit Online Attendance",
+        "view": "View Online Attendance",
+        "delete": "Delete Online Attendance"
     },
     "users": {
         "create": "Create User",
