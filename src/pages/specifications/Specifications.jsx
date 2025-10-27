@@ -1,9 +1,9 @@
 import React from 'react';
 import { useSpecificationsQuery } from '@/api/hooks/useSpecifications';
 import Table from '@/components/common/table/Table';
-import { specificationsColumns } from './configs';
+import { specificationsColumns, filtersDefaultValues } from './configs';
 import useIsOpen from '@/utils/hooks/global/useIsOpen';
-import usePagination from '@/utils/hooks/global/usePagination';
+import useFiltering from '@/utils/hooks/global/useFiltering';
 import CreateSpecification from './CreateSpecification';
 import EditSpecification from './EditSpecification';
 import DeleteSpecification from './DeleteSpecification';
@@ -11,11 +11,13 @@ import useLocale from '@/utils/hooks/global/useLocale';
 import i18next from 'i18next';
 import { getOriginalObject } from '@/utils/helpers/global.fns';
 import ViewSpecification from './ViewSpecifications';
+import Filters from './Filters';
 
 export default function Specifications() {
     const { isOpen, toggle } = useIsOpen();
-    const { pagination, setPagination } = usePagination();
-    const { data, isLoading, refresh } = useSpecificationsQuery(pagination);
+    const { pagination, handleFilter, filters, setter, setFilters } =
+        useFiltering(filtersDefaultValues);
+    const { data, isLoading, refresh } = useSpecificationsQuery(filters);
     const { t } = useLocale();
 
     const tableData = data?.data?.map(item => ({
@@ -35,7 +37,12 @@ export default function Specifications() {
                 columns={specificationsColumns}
                 toggleModals={toggle}
                 pagination={pagination}
-                setPagination={setPagination}
+                setPagination={setter('pagination')}
+                Filters={
+                    <Filters filters={filters} handleFilter={handleFilter} />
+                }
+                setFilters={setFilters}
+                filters={filters}
             />
             {isOpen.add && <CreateSpecification onClose={toggle.add} />}
             {isOpen.edit && (

@@ -47,3 +47,23 @@ export const specificationsFields = [
         viewMode: true
     }
 ];
+
+export const specificationsFilters = [
+    {
+        name: 'search',
+        type: 'text',
+        placeholder: 'validation.search.placeholder',
+        defaultValue: ''
+    },
+    {
+        name: 'status',
+        type: 'select',
+        placeholder: 'validation.status.placeholder',
+        defaultValue: 1
+    }
+];
+
+export const filtersDefaultValues = {
+    status: 1,
+    search: ''
+};

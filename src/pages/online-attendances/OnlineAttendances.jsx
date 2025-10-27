@@ -1,20 +1,22 @@
 import React from 'react';
 import { useOnlineAttendancesQuery } from '@/api/hooks/useOnlineAttendances';
 import Table from '@/components/common/table/Table';
-import { onlineAttendancesColumns } from './configs';
+import { onlineAttendancesColumns, filtersDefaultValues } from './configs';
 import useIsOpen from '@/utils/hooks/global/useIsOpen';
-import usePagination from '@/utils/hooks/global/usePagination';
+import useFiltering from '@/utils/hooks/global/useFiltering';
 import CreateOnlineAttendance from './CreateOnlineAttendance';
 import EditOnlineAttendance from './EditOnlineAttendance';
 import DeleteOnlineAttendance from './DeleteOnlineAttendance';
 import ViewOnlineAttendance from './ViewOnlineAttendance';
 import useLocale from '@/utils/hooks/global/useLocale';
 import { getOriginalObject } from '@/utils/helpers/global.fns';
+import Filters from './Filters';
 
 export default function OnlineAttendances() {
     const { isOpen, toggle } = useIsOpen();
-    const { pagination, setPagination } = usePagination();
-    const { data, isLoading, refresh } = useOnlineAttendancesQuery(pagination);
+    const { pagination, handleFilter, filters, setter, setFilters } =
+        useFiltering(filtersDefaultValues);
+    const { data, isLoading, refresh } = useOnlineAttendancesQuery(filters);
     const { t } = useLocale();
 
     const formData = data?.data?.map(item => {
@@ -50,7 +52,12 @@ export default function OnlineAttendances() {
                 columns={onlineAttendancesColumns}
                 toggleModals={toggle}
                 pagination={pagination}
-                setPagination={setPagination}
+                setPagination={setter('pagination')}
+                Filters={
+                    <Filters filters={filters} handleFilter={handleFilter} />
+                }
+                setFilters={setFilters}
+                filters={filters}
             />
             {isOpen.add && <CreateOnlineAttendance onClose={toggle.add} />}
             {isOpen.edit && (

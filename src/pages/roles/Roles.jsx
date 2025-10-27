@@ -1,9 +1,9 @@
 import React from 'react';
 import { useRolesQuery } from '@/api/hooks/useRoles';
 import Table from '@/components/common/table/Table';
-import { rolesColumns } from './configs';
+import { rolesColumns, filtersDefaultValues } from './configs';
 import useIsOpen from '@/utils/hooks/global/useIsOpen';
-import usePagination from '@/utils/hooks/global/usePagination';
+import useFiltering from '@/utils/hooks/global/useFiltering';
 import CreateRole from './CreateRole';
 import EditRole from './EditRole';
 import DeleteRole from './DeleteRole';
@@ -11,11 +11,13 @@ import useLocale from '@/utils/hooks/global/useLocale';
 import i18next from 'i18next';
 import { getOriginalObject } from '@/utils/helpers/global.fns';
 import ViewRole from './ViewRole';
+import Filters from './Filters';
 
 export default function Roles() {
     const { isOpen, toggle } = useIsOpen();
-    const { pagination, setPagination } = usePagination();
-    const { data, isLoading, refresh } = useRolesQuery(pagination);
+    const { pagination, handleFilter, filters, setter, setFilters } =
+        useFiltering(filtersDefaultValues);
+    const { data, isLoading, refresh } = useRolesQuery(filters);
     const { t } = useLocale();
 
     console.log('data', data);
@@ -43,7 +45,12 @@ export default function Roles() {
                 columns={rolesColumns}
                 toggleModals={toggle}
                 pagination={pagination}
-                setPagination={setPagination}
+                setPagination={setter('pagination')}
+                Filters={
+                    <Filters filters={filters} handleFilter={handleFilter} />
+                }
+                setFilters={setFilters}
+                filters={filters}
             />
             {isOpen.add && <CreateRole onClose={toggle.add} />}
             {isOpen.edit && (

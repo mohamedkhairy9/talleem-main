@@ -1,9 +1,9 @@
 import React from 'react';
 import { useAttendanceTypesQuery } from '@/api/hooks/useAttendanceTypes';
 import Table from '@/components/common/table/Table';
-import { attendanceTypesColumns } from './configs';
+import { attendanceTypesColumns, filtersDefaultValues } from './configs';
 import useIsOpen from '@/utils/hooks/global/useIsOpen';
-import usePagination from '@/utils/hooks/global/usePagination';
+import useFiltering from '@/utils/hooks/global/useFiltering';
 import CreateAttendanceType from './CreateAttendanceType';
 import EditAttendanceType from './EditAttendanceType';
 import DeleteAttendanceType from './DeleteAttendanceType';
@@ -11,11 +11,13 @@ import useLocale from '@/utils/hooks/global/useLocale';
 import i18next from 'i18next';
 import { getOriginalObject } from '@/utils/helpers/global.fns';
 import ViewAttendanceType from './ViewAttendanceTypes';
+import Filters from './Filters';
 
 export default function AttendanceTypes() {
     const { isOpen, toggle } = useIsOpen();
-    const { pagination, setPagination } = usePagination();
-    const { data, isLoading, refresh } = useAttendanceTypesQuery(pagination);
+    const { pagination, handleFilter, filters, setter, setFilters } =
+        useFiltering(filtersDefaultValues);
+    const { data, isLoading, refresh } = useAttendanceTypesQuery(filters);
     const { t } = useLocale();
 
     const tableData = data?.data?.map(item => ({
@@ -35,7 +37,12 @@ export default function AttendanceTypes() {
                 columns={attendanceTypesColumns}
                 toggleModals={toggle}
                 pagination={pagination}
-                setPagination={setPagination}
+                setPagination={setter('pagination')}
+                Filters={
+                    <Filters filters={filters} handleFilter={handleFilter} />
+                }
+                setFilters={setFilters}
+                filters={filters}
             />
             {isOpen.add && <CreateAttendanceType onClose={toggle.add} />}
             {isOpen.edit && (

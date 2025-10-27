@@ -3,7 +3,6 @@ import { useAcademicLevelsQuery } from '@/api/hooks/useAcademicLevels';
 import Table from '@/components/common/table/Table';
 import { academicLevelsColumns, filtersDefaultValues } from './configs';
 import useIsOpen from '@/utils/hooks/global/useIsOpen';
-import usePagination from '@/utils/hooks/global/usePagination';
 import CreateAcademicLevel from './CreateAcademicLevel';
 import EditAcademicLevel from './EditAcademicLevel';
 import DeleteAcademicLevel from './DeleteAcademicLevel';
@@ -16,7 +15,7 @@ import Filters from './Filters';
 
 export default function AcademicLevels() {
     const { isOpen, toggle } = useIsOpen();
-    const { pagination, handleFilter, filters, setter,setFilters } =
+    const { pagination, handleFilter, filters, setter, setFilters } =
         useFiltering(filtersDefaultValues);
     const { data, isLoading, refresh } = useAcademicLevelsQuery(filters);
     const { t } = useLocale();
@@ -26,8 +25,7 @@ export default function AcademicLevels() {
         name: item.name?.[i18next.language]
     }));
 
-    console.log('filters',filters);
-    
+    console.log('filters', filters);
 
     return (
         <div>

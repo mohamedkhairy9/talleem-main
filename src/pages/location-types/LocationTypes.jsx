@@ -1,9 +1,9 @@
 import React from 'react';
 import { useLocationTypesQuery } from '@/api/hooks/useLocationTypes';
 import Table from '@/components/common/table/Table';
-import { locationTypesColumns } from './configs';
+import { locationTypesColumns, filtersDefaultValues } from './configs';
 import useIsOpen from '@/utils/hooks/global/useIsOpen';
-import usePagination from '@/utils/hooks/global/usePagination';
+import useFiltering from '@/utils/hooks/global/useFiltering';
 import CreateLocationType from './CreateLocationType';
 import EditLocationType from './EditLocationType';
 import DeleteLocationType from './DeleteLocationType';
@@ -11,11 +11,13 @@ import useLocale from '@/utils/hooks/global/useLocale';
 import i18next from 'i18next';
 import { getOriginalObject } from '@/utils/helpers/global.fns';
 import ViewLocationType from './ViewLocationTypes';
+import Filters from './Filters';
 
 export default function LocationTypes() {
     const { isOpen, toggle } = useIsOpen();
-    const { pagination, setPagination } = usePagination();
-    const { data, isLoading, refresh } = useLocationTypesQuery(pagination);
+    const { pagination, handleFilter, filters, setter, setFilters } =
+        useFiltering(filtersDefaultValues);
+    const { data, isLoading, refresh } = useLocationTypesQuery(filters);
     const { t } = useLocale();
 
     const tableData = data?.data?.map(item => ({
@@ -35,7 +37,12 @@ export default function LocationTypes() {
                 columns={locationTypesColumns}
                 toggleModals={toggle}
                 pagination={pagination}
-                setPagination={setPagination}
+                setPagination={setter('pagination')}
+                Filters={
+                    <Filters filters={filters} handleFilter={handleFilter} />
+                }
+                setFilters={setFilters}
+                filters={filters}
             />
             {isOpen.add && <CreateLocationType onClose={toggle.add} />}
             {isOpen.edit && (

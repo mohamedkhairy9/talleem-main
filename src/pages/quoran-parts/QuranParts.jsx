@@ -1,20 +1,22 @@
 import React from 'react';
 import { useQuoranPartsQuery } from '@/api/hooks/useQuoranParts';
 import Table from '@/components/common/table/Table';
-import { quoranPartsColumns } from './configs';
+import { quoranPartsColumns, filtersDefaultValues } from './configs';
 import useIsOpen from '@/utils/hooks/global/useIsOpen';
-import usePagination from '@/utils/hooks/global/usePagination';
+import useFiltering from '@/utils/hooks/global/useFiltering';
 import CreateQuoranPart from './CreateQuoranPart';
 import EditQuoranPart from './EditQuoranPart';
 import DeleteQuoranPart from './DeleteQuoranPart';
 import useLocale from '@/utils/hooks/global/useLocale';
 import i18next from 'i18next';
 import ViewQuoranPart from './ViewQuoranPart';
+import Filters from './Filters';
 
 export default function QuranParts() {
     const { isOpen, toggle } = useIsOpen();
-    const { pagination, setPagination } = usePagination();
-    const { data, isLoading, refresh } = useQuoranPartsQuery(pagination);
+    const { pagination, handleFilter, filters, setter, setFilters } =
+        useFiltering(filtersDefaultValues);
+    const { data, isLoading, refresh } = useQuoranPartsQuery(filters);
     const { t } = useLocale();
 
     const tableData = data?.data?.map(item => ({
@@ -23,7 +25,6 @@ export default function QuranParts() {
     }));
 
     console.log(tableData);
-    
 
     return (
         <div>
@@ -37,7 +38,12 @@ export default function QuranParts() {
                 columns={quoranPartsColumns}
                 toggleModals={toggle}
                 pagination={pagination}
-                setPagination={setPagination}
+                setPagination={setter('pagination')}
+                Filters={
+                    <Filters filters={filters} handleFilter={handleFilter} />
+                }
+                setFilters={setFilters}
+                filters={filters}
                 enableAdd={false}
                 enableEdit={false}
                 enableDelete={false}

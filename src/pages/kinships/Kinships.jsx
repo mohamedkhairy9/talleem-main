@@ -1,9 +1,9 @@
 import React from 'react';
 import { useKinshipsQuery } from '@/api/hooks/useKinships';
 import Table from '@/components/common/table/Table';
-import { kinshipsColumns } from './configs';
+import { kinshipsColumns, filtersDefaultValues } from './configs';
 import useIsOpen from '@/utils/hooks/global/useIsOpen';
-import usePagination from '@/utils/hooks/global/usePagination';
+import useFiltering from '@/utils/hooks/global/useFiltering';
 import CreateKinship from './CreateKinship';
 import EditKinship from './EditKinship';
 import DeleteKinship from './DeleteKinship';
@@ -11,11 +11,13 @@ import useLocale from '@/utils/hooks/global/useLocale';
 import i18next from 'i18next';
 import { getOriginalObject } from '@/utils/helpers/global.fns';
 import ViewKinship from './ViewKinship';
+import Filters from './Filters';
 
 export default function Kinships() {
     const { isOpen, toggle } = useIsOpen();
-    const { pagination, setPagination } = usePagination();
-    const { data, isLoading, refresh } = useKinshipsQuery(pagination);
+    const { pagination, handleFilter, filters, setter, setFilters } =
+        useFiltering(filtersDefaultValues);
+    const { data, isLoading, refresh } = useKinshipsQuery(filters);
     const { t } = useLocale();
 
     const tableData = data?.data?.map(item => ({
@@ -35,7 +37,12 @@ export default function Kinships() {
                 columns={kinshipsColumns}
                 toggleModals={toggle}
                 pagination={pagination}
-                setPagination={setPagination}
+                setPagination={setter('pagination')}
+                Filters={
+                    <Filters filters={filters} handleFilter={handleFilter} />
+                }
+                setFilters={setFilters}
+                filters={filters}
             />
             {isOpen.add && <CreateKinship onClose={toggle.add} />}
             {isOpen.edit && (

@@ -1,9 +1,12 @@
 import React from 'react';
 import { useEducationProgramEntityTypesQuery } from '@/api/hooks/useEducationProgramEntityTypes';
 import Table from '@/components/common/table/Table';
-import { educationProgramEntityTypesColumns } from './configs';
+import {
+    educationProgramEntityTypesColumns,
+    filtersDefaultValues
+} from './configs';
 import useIsOpen from '@/utils/hooks/global/useIsOpen';
-import usePagination from '@/utils/hooks/global/usePagination';
+import useFiltering from '@/utils/hooks/global/useFiltering';
 import CreateEducationProgramEntityType from './CreateEducationProgramEntityType';
 import EditEducationProgramEntityType from './EditEducationProgramEntityType';
 import DeleteEducationProgramEntityType from './DeleteEducationProgramEntityType';
@@ -11,12 +14,14 @@ import useLocale from '@/utils/hooks/global/useLocale';
 import i18next from 'i18next';
 import { getOriginalObject } from '@/utils/helpers/global.fns';
 import ViewEducationProgramEntityType from './ViewEducationProgramEntityType';
+import Filters from './Filters';
 
 export default function EducationPrograms() {
     const { isOpen, toggle } = useIsOpen();
-    const { pagination, setPagination } = usePagination();
+    const { pagination, handleFilter, filters, setter, setFilters } =
+        useFiltering(filtersDefaultValues);
     const { data, isLoading, refresh } =
-        useEducationProgramEntityTypesQuery(pagination);
+        useEducationProgramEntityTypesQuery(filters);
     const { t } = useLocale();
 
     console.log('data', data);
@@ -42,7 +47,12 @@ export default function EducationPrograms() {
                 columns={educationProgramEntityTypesColumns}
                 toggleModals={toggle}
                 pagination={pagination}
-                setPagination={setPagination}
+                setPagination={setter('pagination')}
+                Filters={
+                    <Filters filters={filters} handleFilter={handleFilter} />
+                }
+                setFilters={setFilters}
+                filters={filters}
             />
             {isOpen.add && (
                 <CreateEducationProgramEntityType onClose={toggle.add} />

@@ -1,9 +1,9 @@
 import React from 'react';
 import { useCountriesQuery } from '@/api/hooks/useCountries';
 import Table from '@/components/common/table/Table';
-import { countriesColumns } from './configs';
+import { countriesColumns, filtersDefaultValues } from './configs';
 import useIsOpen from '@/utils/hooks/global/useIsOpen';
-import usePagination from '@/utils/hooks/global/usePagination';
+import useFiltering from '@/utils/hooks/global/useFiltering';
 import CreateCountry from './CreateCountry';
 import EditCountry from './EditCountry';
 import DeleteCountry from './DeleteCountry';
@@ -11,11 +11,13 @@ import ViewCountry from './ViewCountry';
 import useLocale from '@/utils/hooks/global/useLocale';
 import i18next from 'i18next';
 import { getOriginalObject } from '@/utils/helpers/global.fns';
+import Filters from './Filters';
 
 export default function Countries() {
     const { isOpen, toggle } = useIsOpen();
-    const { pagination, setPagination } = usePagination();
-    const { data, isLoading, refresh } = useCountriesQuery(pagination);
+    const { pagination, handleFilter, filters, setter, setFilters } =
+        useFiltering(filtersDefaultValues);
+    const { data, isLoading, refresh } = useCountriesQuery(filters);
     const { t } = useLocale();
 
     const tableData = data?.data?.map(item => ({
@@ -43,7 +45,12 @@ export default function Countries() {
                 columns={countriesColumns}
                 toggleModals={toggle}
                 pagination={pagination}
-                setPagination={setPagination}
+                setPagination={setter('pagination')}
+                Filters={
+                    <Filters filters={filters} handleFilter={handleFilter} />
+                }
+                setFilters={setFilters}
+                filters={filters}
             />
             {isOpen.add && <CreateCountry onClose={toggle.add} />}
             {isOpen.edit && (
