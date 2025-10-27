@@ -1141,11 +1141,11 @@ const Table = ({
                                                         </button>
                                                     )}
                                                 </div>
-                                                {header.column.getCanFilter() && (
+                                                {/* {header.column.getCanFilter() && (
                                                     <FilterDropdown
                                                         column={header.column}
                                                     />
-                                                )}
+                                                )} */}
                                             </div>
                                         </th>
                                     ))}
