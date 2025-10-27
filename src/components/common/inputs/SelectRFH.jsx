@@ -16,7 +16,7 @@ export default function SelectRFH({
     classes,
     placeholder = 'Please select ..'
 }) {
-    const { t } = useLocale();
+    const { t,isRTL } = useLocale();
     const getDefaultValue = () => {
         if (defaultValue !== undefined && defaultValue !== null) {
             if (isMulti) {
@@ -88,7 +88,7 @@ export default function SelectRFH({
                         styles={{
                             control: (provided, state) => ({
                                 ...provided,
-                                padding: '6px 16px',
+                                padding: !isRTL ? '6px 0px 6px 16px' : '6px 16px 6px 0px',
                                 minHeight: '44px',
                                 borderRadius: '8px',
                                 boxShadow: state.isFocused

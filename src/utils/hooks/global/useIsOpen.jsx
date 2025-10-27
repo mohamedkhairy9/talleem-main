@@ -5,14 +5,27 @@ export default function useIsOpen() {
         add: false,
         edit: false,
         delete: false,
-        view: false
+        view: false,
+        assignPermission: false,
+        removePermission: false
     });
 
     const toggle = {
         add: () => setIsOpen({ ...isOpen, add: !isOpen.add }),
-        edit: (value) => setIsOpen({ ...isOpen, edit: value || !isOpen.edit }),
-        delete: (value) => setIsOpen({ ...isOpen, delete: value || !isOpen.delete }),
-        view: (value) => setIsOpen({ ...isOpen, view: value || !isOpen.view })
+        edit: value => setIsOpen({ ...isOpen, edit: value || !isOpen.edit }),
+        delete: value =>
+            setIsOpen({ ...isOpen, delete: value || !isOpen.delete }),
+        view: value => setIsOpen({ ...isOpen, view: value || !isOpen.view }),
+        assignPermission: value =>
+            setIsOpen({
+                ...isOpen,
+                assignPermission: value || !isOpen.assignPermission
+            }),
+        removePermission: value =>
+            setIsOpen({
+                ...isOpen,
+                removePermission: value || !isOpen.removePermission
+            })
     };
 
     return { isOpen, toggle };

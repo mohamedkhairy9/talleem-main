@@ -38,6 +38,10 @@ export default function QuranParts() {
                 toggleModals={toggle}
                 pagination={pagination}
                 setPagination={setPagination}
+                enableAdd={false}
+                enableEdit={false}
+                enableDelete={false}
+                enableView={false}
             />
             {isOpen.add && <CreateQuoranPart onClose={toggle.add} />}
             {isOpen.edit && (

@@ -62,12 +62,14 @@ export default function FormRole({
                         options={generateOptions(options?.[field.name])}
                     />
                 ))}
-            {!viewMode && (<Btn
-                loading={isPending}
-                className="py-[10px] w-full"
-                type="submit"
-                label="common.submit"
-            />)}
+            {!viewMode && (
+                <Btn
+                    loading={isPending}
+                    className="py-[10px] w-full"
+                    type="submit"
+                    label="common.submit"
+                />
+            )}
         </form>
     );
 }

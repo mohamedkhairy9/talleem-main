@@ -73,9 +73,5 @@ export const countriesFields = [
 ];
 
 export const countriesDefaultValues = {
-    'name.en': '',
-    'name.ar': '',
-    short_name: '',
-    phone_code: '',
     status: true
 };

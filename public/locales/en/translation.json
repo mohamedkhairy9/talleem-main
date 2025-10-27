@@ -262,6 +262,10 @@
         "attendance_datetime": {
             "label": "Date & Time",
             "placeholder": "Select date and time"
+        },
+        "permission_ids": {
+            "label": "Permissions",
+            "placeholder": "Select permissions"
         }
     },
     "auth": {
@@ -286,7 +290,9 @@
         "no": "No",
         "cancel": "Cancel",
         "delete": "Delete",
-        "back": "Back"
+        "back": "Back",
+        "wait": "Wait",
+        "are_you_sure_you_want_to_delete_this_item": "Are you sure you want to delete this item?"
     },
     "activity_logs": {
         "view_title": "Activity Log Details",
@@ -309,7 +315,8 @@
     "roles": {
         "create": "Create Role",
         "update": "Update Role",
-        "view": "View Role"
+        "view": "View Role",
+        "assign_permission": "Assign Permissions"
     },
     "academic_qualifications": {
         "create": "Create Academic Qualification",
@@ -437,7 +444,7 @@
         "session_periods": "Session Periods",
         "kinships": "Relationships",
         "attendance_types": "Absence Types",
-        "quoran_parts": "Quran Pages",
+        "quoran_parts": "Quran Parts",
         "main_programs": "Main Programs",
         "memorization_programs": "Memorization Programs",
         "education_programs": "Education Programs",

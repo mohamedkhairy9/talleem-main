@@ -22,6 +22,7 @@ export default function CreateMemorizationProgramEntityType({ onClose }) {
                 options={{
                     status: enabledDisabledOptions
                 }}
+                oldData={{ status: true }}
             />
         </Modal>
     );

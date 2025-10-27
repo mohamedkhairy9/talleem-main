@@ -21,6 +21,7 @@ export default function CreateAcademicQualification({ onClose }) {
                 options={{
                     status: enabledDisabledOptions
                 }}
+                oldData={{ status: true }}
             />
         </Modal>
     );

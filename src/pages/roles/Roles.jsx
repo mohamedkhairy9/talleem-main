@@ -31,8 +31,6 @@ export default function Roles() {
         id: item.id
     }));
 
-    console.log('formData', formData);
-
     return (
         <div>
             <Table

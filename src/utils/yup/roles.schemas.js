@@ -16,3 +16,10 @@ export const rolesSchema = yup.object({
         })
         .required(t('validation.required'))
 });
+
+export const assignPermissionsSchema = yup.object({
+    permission_ids: yup
+        .array()
+        .of(yup.string())
+        .required(t('validation.required'))
+});

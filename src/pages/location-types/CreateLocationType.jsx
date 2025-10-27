@@ -18,6 +18,7 @@ export default function CreateLocationType({ onClose }) {
                 options={{
                     status: enabledDisabledOptions
                 }}
+                oldData={{ status: true }}
             />
         </Modal>
     );

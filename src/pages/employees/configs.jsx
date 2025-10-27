@@ -186,19 +186,5 @@ export const employeesFields = [
 ];
 
 export const employeesDefaultValues = {
-    user_id: '',
-    job_id: '',
-    branch_id: '',
-    entity_id: '',
-    nationality_id: '',
-    academic_qualification_id: '',
-    specification_id: '',
-    national_id: '',
-    phone: '',
-    email: '',
-    date_of_birth: '',
-    city_id: '',
-    years_of_experience: 0,
-    address: '',
     status: true
 };

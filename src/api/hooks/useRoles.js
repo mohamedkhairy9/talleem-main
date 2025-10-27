@@ -56,3 +56,29 @@ export const useDeleteRoleMutation = () => {
         }
     });
 };
+
+export const useAssignPermissionMutation = () => {
+    const queryClient = useQueryClient();
+    return useCustomMutation({
+        mutationFn: data => rolesService.assignPermission(data.roleId, data),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: [API_KEYS.ROLES] });
+        },
+        onError: error => {
+            console.log(error);
+        }
+    });
+};
+
+export const useRemovePermissionMutation = () => {
+    const queryClient = useQueryClient();
+    return useCustomMutation({
+        mutationFn: data => rolesService.removePermission(data.roleId, data),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: [API_KEYS.ROLES] });
+        },
+        onError: error => {
+            console.log(error);
+        }
+    });
+};

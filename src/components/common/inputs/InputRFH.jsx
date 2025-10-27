@@ -14,7 +14,8 @@ export default function InputRFH({
     p = 'px-4 py-3',
     onChange,
     disabled,
-    accept
+    accept,
+    isMulti = false
 }) {
     const { t } = useLocale();
 
@@ -30,6 +31,7 @@ export default function InputRFH({
                 options={options}
                 disabled={disabled}
                 placeholder={placeholder}
+                isMulti={isMulti}
             />
         );
     }

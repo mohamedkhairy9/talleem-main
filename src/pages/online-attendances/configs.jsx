@@ -80,7 +80,5 @@ export const onlineAttendancesFields = [
 ];
 
 export const onlineAttendancesDefaultValues = {
-    attendance_type: '',
-    user_id: '',
-    attendance_datetime: ''
+    status: true
 };

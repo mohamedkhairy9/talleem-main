@@ -9,8 +9,8 @@ i18n.use(HttpApi)
         fallbackLng: 'en',
         lng: localStorage.getItem('language-storage')
             ? JSON.parse(localStorage.getItem('language-storage')).state
-                  ?.language || 'en'
-            : 'en',
+                  ?.language || 'ar'
+            : 'ar',
         debug: false, // Disable debug mode for production
         interpolation: {
             escapeValue: false

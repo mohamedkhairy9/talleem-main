@@ -18,6 +18,7 @@ export default function CreateMainProgram({ onClose }) {
                 options={{
                     status: enabledDisabledOptions
                 }}
+                oldData={{ status: true }}
             />
         </Modal>
     );

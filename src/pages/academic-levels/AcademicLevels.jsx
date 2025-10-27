@@ -11,10 +11,11 @@ import useLocale from '@/utils/hooks/global/useLocale';
 import i18next from 'i18next';
 import { getOriginalObject } from '@/utils/helpers/global.fns';
 import ViewAcademicLevel from './ViewAcademicLevels';
+import useFiltering from '@/utils/hooks/global/useFiltering';
 
 export default function AcademicLevels() {
     const { isOpen, toggle } = useIsOpen();
-    const { pagination, setPagination } = usePagination();
+    const { pagination, setPagination } = useFiltering();
     const { data, isLoading, refresh } = useAcademicLevelsQuery(pagination);
     const { t } = useLocale();
 

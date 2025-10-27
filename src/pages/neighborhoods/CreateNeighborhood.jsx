@@ -20,6 +20,7 @@ export default function CreateNeighborhood({ onClose }) {
                 isPending={isPending}
                 onClose={onClose}
                 options={{ city_id: citiesData?.data }}
+                oldData={{ status: true }}
             />
         </Modal>
     );

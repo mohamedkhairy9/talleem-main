@@ -5,7 +5,7 @@ import { persist } from 'zustand/middleware';
 const useLanguageStore = create(
     persist(
         (set, get) => ({
-            language: localStorage.getItem('i18nextLng') || 'en',
+            language: localStorage.getItem('i18nextLng') || 'ar',
             isRTL: false,
 
             setLanguage: async language => {

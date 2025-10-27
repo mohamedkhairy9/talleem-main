@@ -41,7 +41,7 @@ import {
 } from 'react-icons/md';
 import { useTranslation } from 'react-i18next';
 import useLanguageStore from '@/utils/stores/language.store';
-import { FaEye } from "react-icons/fa";
+import { FaEye } from 'react-icons/fa';
 
 const columnHelper = createColumnHelper();
 
@@ -66,7 +66,8 @@ const Table = ({
     refresh,
     toggleModals,
     pagination,
-    setPagination
+    setPagination,
+    Actions = null
 }) => {
     // Core state
     const { t } = useTranslation();
@@ -176,6 +177,9 @@ const Table = ({
                     >
                         <MdDelete className="w-4 h-4" />
                     </button>
+                )}
+                {Actions && (
+                    <Actions row={row.original} toggleModals={toggleModals} />
                 )}
             </div>
         )
@@ -746,7 +750,9 @@ const Table = ({
                                 {globalFilter && (
                                     <button
                                         onClick={() => setGlobalFilter('')}
-                                        className={`absolute ${isRTL ? 'left-8' : 'right-3'} top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600`}
+                                        className={`absolute ${
+                                            isRTL ? 'left-8' : 'right-3'
+                                        } top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600`}
                                     >
                                         <MdClose className="w-4 h-4" />
                                     </button>

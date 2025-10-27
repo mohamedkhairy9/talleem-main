@@ -95,6 +95,11 @@ export const sideMenuTabs = [
                 titleKey: 'sidebar.branches',
                 path: '/branches',
                 icon: HiOfficeBuilding
+            },
+            {
+                titleKey: 'sidebar.nationalities',
+                path: '/nationalities',
+                icon: HiGlobe
             }
         ]
     },
@@ -148,13 +153,6 @@ export const sideMenuTabs = [
         titleKey: 'sidebar.employees',
         path: '/employees',
         icon: HiIdentification
-    },
-
-    // الجنسيات
-    {
-        titleKey: 'sidebar.nationalities',
-        path: '/nationalities',
-        icon: HiGlobe
     },
 
     // المستخدمين

@@ -57,14 +57,16 @@ export const rolesFields = [
         editMode: true,
         viewMode: true
     }
-    // {
-    //     name: 'status',
-    //     label: 'validation.status.label',
-    //     type: 'select',
-    //     placeholder: 'validation.status.placeholder',
-    // defaultValue: true,
-    //     options: enabledDisabledOptions,
-    //     editMode: true,
-    //     viewMode: true
-    // }
+];
+
+export const assignPermissionsFields = [
+    {
+        name: 'permission_ids',
+        label: 'validation.permission_ids.label',
+        type: 'select',
+        placeholder: 'validation.permission_ids.placeholder',
+        editMode: true,
+        viewMode: true,
+        isMulti: true
+    }
 ];

@@ -126,13 +126,8 @@ export const usersFields = [
 ];
 
 export const usersDefaultValues = {
-    name: '',
-    email: '',
-    password: '',
-    phone: '',
-    branch_id: '',
     locale: 'en',
     current_app_locale: 'en',
-    user_type: 'employee', // Static constant
+    user_type: 'employee',
     status: true
 };

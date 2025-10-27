@@ -30,6 +30,7 @@ export default function CreateBranch({ onClose }) {
                     neighborhood_id: neighborhoodsData?.data,
                     status: enabledDisabledOptions
                 }}
+                oldData={{ status: true }}
             />
         </Modal>
     );

@@ -14,6 +14,7 @@ export default function CreateQuoranPart({ onClose }) {
                 mutate={mutate}
                 isPending={isPending}
                 onClose={onClose}
+                oldData={{ status: true }}
             />
         </Modal>
     );

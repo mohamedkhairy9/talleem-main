@@ -31,10 +31,8 @@ export const API_URLS = {
         REMOVE: (userId, roleId) => `/users/${userId}/roles/${roleId}`
     },
     PERMISSION_ASSIGNMENT: {
-        ADD: (userId, permissionId) =>
-            `/users/${userId}/permissions/${permissionId}`,
-        REMOVE: (userId, permissionId) =>
-            `/users/${userId}/permissions/${permissionId}`
+        ADD: roleId => `/roles/${roleId}/permissions`,
+        REMOVE: roleId => `/roles/${roleId}/permissions`
     },
     NOTIFICATIONS: {
         LIST: '/notifications',
@@ -286,5 +284,5 @@ export const API_KEYS = {
     STUDENTS: 'students',
     COUNTRIES: 'countries',
     ONLINE_ATTENDANCES: 'online-attendances',
-    ENTITIES:'entities'
+    ENTITIES: 'entities'
 };

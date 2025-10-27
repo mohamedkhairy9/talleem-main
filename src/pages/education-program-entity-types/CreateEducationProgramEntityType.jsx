@@ -21,6 +21,7 @@ export default function CreateEducationProgramEntityType({ onClose }) {
                 options={{
                     status: enabledDisabledOptions
                 }}
+                oldData={{ status: true }}
             />
         </Modal>
     );

@@ -39,7 +39,7 @@ export default function Navbar() {
                         >
                             <div className="size-10 rounded-full bg-accent flex items-center justify-center">
                                 <span className="text-base font-medium text-white">
-                                    {user?.name[currentLocale].charAt(0).toUpperCase() || (currentLocale === "en" ? 'U' : "م")}
+                                    {user?.name[currentLocale]?.charAt(0).toUpperCase() || (currentLocale === "en" ? 'U' : "م")}
                                 </span>
                             </div>
 

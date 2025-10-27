@@ -264,6 +264,10 @@
         "attendance_datetime": {
             "label": "التاريخ والوقت",
             "placeholder": "اختر التاريخ والوقت"
+        },
+        "permission_ids": {
+            "label": "الصلاحيات",
+            "placeholder": "اختر الصلاحيات"
         }
     },
     "auth": {
@@ -288,7 +292,9 @@
         "no": "لا",
         "cancel": "إلغاء",
         "delete": "حذف",
-        "back": "رجوع"
+        "back": "رجوع",
+        "wait": "انتظر",
+        "are_you_sure_you_want_to_delete_this_item": "هل أنت متأكد أنك تريد حذف هذا العنصر؟"
     },
     "activity_logs": {
         "view_title": "تفاصيل سجل النشاط",
@@ -311,7 +317,8 @@
     "roles": {
         "create": "إنشاء دور",
         "update": "تحديث الدور",
-        "view": "عرض الدور"
+        "view": "عرض الدور",
+        "assign_permission": "تعيين صلاحيات"
     },
     "academic_qualifications": {
         "create": "إنشاء مؤهل أكاديمي",
