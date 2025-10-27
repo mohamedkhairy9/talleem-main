@@ -261,7 +261,7 @@ const Table = ({
                 .getVisibleFlatColumns()
                 .filter(col => col.id !== 'select' && col.id !== 'actions');
             const headers = visibleColumns
-                .map(col => col.columnDef.header)
+                .map(col => t(col.columnDef.header))
                 .join(',');
             const rows = table.getFilteredRowModel().rows.map(row =>
                 visibleColumns
@@ -395,7 +395,7 @@ const Table = ({
                 .getVisibleFlatColumns()
                 .filter(col => col.id !== 'select' && col.id !== 'actions');
             const headers = visibleColumns
-                .map(col => col.columnDef.header)
+                .map(col => t(col.columnDef.header))
                 .join(',');
             const selectedData = selectedRows.map(row => row.original);
             const rows = selectedData.map(rowData =>
@@ -1058,7 +1058,7 @@ const Table = ({
                                 ))}
                                 <button
                                     onClick={() => {
-                                        console.log('filters',filters);
+                                        console.log('filters', filters);
                                         setColumnFilters([]);
                                         setGlobalFilter('');
                                         setFilters({});
