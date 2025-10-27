@@ -7,7 +7,7 @@ import { usersDefaultValues } from './configs';
 import { useBranchesQuery } from '@/api/hooks/useBranches';
 import Loader from '@/components/common/Loader';
 import { allData } from '@/utils/constants/global.constants';
-import { enabledDisabledOptions } from '@/utils/constants/options';
+import { enabledDisabledOptions, userTypeOptions } from '@/utils/constants/options';
 
 // Locale options
 const localeOptions = [
@@ -34,7 +34,8 @@ export default function CreateUser({ onClose }) {
                     branch_id: branchesData?.data,
                     locale: localeOptions,
                     current_app_locale: localeOptions,
-                    status: enabledDisabledOptions
+                    status: enabledDisabledOptions,
+                    user_type: userTypeOptions
                 }}
             />
         </Modal>

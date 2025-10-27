@@ -72,7 +72,8 @@
         },
         "status": {
             "label": "Status",
-            "placeholder": "Select status"
+            "placeholder": "Select status",
+            "invalid": "Status must be either enabled (1) or disabled (0)"
         },
         "enabled": {
             "label": "Enabled"
@@ -233,6 +234,46 @@
             "label": "Address",
             "placeholder": "Enter address",
             "min": "Address must be at least 5 characters"
+        },
+        "dob": {
+            "label": "Date of Birth",
+            "placeholder": "Select date of birth",
+            "required": "Date of birth is required",
+            "invalid": "Please enter a valid date of birth"
+        },
+        "main_program_id": {
+            "label": "Main Program",
+            "placeholder": "Select main program",
+            "integer": "Main program must be selected",
+            "min": "Please select a valid main program"
+        },
+        "licence_number": {
+            "label": "Licence Number",
+            "placeholder": "Enter licence number",
+            "min": "Licence number must be at least 3 characters",
+            "max": "Licence number must not exceed 50 characters"
+        },
+        "education_program_entity_type_id": {
+            "label": "Education Program Entity Type",
+            "placeholder": "Select education program entity type",
+            "integer": "Education program entity type must be selected",
+            "min": "Please select a valid education program entity type"
+        },
+        "entity_category_id": {
+            "label": "Entity Category",
+            "placeholder": "Select entity category",
+            "integer": "Entity category must be selected",
+            "min": "Please select a valid entity category"
+        },
+        "memorization_amount": {
+            "label": "Memorization Amount",
+            "placeholder": "Enter memorization amount (e.g., 15 Juz)",
+            "min": "Memorization amount is required",
+            "max": "Memorization amount must not exceed 50 characters"
+        },
+        "fles": {
+            "label": "Files",
+            "placeholder": "Select files"
         },
         "short_name": {
             "label": "Short Name",
@@ -407,6 +448,11 @@
         "update": "Update Branch",
         "view": "View Branch"
     },
+    "teachers": {
+        "create": "Create Teacher",
+        "update": "Update Teacher",
+        "view": "View Teacher"
+    },
     "session_periods": {
         "create": "Create Session Period",
         "update": "Update Session Period",
@@ -466,7 +512,8 @@
         "employees": "Employees",
         "nationalities": "Nationalities",
         "users": "Users",
-        "online_attendances": "Online Attendances"
+        "online_attendances": "Online Attendances",
+        "teachers": "Teachers"
     },
     "table_titles": {
         "general_banners": "General Banners",
@@ -495,7 +542,8 @@
         "employees": "Employees",
         "nationalities": "Nationalities",
         "users": "Users",
-        "online_attendances": "Online Attendances"
+        "online_attendances": "Online Attendances",
+        "teachers": "Teachers"
     },
     "table": {
         "actions": "Actions",
@@ -584,6 +632,8 @@
         "national_id": "National ID",
         "years_of_experience": "Years of Experience",
         "date_of_birth": "Date of Birth",
+        "licence_number": "Licence Number",
+        "main_program": "Main Program",
         "nationalities": "Nationalities",
         "nationality": "Nationality",
         "academic_qualification": "Academic Qualification",

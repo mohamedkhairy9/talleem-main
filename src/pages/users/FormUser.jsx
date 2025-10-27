@@ -72,12 +72,14 @@ export default function FormUser({
                         </div>
                     ))}
             </div>
-            {!viewMode && (<Btn
-                loading={isPending}
-                className="py-[10px] w-full"
-                type="submit"
-                label="common.submit"
-            />)}
+            {!viewMode && (
+                <Btn
+                    loading={isPending}
+                    className="py-[10px] w-full"
+                    type="submit"
+                    label="common.submit"
+                />
+            )}
         </form>
     );
 }

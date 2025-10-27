@@ -74,7 +74,8 @@
         },
         "status": {
             "label": "الحالة",
-            "placeholder": "اختر الحالة"
+            "placeholder": "اختر الحالة",
+            "invalid": "يجب أن تكون الحالة إما مفعلة (1) أو معطلة (0)"
         },
         "enabled": {
             "label": "مفعل"
@@ -235,6 +236,46 @@
             "label": "العنوان",
             "placeholder": "أدخل العنوان",
             "min": "يجب أن يكون العنوان على الأقل 5 أحرف"
+        },
+        "dob": {
+            "label": "تاريخ الميلاد",
+            "placeholder": "اختر تاريخ الميلاد",
+            "required": "تاريخ الميلاد مطلوب",
+            "invalid": "الرجاء إدخال تاريخ ميلاد صحيح"
+        },
+        "main_program_id": {
+            "label": "البرنامج الرئيسي",
+            "placeholder": "اختر البرنامج الرئيسي",
+            "integer": "يجب اختيار البرنامج الرئيسي",
+            "min": "يرجى اختيار برنامج رئيسي صحيح"
+        },
+        "licence_number": {
+            "label": "رقم الترخيص",
+            "placeholder": "أدخل رقم الترخيص",
+            "min": "يجب أن يكون رقم الترخيص على الأقل 3 أحرف",
+            "max": "يجب ألا يتجاوز رقم الترخيص 50 حرف"
+        },
+        "education_program_entity_type_id": {
+            "label": "نوع كيان البرنامج التعليمي",
+            "placeholder": "اختر نوع كيان البرنامج التعليمي",
+            "integer": "يجب اختيار نوع كيان البرنامج التعليمي",
+            "min": "يرجى اختيار نوع كيان برنامج تعليمي صحيح"
+        },
+        "entity_category_id": {
+            "label": "فئة الكيان",
+            "placeholder": "اختر فئة الكيان",
+            "integer": "يجب اختيار فئة الكيان",
+            "min": "يرجى اختيار فئة كيان صحيحة"
+        },
+        "memorization_amount": {
+            "label": "كمية الحفظ",
+            "placeholder": "أدخل كمية الحفظ (مثال: 15 جزء)",
+            "min": "كمية الحفظ مطلوبة",
+            "max": "يجب ألا تتجاوز كمية الحفظ 50 حرف"
+        },
+        "fles": {
+            "label": "الملفات",
+            "placeholder": "اختر الملفات"
         },
         "short_name": {
             "label": "الاسم المختصر",
@@ -468,7 +509,8 @@
         "employees": "الموظفين",
         "nationalities": "الجنسيات",
         "users": "المستخدمين",
-        "online_attendances": "الحضور الإلكتروني"
+        "online_attendances": "الحضور الإلكتروني",
+        "teachers": "المعلمين"
     },
     "table_titles": {
         "general_banners": "البانرات العامة",
@@ -497,7 +539,8 @@
         "employees": "الموظفون",
         "nationalities": "الجنسيات",
         "users": "المستخدمون",
-        "online_attendances": "الحضور الإلكتروني"
+        "online_attendances": "الحضور الإلكتروني",
+        "teachers": "المعلمين"
     },
     "table": {
         "actions": "الإجراءات",
@@ -586,6 +629,8 @@
         "national_id": "الرقم القومي",
         "years_of_experience": "سنوات الخبرة",
         "date_of_birth": "تاريخ الميلاد",
+        "licence_number": "رقم الترخيص",
+        "main_program": "البرنامج الرئيسي",
         "nationality": "الجنسية",
         "nationalities": "الجنسيات",
         "academic_qualification": "المؤهل الأكاديمي",
@@ -609,6 +654,11 @@
         "edit": "تعديل الجنسية",
         "view": "عرض الجنسية",
         "delete": "حذف الجنسية"
+    },
+    "teachers": {
+        "create": "إضافة معلم",
+        "update": "تعديل معلم",
+        "view": "عرض معلم"
     },
     "countries": {
         "create": "إضافة دولة",

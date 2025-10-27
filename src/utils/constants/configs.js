@@ -155,6 +155,13 @@ export const sideMenuTabs = [
         icon: HiIdentification
     },
 
+    // المعلمين
+    {
+        titleKey: 'sidebar.teachers',
+        path: '/teachers',
+        icon: HiAcademicCap
+    },
+
     // المستخدمين
     {
         titleKey: 'sidebar.users',

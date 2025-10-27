@@ -240,6 +240,22 @@ export const API_URLS = {
         DETAILS: id => `/entities/${id}`,
         UPDATE: id => `/entities/${id}`,
         DELETE: id => `/entities/${id}`
+    },
+    TEACHERS: {
+        CREATE: '/teachers',
+        LIST: '/teachers',
+        DETAILS: id => `/teachers/${id}`,
+        UPDATE: id => `/teachers/${id}`,
+        DELETE: id => `/teachers/${id}`,
+        IMPORT: '/teacher-import',
+        EXPORT: '/teachers-export'
+    },
+    ENTITY_MANAGERS: {
+        CREATE: '/entity-managers',
+        LIST: '/entity-managers',
+        DETAILS: id => `/entity-managers/${id}`,
+        UPDATE: id => `/entity-managers/${id}`,
+        DELETE: id => `/entity-managers/${id}`
     }
 };
 
@@ -284,5 +300,7 @@ export const API_KEYS = {
     STUDENTS: 'students',
     COUNTRIES: 'countries',
     ONLINE_ATTENDANCES: 'online-attendances',
-    ENTITIES: 'entities'
+    ENTITIES: 'entities',
+    TEACHERS: 'teachers',
+    ENTITY_MANAGERS: 'entity-managers'
 };

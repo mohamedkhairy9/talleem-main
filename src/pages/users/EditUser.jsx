@@ -6,7 +6,7 @@ import { useUpdateUserMutation } from '@/api/hooks/useUsers';
 import { useBranchesQuery } from '@/api/hooks/useBranches';
 import Loader from '@/components/common/Loader';
 import { allData } from '@/utils/constants/global.constants';
-import { enabledDisabledOptions } from '@/utils/constants/options';
+import { enabledDisabledOptions, userTypeOptions } from '@/utils/constants/options';
 
 // Locale options
 const localeOptions = [
@@ -34,7 +34,8 @@ export default function EditUser({ onClose, oldData }) {
                     branch_id: branchesData?.data,
                     locale: localeOptions,
                     current_app_locale: localeOptions,
-                    status: enabledDisabledOptions
+                    status: enabledDisabledOptions,
+                    user_type: userTypeOptions
                 }}
             />
         </Modal>

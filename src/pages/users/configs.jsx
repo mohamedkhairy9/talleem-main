@@ -58,10 +58,18 @@ export const usersColumns = [
 
 export const usersFields = [
     {
-        name: 'name',
-        label: 'validation.users.name.label',
+        name: 'name.en',
+        label: 'validation.name.label.en',
         type: 'text',
-        placeholder: 'validation.users.name.placeholder',
+        placeholder: 'validation.name.placeholder.en',
+        editMode: true,
+        viewMode: true
+    },
+    {
+        name: 'name.ar',
+        label: 'validation.name.label.ar',
+        type: 'text',
+        placeholder: 'validation.name.placeholder.ar',
         editMode: true,
         viewMode: true
     },
@@ -78,8 +86,8 @@ export const usersFields = [
         label: 'validation.users.password.label',
         type: 'password',
         placeholder: 'validation.users.password.placeholder',
-        editMode: false, // Password not shown in edit mode for security
-        viewMode: false // Password not shown in view mode for security
+        editMode: false,
+        viewMode: false
     },
     {
         name: 'phone',
@@ -94,6 +102,14 @@ export const usersFields = [
         label: 'validation.users.branch_id.label',
         type: 'select',
         placeholder: 'validation.users.branch_id.placeholder',
+        editMode: true,
+        viewMode: true
+    },
+    {
+        name: 'user_type',
+        label: 'validation.users.user_type.label',
+        type: 'select',
+        placeholder: 'validation.users.user_type.placeholder',
         editMode: true,
         viewMode: true
     },

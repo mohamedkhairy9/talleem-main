@@ -3,9 +3,17 @@ import { t } from 'i18next';
 
 export const usersSchema = yup.object().shape({
     name: yup
-        .string()
-        .required(t('validation.required'))
-        .min(2, 'Name must be at least 2 characters'),
+        .object({
+            en: yup
+                .string()
+                .required(t('validation.required'))
+                .min(2, t('validation.name.en_min')),
+            ar: yup
+                .string()
+                .required(t('validation.required'))
+                .min(2, t('validation.name.ar_min'))
+        })
+        .required(t('validation.required')),
     email: yup
         .string()
         .required(t('validation.required'))
@@ -33,9 +41,8 @@ export const usersSchema = yup.object().shape({
         .string()
         .required(t('validation.required'))
         .oneOf(['en', 'ar'], t('validation.current_app_locale.invalid')),
-    status: yup.boolean().required(t('validation.required')),
     user_type: yup
         .string()
         .required(t('validation.required'))
-        .oneOf(['employee'], t('validation.user_type.invalid'))
+        .oneOf(['entity', 'employee', 'manager', 'teacher'], t('validation.user_type.invalid')),
 });
