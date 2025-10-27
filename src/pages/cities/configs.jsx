@@ -59,6 +59,6 @@ export const citiesFilters = [
 ];
 
 export const filtersDefaultValues = {
-    status: 1,
+    status: true,
     search: ''
 };

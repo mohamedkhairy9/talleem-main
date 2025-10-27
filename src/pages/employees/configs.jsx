@@ -205,6 +205,6 @@ export const employeesFilters = [
 ];
 
 export const filtersDefaultValues = {
-    status: 1,
+    status: true,
     search: ''
 };

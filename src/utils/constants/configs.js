@@ -169,6 +169,13 @@ export const sideMenuTabs = [
         icon: HiUserGroup
     },
 
+    // إدارات الفروع
+    {
+        titleKey: 'sidebar.branch_administrations',
+        path: '/branch-administrations',
+        icon: HiOfficeBuilding
+    },
+
     // المستخدمين
     {
         titleKey: 'sidebar.users',

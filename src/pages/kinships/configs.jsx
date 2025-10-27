@@ -64,6 +64,6 @@ export const kinshipsFilters = [
 ];
 
 export const filtersDefaultValues = {
-    status: 1,
+    status: true,
     search: ''
 };

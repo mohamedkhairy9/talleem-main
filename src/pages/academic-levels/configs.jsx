@@ -62,6 +62,6 @@ export const academicLevelsFilters = [
 ];
 
 export const filtersDefaultValues = {
-    status: 1,
+    status: true,
     search: ''
 };

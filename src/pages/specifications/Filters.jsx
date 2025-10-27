@@ -7,10 +7,7 @@ import FilterText from '@/components/common/inputs/FilterText';
 
 export default function Filters({ filters, handleFilter }) {
     const options = {
-        status: enabledDisabledOptions.map(option => ({
-            label: option.label,
-            value: option.value ? 1 : 0
-        }))
+        status: enabledDisabledOptions
     };
 
     return specificationsFilters.map(filter =>

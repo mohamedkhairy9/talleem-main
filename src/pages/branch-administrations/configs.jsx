@@ -1,21 +1,28 @@
-import i18next from 'i18next';
 import Cell from '@/components/common/table/cells/Cell';
 import DateCell from '@/components/common/table/cells/DateCell';
+import EnabledCell from '@/components/common/table/cells/EnabledCell';
 import NameCell from '@/components/common/table/cells/NameCell';
 import { createColumnHelper } from '@tanstack/react-table';
 import React from 'react';
-import { enabledDisabledOptions } from '@/utils/constants/options';
 
 const columnHelper = createColumnHelper();
 
-export const rolesColumns = [
-    columnHelper.accessor('name', {
-        header: 'table_headers.role',
-        cell: info => <NameCell directValue={info.row.original.display_name} />
+export const branchAdministrationsColumns = [
+    columnHelper.accessor('branch', {
+        header: 'table_headers.branch',
+        cell: info => <NameCell directValue={info.row.original.branch} />
     }),
-    columnHelper.accessor('guard_name', {
-        header: 'table_headers.guard',
-        cell: info => <Cell value={info.getValue()} />
+    columnHelper.accessor('user', {
+        header: 'table_headers.user',
+        cell: info => <NameCell directValue={info.row.original.user} />
+    }),
+    columnHelper.accessor('status', {
+        header: 'table_headers.status',
+        cell: info => {
+            const status = info.getValue();
+            const isEnabled = status === 1 || status === true;
+            return <EnabledCell isEnabled={isEnabled} />;
+        }
     }),
     columnHelper.accessor('created_at', {
         header: 'table_headers.created_at',
@@ -24,20 +31,20 @@ export const rolesColumns = [
     })
 ];
 
-export const rolesFields = [
+export const branchAdministrationsFields = [
     {
-        name: 'display_name.en',
-        label: 'validation.name.label.en',
-        type: 'text',
-        placeholder: 'validation.name.placeholder.en',
+        name: 'branch_id',
+        label: 'validation.branch_id.label',
+        type: 'select',
+        placeholder: 'validation.branch_id.placeholder',
         editMode: true,
         viewMode: true
     },
     {
-        name: 'display_name.ar',
-        label: 'validation.name.label.ar',
-        type: 'text',
-        placeholder: 'validation.name.placeholder.ar',
+        name: 'user_id',
+        label: 'validation.user_id.label',
+        type: 'select',
+        placeholder: 'validation.user_id.placeholder',
         editMode: true,
         viewMode: true
     },
@@ -56,22 +63,26 @@ export const rolesFields = [
         placeholder: 'validation.description.placeholder.ar',
         editMode: true,
         viewMode: true
-    }
-];
-
-export const assignPermissionsFields = [
+    },
     {
-        name: 'permission_ids',
-        label: 'validation.permission_ids.label',
+        name: 'status',
+        label: 'validation.status.label',
         type: 'select',
-        placeholder: 'validation.permission_ids.placeholder',
+        placeholder: 'validation.status.placeholder',
         editMode: true,
-        viewMode: true,
-        isMulti: true
+        viewMode: true
     }
 ];
 
-export const rolesFilters = [
+export const branchAdministrationsDefaultValues = {
+    description: {
+        en: '',
+        ar: ''
+    },
+    status: true
+};
+
+export const branchAdministrationsFilters = [
     {
         name: 'search',
         type: 'text',
@@ -87,6 +98,6 @@ export const rolesFilters = [
 ];
 
 export const filtersDefaultValues = {
-    status: true,
-    search: ''
+    search: '',
+    status: true
 };

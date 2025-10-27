@@ -256,6 +256,13 @@ export const API_URLS = {
         DETAILS: id => `/entity-managers/${id}`,
         UPDATE: id => `/entity-managers/${id}`,
         DELETE: id => `/entity-managers/${id}`
+    },
+    BRANCH_ADMINISTRATIONS: {
+        CREATE: '/branch-administrations',
+        LIST: '/branch-administrations',
+        DETAILS: id => `/branch-administrations/${id}`,
+        UPDATE: id => `/branch-administrations/${id}`,
+        DELETE: id => `/branch-administrations/${id}`
     }
 };
 
@@ -302,5 +309,6 @@ export const API_KEYS = {
     ONLINE_ATTENDANCES: 'online-attendances',
     ENTITIES: 'entities',
     TEACHERS: 'teachers',
-    ENTITY_MANAGERS: 'entity-managers'
+    ENTITY_MANAGERS: 'entity-managers',
+    BRANCH_ADMINISTRATIONS: 'branch-administrations'
 };

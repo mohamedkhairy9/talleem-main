@@ -76,6 +76,6 @@ export const nationalitiesFilters = [
 ];
 
 export const filtersDefaultValues = {
-    status: 1,
+    status: true,
     search: ''
 };

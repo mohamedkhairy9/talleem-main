@@ -53,6 +53,6 @@ export const quoranPartsFilters = [
 ];
 
 export const filtersDefaultValues = {
-    status: 1,
+    status: true,
     search: ''
 };

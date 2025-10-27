@@ -33,6 +33,7 @@ export default function FormCity({
         console.log('data', formData);
         mutate(formData, {
             onSuccess: () => {
+                console.log('onSuccess');
                 onClose();
             }
         });
@@ -59,16 +60,20 @@ export default function FormCity({
                         disabled={viewMode}
                         label={field.label}
                         name={field.name}
-                        defaultValue={oldData?.[field.name] || field.defaultValue}
+                        defaultValue={
+                            oldData?.[field.name] || field.defaultValue
+                        }
                         options={generateOptions(options?.[field.name])}
                     />
                 ))}
-            {!viewMode && (<Btn
-                loading={isPending}
-                className="py-[10px] w-full"
-                type="submit"
-                label="common.submit"
-            />)}
+            {!viewMode && (
+                <Btn
+                    loading={isPending}
+                    className="py-[10px] w-full"
+                    type="submit"
+                    label="common.submit"
+                />
+            )}
         </form>
     );
 }

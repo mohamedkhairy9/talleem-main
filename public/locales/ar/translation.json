@@ -538,7 +538,8 @@
         "users": "المستخدمين",
         "online_attendances": "الحضور الإلكتروني",
         "teachers": "المعلمين",
-        "entity_managers": "مديري الكيانات"
+        "entity_managers": "مديري الكيانات",
+        "branch_administrations": "إدارات الفروع"
     },
     "table_titles": {
         "general_banners": "البانرات العامة",
@@ -694,6 +695,11 @@
         "create": "إضافة مدير كيان",
         "update": "تعديل مدير كيان",
         "view": "عرض مدير كيان"
+    },
+    "branch_administrations": {
+        "create": "إضافة إدارة فرع",
+        "update": "تعديل إدارة فرع",
+        "view": "عرض إدارة فرع"
     },
     "countries": {
         "create": "إضافة دولة",

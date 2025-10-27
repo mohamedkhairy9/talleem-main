@@ -102,6 +102,6 @@ export const branchesFilters = [
 ];
 
 export const filtersDefaultValues = {
-    status: 1,
+    status: true,
     search: ''
 };

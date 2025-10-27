@@ -485,6 +485,11 @@
         "update": "Update Entity Manager",
         "view": "View Entity Manager"
     },
+    "branch_administrations": {
+        "create": "Create Branch Administration",
+        "update": "Update Branch Administration",
+        "view": "View Branch Administration"
+    },
     "session_periods": {
         "create": "Create Session Period",
         "update": "Update Session Period",
@@ -577,7 +582,8 @@
         "users": "Users",
         "online_attendances": "Online Attendances",
         "teachers": "Teachers",
-        "entity_managers": "Entity Managers"
+        "entity_managers": "Entity Managers",
+        "branch_administrations": "Branch Administrations"
     },
     "table": {
         "actions": "Actions",
