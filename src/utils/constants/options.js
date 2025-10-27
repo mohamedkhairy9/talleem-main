@@ -14,3 +14,8 @@ export const userTypeOptions = [
     { label: { ar: 'مدير', en: 'manager' }, value: 'manager' },
     { label: { ar: 'مدرس', en: 'teacher' }, value: 'teacher' }
 ];
+
+export const genderOptions = [
+    { label: { ar: 'ذكر', en: 'Male' }, value: 'male' },
+    { label: { ar: 'أنثى', en: 'Female' }, value: 'female' }
+];

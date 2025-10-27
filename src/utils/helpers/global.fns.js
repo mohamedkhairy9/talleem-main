@@ -19,15 +19,44 @@ export const prepareFormData = data => {
         }
         // Handle Arrays
         else if (Array.isArray(value)) {
-            value.forEach((item, idx) => {
-                appendToFormData(`${key}[${idx}]`, item);
-            });
+            // Check if it's an array of Files
+            const isFileArray = value.length > 0 && value[0] instanceof File;
+
+            if (isFileArray) {
+                // For file arrays, append each file with files[] notation
+                value.forEach(file => {
+                    if (file instanceof File) {
+                        formData.append(`${key}[]`, file);
+                    }
+                });
+            } else {
+                // For other arrays, use indexed notation
+                value.forEach((item, idx) => {
+                    appendToFormData(`${key}[${idx}]`, item);
+                });
+            }
         }
         // Handle nested objects (but not File or FileList)
         else if (typeof value === 'object') {
-            Object.entries(value).forEach(([subKey, subValue]) => {
-                appendToFormData(`${key}.${subKey}`, subValue);
-            });
+            // Special handling for multilingual fields (name, description, etc.)
+            // Check if it's a multilingual object with 'en' and/or 'ar' keys
+            const isMultilingual =
+                Object.prototype.hasOwnProperty.call(value, 'en') ||
+                Object.prototype.hasOwnProperty.call(value, 'ar');
+
+            if (isMultilingual) {
+                // Use bracket notation: name[en], name[ar]
+                Object.entries(value).forEach(([subKey, subValue]) => {
+                    if (subValue !== null && subValue !== undefined) {
+                        formData.append(`${key}[${subKey}]`, subValue);
+                    }
+                });
+            } else {
+                // Use dot notation for other nested objects
+                Object.entries(value).forEach(([subKey, subValue]) => {
+                    appendToFormData(`${key}.${subKey}`, subValue);
+                });
+            }
         }
         // Handle primitives (string, number, boolean)
         else {
@@ -43,7 +72,6 @@ export const prepareFormData = data => {
 };
 
 export function generateOptions(arr = [], valueKey, labelKey) {
-
     if (arr?.length > 0) {
         return arr.map(opt => ({
             label:
@@ -118,7 +146,6 @@ export const getOriginalObject = (identfier, arr = []) => {
     }
     return arr.find(el => el.id == id);
 };
-
 
 export function onlyDate(date) {
     return date ? date.split('T')[0] : null;

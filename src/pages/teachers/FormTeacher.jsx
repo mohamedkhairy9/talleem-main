@@ -22,7 +22,7 @@ export default function FormTeacher({
         schema,
         defaultValues: {
             ...oldData,
-            dob: onlyDate(oldData?.dob),
+            dob: onlyDate(oldData?.dob)
         }
     });
 
@@ -59,6 +59,7 @@ export default function FormTeacher({
                             {field.type === 'file' ? (
                                 <FileInputRFH
                                     register={register}
+                                    control={control}
                                     error={getNestedError(errors, field.name)}
                                     placeholder={field.placeholder}
                                     disabled={viewMode}
@@ -81,7 +82,10 @@ export default function FormTeacher({
                                     options={generateOptions(
                                         options?.[field.name]
                                     )}
-                                    defaultValue={oldData?.[field.name] || field.defaultValue}
+                                    defaultValue={
+                                        oldData?.[field.name] ||
+                                        field.defaultValue
+                                    }
                                 />
                             )}
                         </div>

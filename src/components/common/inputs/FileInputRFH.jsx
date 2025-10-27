@@ -11,13 +11,62 @@ export default function FileInputRFH({
     disabled,
     accept,
     multiple = false,
-    defaultValue = []
+    defaultValue = [],
+    setValue
 }) {
     const { t } = useLocale();
-    const [files, setFiles] = useState(defaultValue || []);
+    const [files, setFiles] = useState([]);
     const [previews, setPreviews] = useState([]);
     const fileInputRef = useRef(null);
     const registered = register(name);
+
+    // Initialize with default values - separate File objects from URL objects
+    useEffect(() => {
+        if (defaultValue && defaultValue.length > 0) {
+            const initialFiles = [];
+            const initialPreviews = [];
+
+            defaultValue.forEach(item => {
+                // Check if it's a File object
+                if (item instanceof File) {
+                    initialFiles.push(item);
+                    // Create preview for File
+                    if (item.type.startsWith('image/')) {
+                        initialPreviews.push({
+                            file: item,
+                            preview: URL.createObjectURL(item),
+                            type: 'image'
+                        });
+                    } else {
+                        initialPreviews.push({
+                            file: item,
+                            preview: null,
+                            type: 'file',
+                            name: item.name,
+                            size: item.size
+                        });
+                    }
+                }
+                // Check if it's a file object with URL (from API)
+                else if (item && typeof item === 'object' && item.url) {
+                    initialPreviews.push({
+                        file: null, // Not a File object, just a reference
+                        preview: item.url,
+                        type: item.url.match(/\.(jpg|jpeg|png|gif|webp)$/i)
+                            ? 'image'
+                            : 'file',
+                        name: item.name,
+                        size: item.size,
+                        url: item.url,
+                        isExisting: true // Flag to indicate this is an existing file
+                    });
+                }
+            });
+
+            setFiles(initialFiles);
+            setPreviews(initialPreviews);
+        }
+    }, [defaultValue]);
 
     const handleFileChange = e => {
         const selectedFiles = Array.from(e.target.files || []);
@@ -64,38 +113,62 @@ export default function FileInputRFH({
             multiple ? [...prev, ...newPreviews] : newPreviews
         );
 
-        // Update the input value for react-hook-form
-        const dataTransfer = new DataTransfer();
-        newFiles.forEach(file => dataTransfer.items.add(file));
-        e.target.files = dataTransfer.files;
-        registered.onChange(e);
+        // Update react-hook-form with the files array
+        if (setValue) {
+            setValue(name, newFiles, { shouldValidate: true });
+        } else {
+            // Fallback: Update the input value for react-hook-form
+            const dataTransfer = new DataTransfer();
+            newFiles.forEach(file => dataTransfer.items.add(file));
+            e.target.files = dataTransfer.files;
+            registered.onChange(e);
+        }
     };
 
     const removeFile = index => {
-        const newFiles = files.filter((_, i) => i !== index);
+        const previewToRemove = previews[index];
+
+        // Only remove File objects from files array, not existing URL objects
+        const newFiles = files.filter((_, i) => {
+            // Find the corresponding file index by checking previews
+            return (
+                previews[i]?.file !== previewToRemove?.file ||
+                previewToRemove?.isExisting
+            );
+        });
+
         const newPreviews = previews.filter((_, i) => i !== index);
 
-        // Cleanup preview URL before removing
-        if (previews[index]?.preview && previews[index].type === 'image') {
-            URL.revokeObjectURL(previews[index].preview);
+        // Cleanup preview URL before removing (only for File objects, not URLs)
+        if (
+            previewToRemove?.preview &&
+            previewToRemove.type === 'image' &&
+            !previewToRemove.isExisting
+        ) {
+            URL.revokeObjectURL(previewToRemove.preview);
         }
 
         setFiles(newFiles);
         setPreviews(newPreviews);
 
-        // Update the input value
-        const dataTransfer = new DataTransfer();
-        newFiles.forEach(file => dataTransfer.items.add(file));
-        if (fileInputRef.current) {
-            fileInputRef.current.files = dataTransfer.files;
+        // Update react-hook-form with only File objects (not existing URL objects)
+        if (setValue) {
+            setValue(name, newFiles, { shouldValidate: true });
+        } else {
+            // Fallback: Update the input value
+            const dataTransfer = new DataTransfer();
+            newFiles.forEach(file => dataTransfer.items.add(file));
+            if (fileInputRef.current) {
+                fileInputRef.current.files = dataTransfer.files;
 
-            // Trigger onChange for react-hook-form without re-running handleFileChange
-            // We manually update the form state
-            const syntheticEvent = {
-                target: fileInputRef.current,
-                currentTarget: fileInputRef.current
-            };
-            registered.onChange(syntheticEvent);
+                // Trigger onChange for react-hook-form without re-running handleFileChange
+                // We manually update the form state
+                const syntheticEvent = {
+                    target: fileInputRef.current,
+                    currentTarget: fileInputRef.current
+                };
+                registered.onChange(syntheticEvent);
+            }
         }
     };
 
@@ -185,7 +258,7 @@ export default function FileInputRFH({
                             >
                                 {preview.type === 'image' ? (
                                     <img
-                                        src={preview.preview}
+                                        src={preview.preview || preview.url}
                                         alt={`Preview ${index + 1}`}
                                         className="w-full h-32 object-cover"
                                     />
@@ -197,9 +270,16 @@ export default function FileInputRFH({
                                         <p className="text-xs text-gray-600 text-center truncate w-full px-1">
                                             {preview.name}
                                         </p>
-                                        <p className="text-xs text-gray-400">
-                                            {formatFileSize(preview.size)}
-                                        </p>
+                                        {preview.size && (
+                                            <p className="text-xs text-gray-400">
+                                                {typeof preview.size ===
+                                                'string'
+                                                    ? preview.size
+                                                    : formatFileSize(
+                                                          preview.size
+                                                      )}
+                                            </p>
+                                        )}
                                     </div>
                                 )}
 
@@ -218,34 +298,50 @@ export default function FileInputRFH({
                 )}
 
                 {/* File List (for non-previewable files) */}
-                {files.length > 0 && previews.length === 0 && (
-                    <div className="space-y-2">
-                        {files.map((file, index) => (
-                            <div
-                                key={index}
-                                className="flex items-center justify-between p-2 bg-gray-50 rounded border border-gray-200"
-                            >
-                                <div className="flex-1 min-w-0">
-                                    <p className="text-sm text-gray-700 truncate">
-                                        {file.name}
-                                    </p>
-                                    <p className="text-xs text-gray-500">
-                                        {formatFileSize(file.size)}
-                                    </p>
-                                </div>
-                                {!disabled && (
-                                    <button
-                                        type="button"
-                                        onClick={() => removeFile(index)}
-                                        className="ml-2 text-red-500 hover:text-red-700"
+                {previews.length > 0 &&
+                    previews.some(p => p.type === 'file' && !p.preview) && (
+                        <div className="space-y-2">
+                            {previews
+                                .filter(p => p.type === 'file' && !p.preview)
+                                .map((preview, index) => (
+                                    <div
+                                        key={index}
+                                        className="flex items-center justify-between p-2 bg-gray-50 rounded border border-gray-200"
                                     >
-                                        <HiX className="w-5 h-5" />
-                                    </button>
-                                )}
-                            </div>
-                        ))}
-                    </div>
-                )}
+                                        <div className="flex-1 min-w-0">
+                                            <p className="text-sm text-gray-700 truncate">
+                                                {preview.name}
+                                            </p>
+                                            {preview.size && (
+                                                <p className="text-xs text-gray-500">
+                                                    {typeof preview.size ===
+                                                    'string'
+                                                        ? preview.size
+                                                        : formatFileSize(
+                                                              preview.size
+                                                          )}
+                                                </p>
+                                            )}
+                                        </div>
+                                        {!disabled && (
+                                            <button
+                                                type="button"
+                                                onClick={() => {
+                                                    const originalIndex =
+                                                        previews.findIndex(
+                                                            p => p === preview
+                                                        );
+                                                    removeFile(originalIndex);
+                                                }}
+                                                className="ml-2 text-red-500 hover:text-red-700"
+                                            >
+                                                <HiX className="w-5 h-5" />
+                                            </button>
+                                        )}
+                                    </div>
+                                ))}
+                        </div>
+                    )}
             </div>
 
             {error && (

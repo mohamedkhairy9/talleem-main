@@ -107,6 +107,12 @@
             "size": "يجب أن يكون حجم الصورة أقل من 5 ميجابايت",
             "type": "يجب أن تكون الصورة بصيغة JPEG أو PNG أو WEBP"
         },
+        "profile_image": {
+            "label": "صورة الملف الشخصي",
+            "placeholder": "رفع صورة الملف الشخصي",
+            "size": "يجب أن يكون حجم الصورة أقل من 5 ميجابايت",
+            "type": "يجب أن تكون الصورة بصيغة JPEG أو PNG أو WEBP"
+        },
         "user_id": {
             "label": "المستخدم",
             "placeholder": "اختر المستخدم",
@@ -276,6 +282,27 @@
         "fles": {
             "label": "الملفات",
             "placeholder": "اختر الملفات"
+        },
+        "gender": {
+            "label": "الجنس",
+            "placeholder": "اختر الجنس",
+            "invalid": "يجب أن يكون الجنس إما ذكر أو أنثى"
+        },
+        "manager_phone": {
+            "label": "هاتف المدير",
+            "placeholder": "أدخل رقم هاتف المدير",
+            "invalid": "الرجاء إدخال رقم هاتف صحيح"
+        },
+        "manager_email": {
+            "label": "بريد المدير الإلكتروني",
+            "placeholder": "أدخل بريد المدير الإلكتروني",
+            "invalid": "الرجاء إدخال بريد إلكتروني صحيح"
+        },
+        "academic_level_id": {
+            "label": "المستوى الأكاديمي",
+            "placeholder": "اختر المستوى الأكاديمي",
+            "integer": "يجب اختيار المستوى الأكاديمي",
+            "min": "يرجى اختيار مستوى أكاديمي صحيح"
         },
         "short_name": {
             "label": "الاسم المختصر",
@@ -510,7 +537,8 @@
         "nationalities": "الجنسيات",
         "users": "المستخدمين",
         "online_attendances": "الحضور الإلكتروني",
-        "teachers": "المعلمين"
+        "teachers": "المعلمين",
+        "entity_managers": "مديري الكيانات"
     },
     "table_titles": {
         "general_banners": "البانرات العامة",
@@ -540,7 +568,8 @@
         "nationalities": "الجنسيات",
         "users": "المستخدمون",
         "online_attendances": "الحضور الإلكتروني",
-        "teachers": "المعلمين"
+        "teachers": "المعلمين",
+        "entity_managers": "مديري الكيانات"
     },
     "table": {
         "actions": "الإجراءات",
@@ -631,11 +660,12 @@
         "date_of_birth": "تاريخ الميلاد",
         "licence_number": "رقم الترخيص",
         "main_program": "البرنامج الرئيسي",
+        "gender": "الجنس",
+        "entity": "الكيان",
         "nationality": "الجنسية",
         "nationalities": "الجنسيات",
         "academic_qualification": "المؤهل الأكاديمي",
         "specification": "التخصص",
-        "entity": "الكيان",
         "link": "الرابط",
         "image": "الصورة",
         "start_date": "تاريخ البداية",
@@ -659,6 +689,11 @@
         "create": "إضافة معلم",
         "update": "تعديل معلم",
         "view": "عرض معلم"
+    },
+    "entity_managers": {
+        "create": "إضافة مدير كيان",
+        "update": "تعديل مدير كيان",
+        "view": "عرض مدير كيان"
     },
     "countries": {
         "create": "إضافة دولة",

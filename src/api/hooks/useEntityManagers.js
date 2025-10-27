@@ -3,6 +3,7 @@ import { entityManagersService } from '../services/entityManagers.service';
 import { API_KEYS } from '../endpoints';
 import useCustomQuery from '../../utils/hooks/global/useCustomQuery';
 import useCustomMutation from '../../utils/hooks/global/useCustomMutation';
+import { prepareFormData } from '@/utils/helpers/global.fns';
 
 export const useEntityManagersQuery = params => {
     return useCustomQuery({
@@ -23,7 +24,9 @@ export const useCreateEntityManagerMutation = () => {
     return useCustomMutation({
         mutationFn: data => entityManagersService.createEntityManager(data),
         onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: [API_KEYS.ENTITY_MANAGERS] });
+            queryClient.invalidateQueries({
+                queryKey: [API_KEYS.ENTITY_MANAGERS]
+            });
         },
         onError: error => {
             console.log(error);
@@ -34,9 +37,12 @@ export const useCreateEntityManagerMutation = () => {
 export const useUpdateEntityManagerMutation = () => {
     const queryClient = useQueryClient();
     return useCustomMutation({
-        mutationFn: data => entityManagersService.updateEntityManager(data.id, data),
+        mutationFn: data =>
+            entityManagersService.updateEntityManager(data.id, prepareFormData(data)),
         onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: [API_KEYS.ENTITY_MANAGERS] });
+            queryClient.invalidateQueries({
+                queryKey: [API_KEYS.ENTITY_MANAGERS]
+            });
         },
         onError: error => {
             console.log(error);
@@ -49,11 +55,12 @@ export const useDeleteEntityManagerMutation = () => {
     return useCustomMutation({
         mutationFn: id => entityManagersService.deleteEntityManager(id),
         onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: [API_KEYS.ENTITY_MANAGERS] });
+            queryClient.invalidateQueries({
+                queryKey: [API_KEYS.ENTITY_MANAGERS]
+            });
         },
         onError: error => {
             console.log(error);
         }
     });
 };
-

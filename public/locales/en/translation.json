@@ -105,6 +105,12 @@
             "size": "Image size must be less than 5MB",
             "type": "Image must be JPEG, PNG, or WEBP format"
         },
+        "profile_image": {
+            "label": "Profile Image",
+            "placeholder": "Upload profile image",
+            "size": "Image size must be less than 5MB",
+            "type": "Image must be JPEG, PNG, or WEBP format"
+        },
         "user_id": {
             "label": "User",
             "placeholder": "Select user",
@@ -274,6 +280,27 @@
         "fles": {
             "label": "Files",
             "placeholder": "Select files"
+        },
+        "gender": {
+            "label": "Gender",
+            "placeholder": "Select gender",
+            "invalid": "Gender must be either male or female"
+        },
+        "manager_phone": {
+            "label": "Manager Phone",
+            "placeholder": "Enter manager phone number",
+            "invalid": "Please enter a valid phone number"
+        },
+        "manager_email": {
+            "label": "Manager Email",
+            "placeholder": "Enter manager email address",
+            "invalid": "Please enter a valid email address"
+        },
+        "academic_level_id": {
+            "label": "Academic Level",
+            "placeholder": "Select academic level",
+            "integer": "Academic level must be selected",
+            "min": "Please select a valid academic level"
         },
         "short_name": {
             "label": "Short Name",
@@ -453,6 +480,11 @@
         "update": "Update Teacher",
         "view": "View Teacher"
     },
+    "entity_managers": {
+        "create": "Create Entity Manager",
+        "update": "Update Entity Manager",
+        "view": "View Entity Manager"
+    },
     "session_periods": {
         "create": "Create Session Period",
         "update": "Update Session Period",
@@ -513,7 +545,8 @@
         "nationalities": "Nationalities",
         "users": "Users",
         "online_attendances": "Online Attendances",
-        "teachers": "Teachers"
+        "teachers": "Teachers",
+        "entity_managers": "Entity Managers"
     },
     "table_titles": {
         "general_banners": "General Banners",
@@ -543,7 +576,8 @@
         "nationalities": "Nationalities",
         "users": "Users",
         "online_attendances": "Online Attendances",
-        "teachers": "Teachers"
+        "teachers": "Teachers",
+        "entity_managers": "Entity Managers"
     },
     "table": {
         "actions": "Actions",
@@ -634,11 +668,12 @@
         "date_of_birth": "Date of Birth",
         "licence_number": "Licence Number",
         "main_program": "Main Program",
+        "gender": "Gender",
+        "entity": "Entity",
         "nationalities": "Nationalities",
         "nationality": "Nationality",
         "academic_qualification": "Academic Qualification",
         "specification": "Specification",
-        "entity": "Entity",
         "link": "Link",
         "image": "Image",
         "start_date": "Start Date",

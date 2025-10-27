@@ -162,6 +162,13 @@ export const sideMenuTabs = [
         icon: HiAcademicCap
     },
 
+    // مديري الكيانات
+    {
+        titleKey: 'sidebar.entity_managers',
+        path: '/entity-managers',
+        icon: HiUserGroup
+    },
+
     // المستخدمين
     {
         titleKey: 'sidebar.users',

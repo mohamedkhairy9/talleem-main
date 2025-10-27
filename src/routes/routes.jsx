@@ -29,6 +29,7 @@ import PrivacyPolicies from '@/pages/privacy-policies/PrivacyPolicies';
 import GeneralBanners from '@/pages/general-banners/GeneralBanners';
 import Employees from '@/pages/employees/Employees';
 import Teachers from '@/pages/teachers/Teachers';
+import EntityManagers from '@/pages/entity-managers/EntityManagers';
 import Nationalities from '@/pages/nationalities/Nationalities';
 import Users from '@/pages/users/Users';
 import Countries from '@/pages/countries/Countries';
@@ -158,6 +159,10 @@ export const routes = [
     {
         path: '/teachers',
         element: <Teachers />
+    },
+    {
+        path: '/entity-managers',
+        element: <EntityManagers />
     },
     {
         path: '/nationalities',
