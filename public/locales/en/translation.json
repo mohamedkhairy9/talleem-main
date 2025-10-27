@@ -1,6 +1,9 @@
 {
     "validation": {
         "required": "This field is required",
+        "search": {
+            "placeholder": "Enter search keyword"
+        },
         "name": {
             "en_min": "English name must be at least 2 characters",
             "ar_min": "Arabic name must be at least 2 characters",

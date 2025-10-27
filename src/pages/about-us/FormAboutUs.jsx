@@ -15,11 +15,7 @@ export default function FormAboutUs({ oldData, isPending, mutate, options }) {
 
     function onSubmit(data) {
         console.log('data', data);
-        mutate(data, {
-            onSuccess: () => {
-                console.log('Updated successfully');
-            }
-        });
+        mutate(data);
     }
 
     return (

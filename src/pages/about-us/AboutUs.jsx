@@ -16,7 +16,6 @@ export default function AboutUs() {
     const { t } = useLocale();
     const [showDeleteModal, setShowDeleteModal] = useState(false);
 
-    console.log('data', data);
 
     if (isLoading) return <Loader />;
 

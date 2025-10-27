@@ -3,8 +3,6 @@ import React from 'react';
 
 export default function NameCell({ info, directValue }) {
     const { currentLocale } = useLocale();
-    console.log('directValue', directValue);
-    console.log('info', info);
 
     if (!directValue && !info) {
         return null

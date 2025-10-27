@@ -3,7 +3,6 @@ import React from 'react';
 
 export default function ModalHeader({ onClose, header }) {
     const { t, currentLocale } = useLocale();
-    console.log('currentLocale', currentLocale);
 
     return (
         <div className="flex p-5 border-b border-gray-300 justify-between items-center mb-4">

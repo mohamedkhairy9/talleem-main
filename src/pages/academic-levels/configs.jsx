@@ -3,7 +3,6 @@ import DateCell from '@/components/common/table/cells/DateCell';
 import NameCell from '@/components/common/table/cells/NameCell';
 import { createColumnHelper } from '@tanstack/react-table';
 import React from 'react';
-import { enabledDisabledOptions } from '@/utils/constants/options';
 
 const columnHelper = createColumnHelper();
 
@@ -46,3 +45,23 @@ export const academicLevelsFields = [
         viewMode: true
     }
 ];
+
+export const academicLevelsFilters = [
+    {
+        name: 'search',
+        type: 'text',
+        placeholder: 'validation.search.placeholder',
+        defaultValue: ''
+    },
+    {
+        name: 'status',
+        type: 'select',
+        placeholder: 'validation.status.placeholder',
+        defaultValue: 1
+    }
+];
+
+export const filtersDefaultValues = {
+    status: 1,
+    search: ''
+};

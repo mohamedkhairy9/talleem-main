@@ -1,7 +1,7 @@
 import React from 'react';
 import { useAcademicLevelsQuery } from '@/api/hooks/useAcademicLevels';
 import Table from '@/components/common/table/Table';
-import { academicLevelsColumns } from './configs';
+import { academicLevelsColumns, filtersDefaultValues } from './configs';
 import useIsOpen from '@/utils/hooks/global/useIsOpen';
 import usePagination from '@/utils/hooks/global/usePagination';
 import CreateAcademicLevel from './CreateAcademicLevel';
@@ -12,17 +12,22 @@ import i18next from 'i18next';
 import { getOriginalObject } from '@/utils/helpers/global.fns';
 import ViewAcademicLevel from './ViewAcademicLevels';
 import useFiltering from '@/utils/hooks/global/useFiltering';
+import Filters from './Filters';
 
 export default function AcademicLevels() {
     const { isOpen, toggle } = useIsOpen();
-    const { pagination, setPagination } = useFiltering();
-    const { data, isLoading, refresh } = useAcademicLevelsQuery(pagination);
+    const { pagination, handleFilter, filters, setter,setFilters } =
+        useFiltering(filtersDefaultValues);
+    const { data, isLoading, refresh } = useAcademicLevelsQuery(filters);
     const { t } = useLocale();
 
     const tableData = data?.data?.map(item => ({
         ...item,
         name: item.name?.[i18next.language]
     }));
+
+    console.log('filters',filters);
+    
 
     return (
         <div>
@@ -36,7 +41,12 @@ export default function AcademicLevels() {
                 columns={academicLevelsColumns}
                 toggleModals={toggle}
                 pagination={pagination}
-                setPagination={setPagination}
+                setPagination={setter('pagination')}
+                Filters={
+                    <Filters filters={filters} handleFilter={handleFilter} />
+                }
+                setFilters={setFilters}
+                filters={filters}
             />
             {isOpen.add && <CreateAcademicLevel onClose={toggle.add} />}
             {isOpen.edit && (

@@ -1,6 +1,9 @@
 {
     "validation": {
         "required": "هذا الحقل مطلوب",
+        "search": {
+            "placeholder": "أدخل كلمة البحث"
+        },
         "name": {
             "en_required": "الاسم بالإنجليزية مطلوب",
             "ar_required": "الاسم بالعربية مطلوب",

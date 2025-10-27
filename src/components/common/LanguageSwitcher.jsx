@@ -15,7 +15,6 @@ export default function LanguageSwitcher() {
         try {
             setLanguage(languageCode);
             setIsDropdownOpen(false);
-            console.log('Language switched to:', languageCode);
         } catch (error) {
             console.error('Error switching language:', error);
         }

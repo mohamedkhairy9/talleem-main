@@ -43,9 +43,6 @@ export const prepareFormData = data => {
 };
 
 export function generateOptions(arr = [], valueKey, labelKey) {
-    console.log('arr', arr);
-
-    console.log(arr.map(opt => opt.id ?? opt.value ?? opt[valueKey] ?? 222));
 
     if (arr?.length > 0) {
         return arr.map(opt => ({

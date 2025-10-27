@@ -67,7 +67,10 @@ const Table = ({
     toggleModals,
     pagination,
     setPagination,
-    Actions = null
+    Actions = null,
+    Filters = null,
+    setFilters = null,
+    filters = null
 }) => {
     // Core state
     const { t } = useTranslation();
@@ -734,29 +737,32 @@ const Table = ({
                         {/* Controls Row */}
                         <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between space-y-4 lg:space-y-0">
                             {/* Search */}
-                            <div className="relative">
-                                <MdSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
-                                <input
-                                    type="text"
-                                    placeholder={t(
-                                        'table.search_across_columns'
+                            <div className="flex flex-col lg:flex-row lg:items-center gap-2">
+                                {/* <div className="relative">
+                                    <MdSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+                                    <input
+                                        type="text"
+                                        placeholder={t(
+                                            'table.search_across_columns'
+                                        )}
+                                        className="pl-10 pr-4 py-2 border border-gray-300 rounded-lg text-sm outline-none duration-200 focus:border-primary-500 w-full lg:w-[300px]"
+                                        value={globalFilter ?? ''}
+                                        onChange={e =>
+                                            setGlobalFilter(e.target.value)
+                                        }
+                                    />
+                                    {globalFilter && (
+                                        <button
+                                            onClick={() => setGlobalFilter('')}
+                                            className={`absolute ${
+                                                isRTL ? 'left-8' : 'right-3'
+                                            } top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600`}
+                                        >
+                                            <MdClose className="w-4 h-4" />
+                                        </button>
                                     )}
-                                    className="pl-10 pr-4 py-2 border border-gray-300 rounded-lg text-sm outline-none duration-200 focus:border-primary-500 w-80"
-                                    value={globalFilter ?? ''}
-                                    onChange={e =>
-                                        setGlobalFilter(e.target.value)
-                                    }
-                                />
-                                {globalFilter && (
-                                    <button
-                                        onClick={() => setGlobalFilter('')}
-                                        className={`absolute ${
-                                            isRTL ? 'left-8' : 'right-3'
-                                        } top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600`}
-                                    >
-                                        <MdClose className="w-4 h-4" />
-                                    </button>
-                                )}
+                                </div> */}
+                                {Filters && Filters}
                             </div>
 
                             {/* Action Buttons */}
@@ -1050,8 +1056,10 @@ const Table = ({
                                 ))}
                                 <button
                                     onClick={() => {
+                                        console.log('filters',filters);
                                         setColumnFilters([]);
                                         setGlobalFilter('');
+                                        setFilters({});
                                     }}
                                     className="text-sm text-red-600 hover:text-red-800 font-medium ml-2"
                                 >
@@ -1199,6 +1207,7 @@ const Table = ({
                                                 onClick={() => {
                                                     setColumnFilters([]);
                                                     setGlobalFilter('');
+                                                    setFilters({});
                                                 }}
                                                 className="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors"
                                             >
