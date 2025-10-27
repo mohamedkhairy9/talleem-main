@@ -275,7 +275,8 @@ const Table = ({
             );
 
             const csvContent = [headers, ...rows].join('\n');
-            const blob = new Blob([csvContent], {
+            const BOM = '\uFEFF'; // UTF-8 BOM
+            const blob = new Blob([BOM + csvContent], {
                 type: 'text/csv;charset=utf-8;'
             });
             const url = window.URL.createObjectURL(blob);
@@ -409,7 +410,8 @@ const Table = ({
             );
 
             const csvContent = [headers, ...rows].join('\n');
-            const blob = new Blob([csvContent], {
+            const BOM = '\uFEFF'; // UTF-8 BOM
+            const blob = new Blob([BOM + csvContent], {
                 type: 'text/csv;charset=utf-8;'
             });
             const url = window.URL.createObjectURL(blob);
