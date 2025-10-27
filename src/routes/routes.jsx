@@ -4,6 +4,7 @@ import Home from '@/pages/Home';
 import Permissions from '@/pages/permissions/Permissions';
 import Resources from '@/pages/resources/Resources';
 import Notifications from '@/pages/notifications/Notifications';
+import NotificationTemplates from '@/pages/notification-templates/NotificationTemplates';
 import ActivityLogs from '@/pages/activity-logs/ActivityLogs';
 import AcademicQualifications from '@/pages/academic-qualifications/AcademicQualifications';
 import Branches from '@/pages/branches/Branches';
@@ -57,6 +58,10 @@ export const routes = [
     {
         path: '/notifications',
         element: <Notifications />
+    },
+    {
+        path: '/notification-templates',
+        element: <NotificationTemplates />
     },
     {
         path: '/activity-logs',

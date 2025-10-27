@@ -35,8 +35,16 @@ export const API_URLS = {
         REMOVE: roleId => `/roles/${roleId}/permissions`
     },
     NOTIFICATIONS: {
-        LIST: '/notifications',
-        CREATE: '/notifications'
+        LIST: '/notifications'
+    },
+    NOTIFICATION_TEMPLATES: {
+        LIST: '/notification-templates'
+    },
+    NOTIFICATION_TRIGGER: {
+        TRIGGER: '/notifications/trigger'
+    },
+    NOTIFICATION_SCHEDULE: {
+        SCHEDULE: '/notifications/schedule'
     },
     LANGUAGE: {
         SWITCH: locale => `profile/locale/${locale}`
@@ -284,6 +292,9 @@ export const API_KEYS = {
     ROLE_ASSIGNMENT: 'role-assignment',
     PERMISSION_ASSIGNMENT: 'permission-assignment',
     NOTIFICATIONS: 'notifications',
+    NOTIFICATION_TEMPLATES: 'notification-templates',
+    NOTIFICATION_TRIGGER: 'notification-trigger',
+    NOTIFICATION_SCHEDULE: 'notification-schedule',
     LANGUAGE: 'language',
     ACTIVITY_LOGS: 'activity-logs',
     ACADAMIC_QUALIFICATIONS: 'academic-qualifications',

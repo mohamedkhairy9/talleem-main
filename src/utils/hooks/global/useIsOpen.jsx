@@ -7,7 +7,9 @@ export default function useIsOpen() {
         delete: false,
         view: false,
         assignPermission: false,
-        removePermission: false
+        removePermission: false,
+        trigger: false,
+        schedule: false
     });
 
     const toggle = {
@@ -25,7 +27,11 @@ export default function useIsOpen() {
             setIsOpen({
                 ...isOpen,
                 removePermission: value || !isOpen.removePermission
-            })
+            }),
+        trigger: value =>
+            setIsOpen({ ...isOpen, trigger: value || !isOpen.trigger }),
+        schedule: value =>
+            setIsOpen({ ...isOpen, schedule: value || !isOpen.schedule })
     };
 
     return { isOpen, toggle };

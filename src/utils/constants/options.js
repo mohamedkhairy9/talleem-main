@@ -19,3 +19,10 @@ export const genderOptions = [
     { label: { ar: 'ذكر', en: 'Male' }, value: 'male' },
     { label: { ar: 'أنثى', en: 'Female' }, value: 'female' }
 ];
+
+export const timeUnitOptions = [
+    { label: { ar: 'دقيقة', en: 'Minute' }, value: 'minute' },
+    { label: { ar: 'ساعة', en: 'Hour' }, value: 'hour' },
+    { label: { ar: 'يوم', en: 'Day' }, value: 'day' },
+    { label: { ar: 'شهر', en: 'Month' }, value: 'month' }
+];

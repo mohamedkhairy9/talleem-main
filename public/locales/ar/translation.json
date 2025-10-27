@@ -349,6 +349,21 @@
         "permission_ids": {
             "label": "الصلاحيات",
             "placeholder": "اختر الصلاحيات"
+        },
+        "users": {
+            "label": "اختر المستخدمين",
+            "placeholder": "اختر المستلمين..."
+        },
+        "time": {
+            "label": "الوقت",
+            "placeholder": "أدخل الوقت...",
+            "min": "يجب أن يكون الوقت على الأقل 1",
+            "integer": "يجب أن يكون الوقت رقم صحيح"
+        },
+        "time_unit": {
+            "label": "وحدة الوقت",
+            "placeholder": "اختر الوحدة...",
+            "invalid": "وحدة زمنية غير صالحة"
         }
     },
     "auth": {
@@ -511,6 +526,8 @@
         "roles": "الأدوار",
         "permissions": "الصلاحيات",
         "resources": "الموارد",
+        "notifications_system": "نظام الإشعارات",
+        "notification_templates": "قوالب الإشعارات",
         "notifications": "الإشعارات",
         "activity_logs": "سجل الحركات",
         "academic_qualifications": "المؤهلات الأكاديمية",
@@ -553,6 +570,8 @@
         "parents": "أولياء الأمور"
     },
     "table_titles": {
+        "notification_templates": "قوالب الإشعارات",
+        "notifications": "الإشعارات",
         "general_banners": "البانرات العامة",
         "permissions": "الصلاحيات",
         "roles": "الأدوار",
@@ -626,6 +645,13 @@
         "total": "الكل"
     },
     "table_headers": {
+        "id": "المعرف",
+        "subject": "الموضوع",
+        "type": "النوع",
+        "sms": "رسالة نصية",
+        "inbox": "صندوق الوارد",
+        "scheduled": "مجدول",
+        "sent_via": "أرسلت عبر",
         "created_at": "تاريخ الإنشاء",
         "updated_at": "تاريخ التحديث",
         "name": "الاسم",
@@ -736,5 +762,19 @@
         "edit": "تعديل المستخدم",
         "view": "عرض المستخدم",
         "delete": "حذف المستخدم"
+    },
+    "notifications": {
+        "trigger": "إرسال إشعار",
+        "schedule": "جدولة إشعار",
+        "template": "القالب",
+        "send_now": "إرسال الآن",
+        "schedule_notification": "جدولة الإشعار",
+        "will_be_sent_in": "سيتم الإرسال خلال",
+        "view": "عرض الإشعار"
+    },
+    "employees": {
+        "create": "إضافة موظف",
+        "update": "تعديل موظف",
+        "view": "عرض موظف"
     }
 }

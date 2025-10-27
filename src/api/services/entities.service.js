@@ -12,11 +12,11 @@ export const entitiesService = {
     },
 
     createEntity: async data => {
-        return await axiosInstance.post(API_URLS.ENTITIES.CREATE, data);
+        return await axiosInstance.post(API_URLS.ENTITIES.CREATE, data, multipartFormData);
     },
 
     updateEntity: async (id, data) => {
-        return await axiosInstance.put(API_URLS.ENTITIES.UPDATE(id), data);
+        return await axiosInstance.post(API_URLS.ENTITIES.UPDATE(id), data, multipartFormData);
     },
 
     deleteEntity: async id => {

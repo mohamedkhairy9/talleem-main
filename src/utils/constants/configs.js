@@ -26,7 +26,8 @@ import {
     HiIdentification,
     HiGlobe,
     HiUser,
-    HiClipboardCheck
+    HiClipboardCheck,
+    HiTemplate
 } from 'react-icons/hi';
 import { VscDebugBreakpointLog } from 'react-icons/vsc';
 
@@ -52,6 +53,24 @@ export const sideMenuTabs = [
                 titleKey: 'sidebar.activity_logs',
                 path: '/activity-logs',
                 icon: HiClipboardList
+            }
+        ]
+    },
+
+    // نظام الإشعارات
+    {
+        titleKey: 'sidebar.notifications_system',
+        icon: HiBell,
+        subMenu: [
+            {
+                titleKey: 'sidebar.notification_templates',
+                path: '/notification-templates',
+                icon: HiTemplate
+            },
+            {
+                titleKey: 'sidebar.notifications',
+                path: '/notifications',
+                icon: HiBell
             }
         ]
     },

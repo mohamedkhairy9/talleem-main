@@ -347,6 +347,21 @@
         "permission_ids": {
             "label": "Permissions",
             "placeholder": "Select permissions"
+        },
+        "users": {
+            "label": "Select Users",
+            "placeholder": "Choose recipients..."
+        },
+        "time": {
+            "label": "Time",
+            "placeholder": "Enter time...",
+            "min": "Time must be at least 1",
+            "integer": "Time must be a whole number"
+        },
+        "time_unit": {
+            "label": "Time Unit",
+            "placeholder": "Select unit...",
+            "invalid": "Invalid time unit"
         }
     },
     "auth": {
@@ -529,6 +544,8 @@
         "roles": "Roles",
         "permissions": "Permissions",
         "resources": "Resources",
+        "notifications_system": "Notifications System",
+        "notification_templates": "Notification Templates",
         "notifications": "Notifications",
         "activity_logs": "Activity Log",
         "academic_qualifications": "Academic Qualifications",
@@ -571,6 +588,8 @@
         "parents": "Parents"
     },
     "table_titles": {
+        "notification_templates": "Notification Templates",
+        "notifications": "Notifications",
         "general_banners": "General Banners",
         "permissions": "Permissions",
         "roles": "Roles",
@@ -646,6 +665,13 @@
         "total": "Total"
     },
     "table_headers": {
+        "id": "ID",
+        "subject": "Subject",
+        "type": "Type",
+        "sms": "SMS",
+        "inbox": "Inbox",
+        "scheduled": "Scheduled",
+        "sent_via": "Sent Via",
         "created_at": "Created Date",
         "updated_at": "Updated Date",
         "name": "Name",
@@ -736,5 +762,19 @@
         "edit": "Edit User",
         "view": "View User",
         "delete": "Delete User"
+    },
+    "notifications": {
+        "trigger": "Trigger Notification",
+        "schedule": "Schedule Notification",
+        "template": "Template",
+        "send_now": "Send Now",
+        "schedule_notification": "Schedule Notification",
+        "will_be_sent_in": "Will be sent in",
+        "view": "View Notification"
+    },
+    "employees": {
+        "create": "Create Employee",
+        "update": "Update Employee",
+        "view": "View Employee"
     }
 }
