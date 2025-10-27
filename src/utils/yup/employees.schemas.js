@@ -52,9 +52,8 @@ export const employeesSchema = yup.object({
         .required(t('validation.required'))
         .email(t('validation.email.invalid')),
     date_of_birth: yup
-        .date()
-        .required(t('validation.date_of_birth.required'))
-        .typeError(t('validation.date_of_birth.invalid')),
+        .string()
+        .required(t('validation.date_of_birth.required')),
     city_id: yup
         .number()
         .required(t('validation.required'))
