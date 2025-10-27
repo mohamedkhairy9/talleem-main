@@ -37,6 +37,7 @@ import Nationalities from '@/pages/nationalities/Nationalities';
 import Users from '@/pages/users/Users';
 import Countries from '@/pages/countries/Countries';
 import OnlineAttendances from '@/pages/online-attendances/OnlineAttendances';
+import Entities from '@/pages/entities/Entities';
 
 export const routes = [
     {
@@ -194,5 +195,9 @@ export const routes = [
     {
         path: '/online-attendances',
         element: <OnlineAttendances />
+    },
+    {
+        path: '/entities',
+        element: <Entities />
     }
 ];

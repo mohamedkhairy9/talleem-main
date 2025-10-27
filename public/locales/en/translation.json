@@ -60,6 +60,53 @@
             "integer": "Neighborhood must be selected",
             "min": "Please select a valid neighborhood"
         },
+        "location_type_id": {
+            "label": "Location Type",
+            "placeholder": "Select location type",
+            "integer": "Location type must be selected",
+            "min": "Please select a valid location type"
+        },
+        "min_acceptance_age": {
+            "label": "Min Acceptance Age",
+            "placeholder": "Enter minimum acceptance age",
+            "integer": "Age must be a number",
+            "min": "Age must be at least 1",
+            "max": "Age cannot exceed 100"
+        },
+        "area": {
+            "label": "Area",
+            "placeholder": "Enter area",
+            "min": "Area must be at least 2 characters",
+            "max": "Area must not exceed 100 characters"
+        },
+        "class_count": {
+            "label": "Class Count",
+            "placeholder": "Enter number of classes",
+            "integer": "Class count must be a number",
+            "min": "Class count cannot be negative"
+        },
+        "management_rooms_count": {
+            "label": "Management Rooms Count",
+            "placeholder": "Enter number of management rooms",
+            "integer": "Management rooms count must be a number",
+            "min": "Management rooms count cannot be negative"
+        },
+        "lecture_holes_count": {
+            "label": "Lecture Holes Count",
+            "placeholder": "Enter number of lecture holes",
+            "integer": "Lecture holes count must be a number",
+            "min": "Lecture holes count cannot be negative"
+        },
+        "activities": {
+            "min": "At least one activity is required"
+        },
+        "files": {
+            "label": "Files",
+            "placeholder": "Upload files"
+        },
+        "status": {
+            "invalid": "Status must be active or inactive"
+        },
         "educational_entity_classification": {
             "label": {
                 "en": "Educational Entity Classification (English)",
@@ -505,6 +552,14 @@
         "update": "Update Teacher",
         "view": "View Teacher"
     },
+    "entities": {
+        "create": "Create Entity",
+        "edit": "Edit Entity",
+        "view": "View Entity",
+        "activities": "Activities",
+        "add_activity": "Add Activity",
+        "activity": "Activity"
+    },
     "entity_managers": {
         "create": "Create Entity Manager",
         "update": "Update Entity Manager",
@@ -583,6 +638,7 @@
         "users": "Users",
         "online_attendances": "Online Attendances",
         "teachers": "Teachers",
+        "entities": "Entities",
         "entity_managers": "Entity Managers",
         "branch_administrations": "Branch Administrations",
         "parents": "Parents"
@@ -618,6 +674,7 @@
         "users": "Users",
         "online_attendances": "Online Attendances",
         "teachers": "Teachers",
+        "entities": "Entities",
         "entity_managers": "Entity Managers",
         "branch_administrations": "Branch Administrations",
         "parents": "Parents"
@@ -696,7 +753,9 @@
         "phone_1": "Phone 1",
         "phone_2": "Phone 2",
         "address": "Address",
+        "area": "Area",
         "branch": "Branch",
+        "main_program": "Main Program",
         "academic_qualifications": "Academic Qualifications",
         "jobs": "Jobs",
         "cities": "Cities",

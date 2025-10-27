@@ -180,6 +180,11 @@ export const sideMenuTabs = [
         path: '/teachers',
         icon: HiAcademicCap
     },
+    {
+        titleKey: 'sidebar.entities',
+        path: '/entities',
+        icon: HiOfficeBuilding
+    },
 
     // مديري الكيانات
     {
