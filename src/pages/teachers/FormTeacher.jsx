@@ -28,7 +28,7 @@ export default function FormTeacher({
 
     function onSubmit(data) {
         console.log('data', data);
-        mutate(data, {
+        mutate({...data,status: data.status ? 1 : 0}, {
             onSuccess: () => {
                 onClose();
             }

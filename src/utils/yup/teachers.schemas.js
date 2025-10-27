@@ -67,9 +67,8 @@ export const teachersSchema = yup.object({
         .integer(t('validation.specification_id.integer'))
         .min(1, t('validation.specification_id.min')),
     dob: yup
-        .date()
-        .required(t('validation.dob.required'))
-        .typeError(t('validation.dob.invalid')),
+        .string()
+        .required(t('validation.dob.required')),
     years_of_experience: yup
         .number()
         .required(t('validation.required'))

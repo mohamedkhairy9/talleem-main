@@ -22,7 +22,7 @@ export const useEntityManagerQuery = id => {
 export const useCreateEntityManagerMutation = () => {
     const queryClient = useQueryClient();
     return useCustomMutation({
-        mutationFn: data => entityManagersService.createEntityManager(data),
+        mutationFn: data => entityManagersService.createEntityManager(prepareFormData(data)),
         onSuccess: () => {
             queryClient.invalidateQueries({
                 queryKey: [API_KEYS.ENTITY_MANAGERS]

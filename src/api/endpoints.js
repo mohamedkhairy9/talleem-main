@@ -263,6 +263,13 @@ export const API_URLS = {
         DETAILS: id => `/branch-administrations/${id}`,
         UPDATE: id => `/branch-administrations/${id}`,
         DELETE: id => `/branch-administrations/${id}`
+    },
+    PARENTS: {
+        CREATE: '/parents',
+        LIST: '/parents',
+        DETAILS: id => `/parents/${id}`,
+        UPDATE: id => `/parents/${id}`,
+        DELETE: id => `/parents/${id}`
     }
 };
 
@@ -310,5 +317,6 @@ export const API_KEYS = {
     ENTITIES: 'entities',
     TEACHERS: 'teachers',
     ENTITY_MANAGERS: 'entity-managers',
-    BRANCH_ADMINISTRATIONS: 'branch-administrations'
+    BRANCH_ADMINISTRATIONS: 'branch-administrations',
+    PARENTS: 'parents'
 };

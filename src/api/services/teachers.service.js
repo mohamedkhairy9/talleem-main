@@ -1,3 +1,4 @@
+import { multipartFormData } from '@/utils/constants/global.constants';
 import { axiosInstance } from '../axiosInstance';
 import { API_URLS } from '../endpoints';
 
@@ -11,11 +12,11 @@ export const teachersService = {
     },
 
     createTeacher: async data => {
-        return await axiosInstance.post(API_URLS.TEACHERS.CREATE, data);
+        return await axiosInstance.post(API_URLS.TEACHERS.CREATE, data,multipartFormData);
     },
 
     updateTeacher: async (id, data) => {
-        return await axiosInstance.post(API_URLS.TEACHERS.UPDATE(id), data);
+        return await axiosInstance.post(API_URLS.TEACHERS.UPDATE(id), data,multipartFormData);
     },
 
     deleteTeacher: async id => {

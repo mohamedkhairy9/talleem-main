@@ -1,9 +1,9 @@
 import React from 'react';
 import DeleteModal from '@/components/common/form/DeleteModal';
-import { useDeleteTeacherMutation } from '@/api/hooks/useTeachers';
+import { useDeleteParentMutation } from '@/api/hooks/useParents';
 
-export default function DeleteTeacher({ onClose, id }) {
-    const { mutate, isPending } = useDeleteTeacherMutation();
+export default function DeleteParent({ onClose, id }) {
+    const { mutate, isPending } = useDeleteParentMutation();
 
     const handleDelete = () => {
         mutate(id, {

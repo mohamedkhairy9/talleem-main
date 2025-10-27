@@ -3,6 +3,7 @@ import { teachersService } from '../services/teachers.service';
 import { API_KEYS } from '../endpoints';
 import useCustomQuery from '../../utils/hooks/global/useCustomQuery';
 import useCustomMutation from '../../utils/hooks/global/useCustomMutation';
+import { prepareFormData } from '@/utils/helpers/global.fns';
 
 export const useTeachersQuery = params => {
     return useCustomQuery({
@@ -21,7 +22,7 @@ export const useTeacherQuery = id => {
 export const useCreateTeacherMutation = () => {
     const queryClient = useQueryClient();
     return useCustomMutation({
-        mutationFn: data => teachersService.createTeacher(data),
+        mutationFn: data => teachersService.createTeacher(prepareFormData(data)),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: [API_KEYS.TEACHERS] });
         },
@@ -34,7 +35,7 @@ export const useCreateTeacherMutation = () => {
 export const useUpdateTeacherMutation = () => {
     const queryClient = useQueryClient();
     return useCustomMutation({
-        mutationFn: data => teachersService.updateTeacher(data.id, data),
+        mutationFn: data => teachersService.updateTeacher(data.id, prepareFormData(data)),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: [API_KEYS.TEACHERS] });
         },

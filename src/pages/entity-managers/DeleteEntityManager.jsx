@@ -15,11 +15,9 @@ export default function DeleteEntityManager({ onClose, id }) {
 
     return (
         <DeleteModal
+            deleteFn={handleDelete}
+            loading={isPending}
             onClose={onClose}
-            onConfirm={handleDelete}
-            isDeleting={isPending}
-            title="common.delete_confirmation"
-            message="common.delete_message"
         />
     );
 }

@@ -31,6 +31,7 @@ import Employees from '@/pages/employees/Employees';
 import Teachers from '@/pages/teachers/Teachers';
 import EntityManagers from '@/pages/entity-managers/EntityManagers';
 import BranchAdministrations from '@/pages/branch-administrations/BranchAdministrations';
+import Parents from '@/pages/parents/Parents';
 import Nationalities from '@/pages/nationalities/Nationalities';
 import Users from '@/pages/users/Users';
 import Countries from '@/pages/countries/Countries';
@@ -168,6 +169,10 @@ export const routes = [
     {
         path: '/branch-administrations',
         element: <BranchAdministrations />
+    },
+    {
+        path: '/parents',
+        element: <Parents />
     },
     {
         path: '/nationalities',

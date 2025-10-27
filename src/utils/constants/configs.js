@@ -176,6 +176,13 @@ export const sideMenuTabs = [
         icon: HiOfficeBuilding
     },
 
+    // أولياء الأمور
+    {
+        titleKey: 'sidebar.parents',
+        path: '/parents',
+        icon: HiUserGroup
+    },
+
     // المستخدمين
     {
         titleKey: 'sidebar.users',

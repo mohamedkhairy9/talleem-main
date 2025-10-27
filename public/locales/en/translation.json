@@ -165,6 +165,16 @@
             "placeholder": "Enter phone number",
             "invalid": "Please enter a valid phone number"
         },
+        "phone_1": {
+            "label": "Phone 1",
+            "placeholder": "Enter primary phone number",
+            "invalid": "Please enter a valid phone number"
+        },
+        "phone_2": {
+            "label": "Phone 2",
+            "placeholder": "Enter secondary phone number (optional)",
+            "invalid": "Please enter a valid phone number"
+        },
         "email": {
             "label": "Email",
             "placeholder": "Enter email address",
@@ -490,6 +500,11 @@
         "update": "Update Branch Administration",
         "view": "View Branch Administration"
     },
+    "parents": {
+        "create": "Create Parent",
+        "update": "Update Parent",
+        "view": "View Parent"
+    },
     "session_periods": {
         "create": "Create Session Period",
         "update": "Update Session Period",
@@ -551,7 +566,9 @@
         "users": "Users",
         "online_attendances": "Online Attendances",
         "teachers": "Teachers",
-        "entity_managers": "Entity Managers"
+        "entity_managers": "Entity Managers",
+        "branch_administrations": "Branch Administrations",
+        "parents": "Parents"
     },
     "table_titles": {
         "general_banners": "General Banners",
@@ -583,7 +600,8 @@
         "online_attendances": "Online Attendances",
         "teachers": "Teachers",
         "entity_managers": "Entity Managers",
-        "branch_administrations": "Branch Administrations"
+        "branch_administrations": "Branch Administrations",
+        "parents": "Parents"
     },
     "table": {
         "actions": "Actions",
@@ -649,6 +667,8 @@
         "status": "Status",
         "email": "Email",
         "phone": "Phone",
+        "phone_1": "Phone 1",
+        "phone_2": "Phone 2",
         "address": "Address",
         "branch": "Branch",
         "academic_qualifications": "Academic Qualifications",
