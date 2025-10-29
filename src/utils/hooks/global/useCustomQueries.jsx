@@ -119,22 +119,3 @@ export default function useCustomQueries(queries, options = {}) {
         ...globalUtils
     };
 }
-
-// const { queries, isAnyLoading, areAllSuccessful, data } = useCustomQueries([
-//   {
-//     queryKey: ['users'],
-//     queryFn: fetchUsers,
-//   },
-//   {
-//     queryKey: ['posts'],
-//     queryFn: fetchPosts,
-//     enabled: !!user,
-//   },
-//   {
-//     queryKey: ['comments'],
-//     queryFn: fetchComments,
-//     ...QueryPresets.realtime
-//   }
-// ]);
-
-// const [usersQuery, postsQuery, commentsQuery] = queries;

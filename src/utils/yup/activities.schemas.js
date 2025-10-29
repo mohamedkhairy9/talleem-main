@@ -8,5 +8,5 @@ export const activitiesSchema = yup.object({
             ar: yup.string().required(t('validation.required')).min(1)
         })
         .required(t('validation.required')),
-    status: yup.boolean().required(t('validation.required'))
+    main_program_id: yup.string().required(t('validation.required'))
 });

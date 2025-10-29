@@ -9,6 +9,10 @@ import { API_KEYS } from '@/api/endpoints';
 const columnHelper = createColumnHelper();
 
 export const activitiesColumns = [
+    columnHelper.accessor('main_program_id', {
+        header: 'table_headers.main_program',
+        cell: info => <NameCell directValue={info.row.original.main_program?.name} />
+    }),
     columnHelper.accessor('name', {
         header: 'table_headers.activities',
         cell: info => <NameCell directValue={info.row.original.name} />
@@ -34,6 +38,14 @@ export const activitiesFields = [
         label: 'validation.name.label.ar',
         type: 'text',
         placeholder: 'validation.name.placeholder.ar',
+        editMode: true,
+        viewMode: true
+    },
+    {
+        name : 'main_program_id',
+        label: 'validation.main_program_id.label',
+        type: 'select',
+        placeholder: 'validation.main_program_id.placeholder',
         editMode: true,
         viewMode: true
     },
@@ -69,4 +81,4 @@ export const filtersDefaultValues = {
     search: ''
 };
 
-const apiCalls = [API_KEYS.MAIN_PROGRAMS];
+export const apiCalls = [API_KEYS.MAIN_PROGRAMS];

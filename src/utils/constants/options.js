@@ -9,7 +9,7 @@ export const enabledDisabledOptions = [
 ];
 
 export const userTypeOptions = [
-    { label: { ar: 'كيان', en: 'entity' }, value: 'entity' },
+    { label: { ar: 'جهة', en: 'entity' }, value: 'entity' },
     { label: { ar: 'موظف', en: 'employee' }, value: 'employee' },
     { label: { ar: 'مدير', en: 'manager' }, value: 'manager' },
     { label: { ar: 'مدرس', en: 'teacher' }, value: 'teacher' }

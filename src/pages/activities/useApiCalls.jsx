@@ -1,16 +1,30 @@
-import { useActivitiesQuery } from '@/api/hooks/useActivities';
-import { useMainProgramsQuery } from '@/api/hooks/useMainPrograms';
-import { useUsersQuery } from '@/api/hooks/useUsers';
+import { API_KEYS } from '@/api/endpoints';
 import { allData } from '@/utils/constants/global.constants';
-import React from 'react';
+import useCustomQueries from '@/utils/hooks/global/useCustomQueries';
+import { mainProgramsService } from '@/api/services/mainPrograms.service';
+import { usersService } from '@/api/services/users.service';
 
 export default function useApiCalls({ apiCalls = [] } = {}) {
-    const { mainProgramsData, isLoading: mainProgramsLoading } =
-        useMainProgramsQuery(allData);
+    const isEnabled = key => apiCalls.includes(key);
 
-    const { usersData, isLoading: usersLoading } = useUsersQuery(allData);
+    const { queries, isAnyLoading } = useCustomQueries([
+        {
+            queryKey: [API_KEYS.MAIN_PROGRAMS, allData],
+            queryFn: () => mainProgramsService.getMainPrograms(allData),
+            enabled: isEnabled(API_KEYS.MAIN_PROGRAMS)
+        },
+        {
+            queryKey: [API_KEYS.USERS, allData],
+            queryFn: () => usersService.getUsers(allData),
+            enabled: isEnabled(API_KEYS.USERS)
+        }
+    ]);
 
-    const isLoading = mainProgramsLoading || usersLoading;
+    const [mainProgramsQuery, usersQuery] = queries;
 
-    return { mainProgramsData, usersData, isLoading };
+    return {
+        mainProgramsData: mainProgramsQuery?.data,
+        usersData: usersQuery?.data,
+        isLoading: isAnyLoading
+    };
 }

@@ -153,7 +153,7 @@ export const sideMenuTabs = [
         icon: HiUserGroup
     },
 
-    // نشاطات الجهة
+    // الأنشطة
     {
         titleKey: 'sidebar.activities',
         path: '/activities',

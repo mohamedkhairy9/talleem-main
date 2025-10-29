@@ -102,12 +102,13 @@
         "activities": {
             "min": "يجب إضافة نشاط واحد على الأقل"
         },
+        "activity_ids": {
+            "label": "الأنشطة",
+            "placeholder": "اختر الأنشطة"
+        },
         "files": {
             "label": "الملفات",
             "placeholder": "رفع الملفات"
-        },
-        "status": {
-            "invalid": "يجب أن تكون الحالة نشط أو غير نشط"
         },
         "educational_entity_classification": {
             "label": {
@@ -122,7 +123,7 @@
         "status": {
             "label": "الحالة",
             "placeholder": "اختر الحالة",
-            "invalid": "يجب أن تكون الحالة إما مفعلة (1) أو معطلة (0)"
+            "invalid": "يجب أن تكون الحالة إما مفعلة  أو معطلة"
         },
         "enabled": {
             "label": "مفعل"
@@ -181,8 +182,8 @@
         "entity_id": {
             "label": "الجهة",
             "placeholder": "اختر الجهة",
-            "integer": "يجب اختيار كيان",
-            "min": "الرجاء اختيار كيان صحيح"
+            "integer": "يجب اختيار جهة",
+            "min": "الرجاء اختيار جهة صحيح"
         },
         "nationality_id": {
             "label": "الجنسية",
@@ -333,16 +334,16 @@
             "max": "يجب ألا يتجاوز رقم الترخيص 50 حرف"
         },
         "education_program_entity_type_id": {
-            "label": "نوع كيان البرنامج التعليمي",
-            "placeholder": "اختر نوع كيان البرنامج التعليمي",
-            "integer": "يجب اختيار نوع كيان البرنامج التعليمي",
-            "min": "يرجى اختيار نوع كيان برنامج تعليمي صحيح"
+            "label": "نوع جهة البرنامج التعليمي",
+            "placeholder": "اختر نوع جهة البرنامج التعليمي",
+            "integer": "يجب اختيار نوع جهة البرنامج التعليمي",
+            "min": "يرجى اختيار نوع جهة برنامج تعليمي صحيح"
         },
         "entity_category_id": {
             "label": "فئة الجهة",
             "placeholder": "اختر فئة الجهة",
             "integer": "يجب اختيار فئة الجهة",
-            "min": "يرجى اختيار فئة كيان صحيحة"
+            "min": "يرجى اختيار فئة جهة صحيحة"
         },
         "memorization_amount": {
             "label": "كمية الحفظ",
@@ -504,10 +505,6 @@
             "label": "الصلاحيات",
             "placeholder": "اختر الصلاحيات"
         },
-        "users": {
-            "label": "اختر المستخدمين",
-            "placeholder": "اختر المستلمين..."
-        },
         "time": {
             "label": "الوقت",
             "placeholder": "أدخل الوقت...",
@@ -642,7 +639,7 @@
         "view": "عرض النشاط"
     },
     "entity_categories": {
-        "create": "إنشاء فئة كيان",
+        "create": "إنشاء فئة جهة",
         "update": "تحديث فئة الجهة",
         "view": "عرض فئة الجهة"
     },
@@ -693,7 +690,7 @@
         "academic_levels": "المستويات الدراسية",
         "location_types": "نوعية المكان",
         "specifications": "المواصفات",
-        "activities": "نشاطات الجهة",
+        "activities": "الأنشطة",
         "entity_categories": "فئة الجهة",
         "session_periods": "فترات الحلقة",
         "kinships": "صلة القربى",
@@ -839,8 +836,6 @@
         "area": "المنطقة",
         "branch": "الفرع",
         "main_program": "البرنامج الرئيسي",
-        "entity": "الجهة",
-        "national_id": "رقم الهوية الوطنية",
         "academic_qualifications": "المؤهلات الأكاديمية",
         "jobs": "الوظائف",
         "cities": "المدن",
@@ -863,7 +858,6 @@
         "years_of_experience": "سنوات الخبرة",
         "date_of_birth": "تاريخ الميلاد",
         "licence_number": "رقم الترخيص",
-        "main_program": "البرنامج الرئيسي",
         "gender": "الجنس",
         "entity": "الجهة",
         "nationality": "الجنسية",
@@ -895,9 +889,9 @@
         "view": "عرض معلم"
     },
     "entities": {
-        "create": "إنشاء كيان",
-        "edit": "تعديل كيان",
-        "view": "عرض كيان",
+        "create": "إنشاء جهة",
+        "edit": "تعديل جهة",
+        "view": "عرض جهة",
         "activities": "الأنشطة",
         "add_activity": "إضافة نشاط",
         "activity": "نشاط"
@@ -909,9 +903,9 @@
         "qualification": "المؤهلات"
     },
     "entity_managers": {
-        "create": "إضافة مدير كيان",
-        "update": "تعديل مدير كيان",
-        "view": "عرض مدير كيان"
+        "create": "إضافة مدير جهة",
+        "update": "تعديل مدير جهة",
+        "view": "عرض مدير جهة"
     },
     "branch_administrations": {
         "create": "إضافة إدارة فرع",

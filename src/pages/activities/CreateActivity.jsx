@@ -7,13 +7,14 @@ import { enabledDisabledOptions } from '@/utils/constants/options';
 import useApiCalls from './useApiCalls';
 import Loader from '@/components/common/Loader';
 import { API_KEYS } from '@/api/endpoints';
-
-const calls = [API_KEYS.MAIN_PROGRAMS];
+import { apiCalls } from './configs';
 
 export default function CreateActivity({ onClose }) {
     const { mutate, isPending } = useCreateActivityMutation();
 
-    const { mainProgramsData, isLoading } = useApiCalls({ calls });
+    const { mainProgramsData, isLoading } = useApiCalls({ apiCalls });
+
+    console.log('mainProgramsData', mainProgramsData);
 
     if (isLoading) return <Loader />;
 

@@ -100,12 +100,13 @@
         "activities": {
             "min": "At least one activity is required"
         },
+        "activity_ids": {
+            "label": "Activities",
+            "placeholder": "Select activities"
+        },
         "files": {
             "label": "Files",
             "placeholder": "Upload files"
-        },
-        "status": {
-            "invalid": "Status must be active or inactive"
         },
         "educational_entity_classification": {
             "label": {
@@ -120,7 +121,7 @@
         "status": {
             "label": "Status",
             "placeholder": "Select status",
-            "invalid": "Status must be either enabled (1) or disabled (0)"
+            "invalid": "Status must be either enabled or disabled"
         },
         "enabled": {
             "label": "Enabled"
@@ -332,7 +333,7 @@
         },
         "education_program_entity_type_id": {
             "label": "Education Program Entity Type",
-            "placeholder": "Select education program entity type",
+            "placeholder": "Select program entity type",
             "integer": "Education program entity type must be selected",
             "min": "Please select a valid education program entity type"
         },
@@ -501,10 +502,6 @@
         "permission_ids": {
             "label": "Permissions",
             "placeholder": "Select permissions"
-        },
-        "users": {
-            "label": "Select Users",
-            "placeholder": "Choose recipients..."
         },
         "time": {
             "label": "Time",
@@ -870,9 +867,6 @@
         "address": "Address",
         "area": "Area",
         "branch": "Branch",
-        "main_program": "Main Program",
-        "entity": "Entity",
-        "national_id": "National ID",
         "academic_qualifications": "Academic Qualifications",
         "jobs": "Jobs",
         "cities": "Cities",

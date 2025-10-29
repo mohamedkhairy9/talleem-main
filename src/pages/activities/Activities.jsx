@@ -22,7 +22,13 @@ export default function Activities() {
 
     const tableData = data?.data?.map(item => ({
         ...item,
-        name: item.name?.[i18next.language]
+        name: item.name?.[i18next.language],
+        main_program_id: item.main_program_id?.name?.[i18next.language]
+    }));
+
+    const formData = data?.data?.map(item => ({
+        ...item,
+        main_program_id: item.main_program?.id
     }));
 
     return (
@@ -48,13 +54,13 @@ export default function Activities() {
             {isOpen.edit && (
                 <EditActivity
                     onClose={toggle.edit}
-                    oldData={getOriginalObject(isOpen.edit, data?.data)}
+                    oldData={getOriginalObject(isOpen.edit, formData)}
                 />
             )}
             {isOpen.view && (
                 <ViewActivity
                     onClose={toggle.view}
-                    oldData={getOriginalObject(isOpen.view, data?.data)}
+                    oldData={getOriginalObject(isOpen.view, formData)}
                 />
             )}
             {isOpen.delete && (
