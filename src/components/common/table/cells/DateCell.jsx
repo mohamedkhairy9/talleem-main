@@ -13,13 +13,11 @@ export default function DateCell({ value, fullDate = false }) {
                     year: 'numeric',
                     month: 'short',
                     day: 'numeric',
-                    timeZone: 'UTC'
                 }),
                 time: date.toLocaleTimeString(isRTL ? 'ar-EG' : 'en-US', {
                     hour: '2-digit',
                     minute: '2-digit',
                     hour12: true,
-                    timeZone: 'UTC'
                 })
             };
         }
@@ -28,7 +26,6 @@ export default function DateCell({ value, fullDate = false }) {
                 month: 'short',
                 day: 'numeric',
                 year: 'numeric',
-                timeZone: 'UTC'
             }),
             time: null
         };
