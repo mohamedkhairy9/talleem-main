@@ -5,17 +5,19 @@ import useCustomQuery from '../../utils/hooks/global/useCustomQuery';
 import useCustomMutation from '../../utils/hooks/global/useCustomMutation';
 import { prepareFormData } from '@/utils/helpers/global.fns';
 
-export const useStudentsQuery = params => {
+export const useStudentsQuery = (params = {}, options = {}) => {
     return useCustomQuery({
         queryKey: [API_KEYS.STUDENTS, params],
-        queryFn: () => studentsService.getStudents(params)
+        queryFn: () => studentsService.getStudents(params),
+        ...options
     });
 };
 
-export const useStudentQuery = id => {
+export const useStudentQuery = (id, options = {}) => {
     return useCustomQuery({
         queryKey: [API_KEYS.STUDENTS, id],
-        queryFn: () => studentsService.getStudent(id)
+        queryFn: () => studentsService.getStudent(id),
+        ...options
     });
 };
 

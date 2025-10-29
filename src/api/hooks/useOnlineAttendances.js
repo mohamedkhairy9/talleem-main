@@ -4,17 +4,19 @@ import { API_KEYS } from '../endpoints';
 import useCustomQuery from '../../utils/hooks/global/useCustomQuery';
 import useCustomMutation from '../../utils/hooks/global/useCustomMutation';
 
-export const useOnlineAttendancesQuery = params => {
+export const useOnlineAttendancesQuery = (params = {}, options = {}) => {
     return useCustomQuery({
         queryKey: [API_KEYS.ONLINE_ATTENDANCES, params],
-        queryFn: () => onlineAttendancesService.getOnlineAttendances(params)
+        queryFn: () => onlineAttendancesService.getOnlineAttendances(params),
+        ...options
     });
 };
 
-export const useOnlineAttendanceQuery = id => {
+export const useOnlineAttendanceQuery = (id, options = {}) => {
     return useCustomQuery({
         queryKey: [API_KEYS.ONLINE_ATTENDANCES, id],
-        queryFn: () => onlineAttendancesService.getOnlineAttendance(id)
+        queryFn: () => onlineAttendancesService.getOnlineAttendance(id),
+        ...options
     });
 };
 
@@ -37,7 +39,7 @@ export const useCreateOnlineAttendanceMutation = () => {
 export const useUpdateOnlineAttendanceMutation = () => {
     const queryClient = useQueryClient();
     return useCustomMutation({
-        mutationFn: (data) =>
+        mutationFn: data =>
             onlineAttendancesService.updateOnlineAttendance(data.id, data),
         onSuccess: () => {
             queryClient.invalidateQueries({

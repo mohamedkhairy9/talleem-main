@@ -4,17 +4,19 @@ import { API_KEYS } from '../endpoints';
 import useCustomQuery from '../../utils/hooks/global/useCustomQuery';
 import useCustomMutation from '../../utils/hooks/global/useCustomMutation';
 
-export const useBranchesQuery = params => {
+export const useBranchesQuery = (params = {}, options = {}) => {
     return useCustomQuery({
         queryKey: [API_KEYS.BRANCHES, params],
-        queryFn: () => branchesService.getBranches(params)
+        queryFn: () => branchesService.getBranches(params),
+        ...options
     });
 };
 
-export const useBranchQuery = id => {
+export const useBranchQuery = (id, options = {}) => {
     return useCustomQuery({
         queryKey: [API_KEYS.BRANCHES, id],
-        queryFn: () => branchesService.getBranch(id)
+        queryFn: () => branchesService.getBranch(id),
+        ...options
     });
 };
 

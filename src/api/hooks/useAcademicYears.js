@@ -4,17 +4,19 @@ import { API_KEYS } from '../endpoints';
 import useCustomQuery from '../../utils/hooks/global/useCustomQuery';
 import useCustomMutation from '../../utils/hooks/global/useCustomMutation';
 
-export const useAcademicYearsQuery = params => {
+export const useAcademicYearsQuery = (params = {}, options = {}) => {
     return useCustomQuery({
         queryKey: [API_KEYS.ACADEMIC_YEARS, params],
-        queryFn: () => academicYearsService.getAcademicYears(params)
+        queryFn: () => academicYearsService.getAcademicYears(params),
+        ...options
     });
 };
 
-export const useAcademicYearQuery = id => {
+export const useAcademicYearQuery = (id, options = {}) => {
     return useCustomQuery({
         queryKey: [API_KEYS.ACADEMIC_YEARS, id],
-        queryFn: () => academicYearsService.getAcademicYear(id)
+        queryFn: () => academicYearsService.getAcademicYear(id),
+        ...options
     });
 };
 

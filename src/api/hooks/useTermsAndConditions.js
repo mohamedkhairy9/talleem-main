@@ -4,10 +4,11 @@ import { API_KEYS } from '../endpoints';
 import useCustomQuery from '../../utils/hooks/global/useCustomQuery';
 import useCustomMutation from '../../utils/hooks/global/useCustomMutation';
 
-export const useTermsAndConditionsQuery = () => {
+export const useTermsAndConditionsQuery = (options = {}) => {
     return useCustomQuery({
         queryKey: [API_KEYS.TERMS_AND_CONDITIONS],
-        queryFn: () => termsAndConditionsService.getTermsAndConditions()
+        queryFn: () => termsAndConditionsService.getTermsAndConditions(),
+        ...options
     });
 };
 
@@ -41,4 +42,3 @@ export const useDeleteTermsAndConditionsMutation = () => {
         }
     });
 };
-

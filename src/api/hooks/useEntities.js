@@ -5,17 +5,19 @@ import useCustomQuery from '../../utils/hooks/global/useCustomQuery';
 import useCustomMutation from '../../utils/hooks/global/useCustomMutation';
 import { prepareFormData } from '@/utils/helpers/global.fns';
 
-export const useEntitiesQuery = params => {
+export const useEntitiesQuery = (params = {}, options = {}) => {
     return useCustomQuery({
         queryKey: [API_KEYS.ENTITIES, params],
-        queryFn: () => entitiesService.getEntities(params)
+        queryFn: () => entitiesService.getEntities(params),
+        ...options
     });
 };
 
-export const useEntityQuery = id => {
+export const useEntityQuery = (id, options = {}) => {
     return useCustomQuery({
         queryKey: [API_KEYS.ENTITIES, id],
-        queryFn: () => entitiesService.getEntity(id)
+        queryFn: () => entitiesService.getEntity(id),
+        ...options
     });
 };
 

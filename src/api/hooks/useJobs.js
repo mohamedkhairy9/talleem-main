@@ -4,17 +4,19 @@ import { API_KEYS } from '../endpoints';
 import useCustomQuery from '../../utils/hooks/global/useCustomQuery';
 import useCustomMutation from '../../utils/hooks/global/useCustomMutation';
 
-export const useJobsQuery = params => {
+export const useJobsQuery = (params = {}, options = {}) => {
     return useCustomQuery({
         queryKey: [API_KEYS.JOBS, params],
-        queryFn: () => jobsService.getJobs(params)
+        queryFn: () => jobsService.getJobs(params),
+        ...options
     });
 };
 
-export const useJobQuery = id => {
+export const useJobQuery = (id, options = {}) => {
     return useCustomQuery({
         queryKey: [API_KEYS.JOBS, id],
-        queryFn: () => jobsService.getJob(id)
+        queryFn: () => jobsService.getJob(id),
+        ...options
     });
 };
 

@@ -4,18 +4,19 @@ import { API_KEYS } from '../endpoints';
 import useCustomQuery from '../../utils/hooks/global/useCustomQuery';
 import useCustomMutation from '../../utils/hooks/global/useCustomMutation';
 
-export const useParentsQuery = params => {
+export const useParentsQuery = (params = {}, options = {}) => {
     return useCustomQuery({
         queryKey: [API_KEYS.PARENTS, params],
-        queryFn: () => parentsService.getParents(params)
+        queryFn: () => parentsService.getParents(params),
+        ...options
     });
 };
 
-export const useParentQuery = id => {
+export const useParentQuery = (id, options = {}) => {
     return useCustomQuery({
         queryKey: [API_KEYS.PARENTS, id],
         queryFn: () => parentsService.getParent(id),
-        enabled: !!id
+        ...options
     });
 };
 

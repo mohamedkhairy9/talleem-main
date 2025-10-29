@@ -4,17 +4,19 @@ import { API_KEYS } from '../endpoints';
 import useCustomQuery from '../../utils/hooks/global/useCustomQuery';
 import useCustomMutation from '../../utils/hooks/global/useCustomMutation';
 
-export const useQuoranPartsQuery = params => {
+export const useQuoranPartsQuery = (params = {}, options = {}) => {
     return useCustomQuery({
         queryKey: [API_KEYS.QUORAN_PARTS, params],
-        queryFn: () => quoranPartsService.getQuoranParts(params)
+        queryFn: () => quoranPartsService.getQuoranParts(params),
+        ...options
     });
 };
 
-export const useQuoranPartQuery = id => {
+export const useQuoranPartQuery = (id, options = {}) => {
     return useCustomQuery({
         queryKey: [API_KEYS.QUORAN_PARTS, id],
-        queryFn: () => quoranPartsService.getQuoranPart(id)
+        queryFn: () => quoranPartsService.getQuoranPart(id),
+        ...options
     });
 };
 

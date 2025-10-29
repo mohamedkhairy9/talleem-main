@@ -4,17 +4,19 @@ import { API_KEYS } from '../endpoints';
 import useCustomQuery from '../../utils/hooks/global/useCustomQuery';
 import useCustomMutation from '../../utils/hooks/global/useCustomMutation';
 
-export const useRolesQuery = params => {
+export const useRolesQuery = (params = {}, options = {}) => {
     return useCustomQuery({
         queryKey: [API_KEYS.ROLES, params],
-        queryFn: () => rolesService.getRoles(params)
+        queryFn: () => rolesService.getRoles(params),
+        ...options
     });
 };
 
-export const useRoleQuery = id => {
+export const useRoleQuery = (id, options = {}) => {
     return useCustomQuery({
         queryKey: [API_KEYS.ROLES, id],
-        queryFn: () => rolesService.getRole(id)
+        queryFn: () => rolesService.getRole(id),
+        ...options
     });
 };
 

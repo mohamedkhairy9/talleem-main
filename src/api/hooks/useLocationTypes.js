@@ -4,17 +4,19 @@ import { API_KEYS } from '../endpoints';
 import useCustomQuery from '../../utils/hooks/global/useCustomQuery';
 import useCustomMutation from '../../utils/hooks/global/useCustomMutation';
 
-export const useLocationTypesQuery = params => {
+export const useLocationTypesQuery = (params = {}, options = {}) => {
     return useCustomQuery({
         queryKey: [API_KEYS.LOCATION_TYPES, params],
-        queryFn: () => locationTypesService.getLocationTypes(params)
+        queryFn: () => locationTypesService.getLocationTypes(params),
+        ...options
     });
 };
 
-export const useLocationTypeQuery = id => {
+export const useLocationTypeQuery = (id, options = {}) => {
     return useCustomQuery({
         queryKey: [API_KEYS.LOCATION_TYPES, id],
-        queryFn: () => locationTypesService.getLocationType(id)
+        queryFn: () => locationTypesService.getLocationType(id),
+        ...options
     });
 };
 

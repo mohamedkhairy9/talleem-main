@@ -4,17 +4,19 @@ import { API_KEYS } from '../endpoints';
 import useCustomQuery from '../../utils/hooks/global/useCustomQuery';
 import useCustomMutation from '../../utils/hooks/global/useCustomMutation';
 
-export const useAttendanceTypesQuery = params => {
+export const useAttendanceTypesQuery = (params = {}, options = {}) => {
     return useCustomQuery({
         queryKey: [API_KEYS.ATTENDANCES_TYPES, params],
-        queryFn: () => attendanceTypesService.getAttendanceTypes(params)
+        queryFn: () => attendanceTypesService.getAttendanceTypes(params),
+        ...options
     });
 };
 
-export const useAttendanceTypeQuery = id => {
+export const useAttendanceTypeQuery = (id, options = {}) => {
     return useCustomQuery({
         queryKey: [API_KEYS.ATTENDANCES_TYPES, id],
-        queryFn: () => attendanceTypesService.getAttendanceType(id)
+        queryFn: () => attendanceTypesService.getAttendanceType(id),
+        ...options
     });
 };
 

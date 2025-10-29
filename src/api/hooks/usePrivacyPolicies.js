@@ -4,10 +4,11 @@ import { API_KEYS } from '../endpoints';
 import useCustomQuery from '../../utils/hooks/global/useCustomQuery';
 import useCustomMutation from '../../utils/hooks/global/useCustomMutation';
 
-export const usePrivacyPoliciesQuery = () => {
+export const usePrivacyPoliciesQuery = (options = {}) => {
     return useCustomQuery({
         queryKey: [API_KEYS.PRIVACY_POLICIES],
-        queryFn: () => privacyPoliciesService.getPrivacyPolicies()
+        queryFn: () => privacyPoliciesService.getPrivacyPolicies(),
+        ...options
     });
 };
 

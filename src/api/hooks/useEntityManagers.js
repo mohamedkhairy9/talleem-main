@@ -5,24 +5,27 @@ import useCustomQuery from '../../utils/hooks/global/useCustomQuery';
 import useCustomMutation from '../../utils/hooks/global/useCustomMutation';
 import { prepareFormData } from '@/utils/helpers/global.fns';
 
-export const useEntityManagersQuery = params => {
+export const useEntityManagersQuery = (params = {}, options = {}) => {
     return useCustomQuery({
         queryKey: [API_KEYS.ENTITY_MANAGERS, params],
-        queryFn: () => entityManagersService.getEntityManagers(params)
+        queryFn: () => entityManagersService.getEntityManagers(params),
+        ...options
     });
 };
 
-export const useEntityManagerQuery = id => {
+export const useEntityManagerQuery = (id, options = {}) => {
     return useCustomQuery({
         queryKey: [API_KEYS.ENTITY_MANAGERS, id],
-        queryFn: () => entityManagersService.getEntityManager(id)
+        queryFn: () => entityManagersService.getEntityManager(id),
+        ...options
     });
 };
 
 export const useCreateEntityManagerMutation = () => {
     const queryClient = useQueryClient();
     return useCustomMutation({
-        mutationFn: data => entityManagersService.createEntityManager(prepareFormData(data)),
+        mutationFn: data =>
+            entityManagersService.createEntityManager(prepareFormData(data)),
         onSuccess: () => {
             queryClient.invalidateQueries({
                 queryKey: [API_KEYS.ENTITY_MANAGERS]
@@ -38,7 +41,10 @@ export const useUpdateEntityManagerMutation = () => {
     const queryClient = useQueryClient();
     return useCustomMutation({
         mutationFn: data =>
-            entityManagersService.updateEntityManager(data.id, prepareFormData(data)),
+            entityManagersService.updateEntityManager(
+                data.id,
+                prepareFormData(data)
+            ),
         onSuccess: () => {
             queryClient.invalidateQueries({
                 queryKey: [API_KEYS.ENTITY_MANAGERS]

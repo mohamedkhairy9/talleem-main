@@ -4,17 +4,19 @@ import { API_KEYS } from '../endpoints';
 import useCustomQuery from '../../utils/hooks/global/useCustomQuery';
 import useCustomMutation from '../../utils/hooks/global/useCustomMutation';
 
-export const useUsersQuery = params => {
+export const useUsersQuery = (params = {}, options = {}) => {
     return useCustomQuery({
         queryKey: [API_KEYS.USERS, params],
-        queryFn: () => usersService.getUsers(params)
+        queryFn: () => usersService.getUsers(params),
+        ...options
     });
 };
 
-export const useUserQuery = id => {
+export const useUserQuery = (id, options = {}) => {
     return useCustomQuery({
         queryKey: [API_KEYS.USERS, id],
-        queryFn: () => usersService.getUser(id)
+        queryFn: () => usersService.getUser(id),
+        ...options
     });
 };
 

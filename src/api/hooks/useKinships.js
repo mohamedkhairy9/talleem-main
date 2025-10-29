@@ -4,17 +4,19 @@ import { API_KEYS } from '../endpoints';
 import useCustomQuery from '../../utils/hooks/global/useCustomQuery';
 import useCustomMutation from '../../utils/hooks/global/useCustomMutation';
 
-export const useKinshipsQuery = params => {
+export const useKinshipsQuery = (params = {}, options = {}) => {
     return useCustomQuery({
         queryKey: [API_KEYS.KINSHIPS, params],
-        queryFn: () => kinshipsService.getKinships(params)
+        queryFn: () => kinshipsService.getKinships(params),
+        ...options
     });
 };
 
-export const useKinshipQuery = id => {
+export const useKinshipQuery = (id, options = {}) => {
     return useCustomQuery({
         queryKey: [API_KEYS.KINSHIPS, id],
-        queryFn: () => kinshipsService.getKinship(id)
+        queryFn: () => kinshipsService.getKinship(id),
+        ...options
     });
 };
 

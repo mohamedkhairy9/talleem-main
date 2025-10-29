@@ -4,17 +4,19 @@ import { API_KEYS } from '../endpoints';
 import useCustomQuery from '../../utils/hooks/global/useCustomQuery';
 import useCustomMutation from '../../utils/hooks/global/useCustomMutation';
 
-export const useEntityCategoriesQuery = params => {
+export const useEntityCategoriesQuery = (params = {}, options = {}) => {
     return useCustomQuery({
         queryKey: [API_KEYS.ENTITY_CATEGORIES, params],
-        queryFn: () => entityCategoriesService.getEntityCategories(params)
+        queryFn: () => entityCategoriesService.getEntityCategories(params),
+        ...options
     });
 };
 
-export const useEntityCategoryQuery = id => {
+export const useEntityCategoryQuery = (id, options = {}) => {
     return useCustomQuery({
         queryKey: [API_KEYS.ENTITY_CATEGORIES, id],
-        queryFn: () => entityCategoriesService.getEntityCategory(id)
+        queryFn: () => entityCategoriesService.getEntityCategory(id),
+        ...options
     });
 };
 

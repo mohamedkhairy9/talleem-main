@@ -4,17 +4,19 @@ import { API_KEYS } from '../endpoints';
 import useCustomQuery from '../../utils/hooks/global/useCustomQuery';
 import useCustomMutation from '../../utils/hooks/global/useCustomMutation';
 
-export const useAcademicLevelsQuery = params => {
+export const useAcademicLevelsQuery = (params = {}, options = {}) => {
     return useCustomQuery({
         queryKey: [API_KEYS.ACADEMIC_LEVELS, params],
-        queryFn: () => academicLevelsService.getAcademicLevels(params)
+        queryFn: () => academicLevelsService.getAcademicLevels(params),
+        ...options
     });
 };
 
-export const useAcademicLevelQuery = id => {
+export const useAcademicLevelQuery = (id, options = {}) => {
     return useCustomQuery({
         queryKey: [API_KEYS.ACADEMIC_LEVELS, id],
-        queryFn: () => academicLevelsService.getAcademicLevel(id)
+        queryFn: () => academicLevelsService.getAcademicLevel(id),
+        ...options
     });
 };
 

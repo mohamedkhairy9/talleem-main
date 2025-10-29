@@ -4,19 +4,20 @@ import { API_KEYS } from '../endpoints';
 import useCustomQuery from '../../utils/hooks/global/useCustomQuery';
 import useCustomMutation from '../../utils/hooks/global/useCustomMutation';
 
-export const useBranchAdministrationsQuery = params => {
+export const useBranchAdministrationsQuery = (params = {}, options = {}) => {
     return useCustomQuery({
         queryKey: [API_KEYS.BRANCH_ADMINISTRATIONS, params],
         queryFn: () =>
-            branchAdministrationsService.getBranchAdministrations(params)
+            branchAdministrationsService.getBranchAdministrations(params),
+        ...options
     });
 };
 
-export const useBranchAdministrationQuery = id => {
+export const useBranchAdministrationQuery = (id, options = {}) => {
     return useCustomQuery({
         queryKey: [API_KEYS.BRANCH_ADMINISTRATIONS, id],
         queryFn: () => branchAdministrationsService.getBranchAdministration(id),
-        enabled: !!id
+        ...options
     });
 };
 
@@ -36,8 +37,11 @@ export const useCreateBranchAdministrationMutation = () => {
 export const useUpdateBranchAdministrationMutation = () => {
     const queryClient = useQueryClient();
     return useCustomMutation({
-        mutationFn: (data) =>
-            branchAdministrationsService.updateBranchAdministration(data.id, data),
+        mutationFn: data =>
+            branchAdministrationsService.updateBranchAdministration(
+                data.id,
+                data
+            ),
         onSuccess: () => {
             queryClient.invalidateQueries({
                 queryKey: [API_KEYS.BRANCH_ADMINISTRATIONS]

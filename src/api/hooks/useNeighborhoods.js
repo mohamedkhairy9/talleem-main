@@ -4,17 +4,19 @@ import { API_KEYS } from '../endpoints';
 import useCustomQuery from '../../utils/hooks/global/useCustomQuery';
 import useCustomMutation from '../../utils/hooks/global/useCustomMutation';
 
-export const useNeighborhoodsQuery = params => {
+export const useNeighborhoodsQuery = (params = {}, options = {}) => {
     return useCustomQuery({
         queryKey: [API_KEYS.NEIGHBORHOODS, params],
-        queryFn: () => neighborhoodsService.getNeighborhoods(params)
+        queryFn: () => neighborhoodsService.getNeighborhoods(params),
+        ...options
     });
 };
 
-export const useNeighborhoodQuery = id => {
+export const useNeighborhoodQuery = (id, options = {}) => {
     return useCustomQuery({
         queryKey: [API_KEYS.NEIGHBORHOODS, id],
-        queryFn: () => neighborhoodsService.getNeighborhood(id)
+        queryFn: () => neighborhoodsService.getNeighborhood(id),
+        ...options
     });
 };
 

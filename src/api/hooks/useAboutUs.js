@@ -4,10 +4,11 @@ import { API_KEYS } from '../endpoints';
 import useCustomQuery from '../../utils/hooks/global/useCustomQuery';
 import useCustomMutation from '../../utils/hooks/global/useCustomMutation';
 
-export const useAboutUsQuery = () => {
+export const useAboutUsQuery = (options = {}) => {
     return useCustomQuery({
         queryKey: [API_KEYS.ABOUT_US],
-        queryFn: () => aboutUsService.getAboutUs()
+        queryFn: () => aboutUsService.getAboutUs(),
+        ...options
     });
 };
 

@@ -4,21 +4,23 @@ import { API_KEYS } from '../endpoints';
 import useCustomQuery from '../../utils/hooks/global/useCustomQuery';
 import useCustomMutation from '../../utils/hooks/global/useCustomMutation';
 
-export const useEducationProgramEntityTypesQuery = params => {
+export const useEducationProgramEntityTypesQuery = (params = {}, options = {}) => {
     return useCustomQuery({
         queryKey: [API_KEYS.EDUCATION_PROGRAM_ENTITY_TYPES, params],
         queryFn: () =>
             educationProgramEntityTypesService.getEducationProgramEntityTypes(
                 params
-            )
+            ),
+        ...options
     });
 };
 
-export const useEducationProgramEntityTypeQuery = id => {
+export const useEducationProgramEntityTypeQuery = (id, options = {}) => {
     return useCustomQuery({
         queryKey: [API_KEYS.EDUCATION_PROGRAM_ENTITY_TYPES, id],
         queryFn: () =>
-            educationProgramEntityTypesService.getEducationProgramEntityType(id)
+            educationProgramEntityTypesService.getEducationProgramEntityType(id),
+        ...options
     });
 };
 

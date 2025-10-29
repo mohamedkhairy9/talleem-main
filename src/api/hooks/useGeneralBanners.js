@@ -4,17 +4,19 @@ import { API_KEYS } from '../endpoints';
 import useCustomQuery from '../../utils/hooks/global/useCustomQuery';
 import useCustomMutation from '../../utils/hooks/global/useCustomMutation';
 
-export const useGeneralBannersQuery = params => {
+export const useGeneralBannersQuery = (params = {}, options = {}) => {
     return useCustomQuery({
         queryKey: [API_KEYS.GENERAL_BANNERS, params],
-        queryFn: () => generalBannersService.getGeneralBanners(params)
+        queryFn: () => generalBannersService.getGeneralBanners(params),
+        ...options
     });
 };
 
-export const useGeneralBannerQuery = id => {
+export const useGeneralBannerQuery = (id, options = {}) => {
     return useCustomQuery({
         queryKey: [API_KEYS.GENERAL_BANNERS, id],
-        queryFn: () => generalBannersService.getGeneralBanner(id)
+        queryFn: () => generalBannersService.getGeneralBanner(id),
+        ...options
     });
 };
 

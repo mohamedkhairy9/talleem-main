@@ -4,17 +4,19 @@ import { API_KEYS } from '../endpoints';
 import useCustomQuery from '../../utils/hooks/global/useCustomQuery';
 import useCustomMutation from '../../utils/hooks/global/useCustomMutation';
 
-export const useSpecificationsQuery = params => {
+export const useSpecificationsQuery = (params = {}, options = {}) => {
     return useCustomQuery({
         queryKey: [API_KEYS.SPECIFICATIONS, params],
-        queryFn: () => specificationsService.getSpecifications(params)
+        queryFn: () => specificationsService.getSpecifications(params),
+        ...options
     });
 };
 
-export const useSpecificationQuery = id => {
+export const useSpecificationQuery = (id, options = {}) => {
     return useCustomQuery({
         queryKey: [API_KEYS.SPECIFICATIONS, id],
-        queryFn: () => specificationsService.getSpecification(id)
+        queryFn: () => specificationsService.getSpecification(id),
+        ...options
     });
 };
 

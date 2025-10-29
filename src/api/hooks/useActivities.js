@@ -4,17 +4,19 @@ import { API_KEYS } from '../endpoints';
 import useCustomQuery from '../../utils/hooks/global/useCustomQuery';
 import useCustomMutation from '../../utils/hooks/global/useCustomMutation';
 
-export const useActivitiesQuery = params => {
+export const useActivitiesQuery = (params = {}, options = {}) => {
     return useCustomQuery({
         queryKey: [API_KEYS.ACTIVITIES, params],
-        queryFn: () => activitiesService.getActivities(params)
+        queryFn: () => activitiesService.getActivities(params),
+        ...options
     });
 };
 
-export const useActivityQuery = id => {
+export const useActivityQuery = (id, options = {}) => {
     return useCustomQuery({
         queryKey: [API_KEYS.ACTIVITIES, id],
-        queryFn: () => activitiesService.getActivity(id)
+        queryFn: () => activitiesService.getActivity(id),
+        ...options
     });
 };
 

@@ -4,17 +4,19 @@ import { API_KEYS } from '../endpoints';
 import useCustomQuery from '../../utils/hooks/global/useCustomQuery';
 import useCustomMutation from '../../utils/hooks/global/useCustomMutation';
 
-export const useEmployeesQuery = params => {
+export const useEmployeesQuery = (params = {}, options = {}) => {
     return useCustomQuery({
         queryKey: [API_KEYS.EMPLOYEES, params],
-        queryFn: () => employeesService.getEmployees(params)
+        queryFn: () => employeesService.getEmployees(params),
+        ...options
     });
 };
 
-export const useEmployeeQuery = id => {
+export const useEmployeeQuery = (id, options = {}) => {
     return useCustomQuery({
         queryKey: [API_KEYS.EMPLOYEES, id],
-        queryFn: () => employeesService.getEmployee(id)
+        queryFn: () => employeesService.getEmployee(id),
+        ...options
     });
 };
 
@@ -56,4 +58,3 @@ export const useDeleteEmployeeMutation = () => {
         }
     });
 };
-

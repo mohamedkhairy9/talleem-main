@@ -4,17 +4,19 @@ import { API_KEYS } from '../endpoints';
 import useCustomQuery from '../../utils/hooks/global/useCustomQuery';
 import useCustomMutation from '../../utils/hooks/global/useCustomMutation';
 
-export const useNationalitiesQuery = params => {
+export const useNationalitiesQuery = (params = {}, options = {}) => {
     return useCustomQuery({
         queryKey: [API_KEYS.NATIONALITIES, params],
-        queryFn: () => nationalitiesService.getNationalities(params)
+        queryFn: () => nationalitiesService.getNationalities(params),
+        ...options
     });
 };
 
-export const useNationalityQuery = id => {
+export const useNationalityQuery = (id, options = {}) => {
     return useCustomQuery({
         queryKey: [API_KEYS.NATIONALITIES, id],
-        queryFn: () => nationalitiesService.getNationality(id)
+        queryFn: () => nationalitiesService.getNationality(id),
+        ...options
     });
 };
 
@@ -36,7 +38,7 @@ export const useCreateNationalityMutation = () => {
 export const useUpdateNationalityMutation = () => {
     const queryClient = useQueryClient();
     return useCustomMutation({
-        mutationFn: (data) =>
+        mutationFn: data =>
             nationalitiesService.updateNationality(data.id, data),
         onSuccess: () => {
             queryClient.invalidateQueries({

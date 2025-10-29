@@ -4,17 +4,19 @@ import { API_KEYS } from '../endpoints';
 import useCustomQuery from '../../utils/hooks/global/useCustomQuery';
 import useCustomMutation from '../../utils/hooks/global/useCustomMutation';
 
-export const useCitiesQuery = params => {
+export const useCitiesQuery = (params = {}, options = {}) => {
     return useCustomQuery({
         queryKey: [API_KEYS.CITIES, params],
-        queryFn: () => citiesService.getCities(params)
+        queryFn: () => citiesService.getCities(params),
+        ...options
     });
 };
 
-export const useCityQuery = id => {
+export const useCityQuery = (id, options = {}) => {
     return useCustomQuery({
         queryKey: [API_KEYS.CITIES, id],
-        queryFn: () => citiesService.getCity(id)
+        queryFn: () => citiesService.getCity(id),
+        ...options
     });
 };
 

@@ -4,17 +4,19 @@ import { API_KEYS } from '../endpoints';
 import useCustomQuery from '../../utils/hooks/global/useCustomQuery';
 import useCustomMutation from '../../utils/hooks/global/useCustomMutation';
 
-export const useSessionPeriodsQuery = params => {
+export const useSessionPeriodsQuery = (params = {}, options = {}) => {
     return useCustomQuery({
         queryKey: [API_KEYS.SESSION_PERIODS, params],
-        queryFn: () => sessionPeriodsService.getSessionPeriods(params)
+        queryFn: () => sessionPeriodsService.getSessionPeriods(params),
+        ...options
     });
 };
 
-export const useSessionPeriodQuery = id => {
+export const useSessionPeriodQuery = (id, options = {}) => {
     return useCustomQuery({
         queryKey: [API_KEYS.SESSION_PERIODS, id],
-        queryFn: () => sessionPeriodsService.getSessionPeriod(id)
+        queryFn: () => sessionPeriodsService.getSessionPeriod(id),
+        ...options
     });
 };
 

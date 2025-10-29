@@ -4,10 +4,11 @@ import { API_KEYS } from '../endpoints';
 import useCustomQuery from '../../utils/hooks/global/useCustomQuery';
 import useCustomMutation from '../../utils/hooks/global/useCustomMutation';
 
-export const useNotificationsQuery = params => {
+export const useNotificationsQuery = (params = {}, options = {}) => {
     return useCustomQuery({
         queryKey: [API_KEYS.NOTIFICATIONS, params],
-        queryFn: () => notificationsService.getNotifications(params)
+        queryFn: () => notificationsService.getNotifications(params),
+        ...options
     });
 };
 

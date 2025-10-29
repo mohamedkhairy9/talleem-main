@@ -4,23 +4,28 @@ import { API_KEYS } from '../endpoints';
 import useCustomQuery from '../../utils/hooks/global/useCustomQuery';
 import useCustomMutation from '../../utils/hooks/global/useCustomMutation';
 
-export const useMemorizationProgramEntityTypesQuery = params => {
+export const useMemorizationProgramEntityTypesQuery = (
+    params = {},
+    options = {}
+) => {
     return useCustomQuery({
         queryKey: [API_KEYS.MEMORIZATION_PROGRAM_ENTITY_TYPES, params],
         queryFn: () =>
             memorizationProgramEntityTypesService.getMemorizationProgramEntityTypes(
                 params
-            )
+            ),
+        ...options
     });
 };
 
-export const useMemorizationProgramEntityTypeQuery = id => {
+export const useMemorizationProgramEntityTypeQuery = (id, options = {}) => {
     return useCustomQuery({
         queryKey: [API_KEYS.MEMORIZATION_PROGRAM_ENTITY_TYPES, id],
         queryFn: () =>
             memorizationProgramEntityTypesService.getMemorizationProgramEntityType(
                 id
-            )
+            ),
+        ...options
     });
 };
 

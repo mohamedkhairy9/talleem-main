@@ -5,24 +5,27 @@ import useCustomQuery from '../../utils/hooks/global/useCustomQuery';
 import useCustomMutation from '../../utils/hooks/global/useCustomMutation';
 import { prepareFormData } from '@/utils/helpers/global.fns';
 
-export const useTeachersQuery = params => {
+export const useTeachersQuery = (params = {}, options = {}) => {
     return useCustomQuery({
         queryKey: [API_KEYS.TEACHERS, params],
-        queryFn: () => teachersService.getTeachers(params)
+        queryFn: () => teachersService.getTeachers(params),
+        ...options
     });
 };
 
-export const useTeacherQuery = id => {
+export const useTeacherQuery = (id, options = {}) => {
     return useCustomQuery({
         queryKey: [API_KEYS.TEACHERS, id],
-        queryFn: () => teachersService.getTeacher(id)
+        queryFn: () => teachersService.getTeacher(id),
+        ...options
     });
 };
 
 export const useCreateTeacherMutation = () => {
     const queryClient = useQueryClient();
     return useCustomMutation({
-        mutationFn: data => teachersService.createTeacher(prepareFormData(data)),
+        mutationFn: data =>
+            teachersService.createTeacher(prepareFormData(data)),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: [API_KEYS.TEACHERS] });
         },
@@ -35,7 +38,8 @@ export const useCreateTeacherMutation = () => {
 export const useUpdateTeacherMutation = () => {
     const queryClient = useQueryClient();
     return useCustomMutation({
-        mutationFn: data => teachersService.updateTeacher(data.id, prepareFormData(data)),
+        mutationFn: data =>
+            teachersService.updateTeacher(data.id, prepareFormData(data)),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: [API_KEYS.TEACHERS] });
         },
