@@ -4,6 +4,18 @@
         "search": {
             "placeholder": "Enter search keyword"
         },
+        "program_entity_types": {
+            "label": "Entity Program Type",
+            "placeholder": "Select entity program type"
+        },
+        "license_number": {
+            "label": "License Number",
+            "placeholder": "Enter license number"
+        },
+        "entity_manager_address": {
+            "label": "Entity Living Address",
+            "placeholder": "Enter the living address"
+        },
         "name": {
             "en_min": "English name must be at least 2 characters",
             "ar_min": "Arabic name must be at least 2 characters",
@@ -16,6 +28,16 @@
             "placeholder": {
                 "en": "Enter name in English",
                 "ar": "Enter name in Arabic"
+            }
+        },
+        "entity_name": {
+            "label": {
+                "en": "Entity Name (English)",
+                "ar": "Entity Name (Arabic)"
+            },
+            "placeholder": {
+                "en": "Enter entity name in English",
+                "ar": "Enter entity name in Arabic"
             }
         },
         "description": {
@@ -67,7 +89,7 @@
             "min": "Please select a valid location type"
         },
         "min_acceptance_age": {
-            "label": "Min Acceptance Age",
+            "label": "Minimum Acceptance Age",
             "placeholder": "Enter minimum acceptance age",
             "integer": "Age must be a number",
             "min": "Age must be at least 1",

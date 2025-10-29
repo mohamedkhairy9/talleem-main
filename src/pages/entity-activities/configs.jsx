@@ -1,4 +1,5 @@
 import Cell from '@/components/common/table/cells/Cell';
+import ActiveCell from '@/components/common/table/cells/ActiveCell';
 import DateCell from '@/components/common/table/cells/DateCell';
 import NameCell from '@/components/common/table/cells/NameCell';
 import { createColumnHelper } from '@tanstack/react-table';
@@ -10,13 +11,17 @@ const columnHelper = createColumnHelper();
 export const entityActivitiesColumns = [
     columnHelper.accessor('entity', {
         header: 'table_headers.entity',
-        cell: info => <NameCell directValue={info.row.original.entity_id?.name} />
+        cell: info => (
+            <NameCell directValue={info.row.original.entity_id?.name} />
+        )
     }),
     columnHelper.accessor('activity', {
         header: 'table_headers.activity',
-        cell: info => (
-            <NameCell directValue={info.row.original.activity_name} />
-        )
+        cell: info => <NameCell directValue={info.row.original.activity_name} />
+    }),
+    columnHelper.accessor('status', {
+        header: 'table_headers.status',
+        cell: info => <ActiveCell info={info} />
     }),
     columnHelper.accessor('created_at', {
         header: 'table_headers.created_at',

@@ -1,4 +1,5 @@
 import Cell from '@/components/common/table/cells/Cell';
+import ActiveCell from '@/components/common/table/cells/ActiveCell';
 import DateCell from '@/components/common/table/cells/DateCell';
 import NameCell from '@/components/common/table/cells/NameCell';
 import { createColumnHelper } from '@tanstack/react-table';
@@ -11,11 +12,17 @@ const columnHelper = createColumnHelper();
 export const activitiesColumns = [
     columnHelper.accessor('main_program_id', {
         header: 'table_headers.main_program',
-        cell: info => <NameCell directValue={info.row.original.main_program?.name} />
+        cell: info => (
+            <NameCell directValue={info.row.original.main_program?.name} />
+        )
     }),
     columnHelper.accessor('name', {
         header: 'table_headers.activities',
         cell: info => <NameCell directValue={info.row.original.name} />
+    }),
+    columnHelper.accessor('status', {
+        header: 'table_headers.status',
+        cell: info => <ActiveCell info={info} />
     }),
     columnHelper.accessor('created_at', {
         header: 'table_headers.created_at',
@@ -42,7 +49,7 @@ export const activitiesFields = [
         viewMode: true
     },
     {
-        name : 'main_program_id',
+        name: 'main_program_id',
         label: 'validation.main_program_id.label',
         type: 'select',
         placeholder: 'validation.main_program_id.placeholder',

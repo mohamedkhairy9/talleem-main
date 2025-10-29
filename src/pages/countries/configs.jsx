@@ -1,4 +1,5 @@
 import Cell from '@/components/common/table/cells/Cell';
+import ActiveCell from '@/components/common/table/cells/ActiveCell';
 import DateCell from '@/components/common/table/cells/DateCell';
 import NameCell from '@/components/common/table/cells/NameCell';
 import { enabledDisabledOptions } from '@/utils/constants/options';
@@ -19,6 +20,10 @@ export const countriesColumns = [
     columnHelper.accessor('phone_code', {
         header: 'table_headers.phone_code',
         cell: info => <Cell value={info.getValue()} />
+    }),
+    columnHelper.accessor('status', {
+        header: 'table_headers.status',
+        cell: info => <ActiveCell info={info} />
     }),
     columnHelper.accessor('created_at', {
         header: 'table_headers.created_at',

@@ -1,4 +1,5 @@
 import Cell from '@/components/common/table/cells/Cell';
+import ActiveCell from '@/components/common/table/cells/ActiveCell';
 import DateCell from '@/components/common/table/cells/DateCell';
 import NameCell from '@/components/common/table/cells/NameCell';
 import { createColumnHelper } from '@tanstack/react-table';
@@ -27,6 +28,10 @@ export const teachersColumns = [
     columnHelper.accessor('main_program', {
         header: 'table_headers.main_program',
         cell: info => <Cell value={info.row.original.main_program} />
+    }),
+    columnHelper.accessor('status', {
+        header: 'table_headers.status',
+        cell: info => <ActiveCell info={info} />
     }),
     columnHelper.accessor('created_at', {
         header: 'table_headers.created_at',

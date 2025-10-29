@@ -98,6 +98,11 @@ export const sideMenuTabs = [
                 icon: VscDebugBreakpointLog
             },
             {
+                titleKey: 'sidebar.employees',
+                path: '/employees',
+                icon: HiIdentification
+            },
+            {
                 titleKey: 'sidebar.location_types',
                 path: '/location-types',
                 icon: VscDebugBreakpointLog
@@ -185,11 +190,7 @@ export const sideMenuTabs = [
                 path: '/students',
                 icon: HiUserGroup
             },
-            {
-                titleKey: 'sidebar.employees',
-                path: '/employees',
-                icon: HiIdentification
-            }
+            
         ]
     },
 

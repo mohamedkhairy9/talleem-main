@@ -14,7 +14,7 @@ import { useNationalitiesQuery } from '@/api/hooks/useNationalities';
 import { useEntitiesQuery } from '@/api/hooks/useEntities';
 import Loader from '@/components/common/Loader';
 import { allData } from '@/utils/constants/global.constants';
-import { genderOptions } from '@/utils/constants/options';
+import { enabledDisabledOptions, genderOptions } from '@/utils/constants/options';
 
 export default function CreateEntityManager({ onClose }) {
     const { mutate, isPending } = useCreateEntityManagerMutation();
@@ -63,7 +63,8 @@ export default function CreateEntityManager({ onClose }) {
                     academic_level_id: academicLevelsData?.data,
                     specification_id: specificationsData?.data,
                     city_id: citiesData?.data,
-                    gender: genderOptions
+                    gender: genderOptions,
+                    status: enabledDisabledOptions
                 }}
             />
         </Modal>

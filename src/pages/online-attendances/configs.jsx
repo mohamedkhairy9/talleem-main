@@ -1,4 +1,5 @@
 import DateCell from '@/components/common/table/cells/DateCell';
+import ActiveCell from '@/components/common/table/cells/ActiveCell';
 import NameCell from '@/components/common/table/cells/NameCell';
 import { createColumnHelper } from '@tanstack/react-table';
 import React from 'react';
@@ -39,6 +40,10 @@ export const onlineAttendancesColumns = [
             }
             return <span>-</span>;
         }
+    }),
+    columnHelper.accessor('status', {
+        header: 'table_headers.status',
+        cell: info => <ActiveCell info={info} />
     }),
     columnHelper.accessor('created_at', {
         header: 'table_headers.created_at',

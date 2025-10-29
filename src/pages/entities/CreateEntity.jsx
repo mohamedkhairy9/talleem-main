@@ -7,6 +7,7 @@ import { apiCalls, entitiesDefaultValues } from './configs';
 
 import Loader from '@/components/common/Loader';
 import useApiCalls from './useApiCalls';
+import { genderOptions } from '@/utils/constants/options';
 
 const statusOptions = [
     { label: { ar: 'نشط', en: 'Active' }, value: 'active' },
@@ -30,6 +31,9 @@ export default function CreateEntity({ onClose }) {
         usersData,
         activitiesData,
         memorizationProgramEntityTypesData,
+        nationalitiesData,
+        academicLevelsData,
+        specificationsData,
         isLoading
     } = useApiCalls({ apiCalls });
 
@@ -56,7 +60,16 @@ export default function CreateEntity({ onClose }) {
                     memorization_program_entity_type_id:
                         memorizationProgramEntityTypesData?.data,
                     education_program_entity_type_id:
-                        educationProgramEntityTypesData?.data
+                        educationProgramEntityTypesData?.data,
+                    nationality_id: nationalitiesData?.data,
+                    academic_level_id: academicLevelsData?.data,
+                    specification_id: specificationsData?.data,
+                    gender: genderOptions,
+                    'manager.city_id': citiesData?.data,
+                    'manager.nationality_id': nationalitiesData?.data,
+                    'manager.academic_level_id': academicLevelsData?.data,
+                    'manager.specification_id': specificationsData?.data,
+                    'manager.gender': genderOptions
                 }}
             />
         </Modal>

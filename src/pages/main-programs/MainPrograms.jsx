@@ -43,26 +43,29 @@ export default function MainPrograms() {
                 }
                 setFilters={setFilters}
                 filters={filters}
+                enableAdd={false}
+                enableEdit={false}
+                enableDelete={false}
             />
-            {isOpen.add && <CreateMainProgram onClose={toggle.add} />}
+            {/* {isOpen.add && <CreateMainProgram onClose={toggle.add} />}
             {isOpen.edit && (
                 <EditMainProgram
                     onClose={toggle.edit}
                     oldData={getOriginalObject(isOpen.edit, data?.data)}
                 />
-            )}
+            )} */}
             {isOpen.view && (
                 <ViewMainProgram
                     onClose={toggle.view}
                     oldData={getOriginalObject(isOpen.view, data?.data)}
                 />
             )}
-            {isOpen.delete && (
+            {/* {isOpen.delete && (
                 <DeleteMainProgram
                     onClose={toggle.delete}
                     id={isOpen.delete?.id}
                 />
-            )}
+            )} */}
         </div>
     );
 }

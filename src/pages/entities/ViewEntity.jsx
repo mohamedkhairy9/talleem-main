@@ -5,6 +5,7 @@ import ModalHeader from '@/components/common/form/ModalHeader';
 import Loader from '@/components/common/Loader';
 import useApiCalls from './useApiCalls';
 import { apiCalls } from './configs';
+import { genderOptions } from '@/utils/constants/options';
 
 const statusOptions = [
     { label: { ar: 'نشط', en: 'Active' }, value: 'active' },
@@ -25,6 +26,10 @@ export default function ViewEntity({ onClose, oldData }) {
         locationTypesData,
         usersData,
         activitiesData,
+        memorizationProgramEntityTypesData,
+        nationalitiesData,
+        academicLevelsData,
+        specificationsData,
         isLoading
     } = useApiCalls({ apiCalls });
 
@@ -50,7 +55,20 @@ export default function ViewEntity({ onClose, oldData }) {
                     neighborhood_id: neighborhoodsData?.data,
                     location_type_id: locationTypesData?.data,
                     status: statusOptions,
-                    activity_ids: activitiesData?.data
+                    activity_ids: activitiesData?.data,
+                    memorization_program_entity_type_id:
+                        memorizationProgramEntityTypesData?.data,
+                    education_program_entity_type_id:
+                        educationProgramEntityTypesData?.data,
+                    nationality_id: nationalitiesData?.data,
+                    academic_level_id: academicLevelsData?.data,
+                    specification_id: specificationsData?.data,
+                    gender: genderOptions,
+                    'manager.city_id': citiesData?.data,
+                    'manager.nationality_id': nationalitiesData?.data,
+                    'manager.academic_level_id': academicLevelsData?.data,
+                    'manager.specification_id': specificationsData?.data,
+                    'manager.gender': genderOptions
                 }}
             />
         </Modal>

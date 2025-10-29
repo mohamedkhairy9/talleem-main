@@ -1,4 +1,5 @@
 import Cell from '@/components/common/table/cells/Cell';
+import ActiveCell from '@/components/common/table/cells/ActiveCell';
 import DateCell from '@/components/common/table/cells/DateCell';
 import NameCell from '@/components/common/table/cells/NameCell';
 import { createColumnHelper } from '@tanstack/react-table';
@@ -38,6 +39,10 @@ export const entityManagersColumns = [
         header: 'table_headers.entity',
         cell: info => <Cell value={info.row.original.entity?.name} />
     }),
+    columnHelper.accessor('status', {
+        header: 'table_headers.status',
+        cell: info => <ActiveCell info={info} />
+    }),
     columnHelper.accessor('created_at', {
         header: 'table_headers.created_at',
         cell: info => <DateCell fullDate value={info.getValue()} />,
@@ -59,6 +64,15 @@ export const entityManagersFields = [
         label: 'validation.name.label.ar',
         type: 'text',
         placeholder: 'validation.name.placeholder.ar',
+        editMode: true,
+        viewMode: true
+    },
+    {
+        name: 'status',
+        label: 'validation.status.label',
+        type: 'select',
+        placeholder: 'validation.status.placeholder',
+        defaultValue: 'active',
         editMode: true,
         viewMode: true
     },
@@ -168,9 +182,9 @@ export const entityManagersFields = [
     },
     {
         name: 'address',
-        label: 'validation.address.label',
+        label: 'validation.entity_manager_address.label',
         type: 'textarea',
-        placeholder: 'validation.address.placeholder',
+        placeholder: 'validation.entity_manager_address.placeholder',
         editMode: true,
         viewMode: true
     },
@@ -195,6 +209,7 @@ export const entityManagersFields = [
 ];
 
 export const entityManagersDefaultValues = {
+    status: true,
     name: {
         en: '',
         ar: ''

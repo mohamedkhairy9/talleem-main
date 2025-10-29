@@ -24,14 +24,8 @@ export default function FormCity({
     });
 
     function onSubmit(data) {
-        // Add static country_id value of 1
-        const formData = {
-            ...data,
-            country_id: 1
-        };
-
-        console.log('data', formData);
-        mutate(formData, {
+        console.log('data', data);
+        mutate(data, {
             onSuccess: () => {
                 console.log('onSuccess');
                 onClose();

@@ -25,6 +25,11 @@ export default function Cities() {
         name: item.name?.[i18next.language]
     }));
 
+    const formData = data?.data?.map(item => ({
+        ...item,
+        country_id: item.country?.id
+    }));
+
     return (
         <div>
             <Table
@@ -48,13 +53,13 @@ export default function Cities() {
             {isOpen.edit && (
                 <EditCity
                     onClose={toggle.edit}
-                    oldData={getOriginalObject(isOpen.edit, data?.data)}
+                    oldData={getOriginalObject(isOpen.edit, formData)}
                 />
             )}
             {isOpen.view && (
                 <ViewCity
                     onClose={toggle.view}
-                    oldData={getOriginalObject(isOpen.view, data?.data)}
+                    oldData={getOriginalObject(isOpen.view, formData)}
                 />
             )}
             {isOpen.delete && (

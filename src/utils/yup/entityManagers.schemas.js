@@ -43,7 +43,6 @@ export const entityManagersSchema = yup.object({
         .min(1, t('validation.academic_level_id.min')),
     specification_id: yup
         .number()
-        .required(t('validation.required'))
         .integer(t('validation.specification_id.integer'))
         .min(1, t('validation.specification_id.min')),
     national_id: yup
@@ -59,28 +58,15 @@ export const entityManagersSchema = yup.object({
     date_of_birth: yup
         .string()
         .required(t('validation.date_of_birth.required')),
-    years_of_experience: yup
-        .number()
-        .required(t('validation.required'))
-        .integer(t('validation.years_of_experience.integer'))
-        .min(0, t('validation.years_of_experience.min')),
+    years_of_experience: yup.string(),
     manager_phone: yup
         .string()
         .required(t('validation.required'))
         .matches(/^[+]?[0-9]+$/, t('validation.phone.invalid')),
-    manager_email: yup
-        .string()
-        .required(t('validation.required'))
-        .email(t('validation.email.invalid')),
+    manager_email: yup.string().email(t('validation.email.invalid')),
     memorization_amount: yup
-        .string()
-        .required(t('validation.required'))
-        .min(1, t('validation.memorization_amount.min'))
-        .max(50, t('validation.memorization_amount.max')),
-    address: yup
-        .string()
-        .required(t('validation.required'))
-        .min(5, t('validation.address.min')),
+        .string().optional(),
+        address: yup.string().optional(),
     files: yup.array().of(yup.mixed()).nullable().optional(),
     profile_image: yup.mixed().nullable().optional()
 });

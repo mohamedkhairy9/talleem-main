@@ -20,7 +20,7 @@ export const entitiesSchema = yup.object({
         .string()
         .oneOf(['active', 'inactive'], t('validation.status.invalid'))
         .required(t('validation.required')),
-    entity_type: yup.string().required(t('validation.required')),
+    program_entity_types: yup.string().required(t('validation.required')),
     main_program_id: yup
         .number()
         .required(t('validation.required'))
@@ -58,23 +58,13 @@ export const entitiesSchema = yup.object({
         .required(t('validation.required'))
         .integer(t('validation.branch_id.integer'))
         .min(1, t('validation.branch_id.min')),
-    address: yup
-        .string()
-        .required(t('validation.required'))
-        .min(5, t('validation.address.min')),
+    address: yup.string().optional(),
     phone: yup
         .string()
         .required(t('validation.required'))
         .matches(/^[+]?[0-9]+$/, t('validation.phone.invalid')),
-    email: yup
-        .string()
-        .required(t('validation.required'))
-        .email(t('validation.email.invalid')),
-    area: yup
-        .string()
-        .required(t('validation.required'))
-        .min(2, t('validation.area.min'))
-        .max(100, t('validation.area.max')),
+    email: yup.string().email(t('validation.email.invalid')),
+    area: yup.string().optional(),
     latitude: yup
         .number()
         .typeError(t('validation.latitude.invalid'))
@@ -88,22 +78,75 @@ export const entitiesSchema = yup.object({
         .min(-180, t('validation.longitude.min'))
         .max(180, t('validation.longitude.max')),
     class_count: yup
-        .number()
-        .typeError(t('validation.class_count.integer'))
-        .required(t('validation.required'))
-        .integer(t('validation.class_count.integer'))
-        .min(0, t('validation.class_count.min')),
-    management_rooms_count: yup
-        .number()
-        .typeError(t('validation.management_rooms_count.integer'))
-        .required(t('validation.required'))
-        .integer(t('validation.management_rooms_count.integer'))
-        .min(0, t('validation.management_rooms_count.min')),
-    lecture_holes_count: yup
-        .number()
-        .typeError(t('validation.lecture_holes_count.integer'))
-        .required(t('validation.required'))
-        .integer(t('validation.lecture_holes_count.integer'))
-        .min(0, t('validation.lecture_holes_count.min')),
-    files: yup.array().of(yup.mixed()).nullable().optional()
+        .string().optional(),
+    management_rooms_count: yup.string().optional(),
+    lecture_holes_count: yup.string().optional(),
+    files: yup.array().of(yup.mixed()).nullable().optional(),
+    registration_date: yup.string().required(t('validation.required')),
+    license_number: yup.string().required(t('validation.required')),
+    manager: yup
+        .object({
+            name: yup
+                .object({
+                    en: yup
+                        .string()
+                        .required(t('validation.required'))
+                        .min(2, t('validation.name.en_min'))
+                        .max(100, t('validation.name.en_max')),
+                    ar: yup
+                        .string()
+                        .required(t('validation.required'))
+                        .min(2, t('validation.name.ar_min'))
+                        .max(100, t('validation.name.ar_max'))
+                })
+                .required(t('validation.required')),
+            manager_email: yup
+                .string()
+                .nullable()
+                .optional()
+                .email(t('validation.email.invalid')),
+            manager_phone: yup
+                .string()
+                .required(t('validation.required'))
+                .matches(/^[+]?[0-9]+$/, t('validation.phone.invalid')),
+            national_id: yup
+                .string()
+                .required(t('validation.required'))
+                .matches(/^[0-9]+$/, t('validation.national_id.numeric'))
+                .min(10, t('validation.national_id.min'))
+                .max(20, t('validation.national_id.max')),
+            gender: yup
+                .string()
+                .required(t('validation.required'))
+                .oneOf(['male', 'female'], t('validation.gender.invalid')),
+            nationality_id: yup
+                .number()
+                .required(t('validation.required'))
+                .integer(t('validation.nationality_id.integer'))
+                .min(1, t('validation.nationality_id.min')),
+            city_id: yup
+                .number()
+                .required(t('validation.required'))
+                .integer(t('validation.city_id.integer'))
+                .min(1, t('validation.city_id.min')),
+            academic_level_id: yup
+                .number()
+                .required(t('validation.required'))
+                .integer(t('validation.academic_level_id.integer'))
+                .min(1, t('validation.academic_level_id.min')),
+            specification_id: yup
+                .number()
+                .integer(t('validation.specification_id.integer'))
+                .min(1, t('validation.specification_id.min')),
+            date_of_birth: yup
+                .string()
+                .required(t('validation.date_of_birth.required')),
+            address: yup.string().optional(),
+            memorization_amount: yup.string().optional(),
+            years_of_experience: yup.string().optional(),
+            files: yup.array().of(yup.mixed()).nullable().optional(),
+            profile_image: yup.mixed().nullable().optional()
+        })
+        .nullable()
+        .optional()
 });

@@ -11,6 +11,9 @@ import { mainProgramsService } from '@/api/services/mainPrograms.service';
 import { neighborhoodsService } from '@/api/services/neighborhoods.service';
 import { usersService } from '@/api/services/users.service';
 import { memorizationProgramEntityTypesService } from '@/api/services/memorizationProgramEntityTypes.service';
+import { nationalitiesService } from '@/api/services/nationalities.service';
+import { academicLevelsService } from '@/api/services/academicLevels.service';
+import { specificationsService } from '@/api/services/specifications.service';
 
 export default function useApiCalls({ apiCalls = [] } = {}) {
     const isEnabled = key => apiCalls.includes(key);
@@ -71,6 +74,21 @@ export default function useApiCalls({ apiCalls = [] } = {}) {
             queryKey: [API_KEYS.ACTIVITIES, allData],
             queryFn: () => activitiesService.getActivities(allData),
             enabled: isEnabled(API_KEYS.ACTIVITIES)
+        },
+        {
+            queryKey: [API_KEYS.NATIONALITIES, allData],
+            queryFn: () => nationalitiesService.getNationalities(allData),
+            enabled: isEnabled(API_KEYS.NATIONALITIES)
+        },
+        {
+            queryKey: [API_KEYS.ACADEMIC_LEVELS, allData],
+            queryFn: () => academicLevelsService.getAcademicLevels(allData),
+            enabled: isEnabled(API_KEYS.ACADEMIC_LEVELS)
+        },
+        {
+            queryKey: [API_KEYS.SPECIFICATIONS, allData],
+            queryFn: () => specificationsService.getSpecifications(allData),
+            enabled: isEnabled(API_KEYS.SPECIFICATIONS)
         }
     ]);
 
@@ -84,7 +102,10 @@ export default function useApiCalls({ apiCalls = [] } = {}) {
         neighborhoodsQuery,
         locationTypesQuery,
         usersQuery,
-        activitiesQuery
+        activitiesQuery,
+        nationalitiesQuery,
+        academicLevelsQuery,
+        specificationsQuery
     ] = queries;
 
     return {
@@ -92,12 +113,16 @@ export default function useApiCalls({ apiCalls = [] } = {}) {
         mainProgramsData: mainProgramsQuery?.data,
         entityCategoriesData: entityCategoriesQuery?.data,
         educationProgramEntityTypesData: educationProgramEntityTypesQuery?.data,
-        memorizationProgramEntityTypesData: memorizationProgramEntityTypesQuery?.data,
+        memorizationProgramEntityTypesData:
+            memorizationProgramEntityTypesQuery?.data,
         citiesData: citiesQuery?.data,
         neighborhoodsData: neighborhoodsQuery?.data,
         locationTypesData: locationTypesQuery?.data,
         usersData: usersQuery?.data,
         activitiesData: activitiesQuery?.data,
+        nationalitiesData: nationalitiesQuery?.data,
+        academicLevelsData: academicLevelsQuery?.data,
+        specificationsData: specificationsQuery?.data,
         isLoading: isAnyLoading
     };
 }
