@@ -6,6 +6,7 @@ import FormNeighborhood from './FormNeighborhood';
 import { useCitiesQuery } from '@/api/hooks/useCities';
 import Loader from '@/components/common/Loader';
 import { allData } from '@/utils/constants/global.constants';
+import { enabledDisabledOptions } from '@/utils/constants/options';
 
 export default function ViewNeighborhood({ onClose, oldData }) {
     const { data: citiesData, isLoading } = useCitiesQuery(allData);
@@ -18,7 +19,10 @@ export default function ViewNeighborhood({ onClose, oldData }) {
                 onClose={onClose}
                 editMode={false}
                 viewMode={true}
-                options={{ city_id: citiesData?.data }}
+                options={{
+                    city_id: citiesData?.data,
+                    status: enabledDisabledOptions
+                }}
             />
         </Modal>
     );

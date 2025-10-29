@@ -3,7 +3,7 @@ import FormEntity from './FormEntity';
 import Modal from '@/components/common/form/Modal';
 import ModalHeader from '@/components/common/form/ModalHeader';
 import { useCreateEntityMutation } from '@/api/hooks/useEntities';
-import { entitiesDefaultValues } from './configs';
+import { apiCalls, entitiesDefaultValues } from './configs';
 
 import Loader from '@/components/common/Loader';
 import useApiCalls from './useApiCalls';
@@ -29,8 +29,9 @@ export default function CreateEntity({ onClose }) {
         locationTypesData,
         usersData,
         activitiesData,
+        memorizationProgramEntityTypesData,
         isLoading
-    } = useApiCalls();
+    } = useApiCalls({ apiCalls });
 
     if (isLoading) return <Loader />;
 
@@ -47,13 +48,15 @@ export default function CreateEntity({ onClose }) {
                     branch_id: branchesData?.data,
                     main_program_id: mainProgramsData?.data,
                     entity_category_id: entityCategoriesData?.data,
-                    education_program_entity_type_id:
-                        educationProgramEntityTypesData?.data,
                     city_id: citiesData?.data,
                     neighborhood_id: neighborhoodsData?.data,
                     location_type_id: locationTypesData?.data,
                     status: statusOptions,
-                    activity_ids: activitiesData?.data
+                    activity_ids: activitiesData?.data,
+                    memorization_program_entity_type_id:
+                        memorizationProgramEntityTypesData?.data,
+                    education_program_entity_type_id:
+                        educationProgramEntityTypesData?.data
                 }}
             />
         </Modal>

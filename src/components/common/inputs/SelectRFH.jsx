@@ -1,7 +1,9 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Controller } from 'react-hook-form';
 import Select from 'react-select';
 import useLocale from '@/utils/hooks/global/useLocale';
+import { FaInfoCircle } from 'react-icons/fa';
+import Modal from '../form/Modal';
 
 export default function SelectRFH({
     label,
@@ -14,9 +16,11 @@ export default function SelectRFH({
     width,
     defaultValue,
     classes,
-    placeholder = 'Please select ..'
+    placeholder = 'Please select ..',
+    info = ''
 }) {
     const { t, isRTL } = useLocale();
+    const [showInfo, setShowInfo] = useState(false);
     const getDefaultValue = () => {
         if (defaultValue !== undefined && defaultValue !== null) {
             if (isMulti) {
@@ -62,9 +66,16 @@ export default function SelectRFH({
             {label && (
                 <label
                     htmlFor={name}
-                    className="block  font-medium text-gray-700 mb-1 font-montserrat"
+                    className="flex items-center gap-2 font-medium text-gray-700 mb-1 font-montserrat"
                 >
-                    {t(label)}
+                    <span>{t(label)}</span>
+
+                    {info && (
+                        <FaInfoCircle
+                            className="text-blue-500 cursor-pointer text-xl "
+                            onClick={() => setShowInfo(true)}
+                        />
+                    )}
                 </label>
             )}
             <Controller
@@ -146,6 +157,16 @@ export default function SelectRFH({
             >
                 {t(error) || ''}
             </p>
+            {showInfo && (
+                <Modal onClose={() => setShowInfo(false)}>
+                    <div className="p-4 flex flex-col gap-4 items-center justify-center bg-white rounded-lg">
+                        <FaInfoCircle className="text-blue-500 text-5xl " />
+                        <h3 className="text-lg font-semibold text-gray-800">
+                            {t(info)}
+                        </h3>
+                    </div>
+                </Modal>
+            )}
         </div>
     );
 }

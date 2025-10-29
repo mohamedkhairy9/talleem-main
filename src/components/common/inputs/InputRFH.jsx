@@ -15,13 +15,15 @@ export default function InputRFH({
     onChange,
     disabled,
     accept,
-    isMulti = false
+    isMulti = false,
+    info = ''
 }) {
     const { t } = useLocale();
 
     if (type === 'select') {
         return (
             <SelectRFH
+                info={info}
                 defaultValue={defaultValue}
                 control={control}
                 register={register}

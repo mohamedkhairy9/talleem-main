@@ -1,3 +1,4 @@
+import { API_KEYS } from '@/api/endpoints';
 import Cell from '@/components/common/table/cells/Cell';
 import DateCell from '@/components/common/table/cells/DateCell';
 import NameCell from '@/components/common/table/cells/NameCell';
@@ -36,14 +37,6 @@ export const entitiesColumns = [
 
 export const entitiesFields = [
     {
-        name: 'user_id',
-        label: 'validation.user_id.label',
-        type: 'select',
-        placeholder: 'validation.user_id.placeholder',
-        editMode: true,
-        viewMode: true
-    },
-    {
         name: 'name.en',
         label: 'validation.name.label.en',
         type: 'text',
@@ -69,22 +62,6 @@ export const entitiesFields = [
         viewMode: true
     },
     {
-        name: 'branch_id',
-        label: 'validation.branch_id.label',
-        type: 'select',
-        placeholder: 'validation.branch_id.placeholder',
-        editMode: true,
-        viewMode: true
-    },
-    {
-        name: 'main_program_id',
-        label: 'validation.main_program_id.label',
-        type: 'select',
-        placeholder: 'validation.main_program_id.placeholder',
-        editMode: true,
-        viewMode: true
-    },
-    {
         name: 'city_id',
         label: 'validation.city_id.label',
         type: 'select',
@@ -98,7 +75,26 @@ export const entitiesFields = [
         type: 'select',
         placeholder: 'validation.neighborhood_id.placeholder',
         editMode: true,
-        viewMode: true
+        viewMode: true,
+        info: 'info.neighborhood_id'
+    },
+    {
+        name: 'branch_id',
+        label: 'validation.branch_id.label',
+        type: 'select',
+        placeholder: 'validation.branch_id.placeholder',
+        editMode: true,
+        viewMode: true,
+        info: 'info.branch_id'
+    },
+    {
+        name: 'main_program_id',
+        label: 'validation.main_program_id.label',
+        type: 'select',
+        placeholder: 'validation.main_program_id.placeholder',
+        editMode: true,
+        viewMode: true,
+        
     },
     {
         name: 'entity_category_id',
@@ -117,12 +113,13 @@ export const entitiesFields = [
         viewMode: true
     },
     {
-        name: 'education_program_entity_type_id',
-        label: 'validation.education_program_entity_type_id.label',
+        name: 'entity_type',
+        label: 'validation.entity_type.label',
         type: 'select',
-        placeholder: 'validation.education_program_entity_type_id.placeholder',
+        placeholder: 'validation.entity_type.placeholder',
         editMode: true,
-        viewMode: true
+        viewMode: true,
+        info: 'info.entity_type'
     },
     {
         name: 'min_acceptance_age',
@@ -189,7 +186,7 @@ export const entitiesFields = [
         viewMode: true
     },
     {
-        name : 'activity_ids',
+        name: 'activity_ids',
         label: 'validation.activity_ids.label',
         type: 'select',
         placeholder: 'validation.activity_ids.placeholder',
@@ -240,3 +237,16 @@ export const filtersDefaultValues = {
     status: 'active',
     search: ''
 };
+
+export const apiCalls = [
+    API_KEYS.BRANCHES,
+    API_KEYS.MAIN_PROGRAMS,
+    API_KEYS.ENTITY_CATEGORIES,
+    API_KEYS.EDUCATION_PROGRAM_ENTITY_TYPES,
+    API_KEYS.MEMORIZATION_PROGRAM_ENTITY_TYPES,
+    API_KEYS.CITIES,
+    API_KEYS.NEIGHBORHOODS,
+    API_KEYS.LOCATION_TYPES,
+    API_KEYS.USERS,
+    API_KEYS.ACTIVITIES
+];

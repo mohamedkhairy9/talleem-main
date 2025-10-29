@@ -20,26 +20,36 @@ export default function FormEntity({
     options
 }) {
     const { t } = useLocale();
-    const { register, errors, handleSubmit, control, setValue } = useRFH({
-        schema,
-        defaultValues: {
-            ...oldData,
-            activities: oldData?.activities?.length
-                ? oldData.activities
-                : [{ main_program_id: '', name: { en: '', ar: '' } }],
-            class_count: oldData?.class_count ?? 0,
-            management_rooms_count: oldData?.management_rooms_count ?? 0,
-            lecture_holes_count: oldData?.lecture_holes_count ?? 0,
-            min_acceptance_age: oldData?.min_acceptance_age ?? 1,
-            latitude: oldData?.latitude ?? '',
-            longitude: oldData?.longitude ?? ''
+    const { register, errors, handleSubmit, control, setValue, watch } = useRFH(
+        {
+            schema,
+            defaultValues: {
+                ...oldData,
+                activities: oldData?.activities?.length
+                    ? oldData.activities
+                    : [{ main_program_id: '', name: { en: '', ar: '' } }],
+                class_count: oldData?.class_count ?? 0,
+                management_rooms_count: oldData?.management_rooms_count ?? 0,
+                lecture_holes_count: oldData?.lecture_holes_count ?? 0,
+                min_acceptance_age: oldData?.min_acceptance_age ?? 1,
+                latitude: oldData?.latitude ?? '',
+                longitude: oldData?.longitude ?? ''
+            }
         }
-    });
+    );
 
     function onSubmit(data) {
         console.log('data', data);
         mutate(
-            { ...data, status: data.status },
+            {
+                ...data,
+                status: data.status,
+                ...(data.main_program_id === 1
+                    ? { education_program_entity_type_id: data.entity_type }
+                    : data.main_program_id === 2
+                    ? { memorization_program_entity_type_id: data.entity_type }
+                    : {})
+            },
             {
                 onSuccess: () => {
                     onClose();
@@ -47,6 +57,27 @@ export default function FormEntity({
             }
         );
     }
+
+    const cityId = watch('city_id');
+    const mainProgramId = watch('main_program_id');
+
+    const enhancedOptions = {
+        ...options,
+        neighborhood_id: options.neighborhood_id.filter(
+            neighborhood => neighborhood.city?.id === cityId
+        ),
+        branch_id: options.branch_id.filter(
+            branch => branch.city?.id === cityId
+        ),
+        entity_type:
+            mainProgramId === 1
+                ? options.education_program_entity_type_id
+                : mainProgramId === 2
+                ? options.memorization_program_entity_type_id
+                : []
+    };
+
+    console.log('errors', errors);
 
     return (
         <form onSubmit={handleSubmit(onSubmit)} className="p-4 space-y-4">
@@ -68,6 +99,11 @@ export default function FormEntity({
                 />
                 <input type="hidden" {...register('latitude')} />
                 <input type="hidden" {...register('longitude')} />
+                {errors.latitude && (
+                    <p className="mt-1 h-4 text-xs text-red-600 font-montserrat">
+                        {t(errors.longitude.message)}
+                    </p>
+                )}
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {entitiesFields
@@ -106,13 +142,10 @@ export default function FormEntity({
                                     control={control}
                                     register={register}
                                     error={getNestedError(errors, field.name)}
-                                    type={field.type}
-                                    placeholder={field.placeholder}
                                     disabled={viewMode}
-                                    label={field.label}
-                                    name={field.name}
+                                    {...field}
                                     options={generateOptions(
-                                        options?.[field.name]
+                                        enhancedOptions?.[field.name]
                                     )}
                                     defaultValue={
                                         oldData?.[field.name] ||

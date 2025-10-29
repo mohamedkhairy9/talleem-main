@@ -183,6 +183,12 @@
             "integer": "Entity must be selected",
             "min": "Please select a valid entity"
         },
+        "entity_type": {
+            "label": "Entity Type",
+            "placeholder": "Select entity type",
+            "integer": "Entity type must be selected",
+            "min": "Please select a valid entity type"
+        },
         "nationality_id": {
             "label": "Nationality",
             "placeholder": "Select nationality",
@@ -309,7 +315,7 @@
         "longitude": {
             "label": "Longitude",
             "placeholder": "Enter/select longitude",
-            "invalid": "Please enter a valid longitude",
+            "invalid": "Please select a location",
             "min": "Longitude cannot be less than -180",
             "max": "Longitude cannot be greater than 180"
         },
@@ -951,5 +957,10 @@
     "zone-search": "Search location...",
     "reset": {
         "title": "Reset"
+    },
+    "info": {
+        "neighborhood_id": "Please select a city first, as the neighborhood depends on the city",
+        "branch_id": "Please select a city first, as the branch depends on the city",
+        "entity_type": "Please select a main program first, as the entity type depends on the main program"
     }
 }

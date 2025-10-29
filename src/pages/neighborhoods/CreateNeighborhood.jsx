@@ -6,6 +6,7 @@ import { useCreateNeighborhoodMutation } from '@/api/hooks/useNeighborhoods';
 import { useCitiesQuery } from '@/api/hooks/useCities';
 import Loader from '@/components/common/Loader';
 import { allData } from '@/utils/constants/global.constants';
+import { enabledDisabledOptions } from '@/utils/constants/options';
 
 export default function CreateNeighborhood({ onClose }) {
     const { mutate, isPending } = useCreateNeighborhoodMutation();
@@ -19,7 +20,10 @@ export default function CreateNeighborhood({ onClose }) {
                 mutate={mutate}
                 isPending={isPending}
                 onClose={onClose}
-                options={{ city_id: citiesData?.data }}
+                options={{
+                    city_id: citiesData?.data,
+                    status: enabledDisabledOptions
+                }}
                 oldData={{ status: true }}
             />
         </Modal>

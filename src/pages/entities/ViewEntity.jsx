@@ -4,6 +4,7 @@ import Modal from '@/components/common/form/Modal';
 import ModalHeader from '@/components/common/form/ModalHeader';
 import Loader from '@/components/common/Loader';
 import useApiCalls from './useApiCalls';
+import { apiCalls } from './configs';
 
 const statusOptions = [
     { label: { ar: 'نشط', en: 'Active' }, value: 'active' },
@@ -25,7 +26,7 @@ export default function ViewEntity({ onClose, oldData }) {
         usersData,
         activitiesData,
         isLoading
-    } = useApiCalls();
+    } = useApiCalls({ apiCalls });
 
     if (isLoading) return <Loader />;
 

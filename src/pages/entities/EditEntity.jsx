@@ -5,6 +5,7 @@ import ModalHeader from '@/components/common/form/ModalHeader';
 import { useUpdateEntityMutation } from '@/api/hooks/useEntities';
 import Loader from '@/components/common/Loader';
 import useApiCalls from './useApiCalls';
+import { apiCalls } from './configs';
 
 const statusOptions = [
     { label: { ar: 'نشط', en: 'Active' }, value: 'active' },
@@ -28,7 +29,7 @@ export default function EditEntity({ onClose, oldData }) {
         usersData,
         activitiesData,
         isLoading
-    } = useApiCalls();
+    } = useApiCalls({ apiCalls });
 
     if (isLoading) return <Loader />;
 

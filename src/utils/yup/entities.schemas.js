@@ -2,11 +2,6 @@ import * as yup from 'yup';
 import { t } from 'i18next';
 
 export const entitiesSchema = yup.object({
-    user_id: yup
-        .number()
-        .required(t('validation.required'))
-        .integer(t('validation.user_id.integer'))
-        .min(1, t('validation.user_id.min')),
     name: yup
         .object({
             en: yup
@@ -25,6 +20,7 @@ export const entitiesSchema = yup.object({
         .string()
         .oneOf(['active', 'inactive'], t('validation.status.invalid'))
         .required(t('validation.required')),
+    entity_type: yup.string().required(t('validation.required')),
     main_program_id: yup
         .number()
         .required(t('validation.required'))
@@ -109,32 +105,5 @@ export const entitiesSchema = yup.object({
         .required(t('validation.required'))
         .integer(t('validation.lecture_holes_count.integer'))
         .min(0, t('validation.lecture_holes_count.min')),
-    activities: yup
-        .array()
-        .of(
-            yup.object({
-                main_program_id: yup
-                    .number()
-                    .required(t('validation.required'))
-                    .integer(t('validation.main_program_id.integer'))
-                    .min(1, t('validation.main_program_id.min')),
-                name: yup
-                    .object({
-                        en: yup
-                            .string()
-                            .required(t('validation.required'))
-                            .min(2, t('validation.name.en_min'))
-                            .max(100, t('validation.name.en_max')),
-                        ar: yup
-                            .string()
-                            .required(t('validation.required'))
-                            .min(2, t('validation.name.ar_min'))
-                            .max(100, t('validation.name.ar_max'))
-                    })
-                    .required(t('validation.required'))
-            })
-        )
-        .min(1, t('validation.activities.min'))
-        .required(t('validation.required')),
     files: yup.array().of(yup.mixed()).nullable().optional()
 });
