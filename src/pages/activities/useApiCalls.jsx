@@ -4,7 +4,7 @@ import { useUsersQuery } from '@/api/hooks/useUsers';
 import { allData } from '@/utils/constants/global.constants';
 import React from 'react';
 
-export default function useApiCalls({ calls = [] } = {}) {
+export default function useApiCalls({ apiCalls = [] } = {}) {
     const { mainProgramsData, isLoading: mainProgramsLoading } =
         useMainProgramsQuery(allData);
 

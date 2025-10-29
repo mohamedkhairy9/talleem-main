@@ -4,6 +4,7 @@ import NameCell from '@/components/common/table/cells/NameCell';
 import { createColumnHelper } from '@tanstack/react-table';
 import React from 'react';
 import { enabledDisabledOptions } from '@/utils/constants/options';
+import { API_KEYS } from '@/api/endpoints';
 
 const columnHelper = createColumnHelper();
 
@@ -67,3 +68,5 @@ export const filtersDefaultValues = {
     status: true,
     search: ''
 };
+
+const apiCalls = [API_KEYS.MAIN_PROGRAMS];
