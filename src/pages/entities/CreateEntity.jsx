@@ -4,53 +4,33 @@ import Modal from '@/components/common/form/Modal';
 import ModalHeader from '@/components/common/form/ModalHeader';
 import { useCreateEntityMutation } from '@/api/hooks/useEntities';
 import { entitiesDefaultValues } from './configs';
-import { useBranchesQuery } from '@/api/hooks/useBranches';
-import { useMainProgramsQuery } from '@/api/hooks/useMainPrograms';
-import { useEntityCategoriesQuery } from '@/api/hooks/useEntityCategories';
-import { useEducationProgramEntityTypesQuery } from '@/api/hooks/useEducationProgramEntityTypes';
-import { useCitiesQuery } from '@/api/hooks/useCities';
-import { useNeighborhoodsQuery } from '@/api/hooks/useNeighborhoods';
-import { useLocationTypesQuery } from '@/api/hooks/useLocationTypes';
-import { useUsersQuery } from '@/api/hooks/useUsers';
+
 import Loader from '@/components/common/Loader';
-import { allData } from '@/utils/constants/global.constants';
+import useApiCalls from './useApiCalls';
 
 const statusOptions = [
     { label: { ar: 'نشط', en: 'Active' }, value: 'active' },
-    { label: { ar: 'غير نشط', en: 'Inactive' }, value: 'inactive' }
+    { label: { ar: 'غير نشط', en: 'Inactive' }, value: 'inactive' },
+    { label: { ar: 'معلق', en: 'Suspended' }, value: 'suspended' },
+    { label: { ar: 'ملغي', en: 'Canceled' }, value: 'canceled' },
+    { label: { ar: 'غير مصرح', en: 'Unauthorized' }, value: 'unauthorized' }
 ];
 
 export default function CreateEntity({ onClose }) {
     const { mutate, isPending } = useCreateEntityMutation();
 
-    // Fetch all available options
-    const { data: branchesData, isLoading: branchesLoading } =
-        useBranchesQuery(allData);
-    const { data: mainProgramsData, isLoading: mainProgramsLoading } =
-        useMainProgramsQuery(allData);
-    const { data: entityCategoriesData, isLoading: entityCategoriesLoading } =
-        useEntityCategoriesQuery(allData);
     const {
-        data: educationProgramEntityTypesData,
-        isLoading: educationProgramEntityTypesLoading
-    } = useEducationProgramEntityTypesQuery(allData);
-    const { data: citiesData, isLoading: citiesLoading } =
-        useCitiesQuery(allData);
-    const { data: neighborhoodsData, isLoading: neighborhoodsLoading } =
-        useNeighborhoodsQuery(allData);
-    const { data: locationTypesData, isLoading: locationTypesLoading } =
-        useLocationTypesQuery(allData);
-    const { data: usersData, isLoading: usersLoading } = useUsersQuery(allData);
-
-    const isLoading =
-        branchesLoading ||
-        mainProgramsLoading ||
-        entityCategoriesLoading ||
-        educationProgramEntityTypesLoading ||
-        citiesLoading ||
-        neighborhoodsLoading ||
-        locationTypesLoading ||
-        usersLoading;
+        branchesData,
+        mainProgramsData,
+        entityCategoriesData,
+        educationProgramEntityTypesData,
+        citiesData,
+        neighborhoodsData,
+        locationTypesData,
+        usersData,
+        activitiesData,
+        isLoading
+    } = useApiCalls();
 
     if (isLoading) return <Loader />;
 
@@ -72,7 +52,8 @@ export default function CreateEntity({ onClose }) {
                     city_id: citiesData?.data,
                     neighborhood_id: neighborhoodsData?.data,
                     location_type_id: locationTypesData?.data,
-                    status: statusOptions
+                    status: statusOptions,
+                    activity_ids: activitiesData?.data
                 }}
             />
         </Modal>

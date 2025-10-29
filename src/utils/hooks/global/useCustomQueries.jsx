@@ -6,7 +6,7 @@ export default function useCustomQueries(queries, options = {}) {
         cacheTime = 1000 * 60 * 10, // 10 minutes
         retry = 3,
         retryDelay = 1000,
-        refetchOnWindowFocus = false,
+        refetchOnWindowFocus = true,
         refetchOnMount = true,
         refetchOnReconnect = true,
         ...globalOptions

@@ -298,6 +298,20 @@
             "placeholder": "Enter address",
             "min": "Address must be at least 5 characters"
         },
+        "latitude": {
+            "label": "Latitude",
+            "placeholder": "Enter/select latitude",
+            "invalid": "Please enter a valid latitude",
+            "min": "Latitude cannot be less than -90",
+            "max": "Latitude cannot be greater than 90"
+        },
+        "longitude": {
+            "label": "Longitude",
+            "placeholder": "Enter/select longitude",
+            "invalid": "Please enter a valid longitude",
+            "min": "Longitude cannot be less than -180",
+            "max": "Longitude cannot be greater than 180"
+        },
         "dob": {
             "label": "Date of Birth",
             "placeholder": "Select date of birth",
@@ -938,5 +952,10 @@
         "create": "Create Employee",
         "update": "Update Employee",
         "view": "View Employee"
+    },
+    "note-zone-pick": "Click on the map to draw a zone, or use the polygon tool.",
+    "zone-search": "Search location...",
+    "reset": {
+        "title": "Reset"
     }
 }

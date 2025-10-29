@@ -4,11 +4,17 @@ import ModalHeader from '@/components/common/form/ModalHeader';
 import React from 'react';
 import FormActivity from './FormActivity';
 import { enabledDisabledOptions } from '@/utils/constants/options';
+import useApiCalls from './useApiCalls';
+import Loader from '@/components/common/Loader';
 
 export default function EditActivity({ onClose, oldData }) {
     console.log('oldData', oldData);
 
     const { mutate, isPending } = useUpdateActivityMutation();
+    const { mainProgramsData, isLoading } = useApiCalls();
+
+    if (isLoading) return <Loader />;
+
     return (
         <Modal onClose={onClose}>
             <ModalHeader onClose={onClose} header="activities.update" />
@@ -19,7 +25,8 @@ export default function EditActivity({ onClose, oldData }) {
                 onClose={onClose}
                 editMode={true}
                 options={{
-                    status: enabledDisabledOptions
+                    status: enabledDisabledOptions,
+                    main_program_id: mainProgramsData?.data
                 }}
             />
         </Modal>

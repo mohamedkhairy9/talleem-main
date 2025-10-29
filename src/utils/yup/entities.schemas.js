@@ -79,6 +79,18 @@ export const entitiesSchema = yup.object({
         .required(t('validation.required'))
         .min(2, t('validation.area.min'))
         .max(100, t('validation.area.max')),
+    latitude: yup
+        .number()
+        .typeError(t('validation.latitude.invalid'))
+        .required(t('validation.required'))
+        .min(-90, t('validation.latitude.min'))
+        .max(90, t('validation.latitude.max')),
+    longitude: yup
+        .number()
+        .typeError(t('validation.longitude.invalid'))
+        .required(t('validation.required'))
+        .min(-180, t('validation.longitude.min'))
+        .max(180, t('validation.longitude.max')),
     class_count: yup
         .number()
         .typeError(t('validation.class_count.integer'))

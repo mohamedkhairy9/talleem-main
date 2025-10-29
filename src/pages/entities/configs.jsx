@@ -189,6 +189,15 @@ export const entitiesFields = [
         viewMode: true
     },
     {
+        name : 'activity_ids',
+        label: 'validation.activity_ids.label',
+        type: 'select',
+        placeholder: 'validation.activity_ids.placeholder',
+        editMode: true,
+        viewMode: true,
+        isMulti: true
+    },
+    {
         name: 'files',
         label: 'validation.files.label',
         type: 'file',

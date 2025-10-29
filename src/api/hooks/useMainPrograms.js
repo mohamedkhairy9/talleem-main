@@ -4,10 +4,11 @@ import { API_KEYS } from '../endpoints';
 import useCustomQuery from '../../utils/hooks/global/useCustomQuery';
 import useCustomMutation from '../../utils/hooks/global/useCustomMutation';
 
-export const useMainProgramsQuery = params => {
+export const useMainProgramsQuery = (params = {}, { enabled = true } = {}) => {
     return useCustomQuery({
         queryKey: [API_KEYS.MAIN_PROGRAMS, params],
-        queryFn: () => mainProgramsService.getMainPrograms(params)
+        queryFn: () => mainProgramsService.getMainPrograms(params),
+        enabled
     });
 };
 
