@@ -9,7 +9,7 @@ const columnHelper = createColumnHelper();
 
 export const educationProgramEntityTypesColumns = [
     columnHelper.accessor('name', {
-        header: 'table_headers.education_programs',
+        header: 'table_headers.education-program-entity-types',
         cell: info => <NameCell directValue={info.row.original.name} />
     }),
     columnHelper.accessor('code', {

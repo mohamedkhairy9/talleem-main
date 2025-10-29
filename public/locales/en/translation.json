@@ -636,9 +636,9 @@
         "view": "View Memorization Program"
     },
     "education_program_entity_types": {
-        "create": "Create Education Program",
-        "update": "Update Education Program",
-        "view": "View Education Program"
+        "create": "Create Education Program Type",
+        "update": "Update Education Program Type",
+        "view": "View Education Program Type"
     },
     "specifications": {
         "create": "Create Specification",
@@ -723,6 +723,52 @@
         "update": "Update Banner",
         "view": "View Banner"
     },
+    "home": {
+        "welcome": {
+            "title": "Welcome to Tallam",
+            "subtitle": "Comprehensive Management System for Quranic Education & Memorization Programs",
+            "status": "System Online"
+        },
+        "features": {
+            "title": "Powerful Features",
+            "subtitle": "Everything you need to manage your educational institution efficiently",
+            "quran_management": "Quran Management",
+            "quran_management_desc": "Track and manage Quran memorization progress, parts, and sessions with ease",
+            "education_programs": "Education Programs",
+            "education_programs_desc": "Organize and manage educational programs for students and entities",
+            "user_management": "User Management",
+            "user_management_desc": "Complete user system with roles, permissions, and activity tracking",
+            "entity_management": "Entity Management",
+            "entity_management_desc": "Manage branches, entities, teachers, and students all in one place",
+            "analytics": "Analytics & Reports",
+            "analytics_desc": "Get insights with comprehensive analytics and detailed reporting tools",
+            "notifications": "Smart Notifications",
+            "notifications_desc": "Send automated notifications and keep everyone informed in real-time"
+        },
+        "about": {
+            "title": "About Tallam",
+            "description": "Tallam is a modern, comprehensive management system designed specifically for Quranic education institutions. Manage every aspect of your educational institution from one centralized platform.",
+            "feature1": "Streamlined administration for entities, branches, and programs",
+            "feature2": "Advanced tracking for student progress and memorization",
+            "feature3": "Integrated notification and communication system"
+        },
+        "quick_start": {
+            "title": "Quick Start Guide",
+            "description": "Get started with Tallam in just a few simple steps",
+            "step1_title": "1. Navigate the Menu",
+            "step1_desc": "Use the sidebar menu to access different sections of the system",
+            "step2_title": "2. Explore Features",
+            "step2_desc": "Start by managing entities, students, or programs from the main sections"
+        },
+        "stats": {
+            "entities": "Entities",
+            "entities_label": "Manage Educational Entities",
+            "students": "Students",
+            "students_label": "Track Student Progress",
+            "programs": "Programs",
+            "programs_label": "Educational & Memorization Programs"
+        }
+    },
     "sidebar": {
         "home": "Home",
         "roles": "Roles",
@@ -773,7 +819,9 @@
         "branch_administrations": "Branch Administrations",
         "parents": "Parents",
         "profile_management": "Profile Management",
-        "entity_activities": "Entity Activities"
+        "entity_activities": "Entity Activities",
+        "education-program-entity-types": "Education Program Types",
+        "memorization-program-entity-types": "Memorization Program Types"
     },
     "table_titles": {
         "notification_templates": "Notification Templates",
@@ -811,7 +859,9 @@
         "entity_managers": "Entity Managers",
         "branch_administrations": "Branch Administrations",
         "parents": "Parents",
-        "entity_activities": "Entity Activities"
+        "entity_activities": "Entity Activities",
+        "education-program-entity-types": "Education Program Types",
+        "memorization-program-entity-types": "Memorization Program Types"
     },
     "table": {
         "actions": "Actions",
@@ -930,7 +980,9 @@
         "phone_code": "Phone Code",
         "check_in": "Check In",
         "check_out": "Check Out",
-        "activity": "Activity"
+        "activity": "Activity",
+        "education-program-entity-types": "Education Program Types",
+        "memorization-program-entity-types": "Memorization Program Types"
     },
     "nationalities": {
         "create": "Create Nationality",

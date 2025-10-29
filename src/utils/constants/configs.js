@@ -184,6 +184,11 @@ export const sideMenuTabs = [
                 titleKey: 'sidebar.students',
                 path: '/students',
                 icon: HiUserGroup
+            },
+            {
+                titleKey: 'sidebar.employees',
+                path: '/employees',
+                icon: HiIdentification
             }
         ]
     },
@@ -228,8 +233,29 @@ export const sideMenuTabs = [
                 titleKey: 'sidebar.academic_years',
                 path: '/academic-years',
                 icon: VscDebugBreakpointLog
+            }
+        ]
+    },
+    {
+        titleKey: 'sidebar.education_program_settings',
+        icon: HiAcademicCap,
+        subMenu: [
+            {
+                titleKey: 'sidebar.entity_categories',
+                path: '/entity-categories',
+                icon: VscDebugBreakpointLog
             },
-            
+
+            {
+                titleKey: 'sidebar.specifications',
+                path: '/specifications',
+                icon: VscDebugBreakpointLog
+            },
+            {
+                titleKey: 'sidebar.academic_years',
+                path: '/academic-years',
+                icon: VscDebugBreakpointLog
+            }
         ]
     },
 
@@ -239,13 +265,13 @@ export const sideMenuTabs = [
         icon: HiBookOpen,
         subMenu: [
             {
-                titleKey: 'sidebar.memorization_programs',
-                path: '/memorization-program-entity-types',
+                titleKey: 'sidebar.education-program-entity-types',
+                path: '/education-program-entity-types',
                 icon: VscDebugBreakpointLog
             },
             {
-                titleKey: 'sidebar.education_programs',
-                path: '/education-program-entity-types',
+                titleKey: 'sidebar.memorization-program-entity-types',
+                path: '/memorization-program-entity-types',
                 icon: VscDebugBreakpointLog
             }
         ]
@@ -263,11 +289,6 @@ export const sideMenuTabs = [
     // أنواع الغياب
 
     // ملف تعريف الموظفين
-    {
-        titleKey: 'sidebar.employees',
-        path: '/employees',
-        icon: HiIdentification
-    },
 
     // المعلمين
 
@@ -317,26 +338,9 @@ export const sideMenuTabs = [
                 icon: VscDebugBreakpointLog
             }
         ]
-    },
+    }
 
     // إعدادات برنامج التحفيظ
 
     // إعدادات برنامج التعليم
-    {
-        titleKey: 'sidebar.education_program_settings',
-        icon: HiAcademicCap,
-        subMenu: [
-            {
-                titleKey: 'sidebar.entity_categories',
-                path: '/entity-categories',
-                icon: VscDebugBreakpointLog
-            },
-
-            {
-                titleKey: 'sidebar.specifications',
-                path: '/specifications',
-                icon: VscDebugBreakpointLog
-            }
-        ]
-    }
 ];

@@ -9,7 +9,7 @@ const columnHelper = createColumnHelper();
 
 export const memorizationProgramEntityTypesColumns = [
     columnHelper.accessor('name', {
-        header: 'table_headers.memorization_programs',
+        header: 'table_headers.memorization-program-entity-types',
         cell: info => <NameCell directValue={info.row.original.name} />
     }),
     columnHelper.accessor('code', {

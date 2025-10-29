@@ -638,9 +638,9 @@
         "view": "عرض برنامج الحفظ"
     },
     "education_program_entity_types": {
-        "create": "إنشاء برنامج تعليمي",
-        "update": "تحديث البرنامج التعليمي",
-        "view": "عرض البرنامج التعليمي"
+        "create": "إنشاء نوع برنامج تعليمي",
+        "update": "تحديث نوع البرنامج التعليمي",
+        "view": "عرض نوع البرنامج التعليمي"
     },
     "specifications": {
         "create": "إنشاء تخصص",
@@ -685,6 +685,52 @@
         "create": "إنشاء بانر",
         "update": "تحديث البانر",
         "view": "عرض البانر"
+    },
+    "home": {
+        "welcome": {
+            "title": "مرحباً بك في تعلم",
+            "subtitle": "نظام إدارة شامل لبرامج التعليم القرآني والتحفيظ",
+            "status": "النظام متصل"
+        },
+        "features": {
+            "title": "مميزات قوية",
+            "subtitle": "كل ما تحتاجه لإدارة مؤسستك التعليمية بكفاءة",
+            "quran_management": "إدارة القرآن",
+            "quran_management_desc": "تتبع وإدارة تقدم حفظ القرآن والأجزاء والجلسات بسهولة",
+            "education_programs": "البرامج التعليمية",
+            "education_programs_desc": "تنظيم وإدارة البرامج التعليمية للطلاب والجهات",
+            "user_management": "إدارة المستخدمين",
+            "user_management_desc": "نظام مستخدمين كامل مع الأدوار والصلاحيات ومتابعة الأنشطة",
+            "entity_management": "إدارة الجهات",
+            "entity_management_desc": "إدارة الفروع والجهات والمعلمين والطلاب في مكان واحد",
+            "analytics": "التحليلات والتقارير",
+            "analytics_desc": "احصل على رؤى مع تحليلات شاملة وأدوات تقارير مفصلة",
+            "notifications": "الإشعارات الذكية",
+            "notifications_desc": "إرسال إشعارات تلقائية وإبقاء الجميع على اطلاع في الوقت الفعلي"
+        },
+        "about": {
+            "title": "حول تعلم",
+            "description": "تعلم هو نظام إدارة حديث وشامل مصمم خصيصاً للمؤسسات التعليمية القرآنية. إدارة كل جانب من جوانب مؤسستك التعليمية من منصة مركزية واحدة.",
+            "feature1": "إدارة مبسطة للجهات والفروع والبرامج",
+            "feature2": "تتبع متقدم لتقدم الطلاب والحفظ",
+            "feature3": "نظام إشعارات واتصال متكامل"
+        },
+        "quick_start": {
+            "title": "دليل البدء السريع",
+            "description": "ابدأ مع تعلم في خطوات بسيطة",
+            "step1_title": "1. التنقل في القائمة",
+            "step1_desc": "استخدم قائمة الشريط الجانبي للوصول إلى أقسام مختلفة من النظام",
+            "step2_title": "2. استكشف المميزات",
+            "step2_desc": "ابدأ بإدارة الجهات أو الطلاب أو البرامج من الأقسام الرئيسية"
+        },
+        "stats": {
+            "entities": "الجهات",
+            "entities_label": "إدارة الجهات التعليمية",
+            "students": "الطلاب",
+            "students_label": "تتبع تقدم الطلاب",
+            "programs": "البرامج",
+            "programs_label": "البرامج التعليمية والتحفيظية"
+        }
     },
     "sidebar": {
         "home": "الرئيسية",
@@ -736,7 +782,9 @@
         "branch_administrations": "إدارات الفروع",
         "parents": "أولياء الأمور",
         "profile_management": "إدارة الملفات الشخصية",
-        "entity_activities": "أنشطة الجهات"
+        "entity_activities": "أنشطة الجهات",
+        "education-program-entity-types": "نوع البرنامج التعليمي",
+        "memorization-program-entity-types": "نوع البرنامج التحفيظي"
     },
     "table_titles": {
         "notification_templates": "قوالب الإشعارات",
@@ -774,7 +822,9 @@
         "entity_managers": "مديري الجهات",
         "branch_administrations": "إدارات الفروع",
         "parents": "أولياء الأمور",
-        "entity_activities": "أنشطة الجهات"
+        "entity_activities": "أنشطة الجهات",
+        "education-program-entity-types": "أنواع البرامج التعليمية",
+        "memorization-program-entity-types": "أنواع البرامج التحفيظية"
     },
     "table": {
         "actions": "الإجراءات",
@@ -893,7 +943,9 @@
         "phone_code": "رمز الهاتف",
         "check_in": "تسجيل الدخول",
         "check_out": "تسجيل الخروج",
-        "activity": "النشاط"
+        "activity": "النشاط",
+        "education-program-entity-types": "نوع البرنامج التعليمي",
+        "memorization-program-entity-types": "نوع البرنامج التحفيظي"
     },
     "nationalities": {
         "create": "إضافة جنسية",

@@ -38,7 +38,7 @@ export default function EducationPrograms() {
     return (
         <div>
             <Table
-                title={t('table_titles.education_programs')}
+                title={t('table_titles.education-program-entity-types')}
                 refresh={refresh}
                 loading={isLoading}
                 data={tableData}

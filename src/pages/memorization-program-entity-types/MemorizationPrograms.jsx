@@ -32,7 +32,7 @@ export default function MemorizationPrograms() {
     return (
         <div>
             <Table
-                title={t('table_titles.memorization_programs')}
+                title={t('table_titles.memorization-program-entity-types')}
                 refresh={refresh}
                 loading={isLoading}
                 data={tableData}
