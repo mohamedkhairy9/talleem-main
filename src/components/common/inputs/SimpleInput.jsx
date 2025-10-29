@@ -41,7 +41,7 @@ export default function SimpleInput({
                     className="mt-1 h-4 text-xs text-red-600 font-montserrat"
                     role="alert"
                 >
-                    {error || ''}
+                    {t(error) || ''}
                 </p>
             )}
         </div>

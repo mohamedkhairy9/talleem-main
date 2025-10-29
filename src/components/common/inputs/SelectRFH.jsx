@@ -16,7 +16,7 @@ export default function SelectRFH({
     classes,
     placeholder = 'Please select ..'
 }) {
-    const { t,isRTL } = useLocale();
+    const { t, isRTL } = useLocale();
     const getDefaultValue = () => {
         if (defaultValue !== undefined && defaultValue !== null) {
             if (isMulti) {
@@ -86,7 +86,9 @@ export default function SelectRFH({
                         styles={{
                             control: (provided, state) => ({
                                 ...provided,
-                                padding: !isRTL ? '6px 0px 6px 16px' : '6px 16px 6px 0px',
+                                padding: !isRTL
+                                    ? '6px 0px 6px 16px'
+                                    : '6px 16px 6px 0px',
                                 minHeight: '44px',
                                 borderRadius: '8px',
                                 boxShadow: state.isFocused
@@ -104,7 +106,7 @@ export default function SelectRFH({
                             input: provided => ({
                                 ...provided,
                                 margin: '0',
-                                padding: '0',
+                                padding: '0'
                             }),
                             placeholder: provided => ({
                                 ...provided,
@@ -117,8 +119,10 @@ export default function SelectRFH({
                             }),
                             singleValue: (provided, state) => ({
                                 ...provided,
-                                color: state.isDisabled ? '#000000' : provided.color,
-                              }),
+                                color: state.isDisabled
+                                    ? '#000000'
+                                    : provided.color
+                            })
                         }}
                         onChange={selected => {
                             const newValue = isMulti
@@ -140,7 +144,7 @@ export default function SelectRFH({
                 className="mt-1 h-4 text-xs text-red-600 font-montserrat"
                 role="alert"
             >
-                {error || ''}
+                {t(error) || ''}
             </p>
         </div>
     );
