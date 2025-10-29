@@ -50,27 +50,14 @@ export const sideMenuTabs = [
                 icon: VscDebugBreakpointLog
             },
             {
-                titleKey: 'sidebar.activity_logs',
-                path: '/activity-logs',
-                icon: HiClipboardList
-            }
-        ]
-    },
-
-    // نظام الإشعارات
-    {
-        titleKey: 'sidebar.notifications_system',
-        icon: HiBell,
-        subMenu: [
-            {
-                titleKey: 'sidebar.notification_templates',
-                path: '/notification-templates',
-                icon: HiTemplate
+                titleKey: 'sidebar.users',
+                path: '/users',
+                icon: HiUser
             },
             {
-                titleKey: 'sidebar.notifications',
-                path: '/notifications',
-                icon: HiBell
+                titleKey: 'sidebar.activity_logs',
+                path: '/activity-logs',
+                icon: VscDebugBreakpointLog
             }
         ]
     },
@@ -81,45 +68,168 @@ export const sideMenuTabs = [
         icon: HiCog,
         subMenu: [
             {
-                titleKey: 'sidebar.academic_qualifications',
-                path: '/academic-qualifications',
-                icon: HiAcademicCap
-            },
-            {
-                titleKey: 'sidebar.jobs',
-                path: '/jobs',
-                icon: HiBriefcase
+                titleKey: 'sidebar.main_programs',
+                path: '/main-programs',
+                icon: VscDebugBreakpointLog
             },
             {
                 titleKey: 'sidebar.countries',
                 path: '/countries',
-                icon: HiGlobe
-            },
-            {
-                titleKey: 'sidebar.cities',
-                path: '/cities',
-                icon: HiLocationMarker
-            },
-            {
-                titleKey: 'sidebar.neighborhoods',
-                path: '/neighborhoods',
-                icon: HiLocationMarker
-            },
-            {
-                titleKey: 'sidebar.location_types',
-                path: '/location-types',
-                icon: HiMap
-            },
-            {
-                titleKey: 'sidebar.branches',
-                path: '/branches',
-                icon: HiOfficeBuilding
+                icon: VscDebugBreakpointLog
             },
             {
                 titleKey: 'sidebar.nationalities',
                 path: '/nationalities',
-                icon: HiGlobe
+                icon: VscDebugBreakpointLog
+            },
+            {
+                titleKey: 'sidebar.cities',
+                path: '/cities',
+                icon: VscDebugBreakpointLog
+            },
+            {
+                titleKey: 'sidebar.neighborhoods',
+                path: '/neighborhoods',
+                icon: VscDebugBreakpointLog
+            },
+            {
+                titleKey: 'sidebar.jobs',
+                path: '/jobs',
+                icon: VscDebugBreakpointLog
+            },
+            {
+                titleKey: 'sidebar.location_types',
+                path: '/location-types',
+                icon: VscDebugBreakpointLog
+            },
+            {
+                titleKey: 'sidebar.branches',
+                path: '/branches',
+                icon: VscDebugBreakpointLog
+            },
+            {
+                titleKey: 'sidebar.branch_administrations',
+                path: '/branch-administrations',
+                icon: VscDebugBreakpointLog
+            },
+            {
+                titleKey: 'sidebar.online_attendances',
+                path: '/online-attendances',
+                icon: VscDebugBreakpointLog
+            },
+            {
+                titleKey: 'sidebar.kinships',
+                path: '/kinships',
+                icon: VscDebugBreakpointLog
+            },
+            {
+                titleKey: 'sidebar.entity_activities',
+                path: '/entity-activities',
+                icon: VscDebugBreakpointLog
+            },
+            {
+                titleKey: 'sidebar.attendance_types',
+                path: '/attendances-types',
+                icon: VscDebugBreakpointLog
+            },
+            {
+                titleKey: 'sidebar.academic_qualifications',
+                path: '/academic-qualifications',
+                icon: VscDebugBreakpointLog
+            },
+            {
+                titleKey: 'sidebar.policies_and_banners',
+                icon: HiDocumentText,
+                subMenu: [
+                    {
+                        titleKey: 'sidebar.about_us',
+                        path: '/about-us',
+                        icon: VscDebugBreakpointLog
+                    },
+                    {
+                        titleKey: 'sidebar.terms_and_conditions',
+                        path: '/term-and-condition',
+                        icon: VscDebugBreakpointLog
+                    },
+                    {
+                        titleKey: 'sidebar.privacy_policies',
+                        path: '/privacy-policies',
+                        icon: VscDebugBreakpointLog
+                    },
+                    {
+                        titleKey: 'sidebar.general_banners',
+                        path: '/general-banners',
+                        icon: VscDebugBreakpointLog
+                    }
+                ]
             }
+        ]
+    },
+
+    {
+        titleKey: 'sidebar.profile_management',
+        icon: HiUser,
+        subMenu: [
+            {
+                titleKey: 'sidebar.entities',
+                path: '/entities',
+                icon: HiOfficeBuilding
+            },
+            {
+                titleKey: 'sidebar.teachers',
+                path: '/teachers',
+                icon: HiAcademicCap
+            },
+            {
+                titleKey: 'sidebar.students',
+                path: '/students',
+                icon: HiUserGroup
+            }
+        ]
+    },
+
+    {
+        titleKey: 'sidebar.notifications_system',
+        icon: HiBell,
+        subMenu: [
+            {
+                titleKey: 'sidebar.notification_templates',
+                path: '/notification-templates',
+                icon: VscDebugBreakpointLog
+            },
+            {
+                titleKey: 'sidebar.notifications',
+                path: '/notifications',
+                icon: VscDebugBreakpointLog
+            }
+        ]
+    },
+
+    {
+        titleKey: 'sidebar.memorization_program_settings',
+        icon: HiBookOpen,
+        subMenu: [
+            {
+                titleKey: 'sidebar.entity_categories',
+                path: '/entity-categories',
+                icon: VscDebugBreakpointLog
+            },
+            {
+                titleKey: 'sidebar.session_periods',
+                path: '/session-periods',
+                icon: VscDebugBreakpointLog
+            },
+            {
+                titleKey: 'sidebar.quoran_parts',
+                path: '/quoran-parts',
+                icon: VscDebugBreakpointLog
+            },
+            {
+                titleKey: 'sidebar.academic_years',
+                path: '/academic-years',
+                icon: VscDebugBreakpointLog
+            },
+            
         ]
     },
 
@@ -129,29 +239,19 @@ export const sideMenuTabs = [
         icon: HiBookOpen,
         subMenu: [
             {
-                titleKey: 'sidebar.main_programs',
-                path: '/main-programs',
-                icon: HiBookOpen
-            },
-            {
                 titleKey: 'sidebar.memorization_programs',
                 path: '/memorization-program-entity-types',
-                icon: HiAcademicCap
+                icon: VscDebugBreakpointLog
             },
             {
                 titleKey: 'sidebar.education_programs',
                 path: '/education-program-entity-types',
-                icon: HiAcademicCap
+                icon: VscDebugBreakpointLog
             }
         ]
     },
 
     // صلة القربى
-    {
-        titleKey: 'sidebar.kinships',
-        path: '/kinships',
-        icon: HiUserGroup
-    },
 
     // الأنشطة
     {
@@ -161,11 +261,6 @@ export const sideMenuTabs = [
     },
 
     // أنواع الغياب
-    {
-        titleKey: 'sidebar.attendance_types',
-        path: '/attendances-types',
-        icon: HiClipboardList
-    },
 
     // ملف تعريف الموظفين
     {
@@ -175,21 +270,6 @@ export const sideMenuTabs = [
     },
 
     // المعلمين
-    {
-        titleKey: 'sidebar.teachers',
-        path: '/teachers',
-        icon: HiAcademicCap
-    },
-    {
-        titleKey: 'sidebar.entities',
-        path: '/entities',
-        icon: HiOfficeBuilding
-    },
-    {
-        titleKey: 'sidebar.students',
-        path: '/students',
-        icon: HiUserGroup
-    },
 
     // مديري الجهات
     {
@@ -199,11 +279,6 @@ export const sideMenuTabs = [
     },
 
     // إدارات الفروع
-    {
-        titleKey: 'sidebar.branch_administrations',
-        path: '/branch-administrations',
-        icon: HiOfficeBuilding
-    },
 
     // أولياء الأمور
     {
@@ -213,18 +288,8 @@ export const sideMenuTabs = [
     },
 
     // المستخدمين
-    {
-        titleKey: 'sidebar.users',
-        path: '/users',
-        icon: HiUser
-    },
 
     // الحضور الإلكتروني
-    {
-        titleKey: 'sidebar.online_attendances',
-        path: '/online-attendances',
-        icon: HiClipboardCheck
-    },
 
     // إعداد السياسات واللافتات العامة
     {
@@ -234,48 +299,27 @@ export const sideMenuTabs = [
             {
                 titleKey: 'sidebar.about_us',
                 path: '/about-us',
-                icon: HiInformationCircle
+                icon: VscDebugBreakpointLog
             },
             {
                 titleKey: 'sidebar.terms_and_conditions',
                 path: '/term-and-condition',
-                icon: HiDocumentText
+                icon: VscDebugBreakpointLog
             },
             {
                 titleKey: 'sidebar.privacy_policies',
                 path: '/privacy-policies',
-                icon: HiShieldExclamation
+                icon: VscDebugBreakpointLog
             },
             {
                 titleKey: 'sidebar.general_banners',
                 path: '/general-banners',
-                icon: HiPhotograph
+                icon: VscDebugBreakpointLog
             }
         ]
     },
 
     // إعدادات برنامج التحفيظ
-    {
-        titleKey: 'sidebar.memorization_program_settings',
-        icon: HiBookOpen,
-        subMenu: [
-            {
-                titleKey: 'sidebar.entity_categories',
-                path: '/entity-categories',
-                icon: HiFolder
-            },
-            {
-                titleKey: 'sidebar.session_periods',
-                path: '/session-periods',
-                icon: HiClock
-            },
-            {
-                titleKey: 'sidebar.quoran_parts',
-                path: '/quoran-parts',
-                icon: HiBookOpen
-            }
-        ]
-    },
 
     // إعدادات برنامج التعليم
     {
@@ -285,22 +329,13 @@ export const sideMenuTabs = [
             {
                 titleKey: 'sidebar.entity_categories',
                 path: '/entity-categories',
-                icon: HiFolder
+                icon: VscDebugBreakpointLog
             },
-            {
-                titleKey: 'sidebar.academic_years',
-                path: '/academic-years',
-                icon: HiCalendar
-            },
-            {
-                titleKey: 'sidebar.academic_levels',
-                path: '/academic-levels',
-                icon: HiChartBar
-            },
+
             {
                 titleKey: 'sidebar.specifications',
                 path: '/specifications',
-                icon: HiTag
+                icon: VscDebugBreakpointLog
             }
         ]
     }

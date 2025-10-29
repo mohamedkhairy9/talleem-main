@@ -108,7 +108,114 @@ export default function SideBar() {
     };
 
     const isSubmenuActive = subMenu => {
-        return subMenu.some(item => isActive(item.path));
+        const check = items =>
+            items?.some(item =>
+                item.subMenu && item.subMenu.length > 0
+                    ? check(item.subMenu)
+                    : isActive(item.path)
+            );
+        return check(subMenu);
+    };
+
+    const toggleNested = key => {
+        setExpandedMenus(prev => ({ ...prev, [key]: !prev[key] }));
+    };
+
+    const renderSubItems = (items, parentKey = '') => {
+        return (
+            <div className="space-y-1">
+                {items.map((subItem, subIndex) => {
+                    const key = parentKey
+                        ? `${parentKey}-${subIndex}`
+                        : `${subIndex}`;
+                    const SubIcon = subItem.icon;
+                    const hasNested =
+                        subItem.subMenu && subItem.subMenu.length > 0;
+                    const subActive = subItem.path
+                        ? isActive(subItem.path)
+                        : false;
+                    const nestedActive = hasNested
+                        ? isSubmenuActive(subItem.subMenu)
+                        : false;
+                    const subTitle = t(subItem.titleKey);
+                    const isExpanded = !!expandedMenus[key];
+
+                    return (
+                        <div key={key} className="space-y-1">
+                            <button
+                                onClick={() =>
+                                    hasNested
+                                        ? toggleNested(key)
+                                        : handleNavigation(subItem.path)
+                                }
+                                className={`
+                                    w-full flex items-center gap-1 text-sm px-3 py-2 rounded-lg transition-all duration-200
+                                    group relative
+                                    ${isRTL ? 'text-right' : 'text-left'}
+                                    ${
+                                        subActive || nestedActive
+                                            ? 'bg-primary-100/50 text-primary-700 font-medium'
+                                            : 'text-gray-500 hover:gap-2 hover:text-primary hover:bg-gray-50'
+                                    }
+                                `}
+                                aria-label={subTitle}
+                            >
+                                <div
+                                    className={`
+                                        flex items-center justify-center transition-all duration-200 shrink-0
+                                        ${
+                                            subActive || nestedActive
+                                                ? 'text-primary-700'
+                                                : 'group-hover:scale-105'
+                                        }
+                                    `}
+                                >
+                                    {SubIcon && <SubIcon size={16} />}
+                                </div>
+
+                                <span
+                                    className={`
+                                        font-medium transition-all duration-200 overflow-hidden whitespace-nowrap flex-1
+                                        ${isRTL ? 'text-right' : 'text-left'}
+                                        ${
+                                            subActive || nestedActive
+                                                ? 'font-semibold'
+                                                : ''
+                                        }
+                                    `}
+                                >
+                                    {subTitle}
+                                </span>
+
+                                {hasNested && (
+                                    <div
+                                        className={`transition-transform duration-200 shrink-0 ${
+                                            isExpanded ? 'rotate-180' : ''
+                                        }`}
+                                    >
+                                        <HiChevronDown size={14} />
+                                    </div>
+                                )}
+                            </button>
+
+                            {hasNested && (
+                                <div
+                                    className={`overflow-hidden transition-all duration-300 ease-in-out ${
+                                        isRTL ? 'pr-4' : 'pl-4'
+                                    } ${
+                                        isExpanded
+                                            ? ' opacity-100 mt-1'
+                                            : 'max-h-0 opacity-0'
+                                    }`}
+                                >
+                                    {renderSubItems(subItem.subMenu, key)}
+                                </div>
+                            )}
+                        </div>
+                    );
+                })}
+            </div>
+        );
     };
 
     return (
@@ -291,91 +398,23 @@ export default function SideBar() {
                                             isRTL ? 'pr-4' : 'pl-4'
                                         } ${
                                             isExpanded
-                                                ? 'max-h-96 opacity-100 mt-1'
+                                                ? ' opacity-100 mt-1'
                                                 : 'max-h-0 opacity-0'
                                         }`}
                                     >
-                                        <div className="space-y-1">
-                                        {tab.subMenu.map(
-                                            (subItem, subIndex) => {
-                                                const SubIcon = subItem.icon;
-                                                const subActive = isActive(
-                                                    subItem.path
-                                                );
-                                                const subTitle = t(
-                                                    subItem.titleKey
-                                                );
-
-                                                return (
-                                                    <button
-                                                        key={subIndex}
-                                                        onClick={() =>
-                                                            handleNavigation(
-                                                                subItem.path
-                                                            )
-                                                        }
-                                                        className={`
-                                                        w-full flex items-center gap-1 text-sm px-3 py-2 rounded-lg transition-all duration-200
-                                                        group relative
-                                                        ${
-                                                            isRTL
-                                                                ? 'text-right'
-                                                                : 'text-left'
-                                                        }
-                                                        ${
-                                                            subActive
-                                                                ? 'bg-primary-100/50 text-primary-700  font-medium'
-                                                                : 'text-gray-500 hover:gap-2 hover:text-primary hover:bg-gray-50'
-                                                        }
-                                                    `}
-                                                        aria-label={subTitle}
-                                                    >
-                                                        <div
-                                                            className={`
-                                                        flex items-center justify-center transition-all duration-200 shrink-0
-                                                        ${
-                                                            subActive
-                                                                ? 'text-primary-700'
-                                                                : 'group-hover:scale-105'
-                                                        }
-                                                    `}
-                                                        >
-                                                            <SubIcon
-                                                                size={16}
-                                                            />
-                                                        </div>
-
-                                                        <span
-                                                            className={`
-                                                        font-medium transition-all duration-200 overflow-hidden whitespace-nowrap
-                                                        ${
-                                                            isRTL
-                                                                ? 'text-right'
-                                                                : 'text-left'
-                                                        }
-                                                        ${
-                                                            subActive
-                                                                ? 'font-semibold'
-                                                                : ''
-                                                        }
-                                                    `}
-                                                        >
-                                                            {subTitle}
-                                                        </span>
-                                                     </button>
-                                                );
-                                            }
+                                        {renderSubItems(
+                                            tab.subMenu,
+                                            `${index}`
                                         )}
-                                        </div>
                                     </div>
                                 )}
 
-                                 {hasSubmenu &&
-                                     !isOpen &&
-                                     !isMobile &&
-                                     hoveredSubmenu === index && (
-                                         <div
-                                             className={`
+                                {hasSubmenu &&
+                                    !isOpen &&
+                                    !isMobile &&
+                                    hoveredSubmenu === index && (
+                                        <div
+                                            className={`
                                              floating-submenu fixed z-50 w-56 bg-white shadow-2xl rounded-lg border border-gray-200 py-2
                                              ${
                                                  isRTL
@@ -383,10 +422,10 @@ export default function SideBar() {
                                                      : 'left-[70px]'
                                              }
                                          `}
-                                             style={{
-                                                 top: `${submenuPosition.top}px`
-                                             }}
-                                         >
+                                            style={{
+                                                top: `${submenuPosition.top}px`
+                                            }}
+                                        >
                                             <div className="px-3 pb-2 mb-2 border-b border-gray-100">
                                                 <span className="text-xs font-semibold text-gray-500 uppercase tracking-wider">
                                                     {title}

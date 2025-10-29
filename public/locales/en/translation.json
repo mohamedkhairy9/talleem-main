@@ -104,6 +104,12 @@
             "label": "Activities",
             "placeholder": "Select activities"
         },
+        "activity_id": {
+            "label": "Activity",
+            "placeholder": "Select activity",
+            "integer": "Activity must be selected",
+            "min": "Please select a valid activity"
+        },
         "files": {
             "label": "Files",
             "placeholder": "Upload files"
@@ -545,6 +551,8 @@
         "delete": "Delete",
         "back": "Back",
         "wait": "Wait",
+        "enabled": "Enabled",
+        "disabled": "Disabled",
         "are_you_sure_you_want_to_delete_this_item": "Are you sure you want to delete this item?"
     },
     "activity_logs": {
@@ -691,6 +699,11 @@
         "update": "Update Parent",
         "view": "View Parent"
     },
+    "entity_activities": {
+        "create": "Create Entity Activity",
+        "update": "Update Entity Activity",
+        "view": "View Entity Activity"
+    },
     "session_periods": {
         "create": "Create Session Period",
         "update": "Update Session Period",
@@ -745,7 +758,7 @@
         "memorization_program_settings": "Memorization Program",
         "education_program_settings": "Education Program",
         "about_us": "About Us",
-        "terms_and_conditions": "Policies",
+        "terms_and_conditions": "Terms and Conditions",
         "privacy_policies": "Policies",
         "general_banners": "General Banners",
         "system_online": "System Online",
@@ -758,7 +771,9 @@
         "students": "Students",
         "entity_managers": "Entity Managers",
         "branch_administrations": "Branch Administrations",
-        "parents": "Parents"
+        "parents": "Parents",
+        "profile_management": "Profile Management",
+        "entity_activities": "Entity Activities"
     },
     "table_titles": {
         "notification_templates": "Notification Templates",
@@ -795,7 +810,8 @@
         "students": "Students",
         "entity_managers": "Entity Managers",
         "branch_administrations": "Branch Administrations",
-        "parents": "Parents"
+        "parents": "Parents",
+        "entity_activities": "Entity Activities"
     },
     "table": {
         "actions": "Actions",
@@ -913,7 +929,8 @@
         "short_name": "Short Name",
         "phone_code": "Phone Code",
         "check_in": "Check In",
-        "check_out": "Check Out"
+        "check_out": "Check Out",
+        "activity": "Activity"
     },
     "nationalities": {
         "create": "Create Nationality",

@@ -106,6 +106,12 @@
             "label": "الأنشطة",
             "placeholder": "اختر الأنشطة"
         },
+        "activity_id": {
+            "label": "النشاط",
+            "placeholder": "اختر النشاط",
+            "integer": "يجب اختيار نشاط",
+            "min": "الرجاء اختيار نشاط صحيح"
+        },
         "files": {
             "label": "الملفات",
             "placeholder": "رفع الملفات"
@@ -547,6 +553,8 @@
         "delete": "حذف",
         "back": "رجوع",
         "wait": "انتظر",
+        "enabled": "مفعل",
+        "disabled": "غير مفعل",
         "are_you_sure_you_want_to_delete_this_item": "هل أنت متأكد أنك تريد حذف هذا العنصر؟"
     },
     "activity_logs": {
@@ -615,9 +623,9 @@
         "view": "عرض المستوى الأكاديمي"
     },
     "academic_years": {
-        "create": "إنشاء سنة أكاديمية",
-        "update": "تحديث السنة الأكاديمية",
-        "view": "عرض السنة الأكاديمية"
+        "create": "إنشاء فصل دراسي",
+        "update": "تحديث الفصل الدراسي",
+        "view": "عرض الفصل الدراسي"
     },
     "location_types": {
         "create": "إنشاء نوع موقع",
@@ -660,9 +668,9 @@
         "view": "عرض الفرع"
     },
     "session_periods": {
-        "create": "إنشاء فترة جلسة",
-        "update": "تحديث فترة الجلسة",
-        "view": "عرض فترة الجلسة"
+        "create": "إنشاء فترة حلقة",
+        "update": "تحديث فترة الحلقة",
+        "view": "عرض فترة الحلقة"
     },
     "about_us": {
         "description": "إدارة محتوى وظهور صفحة من نحن"
@@ -687,7 +695,7 @@
         "notification_templates": "قوالب الإشعارات",
         "notifications": "الإشعارات",
         "activity_logs": "سجل الحركات",
-        "academic_qualifications": "المؤهلات الأكاديمية",
+        "academic_qualifications": "المؤهلات الدراسية",
         "jobs": "الوظائف",
         "countries": "الدول",
         "cities": "المدن",
@@ -713,7 +721,7 @@
         "memorization_program_settings": "برنامج التحفيظ",
         "education_program_settings": "برنامج التعليم",
         "about_us": "نبذة",
-        "terms_and_conditions": "السياسات",
+        "terms_and_conditions": "البنود والشروط",
         "privacy_policies": "السياسات",
         "general_banners": "اللافتات العامة",
         "system_online": "النظام متصل",
@@ -726,7 +734,9 @@
         "students": "الطلاب",
         "entity_managers": "مديري الجهات",
         "branch_administrations": "إدارات الفروع",
-        "parents": "أولياء الأمور"
+        "parents": "أولياء الأمور",
+        "profile_management": "إدارة الملفات الشخصية",
+        "entity_activities": "أنشطة الجهات"
     },
     "table_titles": {
         "notification_templates": "قوالب الإشعارات",
@@ -735,18 +745,18 @@
         "permissions": "الصلاحيات",
         "roles": "الأدوار",
         "activity_logs": "سجل الحركات",
-        "academic_qualifications": "المؤهلات الأكاديمية",
+        "academic_qualifications": "المؤهلات الدراسية",
         "jobs": "الوظائف",
         "countries": "الدول",
         "cities": "المدن",
         "neighborhoods": "الأحياء",
-        "academic_years": "السنوات الأكاديمية",
-        "academic_levels": "المستويات الأكاديمية",
+        "academic_years": "الفصول الدراسية",
+        "academic_levels": "المستويات الدراسية",
         "location_types": "أنواع المواقع",
         "specifications": "المواصفات",
         "activities": "الأنشطة",
         "entity_categories": "فئات الجهات",
-        "session_periods": "فترات الجلسات",
+        "session_periods": "فترات الحلقة",
         "kinships": "صلة القرابة",
         "attendance_types": "أنواع الحضور",
         "quoran_parts": "أجزاء القرآن",
@@ -763,7 +773,8 @@
         "students": "الطلاب",
         "entity_managers": "مديري الجهات",
         "branch_administrations": "إدارات الفروع",
-        "parents": "أولياء الأمور"
+        "parents": "أولياء الأمور",
+        "entity_activities": "أنشطة الجهات"
     },
     "table": {
         "actions": "الإجراءات",
@@ -842,17 +853,17 @@
         "area": "المنطقة",
         "branch": "الفرع",
         "main_program": "البرنامج الرئيسي",
-        "academic_qualifications": "المؤهلات الأكاديمية",
+        "academic_qualifications": "المؤهلات الدراسية",
         "jobs": "الوظائف",
         "cities": "المدن",
         "neighborhoods": "الأحياء",
-        "academic_years": "السنوات الأكاديمية",
-        "academic_levels": "المستويات الأكاديمية",
+        "academic_years": "الفصول الدراسية",
+        "academic_levels": "المستويات الدراسية",
         "location_types": "أنواع المواقع",
         "specifications": "المواصفات",
         "activities": "الأنشطة",
         "entity_categories": "فئات الجهات",
-        "session_periods": "فترات الجلسات",
+        "session_periods": "فترات الحلقة",
         "kinships": "صلة القرابة",
         "attendance_types": "أنواع الحضور",
         "quoran_parts": "أجزاء القرآن",
@@ -881,7 +892,8 @@
         "short_name": "الاسم المختصر",
         "phone_code": "رمز الهاتف",
         "check_in": "تسجيل الدخول",
-        "check_out": "تسجيل الخروج"
+        "check_out": "تسجيل الخروج",
+        "activity": "النشاط"
     },
     "nationalities": {
         "create": "إضافة جنسية",
@@ -922,6 +934,11 @@
         "create": "إضافة ولي أمر",
         "update": "تعديل ولي أمر",
         "view": "عرض ولي أمر"
+    },
+    "entity_activities": {
+        "create": "إضافة نشاط جهة",
+        "update": "تعديل نشاط جهة",
+        "view": "عرض نشاط جهة"
     },
     "countries": {
         "create": "إضافة دولة",
