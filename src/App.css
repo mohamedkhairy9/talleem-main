@@ -495,3 +495,8 @@
         font-family: 'Hacen', 'Inter', system-ui, sans-serif;
     }
 }
+
+
+input:disabled {
+    @apply bg-gray-100;
+}

@@ -38,6 +38,7 @@ import Users from '@/pages/users/Users';
 import Countries from '@/pages/countries/Countries';
 import OnlineAttendances from '@/pages/online-attendances/OnlineAttendances';
 import Entities from '@/pages/entities/Entities';
+import Students from '@/pages/students/Students';
 
 export const routes = [
     {
@@ -199,5 +200,9 @@ export const routes = [
     {
         path: '/entities',
         element: <Entities />
+    },
+    {
+        path: '/students',
+        element: <Students />
     }
 ];

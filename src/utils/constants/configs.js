@@ -185,8 +185,13 @@ export const sideMenuTabs = [
         path: '/entities',
         icon: HiOfficeBuilding
     },
+    {
+        titleKey: 'sidebar.students',
+        path: '/students',
+        icon: HiUserGroup
+    },
 
-    // مديري الكيانات
+    // مديري الجهات
     {
         titleKey: 'sidebar.entity_managers',
         path: '/entity-managers',

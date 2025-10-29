@@ -359,6 +359,99 @@
             "integer": "Academic level must be selected",
             "min": "Please select a valid academic level"
         },
+        "school_name": {
+            "label": "School Name",
+            "placeholder": "Enter school name",
+            "min": "School name must be at least 2 characters",
+            "max": "School name must not exceed 100 characters"
+        },
+        "parent_name": {
+            "label": "Parent Name",
+            "placeholder": "Enter parent name",
+            "min": "Parent name must be at least 2 characters",
+            "max": "Parent name must not exceed 100 characters"
+        },
+        "kinship_id": {
+            "label": "Kinship",
+            "placeholder": "Select kinship",
+            "integer": "Kinship must be selected",
+            "min": "Please select a valid kinship"
+        },
+        "has_medical_issues": {
+            "label": "Has Medical Issues",
+            "placeholder": "Select if student has medical issues",
+            "invalid": "Medical issues must be either yes or no"
+        },
+        "issue_description": {
+            "label": "Issue Description",
+            "placeholder": "Enter medical issue description",
+            "min": "Issue description must be at least 5 characters"
+        },
+        "parent_phone_1": {
+            "label": "Parent Phone 1",
+            "placeholder": "Enter primary parent phone number",
+            "invalid": "Please enter a valid phone number"
+        },
+        "parent_phone_2": {
+            "label": "Parent Phone 2",
+            "placeholder": "Enter secondary parent phone number (optional)",
+            "invalid": "Please enter a valid phone number"
+        },
+        "registration_date": {
+            "label": "Registration Date",
+            "placeholder": "Select registration date"
+        },
+        "department": {
+            "label": {
+                "en": "Department (English)",
+                "ar": "Department (Arabic)"
+            },
+            "placeholder": {
+                "en": "Enter department in English",
+                "ar": "Enter department in Arabic"
+            },
+            "en_min": "English department must be at least 2 characters",
+            "en_max": "English department must not exceed 100 characters",
+            "ar_min": "Arabic department must be at least 2 characters",
+            "ar_max": "Arabic department must not exceed 100 characters"
+        },
+        "qualification": {
+            "has_high_school": {
+                "label": "Has High School",
+                "placeholder": "Select if student has high school certificate",
+                "invalid": "Must be either yes or no"
+            },
+            "high_school_grade": {
+                "label": "High School Grade",
+                "placeholder": "Enter high school grade",
+                "integer": "Grade must be a number",
+                "min": "Grade cannot be negative",
+                "max": "Grade cannot exceed 100"
+            },
+            "has_bachelors_degree": {
+                "label": "Has Bachelor's Degree",
+                "placeholder": "Select if student has bachelor's degree",
+                "invalid": "Must be either yes or no"
+            },
+            "specification": {
+                "label": "Specification",
+                "placeholder": "Select specification",
+                "integer": "Specification must be selected",
+                "min": "Please select a valid specification"
+            },
+            "has_memorized_quran_5_parts": {
+                "label": "Has Memorized Quran 5 Parts",
+                "placeholder": "Select if student has memorized 5 parts of Quran",
+                "invalid": "Must be either yes or no"
+            },
+            "memorized_quran_parts": {
+                "label": "Memorized Quran Parts",
+                "placeholder": "Enter number of memorized Quran parts",
+                "integer": "Must be a number",
+                "min": "Cannot be negative",
+                "max": "Cannot exceed 30 parts"
+            }
+        },
         "short_name": {
             "label": "Short Name",
             "placeholder": "Enter short name (e.g., USA, ITA)",
@@ -560,6 +653,12 @@
         "add_activity": "Add Activity",
         "activity": "Activity"
     },
+    "students": {
+        "create": "Create Student",
+        "edit": "Edit Student",
+        "view": "View Student",
+        "qualification": "Qualification"
+    },
     "entity_managers": {
         "create": "Create Entity Manager",
         "update": "Update Entity Manager",
@@ -639,6 +738,7 @@
         "online_attendances": "Online Attendances",
         "teachers": "Teachers",
         "entities": "Entities",
+        "students": "Students",
         "entity_managers": "Entity Managers",
         "branch_administrations": "Branch Administrations",
         "parents": "Parents"
@@ -675,6 +775,7 @@
         "online_attendances": "Online Attendances",
         "teachers": "Teachers",
         "entities": "Entities",
+        "students": "Students",
         "entity_managers": "Entity Managers",
         "branch_administrations": "Branch Administrations",
         "parents": "Parents"
@@ -756,6 +857,8 @@
         "area": "Area",
         "branch": "Branch",
         "main_program": "Main Program",
+        "entity": "Entity",
+        "national_id": "National ID",
         "academic_qualifications": "Academic Qualifications",
         "jobs": "Jobs",
         "cities": "Cities",

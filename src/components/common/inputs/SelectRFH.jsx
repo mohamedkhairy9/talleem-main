@@ -104,7 +104,7 @@ export default function SelectRFH({
                             input: provided => ({
                                 ...provided,
                                 margin: '0',
-                                padding: '0'
+                                padding: '0',
                             }),
                             placeholder: provided => ({
                                 ...provided,
@@ -114,7 +114,11 @@ export default function SelectRFH({
                             menuPortal: provided => ({
                                 ...provided,
                                 zIndex: 9999
-                            })
+                            }),
+                            singleValue: (provided, state) => ({
+                                ...provided,
+                                color: state.isDisabled ? '#000000' : provided.color,
+                              }),
                         }}
                         onChange={selected => {
                             const newValue = isMulti
