@@ -1,26 +1,20 @@
+import useLocale from '@/utils/hooks/global/useLocale';
 import React from 'react';
 
-export default function StatusCell({ info = null, value = null }) {
+export default function ActiveCell({ value = null, info = null }) {
+    const { t } = useLocale();
     const status = value || info.getValue();
     const statusColors = {
-        active: 'bg-green-100 text-green-800 border-green-200',
-        1: 'bg-green-100 text-green-800 border-green-200',
         true: 'bg-green-100 text-green-800 border-green-200',
-        inactive: 'bg-red-100 text-red-800 border-red-200',
-        0: 'bg-red-100 text-red-800 border-red-200',
         false: 'bg-red-100 text-red-800 border-red-200',
-        pending: 'bg-yellow-100 text-yellow-800 border-yellow-200',
-        archived: 'bg-gray-100 text-gray-800 border-gray-200'
+        1: 'bg-green-100 text-green-800 border-green-200',
+        0: 'bg-red-100 text-red-800 border-red-200'
     };
     const dotColor = {
-        active: 'bg-green-500',
         1: 'bg-green-500',
         true: 'bg-green-500',
-        inactive: 'bg-red-500',
         0: 'bg-red-500',
-        false: 'bg-red-500',
-        pending: 'bg-yellow-500',
-        archived: 'bg-gray-500'
+        false: 'bg-red-500'
     };
     return (
         <div className="flex items-center space-x-2">
@@ -30,7 +24,7 @@ export default function StatusCell({ info = null, value = null }) {
                     statusColors[status] || statusColors.pending
                 }`}
             >
-                {status.charAt(0).toUpperCase() + status.slice(1)}
+                {status ? t('common.enabled') : t('common.disabled')}
             </span>
         </div>
     );

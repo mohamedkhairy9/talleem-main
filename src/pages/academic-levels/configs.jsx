@@ -1,6 +1,8 @@
+import ActiveCell from '@/components/common/table/cells/ActiveCell';
 import Cell from '@/components/common/table/cells/Cell';
 import DateCell from '@/components/common/table/cells/DateCell';
 import NameCell from '@/components/common/table/cells/NameCell';
+import StatusCell from '@/components/common/table/cells/StatusCell';
 import { createColumnHelper } from '@tanstack/react-table';
 import React from 'react';
 
@@ -10,6 +12,10 @@ export const academicLevelsColumns = [
     columnHelper.accessor('name', {
         header: 'table_headers.academic_levels',
         cell: info => <NameCell directValue={info.row.original.name} />
+    }),
+    columnHelper.accessor('status', {
+        header: 'table_headers.status',
+        cell: info => <ActiveCell info={info} />
     }),
     columnHelper.accessor('created_at', {
         header: 'table_headers.created_at',
