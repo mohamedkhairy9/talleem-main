@@ -9,7 +9,7 @@ export default function useCustomQuery({
     retry = 0,
     retryDelay = 1000,
     refetchOnMount = true,
-    refetchOnWindowFocus = 'always',
+    refetchOnWindowFocus = false,
     refetchOnReconnect = true,
     onSuccess,
     onError,

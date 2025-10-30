@@ -5,10 +5,11 @@ import FormActivity from './FormActivity';
 import { enabledDisabledOptions } from '@/utils/constants/options';
 import useApiCalls from './useApiCalls';
 import Loader from '@/components/common/Loader';
+import { apiCalls } from './configs';
 
 export default function ViewActivity({ onClose, oldData }) {
     console.log('oldData', oldData);
-    const { mainProgramsData, isLoading } = useApiCalls();
+    const { mainProgramsData, isLoading } = useApiCalls({ apiCalls });
 
     if (isLoading) return <Loader />;
 

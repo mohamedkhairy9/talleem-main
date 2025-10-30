@@ -43,6 +43,7 @@ import {
 import { useTranslation } from 'react-i18next';
 import useLanguageStore from '@/utils/stores/language.store';
 import { FaEye } from 'react-icons/fa';
+import { getObjectName } from '@/utils/helpers/global.fns';
 
 const columnHelper = createColumnHelper();
 
@@ -259,6 +260,8 @@ const Table = ({
         enableRowSelection: enableRowSelection
     });
 
+
+
     // Export functions
     const exportToCSV = () => {
         try {
@@ -272,9 +275,11 @@ const Table = ({
                 visibleColumns
                     .map(col => {
                         const value = row.original[col.id];
+                        console.log(col.id, value);
+
                         return typeof value === 'string' && value.includes(',')
                             ? `"${value}"`
-                            : value || '';
+                            : getObjectName(value) || '';
                     })
                     .join(',')
             );

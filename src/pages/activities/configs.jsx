@@ -10,7 +10,7 @@ import { API_KEYS } from '@/api/endpoints';
 const columnHelper = createColumnHelper();
 
 export const activitiesColumns = [
-    columnHelper.accessor('main_program_id', {
+    columnHelper.accessor('main_program', {
         header: 'table_headers.main_program',
         cell: info => (
             <NameCell directValue={info.row.original.main_program?.name} />

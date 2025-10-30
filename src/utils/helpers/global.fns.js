@@ -139,12 +139,26 @@ export function generateTableData(data = []) {
     });
 }
 
-export const getOriginalObject = (identfier, arr = []) => {
-    let id = identfier;
-    if (typeof identfier === 'object') {
-        id = identfier.id;
+export function getObjectName(value) {
+    if (!value || typeof value !== 'object') return '';
+
+    const lang = i18next?.language;
+
+    if (value[lang]) return value[lang];
+
+    if (value.name) {
+        if (typeof value.name === 'object') {
+            if (value.name[lang]) return value.name[lang];
+        } else {
+            return value.name;
+        }
     }
-    return arr.find(el => el.id == id);
+
+    return '';
+}
+
+export const getOriginalObject = (identfier, arr = []) => {
+    return arr.find(el => el.id == (identfier?.id || identfier));
 };
 
 export function onlyDate(date) {
