@@ -52,20 +52,20 @@ export const generalBannersColumns = [
     }),
     columnHelper.accessor('status', {
         header: 'table_headers.status',
-        cell: info => (
-            <Cell
-                value={
-                    info.getValue() ? (
-                        <span className="px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">
-                            Active
-                        </span>
-                    ) : (
-                        <span className="px-2 py-1 text-xs font-semibold rounded-full bg-red-100 text-red-800">
-                            Inactive
-                        </span>
-                    )
-                }
-            />
+        cell: info => (<span className={`px-2 py-1 text-xs font-semibold rounded-full ${info.getValue() ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"}`}>{info.getValue() ? "Active" : "Inactive"}</span>
+            // <Cell
+            //     value={
+            //         info.getValue() ? (
+            //             <span className="px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">
+            //                 Active
+            //             </span>
+            //         ) : (
+            //             <span className="px-2 py-1 text-xs font-semibold rounded-full bg-red-100 text-red-800">
+            //                 Inactive
+            //             </span>
+            //         )
+            //     }
+            // />
         )
     }),
     columnHelper.accessor('created_at', {
