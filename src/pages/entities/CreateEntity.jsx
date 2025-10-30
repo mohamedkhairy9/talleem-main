@@ -24,6 +24,7 @@ export default function CreateEntity({ onClose }) {
 
     const {
         branchesData,
+        academicQualificationsData,
         mainProgramsData,
         entityCategoriesData,
         educationProgramEntityTypesData,
@@ -69,10 +70,11 @@ export default function CreateEntity({ onClose }) {
                     gender: genderOptions,
                     'manager.city_id': citiesData?.data,
                     'manager.nationality_id': nationalitiesData?.data,
-                    'manager.academic_level_id': academicLevelsData?.data,
                     'manager.specification_id': specificationsData?.data,
                     'manager.gender': genderOptions,
-                    'manager.status': enabledDisabledOptions
+                    'manager.status': enabledDisabledOptions,
+                    'manager.academic_qualification_id':
+                        academicQualificationsData?.data
                 }}
             />
         </Modal>

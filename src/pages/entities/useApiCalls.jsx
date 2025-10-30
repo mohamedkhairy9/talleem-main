@@ -14,6 +14,7 @@ import { memorizationProgramEntityTypesService } from '@/api/services/memorizati
 import { nationalitiesService } from '@/api/services/nationalities.service';
 import { academicLevelsService } from '@/api/services/academicLevels.service';
 import { specificationsService } from '@/api/services/specifications.service';
+import { academicQualificationsService } from '@/api/services/academicQualifications.service';
 
 export default function useApiCalls({ apiCalls = [] } = {}) {
     const isEnabled = key => apiCalls.includes(key);
@@ -23,6 +24,14 @@ export default function useApiCalls({ apiCalls = [] } = {}) {
             queryKey: [API_KEYS.BRANCHES, allData],
             queryFn: () => branchesService.getBranches(allData),
             enabled: isEnabled(API_KEYS.BRANCHES)
+        },
+        {
+            queryKey: [API_KEYS.ACADEMIC_QUALIFICATIONS, allData],
+            queryFn: () =>
+                academicQualificationsService.getAcademicQualifications(
+                    allData
+                ),
+            enabled: isEnabled(API_KEYS.ACADEMIC_QUALIFICATIONS)
         },
         {
             queryKey: [API_KEYS.MAIN_PROGRAMS, allData],
@@ -81,11 +90,6 @@ export default function useApiCalls({ apiCalls = [] } = {}) {
             enabled: isEnabled(API_KEYS.NATIONALITIES)
         },
         {
-            queryKey: [API_KEYS.ACADEMIC_LEVELS, allData],
-            queryFn: () => academicLevelsService.getAcademicLevels(allData),
-            enabled: isEnabled(API_KEYS.ACADEMIC_LEVELS)
-        },
-        {
             queryKey: [API_KEYS.SPECIFICATIONS, allData],
             queryFn: () => specificationsService.getSpecifications(allData),
             enabled: isEnabled(API_KEYS.SPECIFICATIONS)
@@ -94,6 +98,7 @@ export default function useApiCalls({ apiCalls = [] } = {}) {
 
     const [
         branchesQuery,
+        academicQualificationsQuery,
         mainProgramsQuery,
         entityCategoriesQuery,
         educationProgramEntityTypesQuery,
@@ -104,12 +109,12 @@ export default function useApiCalls({ apiCalls = [] } = {}) {
         usersQuery,
         activitiesQuery,
         nationalitiesQuery,
-        academicLevelsQuery,
         specificationsQuery
     ] = queries;
 
     return {
         branchesData: branchesQuery?.data,
+        academicQualificationsData: academicQualificationsQuery?.data,
         mainProgramsData: mainProgramsQuery?.data,
         entityCategoriesData: entityCategoriesQuery?.data,
         educationProgramEntityTypesData: educationProgramEntityTypesQuery?.data,
@@ -121,7 +126,6 @@ export default function useApiCalls({ apiCalls = [] } = {}) {
         usersData: usersQuery?.data,
         activitiesData: activitiesQuery?.data,
         nationalitiesData: nationalitiesQuery?.data,
-        academicLevelsData: academicLevelsQuery?.data,
         specificationsData: specificationsQuery?.data,
         isLoading: isAnyLoading
     };

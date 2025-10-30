@@ -24,6 +24,7 @@ export default function EditEntity({ onClose, oldData }) {
     const {
         branchesData,
         mainProgramsData,
+        academicQualificationsData,
         entityCategoriesData,
         educationProgramEntityTypesData,
         citiesData,
@@ -69,10 +70,10 @@ export default function EditEntity({ onClose, oldData }) {
                     gender: genderOptions,
                     'manager.city_id': citiesData?.data,
                     'manager.nationality_id': nationalitiesData?.data,
-                    'manager.academic_level_id': academicLevelsData?.data,
                     'manager.specification_id': specificationsData?.data,
                     'manager.gender': genderOptions,
-                    'manager.status': enabledDisabledOptions
+                    'manager.status': enabledDisabledOptions,
+                    'manager.academic_qualification_id': academicQualificationsData?.data
                 }}
             />
         </Modal>

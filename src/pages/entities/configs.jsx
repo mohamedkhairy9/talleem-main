@@ -310,10 +310,10 @@ export const managerFields = [
         section: 'manager'
     },
     {
-        name: 'manager.academic_level_id',
-        label: 'validation.academic_level_id.label',
+        name: 'manager.academic_qualification_id',
+        label: 'validation.academic_qualification_id.label',
         type: 'select',
-        placeholder: 'validation.academic_level_id.placeholder',
+        placeholder: 'validation.academic_qualification_id.placeholder',
         editMode: true,
         viewMode: true,
         section: 'manager'
@@ -434,5 +434,6 @@ export const apiCalls = [
     API_KEYS.ACTIVITIES,
     API_KEYS.NATIONALITIES,
     API_KEYS.ACADEMIC_LEVELS,
-    API_KEYS.SPECIFICATIONS
+    API_KEYS.SPECIFICATIONS,
+    API_KEYS.ACADEMIC_QUALIFICATIONS
 ];

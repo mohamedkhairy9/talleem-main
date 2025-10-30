@@ -52,7 +52,7 @@ export const API_URLS = {
     ACTIVITY_LOGS: {
         LIST: '/activity-logs'
     },
-    ACADAMIC_QUALIFICATIONS: {
+    ACADEMIC_QUALIFICATIONS: {
         CREATE: '/academic-qualifications',
         LIST: '/academic-qualifications',
         DETAILS: id => `/academic-qualifications/${id}`,
@@ -309,7 +309,7 @@ export const API_KEYS = {
     NOTIFICATION_SCHEDULE: 'notification-schedule',
     LANGUAGE: 'language',
     ACTIVITY_LOGS: 'activity-logs',
-    ACADAMIC_QUALIFICATIONS: 'academic-qualifications',
+    ACADEMIC_QUALIFICATIONS: 'academic-qualifications',
     BRANCHES: 'branches',
     MAIN_PROGRAMS: 'main-programs',
     QUORAN_PARTS: 'quoran-parts',

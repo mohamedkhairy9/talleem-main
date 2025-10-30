@@ -6,7 +6,7 @@ import useCustomMutation from '../../utils/hooks/global/useCustomMutation';
 
 export const useAcademicQualificationsQuery = (params = {}, options = {}) => {
     return useCustomQuery({
-        queryKey: [API_KEYS.ACADAMIC_QUALIFICATIONS, params],
+        queryKey: [API_KEYS.ACADEMIC_QUALIFICATIONS, params],
         queryFn: () =>
             academicQualificationsService.getAcademicQualifications(params),
         ...options
@@ -15,7 +15,7 @@ export const useAcademicQualificationsQuery = (params = {}, options = {}) => {
 
 export const useAcademicQualificationQuery = (id, options = {}) => {
     return useCustomQuery({
-        queryKey: [API_KEYS.ACADAMIC_QUALIFICATIONS, id],
+        queryKey: [API_KEYS.ACADEMIC_QUALIFICATIONS, id],
         queryFn: () =>
             academicQualificationsService.getAcademicQualification(id),
         ...options
@@ -29,7 +29,7 @@ export const useCreateAcademicQualificationMutation = () => {
             academicQualificationsService.createAcademicQualification(data),
         onSuccess: () => {
             queryClient.invalidateQueries({
-                queryKey: [API_KEYS.ACADAMIC_QUALIFICATIONS]
+                queryKey: [API_KEYS.ACADEMIC_QUALIFICATIONS]
             });
         },
         onError: error => {
@@ -48,7 +48,7 @@ export const useUpdateAcademicQualificationMutation = () => {
             ),
         onSuccess: () => {
             queryClient.invalidateQueries({
-                queryKey: [API_KEYS.ACADAMIC_QUALIFICATIONS]
+                queryKey: [API_KEYS.ACADEMIC_QUALIFICATIONS]
             });
         },
         onError: error => {
@@ -64,7 +64,7 @@ export const useDeleteAcademicQualificationMutation = () => {
             academicQualificationsService.deleteAcademicQualification(id),
         onSuccess: () => {
             queryClient.invalidateQueries({
-                queryKey: [API_KEYS.ACADAMIC_QUALIFICATIONS]
+                queryKey: [API_KEYS.ACADEMIC_QUALIFICATIONS]
             });
         },
         onError: error => {
