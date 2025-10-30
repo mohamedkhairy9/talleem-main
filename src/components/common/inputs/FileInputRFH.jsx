@@ -115,6 +115,7 @@ export default function FileInputRFH({
 
         // Update react-hook-form with the files array
         if (setValue) {
+            console.log('Setting files for field:', name, 'files:', newFiles);
             setValue(name, newFiles, { shouldValidate: true });
         } else {
             // Fallback: Update the input value for react-hook-form
@@ -153,6 +154,12 @@ export default function FileInputRFH({
 
         // Update react-hook-form with only File objects (not existing URL objects)
         if (setValue) {
+            console.log(
+                'Removing files for field:',
+                name,
+                'remaining files:',
+                newFiles
+            );
             setValue(name, newFiles, { shouldValidate: true });
         } else {
             // Fallback: Update the input value

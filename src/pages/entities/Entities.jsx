@@ -21,6 +21,8 @@ export default function Entities() {
 
     const tableData = data?.data;
 
+    console.log('tableData', tableData);
+
     const formData = data?.data?.map(item => ({
         id: item.id,
         name: {
