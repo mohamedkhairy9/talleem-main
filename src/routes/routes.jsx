@@ -1,6 +1,7 @@
 import Roles from '@/pages/roles/Roles';
 import Login from '../pages/auth/Login';
 import Home from '@/pages/Home';
+import Home2 from '@/pages/Home2';
 import Permissions from '@/pages/permissions/Permissions';
 import Resources from '@/pages/resources/Resources';
 import Notifications from '@/pages/notifications/Notifications';
@@ -42,6 +43,10 @@ import Students from '@/pages/students/Students';
 import EntityActivities from '@/pages/entity-activities/EntityActivities';
 
 export const routes = [
+    {
+        path: '/q/u/r/a/n',
+        element: <Home2 />
+    },
     {
         path: '/',
         element: <Home />
