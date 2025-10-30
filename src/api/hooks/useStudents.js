@@ -61,3 +61,25 @@ export const useDeleteStudentMutation = () => {
         }
     });
 };
+
+export const useImportStudentsMutation = () => {
+    const queryClient = useQueryClient();
+    return useCustomMutation({
+        mutationFn: data => studentsService.importStudents(data),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: [API_KEYS.STUDENTS] });
+        },
+        onError: error => {
+            console.log(error);
+        }
+    });
+};
+
+export const useExportExampleFileMutation = () => {
+    return useCustomMutation({
+        mutationFn: () => studentsService.exportExampleFile(),
+        onError: error => {
+            console.log(error);
+        }
+    });
+};

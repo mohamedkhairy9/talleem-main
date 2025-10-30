@@ -1,5 +1,8 @@
 import React from 'react';
-import { useStudentsQuery } from '@/api/hooks/useStudents';
+import {
+    useStudentsQuery,
+    useExportExampleFileMutation
+} from '@/api/hooks/useStudents';
 import Table from '@/components/common/table/Table';
 import { studentsColumns, filtersDefaultValues } from './configs';
 import useIsOpen from '@/utils/hooks/global/useIsOpen';
@@ -8,9 +11,11 @@ import CreateStudent from './CreateStudent';
 import EditStudent from './EditStudent';
 import DeleteStudent from './DeleteStudent';
 import ViewStudent from './ViewStudent';
+import ImportStudent from './ImportStudent';
 import useLocale from '@/utils/hooks/global/useLocale';
 import { getOriginalObject } from '@/utils/helpers/global.fns';
 import Filters from './Filters';
+import useExportExample from '@/utils/hooks/global/useExportExample';
 
 export default function Students() {
     const { isOpen, toggle } = useIsOpen();
@@ -18,10 +23,10 @@ export default function Students() {
         useFiltering(filtersDefaultValues);
     const { data, isLoading, refresh } = useStudentsQuery(filters);
     const { t } = useLocale();
+    const { mutate } = useExportExampleFileMutation();
+    const { handleExportExample } = useExportExample({mutate, filename: 'students_example.xlsx'});
 
     const tableData = data?.data;
-
-    console.log('tableData', tableData);
 
     const formData = data?.data?.map(item => ({
         ...item,
@@ -55,6 +60,10 @@ export default function Students() {
                 }
                 setFilters={setFilters}
                 filters={filters}
+                enableImport={true}
+                enableExportExample={true}
+                onImport={toggle.import}
+                onExportExample={handleExportExample}
             />
             {isOpen.add && <CreateStudent onClose={toggle.add} />}
             {isOpen.edit && (
@@ -72,6 +81,7 @@ export default function Students() {
             {isOpen.delete && (
                 <DeleteStudent onClose={toggle.delete} id={isOpen.delete?.id} />
             )}
+            {isOpen.import && <ImportStudent onClose={toggle.import} />}
         </div>
     );
 }

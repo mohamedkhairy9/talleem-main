@@ -226,7 +226,9 @@ export const API_URLS = {
         LIST: '/students',
         DETAILS: id => `/students/${id}`,
         UPDATE: id => `/students/${id}`,
-        DELETE: id => `/students/${id}`
+        DELETE: id => `/students/${id}`,
+        IMPORT: '/student-import',
+        EXPORT_EXAMPLE: '/student-example-export'
     },
     COUNTRIES: {
         CREATE: '/countries',
@@ -258,7 +260,8 @@ export const API_URLS = {
         UPDATE: id => `/teachers/${id}`,
         DELETE: id => `/teachers/${id}`,
         IMPORT: '/teacher-import',
-        EXPORT: '/teachers-export'
+        EXPORT: '/teachers-export',
+        EXPORT_EXAMPLE: '/teacher-export-example'
     },
     ENTITY_MANAGERS: {
         CREATE: '/entity-managers',

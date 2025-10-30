@@ -24,7 +24,7 @@ export default function Entities() {
     const { data, isLoading, refresh } = useEntitiesQuery(filters);
     const { t } = useLocale();
     const { mutate } = useExportExampleFileMutation();
-    const { handleExportExample } = useExportExample(mutate);
+    const { handleExportExample } = useExportExample({mutate, filename: 'entities_example.xlsx'});
     const tableData = data?.data;
 
     const formData = data?.data?.map(item => ({

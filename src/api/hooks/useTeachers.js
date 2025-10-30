@@ -82,3 +82,12 @@ export const useExportTeachersQuery = params => {
         enabled: false // Disabled by default, should be triggered manually
     });
 };
+
+export const useExportExampleFileMutation = () => {
+    return useCustomMutation({
+        mutationFn: () => teachersService.exportExampleFile(),
+        onError: error => {
+            console.log(error);
+        }
+    });
+};

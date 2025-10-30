@@ -24,12 +24,22 @@ export const teachersService = {
     },
 
     importTeachers: async data => {
-        return await axiosInstance.post(API_URLS.TEACHERS.IMPORT, data);
+        return await axiosInstance.post(
+            API_URLS.TEACHERS.IMPORT,
+            data,
+            multipartFormData
+        );
     },
 
     exportTeachers: async params => {
         return await axiosInstance.get(API_URLS.TEACHERS.EXPORT, {
             params,
+            responseType: 'blob'
+        });
+    },
+
+    exportExampleFile: async () => {
+        return await axiosInstance.get(API_URLS.TEACHERS.EXPORT_EXAMPLE, {
             responseType: 'blob'
         });
     }

@@ -701,7 +701,10 @@
     "teachers": {
         "create": "Create Teacher",
         "update": "Update Teacher",
-        "view": "View Teacher"
+        "view": "View Teacher",
+        "import": "Import Teachers",
+        "import_info": "Make sure your Excel file matches the example format. Download the example file to see the correct format.",
+        "example_downloaded": "Example file downloaded successfully"
     },
     "entities": {
         "create": "Create Entity",
@@ -719,7 +722,10 @@
         "create": "Create Student",
         "edit": "Edit Student",
         "view": "View Student",
-        "qualification": "Qualification"
+        "qualification": "Qualification",
+        "import": "Import Students",
+        "import_info": "Make sure your Excel file matches the example format. Download the example file to see the correct format.",
+        "example_downloaded": "Example file downloaded successfully"
     },
     "entity_managers": {
         "create": "Create Entity Manager",

@@ -4,7 +4,13 @@ import Modal from '../form/Modal';
 import ModalHeader from '../form/ModalHeader';
 import Btn from '../buttons/Btn';
 
-export default function ImportForm({ onClose, isPending, mutate }) {
+export default function ImportForm({
+    onClose,
+    isPending,
+    mutate,
+    header = 'entities.import',
+    importInfo = 'entities.import_info'
+}) {
     const { t } = useLocale();
     const [file, setFile] = useState(null);
     const fileInputRef = React.useRef(null);
@@ -56,7 +62,7 @@ export default function ImportForm({ onClose, isPending, mutate }) {
 
     return (
         <Modal onClose={onClose} size="lg">
-            <ModalHeader onClose={onClose} header="entities.import" />
+            <ModalHeader onClose={onClose} header={header} />
             <div className="p-4 space-y-4">
                 {/* File Upload Area */}
                 <div className="space-y-2">
@@ -112,7 +118,7 @@ export default function ImportForm({ onClose, isPending, mutate }) {
                     <div className="flex items-start">
                         <div className="ml-3">
                             <p className="text-sm text-blue-700">
-                                {t('entities.import_info') ||
+                                {t(importInfo) ||
                                     'Make sure your Excel file matches the example format. Download the example file to see the correct format.'}
                             </p>
                         </div>

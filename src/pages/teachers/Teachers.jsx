@@ -1,5 +1,8 @@
 import React from 'react';
-import { useTeachersQuery } from '@/api/hooks/useTeachers';
+import {
+    useTeachersQuery,
+    useExportExampleFileMutation
+} from '@/api/hooks/useTeachers';
 import Table from '@/components/common/table/Table';
 import { teachersColumns, filtersDefaultValues } from './configs';
 import useIsOpen from '@/utils/hooks/global/useIsOpen';
@@ -8,10 +11,12 @@ import CreateTeacher from './CreateTeacher';
 import EditTeacher from './EditTeacher';
 import DeleteTeacher from './DeleteTeacher';
 import ViewTeacher from './ViewTeacher';
+import ImportTeacher from './ImportTeacher';
 import useLocale from '@/utils/hooks/global/useLocale';
 import i18next from 'i18next';
 import { getOriginalObject } from '@/utils/helpers/global.fns';
 import Filters from './Filters';
+import useExportExample from '@/utils/hooks/global/useExportExample';
 
 export default function Teachers() {
     const { isOpen, toggle } = useIsOpen();
@@ -19,6 +24,8 @@ export default function Teachers() {
         useFiltering(filtersDefaultValues);
     const { data, isLoading, refresh } = useTeachersQuery(filters);
     const { t } = useLocale();
+    const { mutate } = useExportExampleFileMutation();
+    const { handleExportExample } = useExportExample({mutate, filename: 'teachers_example.xlsx'});
 
     const tableData = data?.data?.map(item => ({
         ...item,
@@ -26,8 +33,6 @@ export default function Teachers() {
         branch: item.branch?.[i18next.language],
         main_program: item.main_program?.name?.[i18next.language]
     }));
-
-    console.log('data', tableData);
 
     const formData = data?.data?.map(item => ({
         ...item,
@@ -62,6 +67,10 @@ export default function Teachers() {
                 }
                 setFilters={setFilters}
                 filters={filters}
+                enableImport={true}
+                enableExportExample={true}
+                onImport={toggle.import}
+                onExportExample={handleExportExample}
             />
             {isOpen.add && <CreateTeacher onClose={toggle.add} />}
             {isOpen.edit && (
@@ -79,6 +88,7 @@ export default function Teachers() {
             {isOpen.delete && (
                 <DeleteTeacher onClose={toggle.delete} id={isOpen.delete?.id} />
             )}
+            {isOpen.import && <ImportTeacher onClose={toggle.import} />}
         </div>
     );
 }

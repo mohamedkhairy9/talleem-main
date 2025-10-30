@@ -29,5 +29,19 @@ export const studentsService = {
 
     deleteStudent: async id => {
         return await axiosInstance.delete(API_URLS.STUDENTS.DELETE(id));
+    },
+
+    importStudents: async data => {
+        return await axiosInstance.post(
+            API_URLS.STUDENTS.IMPORT,
+            data,
+            multipartFormData
+        );
+    },
+
+    exportExampleFile: async () => {
+        return await axiosInstance.get(API_URLS.STUDENTS.EXPORT_EXAMPLE, {
+            responseType: 'blob'
+        });
     }
 };

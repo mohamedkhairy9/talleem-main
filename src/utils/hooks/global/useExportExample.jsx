@@ -1,6 +1,6 @@
 import React from 'react';
 
-export default function useExportExample(mutate) {
+export default function useExportExample({mutate, filename = 'example.xlsx'}) {
     const handleExportExample = () => {
         mutate(undefined, {
             onSuccess: response => {
@@ -15,7 +15,7 @@ export default function useExportExample(mutate) {
                 // Create a temporary anchor element and trigger download
                 const a = document.createElement('a');
                 a.href = url;
-                a.download = 'entities_example.xlsx';
+                a.download = filename;
                 document.body.appendChild(a);
                 a.click();
 
