@@ -19,8 +19,11 @@ export default function GeneralBanners() {
     const { data, isLoading, refresh } = useGeneralBannersQuery(filters);
     const { t } = useLocale();
 
-    const tableData = data?.data;
-    const formData = data?.data;
+    const tableData = data?.data?.map(item => ({
+        ...item,
+        status: item.status
+    }));
+    const formData = data?.data?.map(({ created_at, ...item }) => item);
 
     return (
         <div>

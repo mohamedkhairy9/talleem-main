@@ -7,7 +7,7 @@ import { enabledDisabledOptions } from '@/utils/constants/options';
 
 export default function EditCountry({ onClose, oldData }) {
     const { mutate, isPending } = useUpdateCountryMutation();
-
+    console.log("old data: ", oldData)
     return (
         <Modal onClose={onClose}>
             <ModalHeader onClose={onClose} header="countries.edit" />

@@ -26,9 +26,12 @@ export default function Countries() {
     }));
 
     const formData = data?.data?.map(item => ({
-        ...item,
-        'name.en': item.name?.en,
-        'name.ar': item.name?.ar,
+        id: item.id,
+        name: item.name,
+        status: item.status,
+        // ...item,
+        // 'name.en': item.name?.en,
+        // 'name.ar': item.name?.ar,
         short_name: item.short_name,
         phone_code: item.phone_code
     }));

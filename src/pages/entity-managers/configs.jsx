@@ -37,7 +37,7 @@ export const entityManagersColumns = [
     }),
     columnHelper.accessor('entity', {
         header: 'table_headers.entity',
-        cell: info => <Cell value={info.row.original.entity?.name} />
+        cell: info => <Cell value={info.row.original.entity} />
     }),
     columnHelper.accessor('status', {
         header: 'table_headers.status',

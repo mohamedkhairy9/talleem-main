@@ -33,6 +33,8 @@ export default function EducationPrograms() {
             item.educational_entity_classification?.[i18next.language]
     }));
 
+    const formData = data?.data?.map(({ created_at, updated_at, ...item }) => item);
+
     console.log('tableData', tableData);
 
     return (
@@ -60,13 +62,13 @@ export default function EducationPrograms() {
             {isOpen.edit && (
                 <EditEducationProgramEntityType
                     onClose={toggle.edit}
-                    oldData={getOriginalObject(isOpen.edit, data?.data)}
+                    oldData={getOriginalObject(isOpen.edit, formData)}
                 />
             )}
             {isOpen.view && (
                 <ViewEducationProgramEntityType
                     onClose={toggle.view}
-                    oldData={getOriginalObject(isOpen.view, data?.data)}
+                    oldData={getOriginalObject(isOpen.view, formData)}
                 />
             )}
             {isOpen.delete && (

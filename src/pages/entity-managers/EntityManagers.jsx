@@ -10,7 +10,7 @@ import DeleteEntityManager from './DeleteEntityManager';
 import ViewEntityManager from './ViewEntityManager';
 import useLocale from '@/utils/hooks/global/useLocale';
 import i18next from 'i18next';
-import { getOriginalObject } from '@/utils/helpers/global.fns';
+import { getOriginalObject, onlyDate } from '@/utils/helpers/global.fns';
 import Filters from './Filters';
 
 export default function EntityManagers() {
@@ -23,20 +23,19 @@ export default function EntityManagers() {
     const tableData = data?.data?.map(item => ({
         ...item,
         name: item.name?.[i18next.language],
-        entity: {
-            ...item.entity,
-            name: item.entity?.name?.[i18next.language]
-        }
+        entity: item.entity?.name?.[i18next.language],
     }));
 
-    const formData = data?.data?.map(item => ({
+    const formData = data?.data?.map(({ city, branch, entity, nationality, user, academic_level, date_of_birth, specification, created_at, updated_at, ...item}) => ({
         ...item,
-        entity_id: item.entity?.id,
-        nationality_id: item.nationality?.id,
-        branch_id: item.branch?.id,
-        city_id: item.city?.id,
-        academic_level_id: item.academic_level?.id,
-        specification_id: item.specification?.id
+        entity_id: entity?.id,
+        nationality_id: nationality?.id,
+        branch_id: branch?.id,
+        city_id: city?.id,
+        academic_level_id: academic_level?.id,
+        specification_id: specification?.id,
+        user_id: user?.id,
+        date_of_birth: onlyDate(date_of_birth)
     }));
 
     return (
