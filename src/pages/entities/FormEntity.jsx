@@ -183,6 +183,7 @@ export default function FormEntity({
                     defaultValue={
                         isNested ? defaultValue : oldData?.files || []
                     }
+                    setValue={setValue}
                 />
             );
         }
