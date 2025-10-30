@@ -16,7 +16,7 @@ const statusOptions = [
     { label: { ar: 'نشط', en: 'Active' }, value: 'active' },
     { label: { ar: 'معلق', en: 'Suspended' }, value: 'suspended' },
     { label: { ar: 'ملغاة', en: 'Canceled' }, value: 'canceled' },
-    { label: { ar: 'غير مصرح', en: 'Unauthorized' }, value: 'unauthorized' }
+    { label: { ar: 'غير مصرح', en: 'Unlicensed' }, value: 'unauthorized' }
 ];
 
 export default function CreateEntity({ onClose }) {
