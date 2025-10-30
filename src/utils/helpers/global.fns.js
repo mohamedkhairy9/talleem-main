@@ -150,3 +150,26 @@ export const getOriginalObject = (identfier, arr = []) => {
 export function onlyDate(date) {
     return date ? date.split('T')[0] : null;
 }
+
+export function spreadData(oldData, options){
+    console.log(options)
+    options = options.map(option => option.name)
+    let data = {}
+    for(let item in oldData){
+        if(typeof oldData[item] === "object" && Object.keys(oldData[item]).includes("id")){
+            data[`${item}_id`] = oldData[item].id;
+            continue;
+        }else if(typeof oldData[item] === "object" && Object.keys(oldData[item]).includes("ar", "en") && options.includes(`${item}.en`, `${item}.ar`)){
+            data[`${item}`] = {
+                en: oldData[item].en,
+                ar: oldData[item].ar,
+            }
+            continue;
+        }
+        if(options.includes(item)){
+            data[`${item}`] = oldData[item];
+            continue;
+        }
+    }
+    return data;
+}
