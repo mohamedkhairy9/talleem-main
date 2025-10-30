@@ -21,12 +21,12 @@ export default function SelectRFH({
 }) {
     const { t, isRTL } = useLocale();
     const [showInfo, setShowInfo] = useState(false);
-    const getDefaultValue = () => {
-        if (defaultValue !== undefined && defaultValue !== null) {
+    const getValue = valueToTransform => {
+        if (valueToTransform !== undefined && valueToTransform !== null) {
             if (isMulti) {
                 return options
                     ?.filter(item =>
-                        defaultValue
+                        valueToTransform
                             ?.map(el =>
                                 el.id !== undefined
                                     ? el.id
@@ -47,8 +47,8 @@ export default function SelectRFH({
                 const x = options?.find(
                     el =>
                         (el.id !== undefined &&
-                            Number(el.id) === Number(defaultValue)) ||
-                        el.value === defaultValue
+                            Number(el.id) === Number(valueToTransform)) ||
+                        el.value === valueToTransform
                 );
                 return x
                     ? {
@@ -81,9 +81,10 @@ export default function SelectRFH({
             <Controller
                 name={name}
                 control={control}
+                defaultValue={getValue(defaultValue)}
                 render={({ field }) => (
                     <Select
-                        defaultValue={getDefaultValue()}
+                        value={getValue(field.value)}
                         isMulti={isMulti}
                         className={`react-select ${
                             width ? width : 'w-full min-w-[300px]'

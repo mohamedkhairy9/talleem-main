@@ -246,6 +246,16 @@ export const managerFields = [
         section: 'manager'
     },
     {
+        name: 'manager.status',
+        label: 'validation.status.label',
+        type: 'select',
+        placeholder: 'validation.status.placeholder',
+        defaultValue: true,
+        editMode: true,
+        viewMode: true,
+        section: 'manager'
+    },
+    {
         name: 'manager.manager_email',
         label: 'validation.manager_email.label',
         type: 'email',
@@ -385,7 +395,10 @@ export const entitiesDefaultValues = {
     class_count: 0,
     management_rooms_count: 0,
     lecture_holes_count: 0,
-    min_acceptance_age: 1
+    min_acceptance_age: 1,
+    manager: {
+        status: true
+    }
 };
 
 export const entitiesFilters = [

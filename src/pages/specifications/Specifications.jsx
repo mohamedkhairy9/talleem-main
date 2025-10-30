@@ -28,6 +28,10 @@ export default function Specifications() {
     return (
         <div>
             <Table
+                enableAdd={false}
+                enableEdit={false}
+                enableDelete={false}
+                enableView={false}
                 title={t('table_titles.specifications')}
                 refresh={refresh}
                 loading={isLoading}

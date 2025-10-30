@@ -16,6 +16,7 @@ import { useUsersQuery } from '@/api/hooks/useUsers';
 import Loader from '@/components/common/Loader';
 import { allData } from '@/utils/constants/global.constants';
 import { enabledDisabledOptions } from '@/utils/constants/options';
+import { useEntitiesQuery } from '@/api/hooks/useEntities';
 
 export default function CreateTeacher({ onClose }) {
     const { mutate, isPending } = useCreateTeacherMutation();
@@ -23,6 +24,9 @@ export default function CreateTeacher({ onClose }) {
     // Fetch all available options
     const { data: branchesData, isLoading: branchesLoading } =
         useBranchesQuery(allData);
+
+    const { data: entitiesData, isLoading: entitiesLoading } =
+        useEntitiesQuery(allData);
     const { data: mainProgramsData, isLoading: mainProgramsLoading } =
         useMainProgramsQuery(allData);
     const { data: entityCategoriesData, isLoading: entityCategoriesLoading } =
@@ -52,7 +56,8 @@ export default function CreateTeacher({ onClose }) {
         specificationsLoading ||
         citiesLoading ||
         nationalitiesLoading ||
-        usersLoading;
+        usersLoading ||
+        entitiesLoading;
 
     if (isLoading) return <Loader />;
 
@@ -69,7 +74,7 @@ export default function CreateTeacher({ onClose }) {
                     nationality_id: nationalitiesData?.data,
                     branch_id: branchesData?.data,
                     main_program_id: mainProgramsData?.data,
-                    entity_id: entityCategoriesData?.data,
+                    entity_id: entitiesData?.data,
                     education_program_entity_type_id:
                         educationProgramEntityTypesData?.data,
                     entity_category_id: entityCategoriesData?.data,

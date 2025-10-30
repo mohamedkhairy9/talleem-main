@@ -1,12 +1,12 @@
 import useRFH from '@/utils/hooks/global/useRFH';
 import { entitiesSchema as schema } from '@/utils/yup/entities.schemas';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { entitiesFields, managerFields } from './configs';
 import InputRFH from '@/components/common/inputs/InputRFH';
 import FileInputRFH from '@/components/common/inputs/FileInputRFH';
 import Btn from '@/components/common/buttons/Btn';
 import { getNestedError } from '@/utils/helpers/getNestedError';
-import { generateOptions, onlyDate } from '@/utils/helpers/global.fns';
+import { generateOptions } from '@/utils/helpers/global.fns';
 import useLocale from '@/utils/hooks/global/useLocale';
 import MapPicker from '@/components/common/maps/MapPicker';
 
@@ -32,29 +32,12 @@ export default function FormEntity({
     const { register, errors, handleSubmit, control, setValue, watch } = useRFH(
         {
             schema,
-            defaultValues: {
-                ...oldData,
-                activities: oldData?.activities?.length
-                    ? oldData.activities
-                    : [{ main_program_id: '', name: { en: '', ar: '' } }],
-                class_count: oldData?.class_count ?? 0,
-                management_rooms_count: oldData?.management_rooms_count ?? 0,
-                lecture_holes_count: oldData?.lecture_holes_count ?? 0,
-                min_acceptance_age: oldData?.min_acceptance_age ?? 1,
-                latitude: oldData?.latitude ?? '',
-                longitude: oldData?.longitude ?? '',
-                manager: {
-                    ...oldData?.manager,
-                    date_of_birth: onlyDate(oldData?.manager?.date_of_birth),
-                    name: oldData?.manager?.name || { en: '', ar: '' }
-                }
-            }
+            defaultValues: oldData
         }
     );
 
     function onSubmit(data) {
         console.log('data', data);
-
         // Remove profile_image if not changed in edit mode
         if (editMode && data.manager && !profileImageChanged) {
             delete data.manager.profile_image;
@@ -64,12 +47,12 @@ export default function FormEntity({
             {
                 ...data,
                 status: data.status,
-                ...(data.main_program_id === 1
+                ...(data.main_program_id == 1
                     ? {
                           education_program_entity_type_id:
                               data.program_entity_types
                       }
-                    : data.main_program_id === 2
+                    : data.main_program_id == 2
                     ? {
                           memorization_program_entity_type_id:
                               data.program_entity_types
@@ -103,6 +86,22 @@ export default function FormEntity({
                 ? options.memorization_program_entity_type_id
                 : []
     };
+
+    useEffect(() => {
+        if (
+            (mainProgramId && mainProgramId != oldData?.main_program_id) ||
+            !oldData?.main_program_id
+        ) {
+            setValue('program_entity_types', '');
+        }
+    }, [mainProgramId, oldData?.main_program_id, setValue]);
+
+    useEffect(() => {
+        if ((cityId && cityId != oldData?.city_id) || !oldData?.city_id) {
+            setValue('branch_id', '');
+            setValue('neighborhood_id', '');
+        }
+    }, [cityId, oldData?.city_id, setValue]);
 
     // Manager-specific options mapping
     const managerOptions = {

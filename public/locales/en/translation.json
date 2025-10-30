@@ -314,6 +314,10 @@
             "status": {
                 "label": "Status",
                 "placeholder": "Select status"
+            },
+            "user_type": {
+                "label": "User Type",
+                "placeholder": "Select user type"
             }
         },
         "date_of_birth": {
@@ -698,7 +702,8 @@
         "view": "View Entity",
         "activities": "Activities",
         "add_activity": "Add Activity",
-        "activity": "Activity"
+        "activity": "Activity",
+        "entity_information": "Entity Information"
     },
     "students": {
         "create": "Create Student",
@@ -709,7 +714,8 @@
     "entity_managers": {
         "create": "Create Entity Manager",
         "update": "Update Entity Manager",
-        "view": "View Entity Manager"
+        "view": "View Entity Manager",
+        "manager_information": "Manager Information"
     },
     "branch_administrations": {
         "create": "Create Branch Administration",

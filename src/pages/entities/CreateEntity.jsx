@@ -7,11 +7,10 @@ import { apiCalls, entitiesDefaultValues } from './configs';
 
 import Loader from '@/components/common/Loader';
 import useApiCalls from './useApiCalls';
-import { genderOptions } from '@/utils/constants/options';
+import { enabledDisabledOptions, genderOptions } from '@/utils/constants/options';
 
 const statusOptions = [
     { label: { ar: 'نشط', en: 'Active' }, value: 'active' },
-    { label: { ar: 'غير نشط', en: 'Inactive' }, value: 'inactive' },
     { label: { ar: 'معلق', en: 'Suspended' }, value: 'suspended' },
     { label: { ar: 'ملغي', en: 'Canceled' }, value: 'canceled' },
     { label: { ar: 'غير مصرح', en: 'Unauthorized' }, value: 'unauthorized' }
@@ -69,7 +68,8 @@ export default function CreateEntity({ onClose }) {
                     'manager.nationality_id': nationalitiesData?.data,
                     'manager.academic_level_id': academicLevelsData?.data,
                     'manager.specification_id': specificationsData?.data,
-                    'manager.gender': genderOptions
+                    'manager.gender': genderOptions,
+                    'manager.status': enabledDisabledOptions
                 }}
             />
         </Modal>

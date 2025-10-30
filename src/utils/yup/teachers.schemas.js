@@ -2,11 +2,6 @@ import * as yup from 'yup';
 import { t } from 'i18next';
 
 export const teachersSchema = yup.object({
-    user_id: yup
-        .number()
-        .required(t('validation.required'))
-        .integer(t('validation.user_id.integer'))
-        .min(1, t('validation.user_id.min')),
     name: yup
         .object({
             en: yup

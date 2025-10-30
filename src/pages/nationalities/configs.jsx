@@ -13,6 +13,10 @@ export const nationalitiesColumns = [
         header: 'table_headers.nationalities',
         cell: info => <NameCell directValue={info.row.original.name} />
     }),
+    columnHelper.accessor('country', {
+        header: 'table_headers.country',
+        cell: info => <NameCell directValue={info.row.original.country} />
+    }),
     columnHelper.accessor('status', {
         header: 'table_headers.status',
         cell: info => <ActiveCell info={info} />

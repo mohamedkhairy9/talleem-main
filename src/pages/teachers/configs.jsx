@@ -42,14 +42,6 @@ export const teachersColumns = [
 
 export const teachersFields = [
     {
-        name: 'user_id',
-        label: 'validation.user_id.label',
-        type: 'select',
-        placeholder: 'validation.user_id.placeholder',
-        editMode: true,
-        viewMode: true
-    },
-    {
         name: 'name.en',
         label: 'validation.name.label.en',
         type: 'text',
@@ -209,6 +201,15 @@ export const teachersFields = [
         placeholder: 'validation.address.placeholder',
         editMode: true,
         viewMode: true
+    },
+    {
+        name: 'profile_image',
+        label: 'validation.profile_image.label',
+        type: 'file',
+        placeholder: 'validation.profile_image.placeholder',
+        editMode: true,
+        viewMode: true,
+        accept: 'image/*',
     },
     {
         name: 'files',

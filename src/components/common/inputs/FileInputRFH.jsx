@@ -240,11 +240,6 @@ export default function FileInputRFH({
                         <p className="text-sm text-gray-600">
                             {t(placeholder) || 'Click to upload files'}
                         </p>
-                        {multiple && (
-                            <p className="text-xs text-gray-500 mt-1">
-                                You can select multiple files
-                            </p>
-                        )}
                     </div>
                 </div>
 

@@ -55,7 +55,7 @@ export const prepareFormData = data => {
             } else {
                 // Use dot notation for other nested objects
                 Object.entries(value).forEach(([subKey, subValue]) => {
-                    appendToFormData(`${key}.${subKey}`, subValue);
+                    appendToFormData(`${key}[${subKey}]`, subValue);
                 });
             }
         }

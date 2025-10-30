@@ -14,6 +14,7 @@ import { getOriginalObject } from '@/utils/helpers/global.fns';
 import Filters from './Filters';
 
 export default function Nationalities() {
+
     const { isOpen, toggle } = useIsOpen();
     const { pagination, handleFilter, filters, setter, setFilters } =
         useFiltering(filtersDefaultValues);
@@ -22,7 +23,8 @@ export default function Nationalities() {
 
     const tableData = data?.data?.map(item => ({
         ...item,
-        name: item.name?.[i18next.language]
+        name: item.name?.[i18next.language],
+        country: item.country?.[i18next.language]
     }));
 
     const formData = data?.data?.map(item => ({

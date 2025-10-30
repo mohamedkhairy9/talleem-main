@@ -123,12 +123,6 @@ export const generalBannersFields = [
 
 export const generalBannersFilters = [
     {
-        name: 'search',
-        type: 'text',
-        placeholder: 'validation.search.placeholder',
-        defaultValue: ''
-    },
-    {
         name: 'status',
         type: 'select',
         placeholder: 'validation.status.placeholder',

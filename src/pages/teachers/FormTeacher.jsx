@@ -56,7 +56,7 @@ export default function FormTeacher({
                                     : ''
                             }
                         >
-                            {field.type === 'file' ? (
+                            {field.type === 'file' && field.name !== 'profile_image' ? (
                                 <FileInputRFH
                                     register={register}
                                     control={control}

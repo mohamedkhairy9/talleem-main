@@ -316,6 +316,10 @@
             "status": {
                 "label": "الحالة",
                 "placeholder": "اختر الحالة"
+            },
+            "user_type": {
+                "label": "نوع المستخدم",
+                "placeholder": "اختر نوع المستخدم"
             }
         },
         "date_of_birth": {

@@ -133,6 +133,11 @@ export const sideMenuTabs = [
                 icon: VscDebugBreakpointLog
             },
             {
+                titleKey: 'sidebar.entity_categories',
+                path: '/entity-categories',
+                icon: VscDebugBreakpointLog
+            },
+            {
                 titleKey: 'sidebar.attendance_types',
                 path: '/attendances-types',
                 icon: VscDebugBreakpointLog
@@ -189,8 +194,7 @@ export const sideMenuTabs = [
                 titleKey: 'sidebar.students',
                 path: '/students',
                 icon: HiUserGroup
-            },
-            
+            }
         ]
     },
 
@@ -216,11 +220,6 @@ export const sideMenuTabs = [
         icon: HiBookOpen,
         subMenu: [
             {
-                titleKey: 'sidebar.entity_categories',
-                path: '/entity-categories',
-                icon: VscDebugBreakpointLog
-            },
-            {
                 titleKey: 'sidebar.session_periods',
                 path: '/session-periods',
                 icon: VscDebugBreakpointLog
@@ -234,6 +233,11 @@ export const sideMenuTabs = [
                 titleKey: 'sidebar.academic_years',
                 path: '/academic-years',
                 icon: VscDebugBreakpointLog
+            },
+            {
+                titleKey: 'sidebar.memorization-program-entity-types',
+                path: '/memorization-program-entity-types',
+                icon: VscDebugBreakpointLog
             }
         ]
     },
@@ -241,12 +245,6 @@ export const sideMenuTabs = [
         titleKey: 'sidebar.education_program_settings',
         icon: HiAcademicCap,
         subMenu: [
-            {
-                titleKey: 'sidebar.entity_categories',
-                path: '/entity-categories',
-                icon: VscDebugBreakpointLog
-            },
-
             {
                 titleKey: 'sidebar.specifications',
                 path: '/specifications',
@@ -256,25 +254,12 @@ export const sideMenuTabs = [
                 titleKey: 'sidebar.academic_years',
                 path: '/academic-years',
                 icon: VscDebugBreakpointLog
-            }
-        ]
-    },
-
-    // برامج التعليم الرئيسية
-    {
-        titleKey: 'sidebar.main_education_programs',
-        icon: HiBookOpen,
-        subMenu: [
+            },
             {
                 titleKey: 'sidebar.education-program-entity-types',
                 path: '/education-program-entity-types',
                 icon: VscDebugBreakpointLog
             },
-            {
-                titleKey: 'sidebar.memorization-program-entity-types',
-                path: '/memorization-program-entity-types',
-                icon: VscDebugBreakpointLog
-            }
         ]
     },
 

@@ -5,11 +5,10 @@ import ModalHeader from '@/components/common/form/ModalHeader';
 import Loader from '@/components/common/Loader';
 import useApiCalls from './useApiCalls';
 import { apiCalls } from './configs';
-import { genderOptions } from '@/utils/constants/options';
+import { enabledDisabledOptions, genderOptions } from '@/utils/constants/options';
 
 const statusOptions = [
     { label: { ar: 'نشط', en: 'Active' }, value: 'active' },
-    { label: { ar: 'غير نشط', en: 'Inactive' }, value: 'inactive' },
     { label: { ar: 'معلق', en: 'Suspended' }, value: 'suspended' },
     { label: { ar: 'ملغي', en: 'Canceled' }, value: 'canceled' },
     { label: { ar: 'غير مصرح', en: 'Unauthorized' }, value: 'unauthorized' }
@@ -58,8 +57,6 @@ export default function ViewEntity({ onClose, oldData }) {
                     activity_ids: activitiesData?.data,
                     memorization_program_entity_type_id:
                         memorizationProgramEntityTypesData?.data,
-                    education_program_entity_type_id:
-                        educationProgramEntityTypesData?.data,
                     nationality_id: nationalitiesData?.data,
                     academic_level_id: academicLevelsData?.data,
                     specification_id: specificationsData?.data,
@@ -68,7 +65,8 @@ export default function ViewEntity({ onClose, oldData }) {
                     'manager.nationality_id': nationalitiesData?.data,
                     'manager.academic_level_id': academicLevelsData?.data,
                     'manager.specification_id': specificationsData?.data,
-                    'manager.gender': genderOptions
+                    'manager.gender': genderOptions,
+                    'manager.status': enabledDisabledOptions
                 }}
             />
         </Modal>

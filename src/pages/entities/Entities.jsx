@@ -21,19 +21,58 @@ export default function Entities() {
 
     const tableData = data?.data;
 
-    console.log('tableData', tableData);
-
     const formData = data?.data?.map(item => ({
-        ...item,
-        user_id: item.user?.id,
-        branch_id: item.branch?.id,
-        main_program_id: item.main_program?.id,
-        entity_category_id: item.entity_category?.id,
-        education_program_entity_type_id:
-            item.education_program_entity_type?.id,
+        id: item.id,
+        name: {
+            en: item.name?.en,
+            ar: item.name?.ar
+        },
+        status: item.status,
         city_id: item.city?.id,
         neighborhood_id: item.neighborhood?.id,
-        location_type_id: item.location_type?.id
+        branch_id: item.branch?.id,
+        main_program_id: item.main_program?.id,
+        program_entity_types:
+            item.main_program?.id == 1
+                ? item.education_program_entity_type?.id
+                : item.memorization_program_entity_type?.id,
+        entity_category_id: item.entity_category?.id,
+        location_type_id: item.location_type?.id,
+        min_acceptance_age: item.min_acceptance_age,
+        phone: item.phone,
+        email: item.email,
+        address: item.address,
+        area: item.area,
+        class_count: item.class_count,
+        management_rooms_count: item.management_rooms_count,
+        lecture_holes_count: item.lecture_holes_count,
+        activity_ids: item.activities?.map(activity => activity.id),
+        registration_date: item.registration_date,
+        license_number: item.license_number,
+        files: item.files,
+        latitude: item.latitude,
+        longitude: item.longitude,
+        manager: {
+            name: {
+                en: item.manager?.name?.en,
+                ar: item.manager?.name?.ar
+            },
+            status: item.manager?.status,
+            manager_email: item.manager?.manager_email,
+            manager_phone: item.manager?.manager_phone,
+            national_id: item.manager?.national_id,
+            gender: item.manager?.gender,
+            nationality_id: item.manager?.nationality?.id,
+            city_id: item.manager?.city?.id,
+            academic_level_id: item.manager?.academic_level_id,
+            specification_id: item.manager?.specification_id,
+            date_of_birth: item.manager?.date_of_birth,
+            address: item.manager?.address,
+            memorization_amount: item.manager?.memorization_amount,
+            years_of_experience: item.manager?.years_of_experience,
+            profile_image: item.manager?.profile_image,
+            files: item.manager?.files
+        }
     }));
 
     return (
