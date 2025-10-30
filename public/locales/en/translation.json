@@ -1077,5 +1077,6 @@
         "neighborhood_id": "Please select a city first, as the neighborhood depends on the city",
         "branch_id": "Please select a city first, as the branch depends on the city",
         "entity_type": "Please select a main program first, as the entity type depends on the main program"
-    }
+    },
+    "logout": "Logout"
 }

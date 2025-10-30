@@ -13,6 +13,7 @@ import useLocale from '@/utils/hooks/global/useLocale';
 
 export default function Navbar() {
     const {isRTL, currentLocale } = useLocale()
+    const { t } = useLocale();
     const user = useUserStore(state => state.user);
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
     const { mutate: logout } = useLogoutMutation();
@@ -78,23 +79,13 @@ export default function Navbar() {
                                             </p>
                                         </div>
 
-                                        <button className="flex items-center gap-0 hover:gap-2 w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100  duration-200">
-                                            <HiUser className="mr-3 h-4 w-4 text-gray-400" />
-                                            <span>Profile</span>
-                                        </button>
-
-                                        <button className="flex items-center gap-0 hover:gap-2 w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100  duration-200">
-                                            <HiCog className="mr-3 h-4 w-4 text-gray-400" />
-                                            Settings
-                                        </button>
-
                                         <div className="border-t border-gray-100">
                                             <button
                                                 onClick={handleLogout}
-                                                className="flex items-center w-full px-4 gap-0 hover:gap-2 rounded-b-lg py-2 text-sm text-red-700 hover:bg-red-50  duration-200"
+                                                className="flex items-center w-full px-4 gap-2 hover:gap-2 rounded-b-lg py-2 text-sm text-red-700 hover:bg-red-50  duration-200"
                                             >
                                                 <HiLogout className="mr-3 h-4 w-4 text-red-400" />
-                                                Sign out
+                                                <span>{t('logout')}</span>
                                             </button>
                                         </div>
                                     </div>
