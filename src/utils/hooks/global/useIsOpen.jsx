@@ -9,7 +9,8 @@ export default function useIsOpen() {
         assignPermission: false,
         removePermission: false,
         trigger: false,
-        schedule: false
+        schedule: false,
+        import: false
     });
 
     const toggle = {
@@ -31,7 +32,9 @@ export default function useIsOpen() {
         trigger: value =>
             setIsOpen({ ...isOpen, trigger: value || !isOpen.trigger }),
         schedule: value =>
-            setIsOpen({ ...isOpen, schedule: value || !isOpen.schedule })
+            setIsOpen({ ...isOpen, schedule: value || !isOpen.schedule }),
+        import: value =>
+            setIsOpen({ ...isOpen, import: value || !isOpen.import })
     };
 
     return { isOpen, toggle };

@@ -60,3 +60,25 @@ export const useDeleteEntityMutation = () => {
         }
     });
 };
+
+export const useImportEntitiesMutation = () => {
+    const queryClient = useQueryClient();
+    return useCustomMutation({
+        mutationFn: data => entitiesService.importEntities(data),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: [API_KEYS.ENTITIES] });
+        },
+        onError: error => {
+            console.log(error);
+        }
+    });
+};
+
+export const useExportExampleFileMutation = () => {
+    return useCustomMutation({
+        mutationFn: () => entitiesService.exportExampleFile(),
+        onError: error => {
+            console.log(error);
+        }
+    });
+};

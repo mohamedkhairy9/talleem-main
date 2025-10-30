@@ -26,3 +26,9 @@ export const timeUnitOptions = [
     { label: { ar: 'يوم', en: 'Day' }, value: 'day' },
     { label: { ar: 'شهر', en: 'Month' }, value: 'month' }
 ];
+
+export const teacherStatusOptions = [
+    { label: { ar: 'نشط', en: 'Active' }, value: 'active' },
+    { label: { ar: 'ملغاة', en: 'Canceled' }, value: 'canceled' },
+    { label: { ar: 'غير مصرح', en: 'Unauthorized' }, value: 'unauthorized' }
+];

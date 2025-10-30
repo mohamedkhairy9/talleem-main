@@ -13,7 +13,7 @@ import { useNationalitiesQuery } from '@/api/hooks/useNationalities';
 import { useUsersQuery } from '@/api/hooks/useUsers';
 import Loader from '@/components/common/Loader';
 import { allData } from '@/utils/constants/global.constants';
-import { enabledDisabledOptions } from '@/utils/constants/options';
+import { enabledDisabledOptions, teacherStatusOptions } from '@/utils/constants/options';
 
 export default function ViewTeacher({ onClose, oldData }) {
     // Fetch all available options
@@ -73,7 +73,7 @@ export default function ViewTeacher({ onClose, oldData }) {
                     academic_qualification_id: academicQualificationsData?.data,
                     specification_id: specificationsData?.data,
                     city_id: citiesData?.data,
-                    status: enabledDisabledOptions
+                    status: teacherStatusOptions
                 }}
             />
         </Modal>

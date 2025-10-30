@@ -15,7 +15,7 @@ import { useNationalitiesQuery } from '@/api/hooks/useNationalities';
 import { useUsersQuery } from '@/api/hooks/useUsers';
 import Loader from '@/components/common/Loader';
 import { allData } from '@/utils/constants/global.constants';
-import { enabledDisabledOptions } from '@/utils/constants/options';
+import { enabledDisabledOptions, teacherStatusOptions } from '@/utils/constants/options';
 import { useEntitiesQuery } from '@/api/hooks/useEntities';
 
 export default function CreateTeacher({ onClose }) {
@@ -61,6 +61,8 @@ export default function CreateTeacher({ onClose }) {
 
     if (isLoading) return <Loader />;
 
+  
+
     return (
         <Modal onClose={onClose} size="5xl">
             <ModalHeader onClose={onClose} header="teachers.create" />
@@ -81,7 +83,7 @@ export default function CreateTeacher({ onClose }) {
                     academic_qualification_id: academicQualificationsData?.data,
                     specification_id: specificationsData?.data,
                     city_id: citiesData?.data,
-                    status: enabledDisabledOptions
+                    status: teacherStatusOptions
                 }}
             />
         </Modal>

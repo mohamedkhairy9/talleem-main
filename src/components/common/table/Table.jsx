@@ -37,7 +37,8 @@ import {
     MdViewColumn,
     MdSwapVert,
     MdShare,
-    MdInfo
+    MdInfo,
+    MdUpload
 } from 'react-icons/md';
 import { useTranslation } from 'react-i18next';
 import useLanguageStore from '@/utils/stores/language.store';
@@ -61,6 +62,10 @@ const Table = ({
     enableDelete = true,
     enableCopy = true,
     enableView = true,
+    enableImport = false,
+    enableExportExample = false,
+    onImport,
+    onExportExample,
     onRowClick,
     customActions = [],
     refresh,
@@ -778,6 +783,32 @@ const Table = ({
                                         <MdAdd className="w-4 h-4" />
                                         <span className="text-sm font-medium">
                                             {t('table.add_new')}
+                                        </span>
+                                    </button>
+                                )}
+
+                                {/* Import Button */}
+                                {enableImport && onImport && (
+                                    <button
+                                        onClick={onImport}
+                                        className="flex items-center space-x-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
+                                    >
+                                        <MdUpload className="w-4 h-4" />
+                                        <span className="text-sm font-medium">
+                                            {t('table.import')}
+                                        </span>
+                                    </button>
+                                )}
+
+                                {/* Export Example Button */}
+                                {enableExportExample && onExportExample && (
+                                    <button
+                                        onClick={onExportExample}
+                                        className="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                                    >
+                                        <MdFileDownload className="w-4 h-4" />
+                                        <span className="text-sm font-medium">
+                                            {t('table.download_example')}
                                         </span>
                                     </button>
                                 )}

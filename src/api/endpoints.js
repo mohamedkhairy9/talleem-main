@@ -247,7 +247,9 @@ export const API_URLS = {
         LIST: '/entities',
         DETAILS: id => `/entities/${id}`,
         UPDATE: id => `/entities/${id}`,
-        DELETE: id => `/entities/${id}`
+        DELETE: id => `/entities/${id}`,
+        IMPORT: '/entities-import',
+        EXPORT_EXAMPLE: '/entities-example-export'
     },
     TEACHERS: {
         CREATE: '/teachers',

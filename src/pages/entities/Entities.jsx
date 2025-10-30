@@ -1,5 +1,8 @@
 import React from 'react';
-import { useEntitiesQuery } from '@/api/hooks/useEntities';
+import {
+    useEntitiesQuery,
+    useExportExampleFileMutation
+} from '@/api/hooks/useEntities';
 import Table from '@/components/common/table/Table';
 import { entitiesColumns, filtersDefaultValues } from './configs';
 import useIsOpen from '@/utils/hooks/global/useIsOpen';
@@ -8,9 +11,11 @@ import CreateEntity from './CreateEntity';
 import EditEntity from './EditEntity';
 import DeleteEntity from './DeleteEntity';
 import ViewEntity from './ViewEntity';
+import ImportEntity from './ImportEntity';
 import useLocale from '@/utils/hooks/global/useLocale';
 import { getOriginalObject } from '@/utils/helpers/global.fns';
 import Filters from './Filters';
+import useExportExample from '@/utils/hooks/global/useExportExample';
 
 export default function Entities() {
     const { isOpen, toggle } = useIsOpen();
@@ -18,10 +23,9 @@ export default function Entities() {
         useFiltering(filtersDefaultValues);
     const { data, isLoading, refresh } = useEntitiesQuery(filters);
     const { t } = useLocale();
-
+    const { mutate } = useExportExampleFileMutation();
+    const { handleExportExample } = useExportExample(mutate);
     const tableData = data?.data;
-
-    console.log('tableData', tableData);
 
     const formData = data?.data?.map(item => ({
         id: item.id,
@@ -95,6 +99,10 @@ export default function Entities() {
                 }
                 setFilters={setFilters}
                 filters={filters}
+                enableImport={true}
+                enableExportExample={true}
+                onImport={toggle.import}
+                onExportExample={handleExportExample}
             />
             {isOpen.add && <CreateEntity onClose={toggle.add} />}
             {isOpen.edit && (
@@ -112,6 +120,7 @@ export default function Entities() {
             {isOpen.delete && (
                 <DeleteEntity onClose={toggle.delete} id={isOpen.delete?.id} />
             )}
+            {isOpen.import && <ImportEntity onClose={toggle.import} />}
         </div>
     );
 }

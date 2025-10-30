@@ -4,7 +4,6 @@ export const prepareFormData = data => {
     const formData = new FormData();
 
     const appendToFormData = (key, value) => {
-        console.log('key', key);
         if (value === null || value === undefined) return;
 
         // Handle File instances (including from file inputs)

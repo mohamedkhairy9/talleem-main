@@ -136,6 +136,8 @@
             "label": "Files",
             "placeholder": "Upload files"
         },
+        "file_type_invalid": "Please select an Excel file (.xlsx, .xls, or .csv)",
+        "file_required": "Please select a file",
         "educational_entity_classification": {
             "label": {
                 "en": "Educational Entity Classification (English)",
@@ -579,7 +581,12 @@
         "wait": "Wait",
         "enabled": "Enabled",
         "disabled": "Disabled",
-        "are_you_sure_you_want_to_delete_this_item": "Are you sure you want to delete this item?"
+        "are_you_sure_you_want_to_delete_this_item": "Are you sure you want to delete this item?",
+        "select_file": "Select File",
+        "remove": "Remove",
+        "click_to_select_file": "Click to select Excel file",
+        "supported_formats": "Supported: .xlsx, .xls, .csv",
+        "upload": "Upload"
     },
     "activity_logs": {
         "view_title": "Activity Log Details",
@@ -703,7 +710,10 @@
         "activities": "Activities",
         "add_activity": "Add Activity",
         "activity": "Activity",
-        "entity_information": "Entity Information"
+        "entity_information": "Entity Information",
+        "import": "Import Entities",
+        "import_info": "Make sure your Excel file matches the example format. Download the example file to see the correct format.",
+        "example_downloaded": "Example file downloaded successfully"
     },
     "students": {
         "create": "Create Student",
@@ -931,7 +941,9 @@
         "of": "of",
         "page": "Page",
         "page_size": "Page Size",
-        "total": "Total"
+        "total": "Total",
+        "import": "Import",
+        "download_example": "Download Example"
     },
     "table_headers": {
         "id": "ID",

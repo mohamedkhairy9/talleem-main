@@ -12,14 +12,36 @@ export const entitiesService = {
     },
 
     createEntity: async data => {
-        return await axiosInstance.post(API_URLS.ENTITIES.CREATE, data, multipartFormData);
+        return await axiosInstance.post(
+            API_URLS.ENTITIES.CREATE,
+            data,
+            multipartFormData
+        );
     },
 
     updateEntity: async (id, data) => {
-        return await axiosInstance.post(API_URLS.ENTITIES.UPDATE(id), data, multipartFormData);
+        return await axiosInstance.post(
+            API_URLS.ENTITIES.UPDATE(id),
+            data,
+            multipartFormData
+        );
     },
 
     deleteEntity: async id => {
         return await axiosInstance.delete(API_URLS.ENTITIES.DELETE(id));
+    },
+
+    importEntities: async data => {
+        return await axiosInstance.post(
+            API_URLS.ENTITIES.IMPORT,
+            data,
+            multipartFormData
+        );
+    },
+
+    exportExampleFile: async () => {
+        return await axiosInstance.get(API_URLS.ENTITIES.EXPORT_EXAMPLE, {
+            responseType: 'blob'
+        });
     }
 };
