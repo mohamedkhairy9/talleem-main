@@ -46,7 +46,7 @@ export default function ViewEmployee({ onClose, oldData }) {
     if (isLoading) return <Loader />;
 
     return (
-        <Modal onClose={onClose} size="4xl">
+        <Modal onClose={onClose} size="5xl">
             <ModalHeader onClose={onClose} header="employees.view" />
             <FormEmployee
                 onClose={onClose}

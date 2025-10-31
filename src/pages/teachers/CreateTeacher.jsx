@@ -8,6 +8,7 @@ import { useBranchesQuery } from '@/api/hooks/useBranches';
 import { useMainProgramsQuery } from '@/api/hooks/useMainPrograms';
 import { useEntityCategoriesQuery } from '@/api/hooks/useEntityCategories';
 import { useEducationProgramEntityTypesQuery } from '@/api/hooks/useEducationProgramEntityTypes';
+import { useMemorizationProgramEntityTypesQuery } from '@/api/hooks/useMemorizationProgramEntityTypes';
 import { useAcademicQualificationsQuery } from '@/api/hooks/useAcademicQualifications';
 import { useSpecificationsQuery } from '@/api/hooks/useSpecifications';
 import { useCitiesQuery } from '@/api/hooks/useCities';
@@ -36,6 +37,10 @@ export default function CreateTeacher({ onClose }) {
         isLoading: educationProgramEntityTypesLoading
     } = useEducationProgramEntityTypesQuery(allData);
     const {
+        data: memorizationProgramEntityTypesData,
+        isLoading: memorizationProgramEntityTypesLoading
+    } = useMemorizationProgramEntityTypesQuery(allData);
+    const {
         data: academicQualificationsData,
         isLoading: academicQualificationsLoading
     } = useAcademicQualificationsQuery(allData);
@@ -52,6 +57,7 @@ export default function CreateTeacher({ onClose }) {
         mainProgramsLoading ||
         entityCategoriesLoading ||
         educationProgramEntityTypesLoading ||
+        memorizationProgramEntityTypesLoading ||
         academicQualificationsLoading ||
         specificationsLoading ||
         citiesLoading ||
@@ -79,6 +85,8 @@ export default function CreateTeacher({ onClose }) {
                     entity_id: entitiesData?.data,
                     education_program_entity_type_id:
                         educationProgramEntityTypesData?.data,
+                    memorization_program_entity_type_id:
+                        memorizationProgramEntityTypesData?.data,
                     entity_category_id: entityCategoriesData?.data,
                     academic_qualification_id: academicQualificationsData?.data,
                     specification_id: specificationsData?.data,

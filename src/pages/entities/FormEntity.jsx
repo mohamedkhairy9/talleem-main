@@ -224,7 +224,7 @@ export default function FormEntity({
     return (
         <form
             onSubmit={handleSubmit(onSubmit)}
-            className="p-4 space-y-4 max-h-[90vh] overflow-y-auto"
+            className="p-4 space-y-4  overflow-y-auto"
         >
             <Accordion
                 title={t('entities.entity_information')}

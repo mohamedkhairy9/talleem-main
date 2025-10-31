@@ -36,7 +36,7 @@ export const teachersSchema = yup.object({
         .required(t('validation.required'))
         .min(3, t('validation.licence_number.min'))
         .max(50, t('validation.licence_number.max')),
-    education_program_entity_type_id: yup
+    program_entity_types: yup
         .number()
         .required(t('validation.required'))
         .integer(t('validation.education_program_entity_type_id.integer'))

@@ -1,5 +1,6 @@
 import { axiosInstance } from '../axiosInstance';
 import { API_URLS } from '../endpoints';
+import { multipartFormData } from '@/utils/constants/global.constants';
 
 export const employeesService = {
     getEmployees: async params => {
@@ -11,11 +12,11 @@ export const employeesService = {
     },
 
     createEmployee: async data => {
-        return await axiosInstance.post(API_URLS.EMPLOYEES.CREATE, data);
+        return await axiosInstance.post(API_URLS.EMPLOYEES.CREATE, data, multipartFormData);
     },
 
     updateEmployee: async (id, data) => {
-        return await axiosInstance.put(API_URLS.EMPLOYEES.UPDATE(id), data);
+        return await axiosInstance.put(API_URLS.EMPLOYEES.UPDATE(id), data, multipartFormData);
     },
 
     deleteEmployee: async id => {

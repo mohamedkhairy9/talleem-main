@@ -62,7 +62,15 @@ export const teachersFields = [
         label: 'validation.status.label',
         type: 'select',
         placeholder: 'validation.status.placeholder',
-        defaultValue: 1,
+        defaultValue: 'active',
+        editMode: true,
+        viewMode: true
+    },
+    {
+        name: 'city_id',
+        label: 'validation.city_id.label',
+        type: 'select',
+        placeholder: 'validation.city_id.placeholder',
         editMode: true,
         viewMode: true
     },
@@ -71,14 +79,7 @@ export const teachersFields = [
         label: 'validation.branch_id.label',
         type: 'select',
         placeholder: 'validation.branch_id.placeholder',
-        editMode: true,
-        viewMode: true
-    },
-    {
-        name: 'main_program_id',
-        label: 'validation.main_program_id.label',
-        type: 'select',
-        placeholder: 'validation.main_program_id.placeholder',
+        info: 'info.branch_id',
         editMode: true,
         viewMode: true
     },
@@ -91,18 +92,19 @@ export const teachersFields = [
         viewMode: true
     },
     {
-        name: 'licence_number',
-        label: 'validation.licence_number.label',
-        type: 'text',
-        placeholder: 'validation.licence_number.placeholder',
+        name: 'main_program_id',
+        label: 'validation.main_program_id.label',
+        type: 'select',
+        placeholder: 'validation.main_program_id.placeholder',
         editMode: true,
         viewMode: true
     },
     {
-        name: 'education_program_entity_type_id',
-        label: 'validation.education_program_entity_type_id.label',
+        name: 'program_entity_types',
+        label: 'validation.program_entity_types.label',
         type: 'select',
-        placeholder: 'validation.education_program_entity_type_id.placeholder',
+        placeholder: 'validation.program_entity_types.placeholder',
+        info: 'info.entity_type',
         editMode: true,
         viewMode: true
     },
@@ -111,6 +113,14 @@ export const teachersFields = [
         label: 'validation.entity_category_id.label',
         type: 'select',
         placeholder: 'validation.entity_category_id.placeholder',
+        editMode: true,
+        viewMode: true
+    },
+    {
+        name: 'licence_number',
+        label: 'validation.licence_number.label',
+        type: 'text',
+        placeholder: 'validation.licence_number.placeholder',
         editMode: true,
         viewMode: true
     },
@@ -187,14 +197,6 @@ export const teachersFields = [
         viewMode: true
     },
     {
-        name: 'city_id',
-        label: 'validation.city_id.label',
-        type: 'select',
-        placeholder: 'validation.city_id.placeholder',
-        editMode: true,
-        viewMode: true
-    },
-    {
         name: 'address',
         label: 'validation.address.label',
         type: 'textarea',
@@ -209,7 +211,7 @@ export const teachersFields = [
         placeholder: 'validation.profile_image.placeholder',
         editMode: true,
         viewMode: true,
-        accept: 'image/*',
+        accept: 'image/*'
     },
     {
         name: 'files',

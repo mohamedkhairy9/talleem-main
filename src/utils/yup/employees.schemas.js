@@ -2,11 +2,6 @@ import * as yup from 'yup';
 import { t } from 'i18next';
 
 export const employeesSchema = yup.object({
-    user_id: yup
-        .number()
-        .required(t('validation.required'))
-        .integer(t('validation.user_id.integer'))
-        .min(1, t('validation.user_id.min')),
     job_id: yup
         .number()
         .required(t('validation.required'))
@@ -70,6 +65,8 @@ export const employeesSchema = yup.object({
         .min(5, t('validation.address.min')),
     status: yup
         .boolean()
-        .required(t('validation.required'))
+        .required(t('validation.required')),
+    profile_picture: yup.mixed().nullable().optional(),
+    files: yup.array().of(yup.mixed()).nullable().optional()
 });
 

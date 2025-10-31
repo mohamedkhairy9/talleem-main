@@ -62,14 +62,6 @@ export const employeesColumns = [
 
 export const employeesFields = [
     {
-        name: 'user_id',
-        label: 'validation.user_id.label',
-        type: 'select',
-        placeholder: 'validation.user_id.placeholder',
-        editMode: true,
-        viewMode: true
-    },
-    {
         name: 'job_id',
         label: 'validation.job_id.label',
         type: 'select',
@@ -78,10 +70,19 @@ export const employeesFields = [
         viewMode: true
     },
     {
+        name: 'city_id',
+        label: 'validation.city_id.label',
+        type: 'select',
+        placeholder: 'validation.city_id.placeholder',
+        editMode: true,
+        viewMode: true
+    },
+    {
         name: 'branch_id',
         label: 'validation.branch_id.label',
         type: 'select',
         placeholder: 'validation.branch_id.placeholder',
+        info: 'info.branch_id',
         editMode: true,
         viewMode: true
     },
@@ -150,14 +151,6 @@ export const employeesFields = [
         viewMode: true
     },
     {
-        name: 'city_id',
-        label: 'validation.city_id.label',
-        type: 'select',
-        placeholder: 'validation.city_id.placeholder',
-        editMode: true,
-        viewMode: true
-    },
-    {
         name: 'years_of_experience',
         label: 'validation.years_of_experience.label',
         type: 'number',
@@ -182,6 +175,24 @@ export const employeesFields = [
         options: enabledDisabledOptions,
         editMode: true,
         viewMode: true
+    },
+    {
+        name: 'profile_picture',
+        label: 'validation.profile_image.label',
+        type: 'file',
+        placeholder: 'validation.profile_image.placeholder',
+        editMode: true,
+        viewMode: true,
+        accept: 'image/*'
+    },
+    {
+        name: 'files',
+        label: 'validation.fles.label',
+        type: 'file',
+        placeholder: 'validation.fles.placeholder',
+        editMode: true,
+        viewMode: true,
+        multiple: true
     }
 ];
 
