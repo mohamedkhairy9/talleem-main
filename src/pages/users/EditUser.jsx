@@ -15,6 +15,7 @@ const localeOptions = [
 ];
 
 export default function EditUser({ onClose, oldData }) {
+    console.log("old data: ", oldData);
     const { mutate, isPending } = useUpdateUserMutation();
     const { data: branchesData, isLoading: branchesLoading } =
         useBranchesQuery(allData);

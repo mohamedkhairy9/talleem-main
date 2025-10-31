@@ -8,6 +8,7 @@ import { attendanceTypeOptions } from './configs';
 import { allData } from '@/utils/constants/global.constants';
 
 export default function EditOnlineAttendance({ onClose, oldData }) {
+    console.log("old data: ", oldData);
     const { mutate, isPending } = useUpdateOnlineAttendanceMutation();
     const { data: usersData } = useUsersQuery(allData);
 

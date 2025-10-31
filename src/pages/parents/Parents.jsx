@@ -25,7 +25,7 @@ export default function Parents() {
         name: item.name?.[i18next.language]
     }));
 
-    const formData = data?.data;
+    const formData = data?.data?.map(({ created_at, updated_at, students, ...item}) => item);
 
     return (
         <div>

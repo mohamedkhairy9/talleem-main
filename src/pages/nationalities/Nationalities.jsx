@@ -28,10 +28,10 @@ export default function Nationalities() {
     }));
 
     const formData = data?.data?.map(item => ({
-        ...item,
-        country_id: item.country_id,
-        'name.en': item.name?.en,
-        'name.ar': item.name?.ar
+        id: item.id,
+        name: item.name,
+        status: item.status,
+        country_id: item.country_id
     }));
 
     return (

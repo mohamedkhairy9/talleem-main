@@ -10,6 +10,7 @@ import Loader from '@/components/common/Loader';
 
 
 export default function EditNationality({ onClose, oldData }) {
+    console.log("old data: ", oldData)
     const { mutate, isPending } = useUpdateNationalityMutation();
     const { data: countriesData, isLoading } = useCountriesQuery(allData);
 

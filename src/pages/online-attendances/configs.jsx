@@ -9,7 +9,7 @@ const columnHelper = createColumnHelper();
 export const onlineAttendancesColumns = [
     columnHelper.accessor('user', {
         header: 'table_headers.user',
-        cell: info => <NameCell directValue={info.row.original.user?.name} />
+        cell: info => <NameCell directValue={info.row.original.user} />
     }),
     columnHelper.accessor('check_in', {
         header: 'table_headers.check_in',

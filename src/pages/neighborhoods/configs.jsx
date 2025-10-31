@@ -14,7 +14,7 @@ export const neighborhoodsColumns = [
     }),
     columnHelper.accessor('city', {
         header: 'table_headers.city',
-        cell: info => <NameCell directValue={info.row.original.city?.name} />
+        cell: info => <NameCell directValue={info.row.original.city} />
     })
 ];
 

@@ -22,6 +22,7 @@ export default function Users() {
 
     const tableData = data?.data?.map(item => ({
         ...item,
+        name: item.name?.[i18next.language],
         branch: {
             ...item.branch,
             name: item.branch?.name?.[i18next.language]
@@ -29,7 +30,14 @@ export default function Users() {
     }));
 
     const formData = data?.data?.map(item => ({
-        ...item,
+        id: item.id,
+        locale: item.locale,
+        current_app_locale: item.current_app_locale,
+        email: item.email,
+        name: item.name,
+        phone: item.phone,
+        status: item.status,
+        user_type: item.user_type,
         branch_id: item.branch?.id
     }));
 

@@ -11,6 +11,7 @@ import ViewOnlineAttendance from './ViewOnlineAttendance';
 import useLocale from '@/utils/hooks/global/useLocale';
 import { getOriginalObject } from '@/utils/helpers/global.fns';
 import Filters from './Filters';
+import i18next from 'i18next';
 
 export default function OnlineAttendances() {
     const { isOpen, toggle } = useIsOpen();
@@ -18,6 +19,11 @@ export default function OnlineAttendances() {
         useFiltering(filtersDefaultValues);
     const { data, isLoading, refresh } = useOnlineAttendancesQuery(filters);
     const { t } = useLocale();
+    
+    const tableData = data?.data?.map(item => ({
+        ...item,
+        user: item.user?.name?.[i18next.language]
+    }))
 
     const formData = data?.data?.map(item => {
         // Determine if this is a check_in or check_out based on available data
@@ -33,9 +39,9 @@ export default function OnlineAttendances() {
             date && time ? `${date}T${time?.slice(0, 5)}` : '';
 
         return {
-            ...item,
-            user_id: item.user_id,
+            id: item.id,
             attendance_type,
+            user_id: item.user?.id,
             attendance_datetime
         };
     });
@@ -46,7 +52,7 @@ export default function OnlineAttendances() {
                 title={t('table_titles.online_attendances')}
                 refresh={refresh}
                 loading={isLoading}
-                data={data?.data}
+                data={tableData}
                 serverPagination={true}
                 totalCount={data?.meta?.total}
                 columns={onlineAttendancesColumns}

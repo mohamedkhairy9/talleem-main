@@ -24,6 +24,7 @@ export default function FormOnlineAttendance({
     function onSubmit(data) {
         // Build the submit data based on attendance type
         const submitData = {
+            id: data.id,
             user_id: data.user_id,
             status: true
         };

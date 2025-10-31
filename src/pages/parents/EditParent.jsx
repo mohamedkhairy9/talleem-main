@@ -5,6 +5,7 @@ import FormParent from './FormParent';
 import { useUpdateParentMutation } from '@/api/hooks/useParents';
 
 export default function EditParent({ onClose, oldData }) {
+    console.log("Old data: ", oldData)
     const { mutate, isPending } = useUpdateParentMutation();
 
     return (

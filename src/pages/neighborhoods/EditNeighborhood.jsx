@@ -9,6 +9,7 @@ import { allData } from '@/utils/constants/global.constants';
 import { enabledDisabledOptions } from '@/utils/constants/options';
 
 export default function EditNeighborhood({ onClose, oldData }) {
+    console.log("old data: ", oldData)
     const { data: citiesData, isLoading } = useCitiesQuery(allData);
     const { mutate, isPending } = useUpdateNeighborhoodMutation();
     if (isLoading) return <Loader />;
