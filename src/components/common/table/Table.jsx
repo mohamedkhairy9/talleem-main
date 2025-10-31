@@ -260,8 +260,6 @@ const Table = ({
         enableRowSelection: enableRowSelection
     });
 
-
-
     // Export functions
     const exportToCSV = () => {
         try {
@@ -863,11 +861,11 @@ const Table = ({
                                                                     className="rounded border-gray-300 text-primary-600 focus:ring-primary-500"
                                                                 />
                                                                 <span className="text-sm text-gray-700">
-                                                                    {
+                                                                    {t(
                                                                         column
                                                                             .columnDef
                                                                             .header
-                                                                    }
+                                                                    )}
                                                                 </span>
                                                             </label>
                                                         )
@@ -1136,7 +1134,11 @@ const Table = ({
                                                 <div className="flex items-center space-x-2">
                                                     {header.isPlaceholder ? null : (
                                                         <button
-                                                            className={`flex ${isRTL ? 'text-right' : 'text-left'} items-center space-x-1 hover:text-gray-700 transition-colors ${
+                                                            className={`flex ${
+                                                                isRTL
+                                                                    ? 'text-right'
+                                                                    : 'text-left'
+                                                            } items-center space-x-1 hover:text-gray-700 transition-colors ${
                                                                 header.column.getCanSort()
                                                                     ? 'cursor-pointer select-none'
                                                                     : ''

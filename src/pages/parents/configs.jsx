@@ -20,10 +20,10 @@ export const parentsColumns = [
         header: 'table_headers.phone_2',
         cell: info => <Cell value={info.getValue()} />
     }),
-    columnHelper.accessor('status', {
-        header: 'table_headers.status',
-        cell: info => <ActiveCell info={info} />
-    }),
+    // columnHelper.accessor('status', {
+    //     header: 'table_headers.status',
+    //     cell: info => <ActiveCell info={info} />
+    // }),
     columnHelper.accessor('created_at', {
         header: 'table_headers.created_at',
         cell: info => <DateCell fullDate value={info.getValue()} />,
@@ -81,9 +81,16 @@ export const parentsFilters = [
         type: 'text',
         placeholder: 'validation.search.placeholder',
         defaultValue: ''
+    },
+    {
+        name: 'status',
+        type: 'select',
+        placeholder: 'validation.status.placeholder',
+        defaultValue: 1
     }
 ];
 
 export const filtersDefaultValues = {
+    status: true,
     search: ''
 };

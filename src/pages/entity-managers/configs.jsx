@@ -39,10 +39,6 @@ export const entityManagersColumns = [
         header: 'table_headers.entity',
         cell: info => <Cell value={info.row.original.entity?.name} />
     }),
-    columnHelper.accessor('status', {
-        header: 'table_headers.status',
-        cell: info => <ActiveCell info={info} />
-    }),
     columnHelper.accessor('created_at', {
         header: 'table_headers.created_at',
         cell: info => <DateCell fullDate value={info.getValue()} />,
@@ -222,9 +218,16 @@ export const entityManagersFilters = [
         type: 'text',
         placeholder: 'validation.search.placeholder',
         defaultValue: ''
+    },
+    {
+        name: 'status',
+        type: 'select',
+        placeholder: 'validation.status.placeholder',
+        defaultValue: 1
     }
 ];
 
 export const filtersDefaultValues = {
+    status: true,
     search: ''
 };
