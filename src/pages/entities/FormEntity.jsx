@@ -9,6 +9,7 @@ import { getNestedError } from '@/utils/helpers/getNestedError';
 import { generateOptions } from '@/utils/helpers/global.fns';
 import useLocale from '@/utils/hooks/global/useLocale';
 import MapPicker from '@/components/common/maps/MapPicker';
+import Accordion from '@/components/common/UIs/Accordion';
 
 export default function FormEntity({
     onClose,
@@ -36,8 +37,7 @@ export default function FormEntity({
         }
     );
 
-    console.log('errors',errors);
-    
+    console.log('errors', errors);
 
     function onSubmit(data) {
         // Remove profile_image if not changed in edit mode
@@ -226,137 +226,86 @@ export default function FormEntity({
             onSubmit={handleSubmit(onSubmit)}
             className="p-4 space-y-4 max-h-[90vh] overflow-y-auto"
         >
-            <div className="border border-gray-200 rounded-lg overflow-hidden">
-                <button
-                    type="button"
-                    onClick={() => toggleSection('entityInfo')}
-                    className="w-full px-4 py-3 bg-gray-50 hover:bg-gray-100 flex items-center justify-between transition-colors"
-                >
-                    <h3 className="text-lg font-semibold text-gray-800">
-                        {t('entities.entity_information')}
-                    </h3>
-                    <svg
-                        className={`w-5 h-5 text-gray-600 transform transition-transform ${
-                            openSections.entityInfo ? 'rotate-180' : ''
-                        }`}
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                    >
-                        <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M19 9l-7 7-7-7"
-                        />
-                    </svg>
-                </button>
-                {openSections.entityInfo && (
-                    <div className="p-4 space-y-4">
-                        {/* Map Picker */}
-                        <div className="space-y-3">
-                            <h4 className="text-md font-medium text-gray-700">
-                                {t('validation.address.label')}
-                            </h4>
-                            <MapPicker
-                                onLocationSelect={({ lat, lng }) => {
-                                    setValue('latitude', lat, {
-                                        shouldValidate: true
-                                    });
-                                    setValue('longitude', lng, {
-                                        shouldValidate: true
-                                    });
-                                }}
-                                oldLocation={
-                                    oldData?.latitude && oldData?.longitude
-                                        ? {
-                                              lat: oldData.latitude,
-                                              lng: oldData.longitude
-                                          }
-                                        : null
-                                }
-                                disabled={viewMode}
-                            />
-                            <input type="hidden" {...register('latitude')} />
-                            <input type="hidden" {...register('longitude')} />
-                            {errors.latitude && (
-                                <p className="mt-1 h-4 text-xs text-red-600 font-montserrat">
-                                    {t(errors.longitude.message)}
-                                </p>
-                            )}
-                        </div>
+            <Accordion
+                title={t('entities.entity_information')}
+                open={openSections.entityInfo}
+                onToggle={() => toggleSection('entityInfo')}
+            >
+                {/* Map Picker */}
+                <div className="space-y-3">
+                    <h4 className="text-md font-medium text-gray-700">
+                        {t('validation.address.label')}
+                    </h4>
+                    <MapPicker
+                        onLocationSelect={({ lat, lng }) => {
+                            setValue('latitude', lat, {
+                                shouldValidate: true
+                            });
+                            setValue('longitude', lng, {
+                                shouldValidate: true
+                            });
+                        }}
+                        oldLocation={
+                            oldData?.latitude && oldData?.longitude
+                                ? {
+                                      lat: oldData.latitude,
+                                      lng: oldData.longitude
+                                  }
+                                : null
+                        }
+                        disabled={viewMode}
+                    />
+                    <input type="hidden" {...register('latitude')} />
+                    <input type="hidden" {...register('longitude')} />
+                    {errors.latitude && (
+                        <p className="mt-1 h-4 text-xs text-red-600 font-montserrat">
+                            {t(errors.longitude.message)}
+                        </p>
+                    )}
+                </div>
 
-                        {/* Entity Fields */}
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                            {filteredEntityFields.map(field => (
-                                <div
-                                    key={field.name}
-                                    className={
-                                        field.type === 'textarea'
-                                            ? 'md:col-span-2 lg:col-span-3'
-                                            : field.type === 'file'
-                                            ? 'md:col-span-2 lg:col-span-3'
-                                            : ''
-                                    }
-                                >
-                                    {renderField(field)}
-                                </div>
-                            ))}
+                {/* Entity Fields */}
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    {filteredEntityFields.map(field => (
+                        <div
+                            key={field.name}
+                            className={
+                                field.type === 'textarea'
+                                    ? 'md:col-span-2 lg:col-span-3'
+                                    : field.type === 'file'
+                                    ? 'md:col-span-2 lg:col-span-3'
+                                    : ''
+                            }
+                        >
+                            {renderField(field)}
                         </div>
-                    </div>
-                )}
-            </div>
+                    ))}
+                </div>
+            </Accordion>
 
             {/* Manager Information Section */}
-            <div className="border border-gray-200 rounded-lg overflow-hidden">
-                <button
-                    type="button"
-                    onClick={() => toggleSection('managerInfo')}
-                    className="w-full px-4 py-3 bg-gray-50 hover:bg-gray-100 flex items-center justify-between transition-colors"
-                >
-                    <h3 className="text-lg font-semibold text-gray-800">
-                        {t('entity_managers.manager_information')}
-                    </h3>
-                    <svg
-                        className={`w-5 h-5 text-gray-600 transform transition-transform ${
-                            openSections.managerInfo ? 'rotate-180' : ''
-                        }`}
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                    >
-                        <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M19 9l-7 7-7-7"
-                        />
-                    </svg>
-                </button>
-                {openSections.managerInfo && (
-                    <div className="p-4 space-y-4">
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                            {filteredManagerFields.map(field => (
-                                <div
-                                    key={field.name}
-                                    className={
-                                        field.type === 'textarea'
-                                            ? 'md:col-span-2 lg:col-span-3'
-                                            : field.type === 'file'
-                                            ? 'md:col-span-2 lg:col-span-3'
-                                            : ''
-                                    }
-                                >
-                                    {renderField(
-                                        field,
-                                        managerOptions[field.name]
-                                    )}
-                                </div>
-                            ))}
+            <Accordion
+                title={t('entity_managers.manager_information')}
+                open={openSections.managerInfo}
+                onToggle={() => toggleSection('managerInfo')}
+            >
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    {filteredManagerFields.map(field => (
+                        <div
+                            key={field.name}
+                            className={
+                                field.type === 'textarea'
+                                    ? 'md:col-span-2 lg:col-span-3'
+                                    : field.type === 'file'
+                                    ? 'md:col-span-2 lg:col-span-3'
+                                    : ''
+                            }
+                        >
+                            {renderField(field, managerOptions[field.name])}
                         </div>
-                    </div>
-                )}
-            </div>
+                    ))}
+                </div>
+            </Accordion>
 
             {!viewMode && (
                 <Btn
