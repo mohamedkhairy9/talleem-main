@@ -1136,7 +1136,7 @@ const Table = ({
                                                 <div className="flex items-center space-x-2">
                                                     {header.isPlaceholder ? null : (
                                                         <button
-                                                            className={`flex items-center space-x-1 hover:text-gray-700 transition-colors ${
+                                                            className={`flex ${isRTL ? 'text-right' : 'text-left'} items-center space-x-1 hover:text-gray-700 transition-colors ${
                                                                 header.column.getCanSort()
                                                                     ? 'cursor-pointer select-none'
                                                                     : ''

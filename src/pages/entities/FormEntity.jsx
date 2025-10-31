@@ -36,6 +36,9 @@ export default function FormEntity({
         }
     );
 
+    console.log('errors',errors);
+    
+
     function onSubmit(data) {
         // Remove profile_image if not changed in edit mode
         if (editMode && data.manager && !profileImageChanged) {
