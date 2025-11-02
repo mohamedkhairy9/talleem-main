@@ -3,6 +3,7 @@ import ActiveCell from '@/components/common/table/cells/ActiveCell';
 import NameCell from '@/components/common/table/cells/NameCell';
 import { createColumnHelper } from '@tanstack/react-table';
 import React from 'react';
+import { enabledDisabledOptions } from '@/utils/constants/options';
 
 const columnHelper = createColumnHelper();
 
@@ -30,6 +31,7 @@ export const onlineAttendancesColumns = [
         header: 'table_headers.check_out',
         cell: info => {
             const data = info.row.original;
+            console.log("table data: ", data)
             if (data.check_out_date && data.check_out_time) {
                 return (
                     <DateCell
@@ -52,20 +54,7 @@ export const onlineAttendancesColumns = [
     })
 ];
 
-export const attendanceTypeOptions = [
-    { id: 'check_in', name: { en: 'Check In', ar: 'تسجيل دخول' } },
-    { id: 'check_out', name: { en: 'Check Out', ar: 'تسجيل خروج' } }
-];
-
 export const onlineAttendancesFields = [
-    {
-        name: 'attendance_type',
-        label: 'validation.attendance_type.label',
-        type: 'select',
-        placeholder: 'validation.attendance_type.placeholder',
-        editMode: true,
-        viewMode: true
-    },
     {
         name: 'user_id',
         label: 'validation.user_id.label',
@@ -75,13 +64,31 @@ export const onlineAttendancesFields = [
         viewMode: true
     },
     {
-        name: 'attendance_datetime',
-        label: 'validation.attendance_datetime.label',
+        name: 'check_in',
+        label: 'validation.check_in.label',
         type: 'datetime-local',
-        placeholder: 'validation.attendance_datetime.placeholder',
+        placeholder: 'validation.check_in.placeholder',
         editMode: true,
         viewMode: true
-    }
+    },
+    {
+        name: 'check_out',
+        label: 'validation.check_out.label',
+        type: 'datetime-local',
+        placeholder: 'validation.check_out.placeholder',
+        editMode: true,
+        viewMode: true
+    },
+    {
+        name: 'status',
+        label: 'validation.status.label',
+        type: 'select',
+        placeholder: 'validation.status.placeholder',
+        defaultValue: true,
+        options: enabledDisabledOptions,
+        editMode: true,
+        viewMode: true
+        }
 ];
 
 export const onlineAttendancesFilters = [
