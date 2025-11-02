@@ -702,6 +702,11 @@
         "update": "Update Branch",
         "view": "View Branch"
     },
+    "majors": {
+        "create": "Create Major",
+        "update": "Update Major",
+        "view": "View Major"
+    },
     "teachers": {
         "create": "Create Teacher",
         "update": "Update Teacher",
@@ -845,6 +850,7 @@
         "memorization_programs": "Memorization Programs",
         "education_programs": "Education Programs",
         "branches": "Branches",
+        "majors": "Majors",
         "security_system": "Security System",
         "system_settings": "System Settings",
         "main_education_programs": "Main Programs",
@@ -898,6 +904,7 @@
         "memorization_programs": "Memorization Programs",
         "education_programs": "Education Programs",
         "branches": "Branches",
+        "majors": "Majors",
         "employees": "Employees",
         "nationalities": "Nationalities",
         "users": "Users",
@@ -1008,6 +1015,7 @@
         "memorization_programs": "Memorization Programs",
         "education_programs": "Education Programs",
         "branches": "Branches",
+        "majors": "Majors",
         "national_id": "National ID",
         "years_of_experience": "Years of Experience",
         "date_of_birth": "Date of Birth",
