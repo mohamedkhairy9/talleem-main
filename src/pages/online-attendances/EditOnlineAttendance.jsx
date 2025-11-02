@@ -4,8 +4,8 @@ import Modal from '@/components/common/form/Modal';
 import ModalHeader from '@/components/common/form/ModalHeader';
 import { useUpdateOnlineAttendanceMutation } from '@/api/hooks/useOnlineAttendances';
 import { useUsersQuery } from '@/api/hooks/useUsers';
-import { attendanceTypeOptions } from './configs';
 import { allData } from '@/utils/constants/global.constants';
+import { enabledDisabledOptions } from '@/utils/constants/options';
 
 export default function EditOnlineAttendance({ onClose, oldData }) {
     console.log("old data: ", oldData);
@@ -22,8 +22,8 @@ export default function EditOnlineAttendance({ onClose, oldData }) {
                 mutate={mutate}
                 isPending={isPending}
                 options={{
-                    attendance_type: attendanceTypeOptions,
-                    user_id: usersData?.data || []
+                    user_id: usersData?.data || [],
+                    status: enabledDisabledOptions,
                 }}
             />
         </Modal>

@@ -536,8 +536,12 @@
             "placeholder": "Select attendance time"
         },
         "attendance_datetime": {
-            "label": "Date & Time",
-            "placeholder": "Select date and time"
+            "label": "Attendance date",
+            "placeholder": "Select attendance date"
+        },
+        "departure_datetime": {
+            "label": "Departure date",
+            "placeholder": "Select departure date"
         },
         "permission_ids": {
             "label": "Permissions",
