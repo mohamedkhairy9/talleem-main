@@ -22,7 +22,9 @@ export default function OnlineAttendances() {
     
     const tableData = data?.data?.map(item => ({
         ...item,
-        user: item.user?.name?.[i18next.language]
+        user: item.user?.name?.[i18next.language],
+        check_in: `${item.check_in_date}T${item.check_in_time?.slice(0, 5)}`,
+        check_out: `${item.check_out_date}T${item.check_out_time?.slice(0, 5)}`,
     }))
 
     console.log("Data: ", data?.data);

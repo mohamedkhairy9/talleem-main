@@ -140,11 +140,13 @@ export function generateTableData(data = []) {
 }
 
 export function getObjectName(value) {
-    if (!value || typeof value !== 'object') return '';
+    if (!value && typeof value !== 'object') return '';
 
     const lang = i18next?.language;
 
     if (value[lang]) return value[lang];
+
+    if(typeof value !== "object") return value;
 
     if (value.name) {
         if (typeof value.name === 'object') {
