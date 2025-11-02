@@ -20,13 +20,18 @@ export default function Cities() {
     const { data, isLoading, refresh } = useCitiesQuery(filters);
     const { t } = useLocale();
 
+    console.log("country: ", data?.data?.[0].country)
+
     const tableData = data?.data?.map(item => ({
         ...item,
+        country: item.country?.name?.[i18next.language],
         name: item.name?.[i18next.language]
     }));
 
     const formData = data?.data?.map(item => ({
-        ...item,
+        id: item.id,
+        name: item.name,
+        status: item.status,
         country_id: item.country?.id
     }));
 

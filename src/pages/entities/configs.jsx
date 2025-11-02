@@ -23,11 +23,11 @@ export const entitiesColumns = [
     }),
     columnHelper.accessor('branch', {
         header: 'table_headers.branch',
-        cell: info => <Cell value={info.row.original.branch?.name} />
+        cell: info => <Cell value={info.row.original.branch} />
     }),
     columnHelper.accessor('main_program', {
         header: 'table_headers.main_program',
-        cell: info => <Cell value={info.row.original.main_program?.name} />
+        cell: info => <Cell value={info.row.original.main_program} />
     }),
     columnHelper.accessor('status', {
         header: 'table_headers.status',

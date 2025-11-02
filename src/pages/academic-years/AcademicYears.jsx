@@ -9,7 +9,7 @@ import EditAcademicYear from './EditAcademicYear';
 import DeleteAcademicYear from './DeleteAcademicYear';
 import useLocale from '@/utils/hooks/global/useLocale';
 import i18next from 'i18next';
-import { getOriginalObject } from '@/utils/helpers/global.fns';
+import { getOriginalObject, onlyDate } from '@/utils/helpers/global.fns';
 import ViewAcademicYear from './ViewAcademicYear';
 import Filters from './Filters';
 
@@ -24,6 +24,14 @@ export default function AcademicYears() {
         ...item,
         name: item.name?.[i18next.language]
     }));
+
+    const formData = data?.data?.map(item => ({
+        id: item.id,
+        name: item.name,
+        start_date: onlyDate(item.start_date),
+        end_date: onlyDate(item.end_date),
+        status: item.status
+    }))
 
     return (
         <div>
@@ -48,13 +56,13 @@ export default function AcademicYears() {
             {isOpen.edit && (
                 <EditAcademicYear
                     onClose={toggle.edit}
-                    oldData={getOriginalObject(isOpen.edit, data?.data)}
+                    oldData={getOriginalObject(isOpen.edit, formData)}
                 />
             )}
             {isOpen.view && (
                 <ViewAcademicYear
                     onClose={toggle.view}
-                    oldData={getOriginalObject(isOpen.view, data?.data)}
+                    oldData={getOriginalObject(isOpen.view, formData)}
                 />
             )}
             {isOpen.delete && (

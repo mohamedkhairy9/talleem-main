@@ -19,6 +19,7 @@ const statusOptions = [
 ];
 
 export default function EditEntity({ onClose, oldData }) {
+    console.log("old data: ", oldData)
     const { mutate, isPending } = useUpdateEntityMutation();
 
     const {

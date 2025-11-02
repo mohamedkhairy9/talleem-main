@@ -8,6 +8,7 @@ import { useUsersQuery } from '@/api/hooks/useUsers';
 import Loader from '@/components/common/Loader';
 
 export default function EditBranchAdministration({ onClose, oldData }) {
+    console.log("old data:", oldData)
     const { mutate, isPending } = useUpdateBranchAdministrationMutation();
     const { data: branchesData, isLoading: branchesLoading } = useBranchesQuery(
         { per_page: 0 }

@@ -15,7 +15,7 @@ export const citiesColumns = [
     }),
     columnHelper.accessor('country', {
         header: 'table_headers.country',
-        cell: info => <NameCell directValue={info.row.original.country?.name} />
+        cell: info => <NameCell directValue={info.row.original.country} />
     }),
     columnHelper.accessor('status', {
         header: 'table_headers.status',

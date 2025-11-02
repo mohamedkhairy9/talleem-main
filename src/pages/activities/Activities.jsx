@@ -27,7 +27,9 @@ export default function Activities() {
     }));
 
     const formData = data?.data?.map(item => ({
-        ...item,
+        id: item.id,
+        name: item.name,
+        status: item.status,
         main_program_id: item.main_program?.id
     }));
 

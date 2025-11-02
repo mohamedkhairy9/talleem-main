@@ -15,6 +15,7 @@ export const branchesService = {
     },
 
     updateBranch: async (id, data) => {
+        console.log("Data: ", data);
         return await axiosInstance.put(API_URLS.BRANCHES.UPDATE(id), data);
     },
 

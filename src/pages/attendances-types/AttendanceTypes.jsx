@@ -25,6 +25,13 @@ export default function AttendanceTypes() {
         name: item.name?.[i18next.language]
     }));
 
+    const formData = data?.data?.map(item => ({
+        id: item.id,
+        name: item.name,
+        code: item.code,
+        status: item.status
+    }))
+
     return (
         <div>
             <Table
@@ -48,13 +55,13 @@ export default function AttendanceTypes() {
             {isOpen.edit && (
                 <EditAttendanceType
                     onClose={toggle.edit}
-                    oldData={getOriginalObject(isOpen.edit, data?.data)}
+                    oldData={getOriginalObject(isOpen.edit, formData)}
                 />
             )}
             {isOpen.view && (
                 <ViewAttendanceType
                     onClose={toggle.view}
-                    oldData={getOriginalObject(isOpen.view, data?.data)}
+                    oldData={getOriginalObject(isOpen.view, formData)}
                 />
             )}
             {isOpen.delete && (

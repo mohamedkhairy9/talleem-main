@@ -26,7 +26,10 @@ export default function Branches() {
     }));
 
     const formData = data?.data?.map(item => ({
-        ...item,
+        id: item.id,
+        name: item.name,
+        code: item.code,
+        status: item.status,
         city_id: item.city.id,
         neighborhood_id: item.neighborhood.id
     }));

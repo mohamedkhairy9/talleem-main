@@ -23,12 +23,14 @@ export default function BranchAdministrations() {
     const tableData = data?.data?.map(item => ({
         ...item,
         description: item.description?.[i18next.language],
-        branch: item.branch?.name,
-        user: item.user?.name
+        branch: item.branch?.name?.[i18next.language],
+        user: item.user?.name?.[i18next.language]
     }));
 
     const formData = data?.data?.map(item => ({
-        ...item,
+        id: item.id,
+        description: item.description,
+        status: item.status,
         branch_id: item.branch?.id,
         user_id: item.user?.id
     }));

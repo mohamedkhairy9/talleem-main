@@ -25,6 +25,8 @@ export default function SessionPeriods() {
         name: item.name?.[i18next.language]
     }));
 
+    const formData = data?.data?.map(({ created_at, updated_at, ...item }) => item);
+
     return (
         <div>
             <Table
@@ -48,13 +50,13 @@ export default function SessionPeriods() {
             {isOpen.edit && (
                 <EditSessionPeriod
                     onClose={toggle.edit}
-                    oldData={getOriginalObject(isOpen.edit, data?.data)}
+                    oldData={getOriginalObject(isOpen.edit, formData)}
                 />
             )}
             {isOpen.view && (
                 <ViewSessionPeriod
                     onClose={toggle.view}
-                    oldData={getOriginalObject(isOpen.view, data?.data)}
+                    oldData={getOriginalObject(isOpen.view, formData)}
                 />
             )}
             {isOpen.delete && (

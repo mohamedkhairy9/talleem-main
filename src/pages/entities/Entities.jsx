@@ -16,6 +16,7 @@ import useLocale from '@/utils/hooks/global/useLocale';
 import { getOriginalObject } from '@/utils/helpers/global.fns';
 import Filters from './Filters';
 import useExportExample from '@/utils/hooks/global/useExportExample';
+import i18next from 'i18next';
 
 export default function Entities() {
     const { isOpen, toggle } = useIsOpen();
@@ -25,8 +26,15 @@ export default function Entities() {
     const { t } = useLocale();
     const { mutate } = useExportExampleFileMutation();
     const { handleExportExample } = useExportExample({mutate, filename: 'entities_example.xlsx'});
-    const tableData = data?.data;
+    
+    const tableData = data?.data?.map(item => ({
+        ...item,
+        name: item.name?.[i18next.language],
+        branch: item.branch?.name?.[i18next.language],
+        main_program: item.main_program?.name?.[i18next.language]
+    }));
 
+    console.log(data?.data?.[0])
     const formData = data?.data?.map(item => ({
         id: item.id,
         name: {

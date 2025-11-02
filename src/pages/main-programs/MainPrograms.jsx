@@ -25,6 +25,8 @@ export default function MainPrograms() {
         name: item.name?.[i18next.language]
     }));
 
+    const formData = data?.data?.map(({ created_at, updated_at, ...item }) => item);
+
     return (
         <div>
             <Table
@@ -57,7 +59,7 @@ export default function MainPrograms() {
             {isOpen.view && (
                 <ViewMainProgram
                     onClose={toggle.view}
-                    oldData={getOriginalObject(isOpen.view, data?.data)}
+                    oldData={getOriginalObject(isOpen.view, formData)}
                 />
             )}
             {/* {isOpen.delete && (

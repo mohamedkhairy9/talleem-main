@@ -23,8 +23,11 @@ export default function Kinships() {
     const tableData = data?.data?.map(item => ({
         ...item,
         name: item.name?.[i18next.language]
+
     }));
 
+    const formData = data?.data?.map(({ created_at, updated_at, ...item }) => item);
+    
     return (
         <div>
             <Table
@@ -48,13 +51,13 @@ export default function Kinships() {
             {isOpen.edit && (
                 <EditKinship
                     onClose={toggle.edit}
-                    oldData={getOriginalObject(isOpen.edit, data?.data)}
+                    oldData={getOriginalObject(isOpen.edit, formData)}
                 />
             )}
             {isOpen.view && (
                 <ViewKinship
                     onClose={toggle.view}
-                    oldData={getOriginalObject(isOpen.view, data?.data)}
+                    oldData={getOriginalObject(isOpen.view, formData)}
                 />
             )}
             {isOpen.delete && (
