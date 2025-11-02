@@ -27,6 +27,7 @@ export default function FormEmployee({
         schema,
         defaultValues: {
             ...oldData,
+            name: oldData?.name || { en: '', ar: '' },
             date_of_birth: onlyDate(oldData?.date_of_birth)
         }
     });

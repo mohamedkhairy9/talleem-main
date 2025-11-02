@@ -1,37 +1,20 @@
 import * as yup from 'yup';
 import { t } from 'i18next';
+import { selectSchema } from './globals.schemas';
 
 export const employeesSchema = yup.object({
-    job_id: yup
-        .number()
-        .required(t('validation.required'))
-        .integer(t('validation.job_id.integer'))
-        .min(1, t('validation.job_id.min')),
-    branch_id: yup
-        .number()
-        .required(t('validation.required'))
-        .integer(t('validation.branch_id.integer'))
-        .min(1, t('validation.branch_id.min')),
-    entity_id: yup
-        .number()
-        .required(t('validation.required'))
-        .integer(t('validation.entity_id.integer'))
-        .min(1, t('validation.entity_id.min')),
-    nationality_id: yup
-        .number()
-        .required(t('validation.required'))
-        .integer(t('validation.nationality_id.integer'))
-        .min(1, t('validation.nationality_id.min')),
-    academic_qualification_id: yup
-        .number()
-        .required(t('validation.required'))
-        .integer(t('validation.academic_qualification_id.integer'))
-        .min(1, t('validation.academic_qualification_id.min')),
-    specification_id: yup
-        .number()
-        .required(t('validation.required'))
-        .integer(t('validation.specification_id.integer'))
-        .min(1, t('validation.specification_id.min')),
+    name: yup
+        .object({
+            en: yup.string().required(t('validation.required')).min(1),
+            ar: yup.string().required(t('validation.required')).min(1)
+        })
+        .required(t('validation.required')),
+    job_id: selectSchema,
+    branch_id: selectSchema,
+    entity_id: selectSchema,
+    nationality_id: selectSchema,
+    academic_qualification_id: selectSchema,
+    specification_id: selectSchema,
     national_id: yup
         .string()
         .required(t('validation.required'))
@@ -49,24 +32,13 @@ export const employeesSchema = yup.object({
     date_of_birth: yup
         .string()
         .required(t('validation.date_of_birth.required')),
-    city_id: yup
-        .number()
-        .required(t('validation.required'))
-        .integer(t('validation.city_id.integer'))
-        .min(1, t('validation.city_id.min')),
-    years_of_experience: yup
-        .number()
-        .required(t('validation.required'))
-        .integer(t('validation.years_of_experience.integer'))
-        .min(0, t('validation.years_of_experience.min')),
+    city_id: selectSchema,
+    years_of_experience: yup.string().optional().nullable(),
     address: yup
         .string()
         .required(t('validation.required'))
         .min(5, t('validation.address.min')),
-    status: yup
-        .boolean()
-        .required(t('validation.required')),
+    status: yup.boolean().required(t('validation.required')),
     profile_picture: yup.mixed().nullable().optional(),
     files: yup.array().of(yup.mixed()).nullable().optional()
 });
-
