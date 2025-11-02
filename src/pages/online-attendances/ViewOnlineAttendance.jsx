@@ -3,8 +3,8 @@ import FormOnlineAttendance from './FormOnlineAttendance';
 import Modal from '@/components/common/form/Modal';
 import ModalHeader from '@/components/common/form/ModalHeader';
 import { useUsersQuery } from '@/api/hooks/useUsers';
-import { attendanceTypeOptions } from './configs';
 import { allData } from '@/utils/constants/global.constants';
+import { enabledDisabledOptions } from '@/utils/constants/options';
 
 export default function ViewOnlineAttendance({ onClose, oldData }) {
     const { data: usersData } = useUsersQuery(allData);
@@ -19,8 +19,8 @@ export default function ViewOnlineAttendance({ onClose, oldData }) {
                 mutate={() => {}} // No mutation needed for view mode
                 isPending={false}
                 options={{
-                    attendance_type: attendanceTypeOptions,
-                    user_id: usersData?.data || []
+                    user_id: usersData?.data || [],
+                    status: enabledDisabledOptions,
                 }}
             />
         </Modal>

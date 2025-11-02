@@ -25,24 +25,26 @@ export default function OnlineAttendances() {
         user: item.user?.name?.[i18next.language]
     }))
 
-    const formData = data?.data?.map(item => {
-        // Determine if this is a check_in or check_out based on available data
-        const hasCheckOut = item.check_out_date && item.check_out_time;
+    console.log("Data: ", data?.data);
 
+    const formData = data?.data?.map(item => {
         // For edit/view mode we map split fields into one datetime-local value
-        const attendance_type = hasCheckOut ? 'check_out' : 'check_in';
-        const date = hasCheckOut ? item.check_out_date : item.check_in_date;
-        const time = hasCheckOut ? item.check_out_time : item.check_in_time;
+        const date = item.check_out_date && item.check_in_date;
+        const time = item.check_out_time && item.check_in_time;
 
         // Convert to datetime-local compatible format: YYYY-MM-DDTHH:MM
-        const attendance_datetime =
-            date && time ? `${date}T${time?.slice(0, 5)}` : '';
+        const check_in_datetime =
+            date && time ? `${item.check_in_date}T${item.check_in_time?.slice(0, 5)}` : '';
+        
+        const check_out_datetime = 
+            date && time ? `${item.check_out_date}T${item.check_out_time?.slice(0, 5)}` : "";
 
         return {
             id: item.id,
-            attendance_type,
             user_id: item.user?.id,
-            attendance_datetime
+            check_in: check_in_datetime,
+            check_out: check_out_datetime,
+            status: item.status,
         };
     });
 

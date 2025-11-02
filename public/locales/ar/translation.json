@@ -520,6 +520,10 @@
             "placeholder": "أدخل رمز الهاتف (مثال: +1، +39)",
             "pattern": "يجب أن يبدأ رمز الهاتف بعلامة + متبوعة بأرقام"
         },
+        "check_in": {
+            "label": "تاريخ و وقت الحضور",
+            "placeholder": "إختلر تاريخ و وقت الحضور"
+        },
         "check_out": {
             "label": "تاريخ ووقت المغادرة",
             "placeholder": "اختر تاريخ ووقت المغادرة"
@@ -538,8 +542,12 @@
             "placeholder": "اختر وقت الحضور"
         },
         "attendance_datetime": {
-            "label": "التاريخ والوقت",
-            "placeholder": "اختر التاريخ والوقت"
+            "label": "تاريخ الحضور",
+            "placeholder": "اختر تاريخ الحضور"
+        },
+        "departure_datetime": {
+            "label": "تاريخ الإنصراف",
+            "placeholder": "إختر تاريخ الإنصراف"
         },
         "permission_ids": {
             "label": "الصلاحيات",

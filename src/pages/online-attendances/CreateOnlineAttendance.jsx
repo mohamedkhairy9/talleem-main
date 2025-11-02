@@ -5,10 +5,10 @@ import ModalHeader from '@/components/common/form/ModalHeader';
 import { useCreateOnlineAttendanceMutation } from '@/api/hooks/useOnlineAttendances';
 import {
     onlineAttendancesDefaultValues,
-    attendanceTypeOptions
 } from './configs';
 import { useUsersQuery } from '@/api/hooks/useUsers';
 import { allData } from '@/utils/constants/global.constants';
+import { enabledDisabledOptions } from '@/utils/constants/options';
 
 export default function CreateOnlineAttendance({ onClose }) {
     const { mutate, isPending } = useCreateOnlineAttendanceMutation();
@@ -23,7 +23,7 @@ export default function CreateOnlineAttendance({ onClose }) {
                 mutate={mutate}
                 isPending={isPending}
                 options={{
-                    attendance_type: attendanceTypeOptions,
+                    status: enabledDisabledOptions,
                     user_id: usersData?.data || []
                 }}
             />

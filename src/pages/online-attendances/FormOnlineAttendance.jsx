@@ -22,10 +22,13 @@ export default function FormOnlineAttendance({
     });
 
     function onSubmit(data) {
+        console.log("submiting")
         // Build the submit data based on attendance type
         const submitData = {
             id: data.id,
             user_id: data.user_id,
+            check_in: data.check_in,
+            check_out: data.check_out,
             status: true
         };
 
