@@ -865,7 +865,8 @@
         "profile_management": "Profile Management",
         "entity_activities": "Entity Activities",
         "education-program-entity-types": "Education Program Types",
-        "memorization-program-entity-types": "Memorization Program Types"
+        "memorization-program-entity-types": "Memorization Program Types",
+        "lookups" : "Lookups"
     },
     "table_titles": {
         "notification_templates": "Notification Templates",

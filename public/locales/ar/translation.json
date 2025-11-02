@@ -817,7 +817,8 @@
         "profile_management": "إدارة الملفات الشخصية",
         "entity_activities": "أنشطة الجهات",
         "education-program-entity-types": "نوع البرنامج التعليمي",
-        "memorization-program-entity-types": "نوع البرنامج التحفيظي"
+        "memorization-program-entity-types": "نوع البرنامج التحفيظي",
+        "lookups" : "ملفات الرموز"
     },
     "table_titles": {
         "notification_templates": "قوالب الإشعارات",

@@ -30,6 +30,7 @@ import {
     HiTemplate
 } from 'react-icons/hi';
 import { VscDebugBreakpointLog } from 'react-icons/vsc';
+import { IoGrid } from "react-icons/io5";
 
 export const sideMenuTabs = [
     { titleKey: 'sidebar.home', path: '/', icon: HiHome },
@@ -68,84 +69,90 @@ export const sideMenuTabs = [
         icon: HiCog,
         subMenu: [
             {
-                titleKey: 'sidebar.main_programs',
-                path: '/main-programs',
-                icon: VscDebugBreakpointLog
-            },
-            {
-                titleKey: 'sidebar.countries',
-                path: '/countries',
-                icon: VscDebugBreakpointLog
-            },
-            {
-                titleKey: 'sidebar.nationalities',
-                path: '/nationalities',
-                icon: VscDebugBreakpointLog
-            },
-            {
-                titleKey: 'sidebar.cities',
-                path: '/cities',
-                icon: VscDebugBreakpointLog
-            },
-            {
-                titleKey: 'sidebar.neighborhoods',
-                path: '/neighborhoods',
-                icon: VscDebugBreakpointLog
-            },
-            {
-                titleKey: 'sidebar.jobs',
-                path: '/jobs',
-                icon: VscDebugBreakpointLog
-            },
-            {
-                titleKey: 'sidebar.employees',
-                path: '/employees',
-                icon: HiIdentification
-            },
-            {
-                titleKey: 'sidebar.location_types',
-                path: '/location-types',
-                icon: VscDebugBreakpointLog
-            },
-            {
-                titleKey: 'sidebar.branches',
-                path: '/branches',
-                icon: VscDebugBreakpointLog
-            },
-            {
-                titleKey: 'sidebar.branch_administrations',
-                path: '/branch-administrations',
-                icon: VscDebugBreakpointLog
-            },
-            {
-                titleKey: 'sidebar.online_attendances',
-                path: '/online-attendances',
-                icon: VscDebugBreakpointLog
-            },
-            {
-                titleKey: 'sidebar.kinships',
-                path: '/kinships',
-                icon: VscDebugBreakpointLog
-            },
-            {
-                titleKey: 'sidebar.entity_activities',
-                path: '/entity-activities',
-                icon: VscDebugBreakpointLog
-            },
-            {
-                titleKey: 'sidebar.entity_categories',
-                path: '/entity-categories',
-                icon: VscDebugBreakpointLog
-            },
-            {
-                titleKey: 'sidebar.attendance_types',
-                path: '/attendances-types',
-                icon: VscDebugBreakpointLog
-            },
-            {
-                titleKey: 'sidebar.academic_qualifications',
-                path: '/academic-qualifications',
-                icon: VscDebugBreakpointLog
+                titleKey: 'sidebar.lookups',
+                icon: IoGrid,
+                subMenu: [
+                    {
+                        titleKey: 'sidebar.main_programs',
+                        path: '/main-programs',
+                        icon: VscDebugBreakpointLog
+                    },
+                    {
+                        titleKey: 'sidebar.countries',
+                        path: '/countries',
+                        icon: VscDebugBreakpointLog
+                    },
+                    {
+                        titleKey: 'sidebar.nationalities',
+                        path: '/nationalities',
+                        icon: VscDebugBreakpointLog
+                    },
+                    {
+                        titleKey: 'sidebar.cities',
+                        path: '/cities',
+                        icon: VscDebugBreakpointLog
+                    },
+                    {
+                        titleKey: 'sidebar.neighborhoods',
+                        path: '/neighborhoods',
+                        icon: VscDebugBreakpointLog
+                    },
+                    {
+                        titleKey: 'sidebar.jobs',
+                        path: '/jobs',
+                        icon: VscDebugBreakpointLog
+                    },
+                    {
+                        titleKey: 'sidebar.employees',
+                        path: '/employees',
+                        icon: VscDebugBreakpointLog
+                    },
+                    {
+                        titleKey: 'sidebar.location_types',
+                        path: '/location-types',
+                        icon: VscDebugBreakpointLog
+                    },
+                    {
+                        titleKey: 'sidebar.branches',
+                        path: '/branches',
+                        icon: VscDebugBreakpointLog
+                    },
+                    {
+                        titleKey: 'sidebar.branch_administrations',
+                        path: '/branch-administrations',
+                        icon: VscDebugBreakpointLog
+                    },
+                    {
+                        titleKey: 'sidebar.online_attendances',
+                        path: '/online-attendances',
+                        icon: VscDebugBreakpointLog
+                    },
+                    {
+                        titleKey: 'sidebar.kinships',
+                        path: '/kinships',
+                        icon: VscDebugBreakpointLog
+                    },
+                    {
+                        titleKey: 'sidebar.entity_activities',
+                        path: '/entity-activities',
+                        icon: VscDebugBreakpointLog
+                    },
+                    {
+                        titleKey: 'sidebar.entity_categories',
+                        path: '/entity-categories',
+                        icon: VscDebugBreakpointLog
+                    },
+                    {
+                        titleKey: 'sidebar.attendance_types',
+                        path: '/attendances-types',
+                        icon: VscDebugBreakpointLog
+                    },
+                    {
+                        titleKey: 'sidebar.academic_qualifications',
+                        path: '/academic-qualifications',
+                        icon: VscDebugBreakpointLog
+                    },
+                ]
             },
             {
                 titleKey: 'sidebar.policies_and_banners',
