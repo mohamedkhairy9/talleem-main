@@ -21,7 +21,6 @@ export const entitiesSchema = yup.object({
     program_entity_types: selectSchema,
     main_program_id: selectSchema,
     city_id: selectSchema,
-    entity_category_id: selectSchema,
     neighborhood_id: selectSchema,
     location_type_id: selectSchema,
     branch_id: selectSchema,

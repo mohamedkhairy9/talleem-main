@@ -183,7 +183,7 @@
             "size": "Image size must be less than 5MB",
             "type": "Image must be JPEG, PNG, or WEBP format"
         },
-        "profile_image": {
+        "profile_picture": {
             "label": "Profile Image",
             "placeholder": "Upload profile image",
             "size": "Image size must be less than 5MB",

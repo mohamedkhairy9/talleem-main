@@ -4,9 +4,9 @@ export default function useCustomQueries(queries, options = {}) {
     const {
         staleTime = 1000 * 60 * 5, // 5 minutes
         cacheTime = 1000 * 60 * 10, // 10 minutes
-        retry = 3,
+        retry = 0, // Cancel retries for testing
         retryDelay = 1000,
-        refetchOnWindowFocus = true,
+        refetchOnWindowFocus = false, // cancel retry on focus for now for testing
         refetchOnMount = true,
         refetchOnReconnect = true,
         ...globalOptions

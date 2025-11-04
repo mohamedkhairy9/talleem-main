@@ -110,14 +110,6 @@ export const entitiesFields = [
         info: 'info.program_entity_types'
     },
     {
-        name: 'entity_category_id',
-        label: 'validation.entity_category_id.label',
-        type: 'select',
-        placeholder: 'validation.entity_category_id.placeholder',
-        editMode: true,
-        viewMode: true
-    },
-    {
         name: 'location_type_id',
         label: 'validation.location_type_id.label',
         type: 'select',

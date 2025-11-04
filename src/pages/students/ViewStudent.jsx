@@ -77,7 +77,7 @@ export default function ViewStudent({ onClose, oldData }) {
                 options={{
                     branch_id: branchesData?.data,
                     main_program_id: mainProgramsData?.data,
-                    entity_category_id: entityCategoriesData?.data,
+                    // entity_category_id: entityCategoriesData?.data,
                     education_program_entity_type_id:
                         educationProgramEntityTypesData?.data,
                     city_id: citiesData?.data,

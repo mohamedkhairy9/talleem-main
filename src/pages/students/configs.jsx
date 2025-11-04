@@ -108,20 +108,20 @@ export const studentsFields = [
         editMode: true,
         viewMode: true
     },
-    {
-        name: 'entity_category_id',
-        label: 'validation.entity_category_id.label',
-        type: 'select',
-        placeholder: 'validation.entity_category_id.placeholder',
-        editMode: true,
-        viewMode: true
-    },
+    // {
+    //     name: 'entity_category_id',
+    //     label: 'validation.entity_category_id.label',
+    //     type: 'select',
+    //     placeholder: 'validation.entity_category_id.placeholder',
+    //     editMode: true,
+    //     viewMode: true
+    // },
     {
         name: 'status',
         label: 'validation.status.label',
         type: 'select',
         placeholder: 'validation.status.placeholder',
-        defaultValue: 1,
+        defaultValue: true,
         editMode: true,
         viewMode: true
     },
@@ -238,6 +238,23 @@ export const studentsFields = [
         editMode: true,
         viewMode: true
     },
+    // {
+    //     name: 'specification_id',
+    //     label: 'validation.specification_id.label',
+    //     type: 'select',
+    //     placeholder: 'validation.specification_id.placeholder',
+    //     editMode: true,
+    //     viewMode: true
+    // },
+    {
+        name: 'profile_picture',
+        label: 'validation.profile_picture.label',
+        type: 'file',
+        placeholder: 'validation.profile_picture.placeholder',
+        editMode: true,
+        viewMode: true,
+        // accept: 'image/*'
+    },
     {
         name: 'gender',
         label: 'validation.gender.label',
@@ -262,22 +279,22 @@ export const studentsFields = [
         editMode: true,
         viewMode: true
     },
-    {
-        name: 'department.en',
-        label: 'validation.department.label.en',
-        type: 'text',
-        placeholder: 'validation.department.placeholder.en',
-        editMode: true,
-        viewMode: true
-    },
-    {
-        name: 'department.ar',
-        label: 'validation.department.label.ar',
-        type: 'text',
-        placeholder: 'validation.department.placeholder.ar',
-        editMode: true,
-        viewMode: true
-    },
+    // {
+    //     name: 'department.en',
+    //     label: 'validation.department.label.en',
+    //     type: 'text',
+    //     placeholder: 'validation.department.placeholder.en',
+    //     editMode: true,
+    //     viewMode: true
+    // },
+    // {
+    //     name: 'department.ar',
+    //     label: 'validation.department.label.ar',
+    //     type: 'text',
+    //     placeholder: 'validation.department.placeholder.ar',
+    //     editMode: true,
+    //     viewMode: true
+    // },
     {
         name: 'files',
         label: 'validation.files.label',
@@ -286,7 +303,8 @@ export const studentsFields = [
         editMode: true,
         viewMode: true,
         multiple: true
-    }
+    },
+
 ];
 
 export const studentsDefaultValues = {

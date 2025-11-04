@@ -31,15 +31,18 @@ export default function Students() {
     const formData = data?.data?.map(item => ({
         ...item,
         branch_id: item.branch?.id,
-        main_program_id: item.main_program?.id,
-        entity_category_id: item.entity_category?.id,
-        education_program_entity_type_id:
-            item.education_program_entity_type?.id,
+        main_program_id: 
+            item.main_program ? item.main_program.id : item.main_program_id?.id, // leaving it as it is until fixed
+        // entity_category_id: item.entity_category?.id,
+        education_program_entity_type_id: 
+            item.education_program_entity_type ? item.education_program_entity_type.id : item.education_program_entity_type_id?.id, // leaving it as it is until fixed
         city_id: item.city?.id,
         kinship_id: item.kinship?.id,
         academic_level_id: item.academic_level?.id,
         entity_id: item.entity?.id,
-        nationality_id: item.nationality?.id
+        nationality_id: item.nationality?.id,
+        specification_id: item.specification?.id,
+        has_medical_issues: +item.has_medical_issues
     }));
 
     return (
