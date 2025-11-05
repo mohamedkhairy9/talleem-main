@@ -20,25 +20,30 @@ export default function FormStudent({
     options
 }) {
     const { t } = useLocale();
-    const { register, errors, handleSubmit, setValue, control, watch } = useRFH({
-        schema,
-        defaultValues: {
-            ...oldData,
-            date_of_birth: onlyDate(oldData?.date_of_birth),
-            registration_date: onlyDate(oldData?.registration_date),
-            qualification: oldData?.qualification || {
-                has_high_school: 0,
-                high_school_grade: 0,
-                has_bachelors_degree: 0,
-                specification: null,
-                has_memorized_quran_5_parts: 0,
-                memorized_quran_parts: 0
-            },
-            department: oldData?.department || { en: '', ar: '' }
+    const { register, errors, handleSubmit, setValue, control, watch } = useRFH(
+        {
+            schema,
+            defaultValues: {
+                ...oldData,
+                date_of_birth: onlyDate(oldData?.date_of_birth),
+                registration_date: onlyDate(oldData?.registration_date),
+                qualification: oldData?.qualification || {
+                    has_high_school: 0,
+                    high_school_grade: 0,
+                    has_bachelors_degree: 0,
+                    major_id: null,
+                    has_memorized_quran_5_parts: 0,
+                    memorized_quran_parts: 0
+                },
+                department: oldData?.department || { en: '', ar: '' }
+            }
         }
-    });
+    );
 
     const hasMedicalIssues = watch('has_medical_issues');
+    const hasHighSchool = watch('qualification.has_high_school');
+    const hasBachelors = watch('qualification.has_bachelors_degree');
+    const hasMemorizedFive = watch('qualification.has_memorized_quran_5_parts');
 
     function onSubmit(data) {
         console.log('data', data);
@@ -82,7 +87,8 @@ export default function FormStudent({
                                         : ''
                                 }
                             >
-                                {field.type === 'file' && field.name !== "profile_picture" ? (
+                                {field.type === 'file' &&
+                                field.name !== 'profile_picture' ? (
                                     <FileInputRFH
                                         register={register}
                                         control={control}
@@ -150,23 +156,25 @@ export default function FormStudent({
                             oldData?.qualification?.has_high_school ?? 0
                         }
                     />
-                    <InputRFH
-                        p="px-3 py-3"
-                        control={control}
-                        register={register}
-                        error={getNestedError(
-                            errors,
-                            'qualification.high_school_grade'
-                        )}
-                        type="number"
-                        placeholder="validation.qualification.high_school_grade.placeholder"
-                        disabled={viewMode}
-                        label="validation.qualification.high_school_grade.label"
-                        name="qualification.high_school_grade"
-                        defaultValue={
-                            oldData?.qualification?.high_school_grade ?? 0
-                        }
-                    />
+                    {Number(hasHighSchool) === 1 && (
+                        <InputRFH
+                            p="px-3 py-3"
+                            control={control}
+                            register={register}
+                            error={getNestedError(
+                                errors,
+                                'qualification.high_school_grade'
+                            )}
+                            type="number"
+                            placeholder="validation.qualification.high_school_grade.placeholder"
+                            disabled={viewMode}
+                            label="validation.qualification.high_school_grade.label"
+                            name="qualification.high_school_grade"
+                            defaultValue={
+                                oldData?.qualification?.high_school_grade ?? 0
+                            }
+                        />
+                    )}
                     <InputRFH
                         p="px-3 py-3"
                         control={control}
@@ -185,25 +193,26 @@ export default function FormStudent({
                             oldData?.qualification?.has_bachelors_degree ?? 0
                         }
                     />
-                    <InputRFH
-                        p="px-3 py-3"
-                        control={control}
-                        register={register}
-                        error={getNestedError(
-                            errors,
-                            'qualification.specification'
-                        )}
-                        type="select"
-                        placeholder="validation.qualification.specification.placeholder"
-                        disabled={viewMode}
-                        label="validation.qualification.specification.label"
-                        // name="qualification.specification"
-                        name="specification_id"
-                        options={generateOptions(options?.specification_id)}
-                        defaultValue={
-                            oldData?.qualification?.specification || ''
-                        }
-                    />
+                    {Number(hasBachelors) === 1 && (
+                        <InputRFH
+                            p="px-3 py-3"
+                            control={control}
+                            register={register}
+                            error={getNestedError(
+                                errors,
+                                'qualification.major_id'
+                            )}
+                            type="select"
+                            placeholder="validation.major_id.placeholder"
+                            disabled={viewMode}
+                            label="validation.major_id.label"
+                            name="qualification.major_id"
+                            options={generateOptions(options?.major_id)}
+                            defaultValue={
+                                oldData?.qualification?.major_id || ''
+                            }
+                        />
+                    )}
                     <InputRFH
                         p="px-3 py-3"
                         control={control}
@@ -225,23 +234,26 @@ export default function FormStudent({
                                 ?.has_memorized_quran_5_parts ?? 0
                         }
                     />
-                    <InputRFH
-                        p="px-3 py-3"
-                        control={control}
-                        register={register}
-                        error={getNestedError(
-                            errors,
-                            'qualification.memorized_quran_parts'
-                        )}
-                        type="number"
-                        placeholder="validation.qualification.memorized_quran_parts.placeholder"
-                        disabled={viewMode}
-                        label="validation.qualification.memorized_quran_parts.label"
-                        name="qualification.memorized_quran_parts"
-                        defaultValue={
-                            oldData?.qualification?.memorized_quran_parts ?? 0
-                        }
-                    />
+                    {Number(hasMemorizedFive) === 1 && (
+                        <InputRFH
+                            p="px-3 py-3"
+                            control={control}
+                            register={register}
+                            error={getNestedError(
+                                errors,
+                                'qualification.memorized_quran_parts'
+                            )}
+                            type="number"
+                            placeholder="validation.qualification.memorized_quran_parts.placeholder"
+                            disabled={viewMode}
+                            label="validation.qualification.memorized_quran_parts.label"
+                            name="qualification.memorized_quran_parts"
+                            defaultValue={
+                                oldData?.qualification?.memorized_quran_parts ??
+                                0
+                            }
+                        />
+                    )}
                 </div>
             </div>
 

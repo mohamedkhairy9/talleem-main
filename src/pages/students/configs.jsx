@@ -238,14 +238,14 @@ export const studentsFields = [
         editMode: true,
         viewMode: true
     },
-    // {
-    //     name: 'specification_id',
-    //     label: 'validation.specification_id.label',
-    //     type: 'select',
-    //     placeholder: 'validation.specification_id.placeholder',
-    //     editMode: true,
-    //     viewMode: true
-    // },
+    {
+        name: 'specification_id',
+        label: 'validation.specification_id.label',
+        type: 'select',
+        placeholder: 'validation.specification_id.placeholder',
+        editMode: true,
+        viewMode: true
+    },
     {
         name: 'profile_picture',
         label: 'validation.profile_picture.label',
@@ -322,7 +322,7 @@ export const studentsDefaultValues = {
         has_high_school: 0,
         high_school_grade: 0,
         has_bachelors_degree: 0,
-        specification: null,
+        major_id: null,
         has_memorized_quran_5_parts: 0,
         memorized_quran_parts: 0
     }

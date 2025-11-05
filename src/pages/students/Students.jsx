@@ -42,6 +42,10 @@ export default function Students() {
         entity_id: item.entity?.id,
         nationality_id: item.nationality?.id,
         specification_id: item.specification?.id,
+        qualification: {
+            ...item.qualification,
+            major_id: item.major?.id || item.qualification?.major_id
+        },
         has_medical_issues: +item.has_medical_issues
     }));
 
