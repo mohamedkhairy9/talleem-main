@@ -26,7 +26,6 @@ export default function CreateEntity({ onClose }) {
         branchesData,
         academicQualificationsData,
         mainProgramsData,
-        // entityCategoriesData,
         educationProgramEntityTypesData,
         citiesData,
         neighborhoodsData,
