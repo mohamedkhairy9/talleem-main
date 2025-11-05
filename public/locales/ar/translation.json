@@ -379,6 +379,12 @@
             "integer": "يجب اختيار نوع جهة التعليم",
             "min": "يرجى اختيار نوع جهة برنامج تعليمي صحيح"
         },
+        "education_program_entity_type_classification": {
+            "label": "تصنيف جهة التعليم",
+            "placeholder": "اختر تصنيف جهة التعليم",
+            "integer": "يجب اختيار تصنيف جهة التعليم",
+            "min": "يرجى اختيار تصنيف جهة تعليم صحيح"
+        },
         "entity_category_id": {
             "label": "فئة الجهة",
             "placeholder": "اختر فئة الجهة",
@@ -674,14 +680,14 @@
         "view": "عرض نوع الموقع"
     },
     "memorization_program_entity_types": {
-        "create": "إنشاء برنامج حفظ",
-        "update": "تحديث برنامج الحفظ",
-        "view": "عرض برنامج الحفظ"
+        "create": "إنشاء فئة جهة",
+        "update": "تحديث فئة الجهة",
+        "view": "عرض فئة الجهة"
     },
     "education_program_entity_types": {
-        "create": "إنشاء نوع برنامج تعليمي",
-        "update": "تحديث نوع البرنامج التعليمي",
-        "view": "عرض نوع البرنامج التعليمي"
+        "create": "إنشاء تصنيف جهة تعليم",
+        "update": "تحديث تصنيف جهة التعليم",
+        "view": "عرض تصنيف جهة التعليم"
     },
     "specifications": {
         "create": "إنشاء تخصص",
@@ -830,9 +836,9 @@
         "parents": "أولياء الأمور",
         "profile_management": "إدارة الملفات الشخصية",
         "entity_activities": "أنشطة الجهات",
-        "education-program-entity-types": "نوع البرنامج التعليمي",
-        "memorization-program-entity-types": "نوع البرنامج التحفيظي",
-        "lookups" : "ملفات الرموز"
+        "education-program-entity-types": "تصنيف جهة التعليم",
+        "memorization-program-entity-types": "فئة الجهة",
+        "lookups": "ملفات الرموز"
     },
     "table_titles": {
         "notification_templates": "قوالب الإشعارات",
@@ -872,8 +878,8 @@
         "branch_administrations": "إدارات الفروع",
         "parents": "أولياء الأمور",
         "entity_activities": "أنشطة الجهات",
-        "education-program-entity-types": "أنواع البرامج التعليمية",
-        "memorization-program-entity-types": "أنواع البرامج التحفيظية"
+        "education-program-entity-types": "تصنيفات جهة التعليم",
+        "memorization-program-entity-types": "فئات الجهة"
     },
     "table": {
         "actions": "الإجراءات",
@@ -996,8 +1002,8 @@
         "check_in": "تسجيل الدخول",
         "check_out": "تسجيل الخروج",
         "activity": "النشاط",
-        "education-program-entity-types": "نوع البرنامج التعليمي",
-        "memorization-program-entity-types": "نوع البرنامج التحفيظي"
+        "education-program-entity-types": "تصنيف جهة التعليم",
+        "memorization-program-entity-types": "فئة الجهة"
     },
     "nationalities": {
         "create": "إضافة جنسية",
@@ -1097,5 +1103,5 @@
         "branch_id": "برجاء اختيار مدية أولا حيث ان الفرع يعتمد على المدينة",
         "entity_type": "برجاء اختيار برنامج رئيسي أولا حيث ان نوع الجهة يعتمد على البرنامج الرئيسي"
     },
-    "logout" : "تسجيل الخروج"
+    "logout": "تسجيل الخروج"
 }

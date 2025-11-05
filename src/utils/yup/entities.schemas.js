@@ -18,8 +18,27 @@ export const entitiesSchema = yup.object({
         })
         .required(t('validation.required')),
     status: selectSchema,
-    program_entity_types: selectSchema,
     main_program_id: selectSchema,
+    education_program_entity_type_classification: yup
+        .string()
+        .nullable()
+        .when('main_program_id', {
+            // main_program_id comes as string from selects; coerce safely
+            is: value => Number(value) === 1,
+            then: schema => schema.required(t('validation.required')),
+            otherwise: schema => schema.optional()
+        }),
+    entity_category_id: yup
+        .string()
+        .nullable()
+        .when('main_program_id', {
+            is: value => [1, 2].includes(Number(value)),
+            then: schema =>
+                schema
+                    .required(t('validation.required'))
+                    .min(1, t('validation.select.min')),
+            otherwise: schema => schema.optional()
+        }),
     city_id: selectSchema,
     neighborhood_id: selectSchema,
     location_type_id: selectSchema,

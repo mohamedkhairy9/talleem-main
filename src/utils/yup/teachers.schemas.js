@@ -36,16 +36,25 @@ export const teachersSchema = yup.object({
         .required(t('validation.required'))
         .min(3, t('validation.licence_number.min'))
         .max(50, t('validation.licence_number.max')),
-    program_entity_types: yup
-        .number()
-        .required(t('validation.required'))
-        .integer(t('validation.education_program_entity_type_id.integer'))
-        .min(1, t('validation.education_program_entity_type_id.min')),
+    education_program_entity_type_classification: yup
+        .string()
+        .nullable()
+        .when('main_program_id', {
+            is: value => Number(value) === 1,
+            then: schema => schema.required(t('validation.required')),
+            otherwise: schema => schema.optional()
+        }),
     entity_category_id: yup
-        .number()
-        .required(t('validation.required'))
-        .integer(t('validation.entity_category_id.integer'))
-        .min(1, t('validation.entity_category_id.min')),
+        .string()
+        .nullable()
+        .when('main_program_id', {
+            is: value => [1, 2].includes(Number(value)),
+            then: schema =>
+                schema
+                    .required(t('validation.required'))
+                    .min(1, t('validation.select.min')),
+            otherwise: schema => schema.optional()
+        }),
     nationality_id: yup
         .number()
         .required(t('validation.required'))
@@ -61,9 +70,7 @@ export const teachersSchema = yup.object({
         .required(t('validation.required'))
         .integer(t('validation.specification_id.integer'))
         .min(1, t('validation.specification_id.min')),
-    dob: yup
-        .string()
-        .required(t('validation.dob.required')),
+    dob: yup.string().required(t('validation.dob.required')),
     years_of_experience: yup
         .number()
         .required(t('validation.required'))

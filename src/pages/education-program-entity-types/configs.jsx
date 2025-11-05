@@ -17,16 +17,16 @@ export const educationProgramEntityTypesColumns = [
         header: 'table_headers.code',
         cell: info => <Cell value={info.getValue()} />
     }),
-    columnHelper.accessor('educational_entity_classification', {
-        header: 'table_headers.entity_categories',
-        cell: info => (
-            <NameCell
-                directValue={
-                    info.row.original.educational_entity_classification
-                }
-            />
-        )
-    }),
+    // columnHelper.accessor('educational_entity_classification', {
+    //     header: 'table_headers.entity_categories',
+    //     cell: info => (
+    //         <NameCell
+    //             directValue={
+    //                 info.row.original.educational_entity_classification
+    //             }
+    //         />
+    //     )
+    // }),
     columnHelper.accessor('status', {
         header: 'table_headers.status',
         cell: info => <ActiveCell info={info} />

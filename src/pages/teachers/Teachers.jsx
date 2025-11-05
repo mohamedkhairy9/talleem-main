@@ -44,9 +44,13 @@ export default function Teachers() {
         academic_qualification_id: item.academic_qualification?.id,
         specification_id: item.specification?.id,
         city_id: item.city?.id,
-        education_program_entity_type_id:
-            item.education_program_entity_type?.id,
-        entity_category_id: item.entity_category?.id
+        education_program_entity_type_classification: null, // Will be set in FormTeacher based on entity_category_id
+        entity_category_id:
+            item.main_program?.id == 1
+                ? item.education_program_entity_type?.id
+                : item.main_program?.id == 2
+                ? item.memorization_program_entity_type?.id
+                : null
     }));
 
     return (
