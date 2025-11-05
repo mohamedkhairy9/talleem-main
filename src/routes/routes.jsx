@@ -41,6 +41,7 @@ import OnlineAttendances from '@/pages/online-attendances/OnlineAttendances';
 import Entities from '@/pages/entities/Entities';
 import Students from '@/pages/students/Students';
 import EntityActivities from '@/pages/entity-activities/EntityActivities';
+import Majors from '@/pages/majors/Majors';
 
 export const routes = [
     {
@@ -210,5 +211,9 @@ export const routes = [
     {
         path: '/entity-activities',
         element: <EntityActivities />
+    },
+    {
+        path: '/majors',
+        element: <Majors />
     }
 ];

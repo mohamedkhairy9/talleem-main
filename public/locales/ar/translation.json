@@ -714,6 +714,11 @@
         "update": "تحديث الفرع",
         "view": "عرض الفرع"
     },
+    "majors": {
+        "create": "إنشاء تخصص",
+        "update": "تحديث التخصص",
+        "view": "عرض التخصص"
+    },
     "session_periods": {
         "create": "إنشاء فترة حلقة",
         "update": "تحديث فترة الحلقة",
@@ -807,6 +812,7 @@
         "memorization_programs": "برامج التحفيظ",
         "education_programs": "برامج التعليم",
         "branches": "الفروع",
+        "majors": "التخصصات",
         "security_system": "نظام الحماية",
         "system_settings": "الإعدادات العامة",
         "main_education_programs": "البرامج الرئيسية",
@@ -860,6 +866,7 @@
         "memorization_programs": "برامج الحفظ",
         "education_programs": "البرامج التعليمية",
         "branches": "الفروع",
+        "majors": "التخصصات",
         "employees": "الموظفون",
         "nationalities": "الجنسيات",
         "users": "المستخدمون",
@@ -971,6 +978,7 @@
         "memorization_programs": "برامج الحفظ",
         "education_programs": "البرامج التعليمية",
         "branches": "الفروع",
+        "majors": "التخصصات",
         "national_id": "رقم الهوية",
         "years_of_experience": "سنوات الخبرة",
         "date_of_birth": "تاريخ الميلاد",
