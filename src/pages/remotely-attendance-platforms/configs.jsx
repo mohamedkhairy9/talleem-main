@@ -71,6 +71,6 @@ export const remotelyAttendanceplatformsDefaultValues = {
 };
 
 export const filtersDefaultValues = {
-    status: 1,
+    status: true,
     search: ''
 }

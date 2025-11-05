@@ -123,8 +123,8 @@ export const sideMenuTabs = [
                         icon: VscDebugBreakpointLog
                     },
                     {
-                        titleKey: 'sidebar.online_attendances',
-                        path: '/online-attendances',
+                        titleKey: 'sidebar.remotely_attendance_platforms',
+                        path: '/remotely-attendance-platforms',
                         icon: VscDebugBreakpointLog
                     },
                     {
@@ -150,11 +150,6 @@ export const sideMenuTabs = [
                     {
                         titleKey: 'sidebar.majors',
                         path: '/majors',
-                        icon: VscDebugBreakpointLog
-                    },
-                    {
-                        titleKey: 'sidebar.remotely_attendance_platforms',
-                        path: '/remotely-attendance-platforms',
                         icon: VscDebugBreakpointLog
                     },
                     {
