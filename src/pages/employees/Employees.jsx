@@ -12,6 +12,9 @@ import useLocale from '@/utils/hooks/global/useLocale';
 import i18next from 'i18next';
 import { getOriginalObject } from '@/utils/helpers/global.fns';
 import Filters from './Filters';
+import ImportEmployee from './ImportEmployee';
+import { useExportExampleFileMutation } from '@/api/hooks/useEmployees';
+import useExportExample from '@/utils/hooks/global/useExportExample';
 
 export default function Employees() {
     const { isOpen, toggle } = useIsOpen();
@@ -19,6 +22,8 @@ export default function Employees() {
         useFiltering(filtersDefaultValues);
     const { data, isLoading, refresh } = useEmployeesQuery(filters);
     const { t } = useLocale();
+    const { mutate } = useExportExampleFileMutation();
+    const { handleExportExample } = useExportExample({ mutate, filename: 'employees_example.xlsx' });
 
     const tableData = data?.data?.map(item => ({
         ...item,
@@ -62,6 +67,10 @@ export default function Employees() {
                 }
                 setFilters={setFilters}
                 filters={filters}
+                enableImport={true}
+                enableExportExample={true}
+                onImport={toggle.import}
+                onExportExample={handleExportExample}
             />
             {isOpen.add && <CreateEmployee onClose={toggle.add} />}
             {isOpen.edit && (
@@ -82,6 +91,7 @@ export default function Employees() {
                     id={isOpen.delete?.id}
                 />
             )}
+            {isOpen.import && <ImportEmployee onClose={toggle.import} />}
         </div>
     );
 }

@@ -58,3 +58,25 @@ export const useDeleteEmployeeMutation = () => {
         }
     });
 };
+
+export const useImportEmployeesMutation = () => {
+    const queryClient = useQueryClient();
+    return useCustomMutation({
+        mutationFn: data => employeesService.importEmployees(data),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: [API_KEYS.EMPLOYEES] });
+        },
+        onError: error => {
+            console.log(error);
+        }
+    });
+};
+
+export const useExportExampleFileMutation = () => {
+    return useCustomMutation({
+        mutationFn: () => employeesService.exportExampleFile(),
+        onError: error => {
+            console.log(error);
+        }
+    });
+};
