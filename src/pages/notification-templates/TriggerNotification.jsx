@@ -63,8 +63,8 @@ export default function TriggerNotification({ onClose, template }) {
                     register={register}
                     error={getNestedError(errors, 'user_ids')}
                     type="select"
-                    label="validation.users.label"
-                    placeholder="validation.users.placeholder"
+                    label="validation.user_id.label"
+                    placeholder="validation.user_id.placeholder"
                     name="user_ids"
                     options={generateOptions(usersData?.data)}
                     isMulti={true}
