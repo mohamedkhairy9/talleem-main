@@ -36,15 +36,12 @@ export const studentsSchema = yup.object({
         .required(t('validation.required'))
         .integer(t('validation.entity_id.integer'))
         .min(1, t('validation.entity_id.min')),
-    entity_category_id: yup
-        .number()
-        .required(t('validation.required'))
-        .integer(t('validation.entity_category_id.integer'))
-        .min(1, t('validation.entity_category_id.min')),
-    status: yup
-        .number()
-        .required(t('validation.required'))
-        .oneOf([0, 1], t('validation.status.invalid')),
+    // entity_category_id: yup
+    //     .number()
+    //     .required(t('validation.required'))
+    //     .integer(t('validation.entity_category_id.integer'))
+    //     .min(1, t('validation.entity_category_id.min')),
+    status: yup.boolean().required(t('validation.required')),
     national_id: yup
         .string()
         .required(t('validation.required'))
@@ -121,20 +118,20 @@ export const studentsSchema = yup.object({
         .nullable()
         .matches(/^[+]?[0-9]*$/, t('validation.phone.invalid')),
     email: yup.string().nullable().email(t('validation.email.invalid')),
-    department: yup
-        .object({
-            en: yup
-                .string()
-                .nullable()
-                .min(2, t('validation.department.en_min'))
-                .max(100, t('validation.department.en_max')),
-            ar: yup
-                .string()
-                .nullable()
-                .min(2, t('validation.department.ar_min'))
-                .max(100, t('validation.department.ar_max'))
-        })
-        .nullable(),
+    // department: yup
+    //     .object({
+    //         en: yup
+    //             .string()
+    //             .nullable()
+    //             .min(2, t('validation.department.en_min'))
+    //             .max(100, t('validation.department.en_max')),
+    //         ar: yup
+    //             .string()
+    //             .nullable()
+    //             .min(2, t('validation.department.ar_min'))
+    //             .max(100, t('validation.department.ar_max'))
+    //     })
+    //     .nullable(),
     qualification: yup
         .object({
             has_high_school: yup
@@ -159,11 +156,6 @@ export const studentsSchema = yup.object({
                     [0, 1],
                     t('validation.qualification.has_bachelors_degree.invalid')
                 ),
-            specification: yup
-                .number()
-                .nullable()
-                .integer(t('validation.qualification.specification.integer'))
-                .min(1, t('validation.qualification.specification.min')),
             has_memorized_quran_5_parts: yup
                 .number()
                 .nullable()
@@ -189,5 +181,6 @@ export const studentsSchema = yup.object({
                 )
         })
         .nullable(),
-    files: yup.array().of(yup.mixed()).nullable().optional()
+    files: yup.array().of(yup.mixed()).nullable().optional(),
+    profile_picture: yup.mixed().required(t('validation.required')),
 });

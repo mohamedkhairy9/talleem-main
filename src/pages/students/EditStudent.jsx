@@ -28,6 +28,7 @@ const yesNoOptions = [
 ];
 
 export default function EditStudent({ onClose, oldData }) {
+    console.log("old data: ", oldData);
     const { mutate, isPending } = useUpdateStudentMutation();
 
     // Fetch all available options
@@ -35,8 +36,8 @@ export default function EditStudent({ onClose, oldData }) {
         useBranchesQuery(allData);
     const { data: mainProgramsData, isLoading: mainProgramsLoading } =
         useMainProgramsQuery(allData);
-    const { data: entityCategoriesData, isLoading: entityCategoriesLoading } =
-        useEntityCategoriesQuery(allData);
+    // const { data: entityCategoriesData, isLoading: entityCategoriesLoading } =
+    //     useEntityCategoriesQuery(allData);
     const {
         data: educationProgramEntityTypesData,
         isLoading: educationProgramEntityTypesLoading
@@ -57,7 +58,7 @@ export default function EditStudent({ onClose, oldData }) {
     const isLoading =
         branchesLoading ||
         mainProgramsLoading ||
-        entityCategoriesLoading ||
+        // entityCategoriesLoading ||
         educationProgramEntityTypesLoading ||
         citiesLoading ||
         kinshipsLoading ||
@@ -80,7 +81,7 @@ export default function EditStudent({ onClose, oldData }) {
                 options={{
                     branch_id: branchesData?.data,
                     main_program_id: mainProgramsData?.data,
-                    entity_category_id: entityCategoriesData?.data,
+                    // entity_category_id: entityCategoriesData?.data,
                     education_program_entity_type_id:
                         educationProgramEntityTypesData?.data,
                     city_id: citiesData?.data,

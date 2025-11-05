@@ -20,7 +20,7 @@ export default function FormStudent({
     options
 }) {
     const { t } = useLocale();
-    const { register, errors, handleSubmit, control, watch } = useRFH({
+    const { register, errors, handleSubmit, setValue, control, watch } = useRFH({
         schema,
         defaultValues: {
             ...oldData,
@@ -82,7 +82,7 @@ export default function FormStudent({
                                         : ''
                                 }
                             >
-                                {field.type === 'file' ? (
+                                {field.type === 'file' && field.name !== "profile_picture" ? (
                                     <FileInputRFH
                                         register={register}
                                         control={control}
@@ -96,6 +96,7 @@ export default function FormStudent({
                                         name={field.name}
                                         multiple={field.multiple}
                                         defaultValue={oldData?.files || []}
+                                        setValue={setValue}
                                     />
                                 ) : (
                                     <InputRFH
@@ -196,7 +197,8 @@ export default function FormStudent({
                         placeholder="validation.qualification.specification.placeholder"
                         disabled={viewMode}
                         label="validation.qualification.specification.label"
-                        name="qualification.specification"
+                        // name="qualification.specification"
+                        name="specification_id"
                         options={generateOptions(options?.specification_id)}
                         defaultValue={
                             oldData?.qualification?.specification || ''

@@ -112,16 +112,6 @@ export const entitiesFields = [
         showWhen: { main_program_id: 1 }
     },
     {
-        name: 'entity_category_id',
-        label: 'validation.entity_category_id.label',
-        type: 'select',
-        placeholder: 'validation.entity_category_id.placeholder',
-        editMode: true,
-        viewMode: true,
-        conditional: true,
-        showWhen: { main_program_id: [1, 2] }
-    },
-    {
         name: 'location_type_id',
         label: 'validation.location_type_id.label',
         type: 'select',

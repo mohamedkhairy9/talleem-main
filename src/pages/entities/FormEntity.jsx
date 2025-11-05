@@ -25,6 +25,7 @@ export default function FormEntity({
     mutate,
     options
 }) {
+    console.log("options: ", options)
     const { t } = useLocale();
     const [openSections, setOpenSections] = useState({
         entityInfo: true,
@@ -45,6 +46,7 @@ export default function FormEntity({
     console.log('errors', errors);
 
     function onSubmit(data) {
+        console.log("Data: ", data);
         // Remove profile_image if not changed in edit mode
         if (editMode && data.manager && !profileImageChanged) {
             delete data.manager.profile_image;
