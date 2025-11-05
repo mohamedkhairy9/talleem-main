@@ -185,7 +185,7 @@ export const studentsSchema = yup.object({
                     t('validation.qualification.memorized_quran_parts.max')
                 )
                 .when('has_memorized_quran_5_parts', {
-                    is: 1,
+                    is: 0,
                     then: schema => schema.required(t('validation.required')),
                     otherwise: schema => schema.nullable()
                 }),
@@ -199,7 +199,12 @@ export const studentsSchema = yup.object({
                     otherwise: schema => schema.nullable()
                 })
         })
-        .nullable(),
+        .nullable()
+        .when('main_program_id', {
+            is: value => Number(value) === 1,
+            then: schema => schema.required(t('validation.required')),
+            otherwise: schema => schema.nullable().optional()
+        }),
     files: yup.array().of(yup.mixed()).nullable().optional(),
     profile_picture: yup.mixed().required(t('validation.required'))
 });
