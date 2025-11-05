@@ -42,6 +42,7 @@ import Entities from '@/pages/entities/Entities';
 import Students from '@/pages/students/Students';
 import EntityActivities from '@/pages/entity-activities/EntityActivities';
 import Majors from '@/pages/majors/Majors';
+import RemotelyAttendancePlatforms from '@/pages/remotely-attendance-platforms/RemotelyAttendancePlatforms';
 
 export const routes = [
     {
@@ -215,5 +216,9 @@ export const routes = [
     {
         path: '/majors',
         element: <Majors />
+    },
+    {
+        path: '/remotely-attendance-platforms',
+        element: <RemotelyAttendancePlatforms />
     }
 ];

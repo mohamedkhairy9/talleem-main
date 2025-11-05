@@ -297,6 +297,13 @@ export const API_URLS = {
         DETAILS: id => `/majors/${id}`,
         UPDATE: id => `/majors/${id}`,
         DELETE: id => `/majors/${id}`
+    },
+    REMOTELY_ATTENDANCE_PLATFROMS: {
+        CREATE: '/remotely-attendance-platforms',
+        LIST: '/remotely-attendance-platforms',
+        DETAILS: id => `/remotely-attendance-platforms/${id}`,
+        UPDATE: id => `/remotely-attendance-platforms/${id}`,
+        DELETE: id => `/remotely-attendance-platforms/${id}`,
     }
 };
 
@@ -350,5 +357,6 @@ export const API_KEYS = {
     BRANCH_ADMINISTRATIONS: 'branch-administrations',
     PARENTS: 'parents',
     ENTITY_ACTIVITIES: 'entity-activities',
-    MAJORS: 'majors'
+    MAJORS: 'majors',
+    REMOTELY_ATTENDANCE_PLATFROMS: 'remotely-attendance-platforms'
 };
