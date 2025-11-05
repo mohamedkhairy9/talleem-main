@@ -18,10 +18,8 @@ export const remotelyAttandancePlatformsColumns = [
 
     columnHelper.accessor('created_at', {
         header: 'table_headers.created_at',
-        cell: info => {
-            // console.log("info: ", info.getValue()) && 
-            <DateCell fullDate value={info.getValue()}/>
-        }
+        enableColumnFilter: false,
+        cell: info => <DateCell fullDate value={info.getValue()}/>
     })
 
 ]
@@ -50,7 +48,7 @@ export const remotelyAttandancePlatformsFields = [
         type: "select",
         editMode: true,
         viewMode: true
-    }
+    },
 ]
 
 export const remotelyAttendanceplatformsFilters = [
@@ -68,6 +66,9 @@ export const remotelyAttendanceplatformsFilters = [
     }
 ]
 
+export const remotelyAttendanceplatformsDefaultValues = {
+    status: true
+};
 
 export const filtersDefaultValues = {
     status: 1,

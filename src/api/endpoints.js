@@ -298,7 +298,7 @@ export const API_URLS = {
         UPDATE: id => `/majors/${id}`,
         DELETE: id => `/majors/${id}`
     },
-    REMOTELY_ATTENDANCE_PLATFROMS: {
+    REMOTELY_ATTENDANCE_PLATFORMS: {
         CREATE: '/remotely-attendance-platforms',
         LIST: '/remotely-attendance-platforms',
         DETAILS: id => `/remotely-attendance-platforms/${id}`,
@@ -358,5 +358,5 @@ export const API_KEYS = {
     PARENTS: 'parents',
     ENTITY_ACTIVITIES: 'entity-activities',
     MAJORS: 'majors',
-    REMOTELY_ATTENDANCE_PLATFROMS: 'remotely-attendance-platforms'
+    REMOTELY_ATTENDANCE_PLATFORMS: 'remotely-attendance-platforms'
 };

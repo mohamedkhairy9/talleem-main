@@ -147,6 +147,16 @@ export const sideMenuTabs = [
                         path: '/academic-qualifications',
                         icon: VscDebugBreakpointLog
                     },
+                    {
+                        titleKey: 'sidebar.majors',
+                        path: '/majors',
+                        icon: VscDebugBreakpointLog
+                    },
+                    {
+                        titleKey: 'sidebar.remotely_attendance_platforms',
+                        path: '/remotely-attendance-platforms',
+                        icon: VscDebugBreakpointLog
+                    },
                 ]
             },
             {

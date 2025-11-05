@@ -6,7 +6,7 @@ import { remotelyAttendancePlatformsServices } from '../services/remotelyAttenda
 
 export const useRemotelyAttendancePlatformsQuery = (params = {}, options = {}) => {
     return useCustomQuery({
-        queryKey: [API_KEYS.REMOTELY_ATTENDANCE_PLATFROMS, params],
+        queryKey: [API_KEYS.REMOTELY_ATTENDANCE_PLATFORMS, params],
         queryFn: () => remotelyAttendancePlatformsServices.getRemotelyAttendancePlatforms(params),
         ...options
     });
@@ -14,7 +14,7 @@ export const useRemotelyAttendancePlatformsQuery = (params = {}, options = {}) =
 
 export const useRemotelyAttendancePlatformQuery = (id, options = {}) => {
     return useCustomQuery({
-        queryKey: [API_KEYS.REMOTELY_ATTENDANCE_PLATFROMS, id],
+        queryKey: [API_KEYS.REMOTELY_ATTENDANCE_PLATFORMS, id],
         queryFn: () => remotelyAttendancePlatformsServices.getRemotelyAttendancePlatform(id),
         ...options
     });
@@ -26,7 +26,7 @@ export const useCreateRemotelyAttendancePlatformMutation = () => {
         mutationFn: data => remotelyAttendancePlatformsServices.createRemotelyAttendancePlatform(data),
         onSuccess: () => {
             queryClient.invalidateQueries({
-                queryKey: [API_KEYS.REMOTELY_ATTENDANCE_PLATFROMS]
+                queryKey: [API_KEYS.REMOTELY_ATTENDANCE_PLATFORMS]
             });
         },
         onError: error => {
@@ -41,7 +41,7 @@ export const useUpdateRemotelyAttendancePlatformMutation = () => {
         mutationFn: data => remotelyAttendancePlatformsServices.updateRemotelyAttendancePlatform(data.id, data),
         onSuccess: () => {
             queryClient.invalidateQueries({
-                queryKey: [API_KEYS.REMOTELY_ATTENDANCE_PLATFROMS]
+                queryKey: [API_KEYS.REMOTELY_ATTENDANCE_PLATFORMS]
             });
         },
         onError: error => {
@@ -56,7 +56,7 @@ export const useDeleteRemotelyAttendancePlatformMutation = () => {
         mutationFn: id => remotelyAttendancePlatformsServices.deleteRemotelyAttendancePlatform(id),
         onSuccess: () => {
             queryClient.invalidateQueries({
-                queryKey: [API_KEYS.REMOTELY_ATTENDANCE_PLATFROMS]
+                queryKey: [API_KEYS.REMOTELY_ATTENDANCE_PLATFORMS]
             });
         },
         onError: error => {
