@@ -32,7 +32,7 @@ export default function FormTeacher({
     const branchId = watch('branch_id');
     const mainProgramId = watch('main_program_id');
 
-    console.log(errors)
+    console.log(errors);
 
     useEffect(() => {
         if ((cityId && cityId != oldData?.city_id) || !oldData?.city_id) {
@@ -58,6 +58,19 @@ export default function FormTeacher({
             setValue('program_entity_types', '');
         }
     }, [mainProgramId, oldData?.main_program_id, setValue]);
+
+    const enhancedOptions = {
+        ...options,
+        branch_id:
+            options.branch_id?.filter(branch => branch.city?.id === cityId) ||
+            [],
+        program_entity_types:
+            mainProgramId === 1
+                ? options.education_program_entity_type_id
+                : mainProgramId === 2
+                ? options.memorization_program_entity_type_id
+                : []
+    };
 
     function onSubmit(data) {
         const payload = {
@@ -139,26 +152,7 @@ export default function FormTeacher({
                                     label={field.label}
                                     name={field.name}
                                     options={generateOptions(
-                                        field.name === 'entity_id'
-                                            ? (options?.entity_id || []).filter(
-                                                  e =>
-                                                      !branchId ||
-                                                      e.branch?.id === branchId
-                                              )
-                                            : field.name === 'branch_id'
-                                            ? (options?.branch_id || []).filter(
-                                                  b =>
-                                                      !cityId ||
-                                                      b.city?.id === cityId
-                                              )
-                                            : field.name ===
-                                              'program_entity_types'
-                                            ? mainProgramId === 1
-                                                ? options?.education_program_entity_type_id
-                                                : mainProgramId === 2
-                                                ? options?.memorization_program_entity_type_id
-                                                : []
-                                            : options?.[field.name]
+                                        enhancedOptions?.[field.name]
                                     )}
                                     defaultValue={
                                         oldData?.[field.name] ||

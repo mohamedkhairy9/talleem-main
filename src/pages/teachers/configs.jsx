@@ -67,6 +67,14 @@ export const teachersFields = [
         viewMode: true
     },
     {
+        name: 'main_program_id',
+        label: 'validation.main_program_id.label',
+        type: 'select',
+        placeholder: 'validation.main_program_id.placeholder',
+        editMode: true,
+        viewMode: true
+    },
+    {
         name: 'city_id',
         label: 'validation.city_id.label',
         type: 'select',
@@ -92,27 +100,11 @@ export const teachersFields = [
         viewMode: true
     },
     {
-        name: 'main_program_id',
-        label: 'validation.main_program_id.label',
-        type: 'select',
-        placeholder: 'validation.main_program_id.placeholder',
-        editMode: true,
-        viewMode: true
-    },
-    {
         name: 'program_entity_types',
         label: 'validation.program_entity_types.label',
         type: 'select',
         placeholder: 'validation.program_entity_types.placeholder',
         info: 'info.entity_type',
-        editMode: true,
-        viewMode: true
-    },
-    {
-        name: 'entity_category_id',
-        label: 'validation.entity_category_id.label',
-        type: 'select',
-        placeholder: 'validation.entity_category_id.placeholder',
         editMode: true,
         viewMode: true
     },

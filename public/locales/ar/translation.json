@@ -379,6 +379,12 @@
             "integer": "يجب اختيار نوع جهة التعليم",
             "min": "يرجى اختيار نوع جهة برنامج تعليمي صحيح"
         },
+        "education_program_entity_type_classification": {
+            "label": "تصنيف جهة التعليم",
+            "placeholder": "اختر تصنيف جهة التعليم",
+            "integer": "يجب اختيار تصنيف جهة التعليم",
+            "min": "يرجى اختيار تصنيف جهة تعليم صحيح"
+        },
         "entity_category_id": {
             "label": "فئة الجهة",
             "placeholder": "اختر فئة الجهة",

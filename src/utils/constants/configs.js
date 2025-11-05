@@ -138,11 +138,6 @@ export const sideMenuTabs = [
                         icon: VscDebugBreakpointLog
                     },
                     {
-                        titleKey: 'sidebar.entity_categories',
-                        path: '/entity-categories',
-                        icon: VscDebugBreakpointLog
-                    },
-                    {
                         titleKey: 'sidebar.attendance_types',
                         path: '/attendances-types',
                         icon: VscDebugBreakpointLog

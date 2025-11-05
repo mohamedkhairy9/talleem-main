@@ -140,10 +140,6 @@ export const routes = [
         element: <Activities />
     },
     {
-        path: '/entity-categories',
-        element: <EntityCategories />
-    },
-    {
         path: '/session-periods',
         element: <SessionPeriods />
     },

@@ -146,7 +146,7 @@ export function getObjectName(value) {
 
     if (value[lang]) return value[lang];
 
-    if(typeof value !== "object") return value;
+    if (typeof value !== 'object') return value;
 
     if (value.name) {
         if (typeof value.name === 'object') {
@@ -167,25 +167,84 @@ export function onlyDate(date) {
     return date ? date.split('T')[0] : null;
 }
 
-export function spreadData(oldData, options){
-    console.log(options)
-    options = options.map(option => option.name)
-    let data = {}
-    for(let item in oldData){
-        if(typeof oldData[item] === "object" && Object.keys(oldData[item]).includes("id")){
+export function spreadData(oldData, options) {
+    console.log(options);
+    options = options.map(option => option.name);
+    let data = {};
+    for (let item in oldData) {
+        if (
+            typeof oldData[item] === 'object' &&
+            Object.keys(oldData[item]).includes('id')
+        ) {
             data[`${item}_id`] = oldData[item].id;
             continue;
-        }else if(typeof oldData[item] === "object" && Object.keys(oldData[item]).includes("ar", "en") && options.includes(`${item}.en`, `${item}.ar`)){
+        } else if (
+            typeof oldData[item] === 'object' &&
+            Object.keys(oldData[item]).includes('ar', 'en') &&
+            options.includes(`${item}.en`, `${item}.ar`)
+        ) {
             data[`${item}`] = {
                 en: oldData[item].en,
-                ar: oldData[item].ar,
-            }
+                ar: oldData[item].ar
+            };
             continue;
         }
-        if(options.includes(item)){
+        if (options.includes(item)) {
             data[`${item}`] = oldData[item];
             continue;
         }
     }
     return data;
+}
+
+// Get unique options by name (for cascading selects where name is used as filter)
+export function getUniqueOptionsByName(arr = []) {
+    if (!arr?.length) return [];
+
+    const lang = i18next.language;
+    const seen = new Map();
+
+    return arr
+        .filter(opt => {
+            const nameKey =
+                opt.name?.[lang] || opt.name?.en || opt.name?.ar || opt.name;
+            if (!nameKey) return false;
+
+            if (!seen.has(nameKey)) {
+                seen.set(nameKey, opt);
+                return true;
+            }
+            return false;
+        })
+        .map(opt => ({
+            ...opt,
+            value: opt.id !== undefined ? opt.id : opt.value
+        }));
+}
+
+// Generate options with custom label field (e.g., educational_entity_classification)
+export function generateOptionsWithCustomLabel(arr = [], labelField = 'name') {
+    if (!arr?.length) return [];
+
+    const lang = i18next.language;
+
+    return arr.map(opt => {
+        const labelValue =
+            opt[labelField]?.[lang] ||
+            opt[labelField]?.['en'] ||
+            opt[labelField]?.['ar'] ||
+            opt[labelField] ||
+            opt.name?.[lang] ||
+            opt.name?.en ||
+            opt.name?.ar ||
+            opt.name ||
+            opt.label;
+
+        return {
+            ...opt, // Keep original data for filtering
+            label: labelValue,
+            value: opt.id !== undefined ? opt.id : opt.value,
+            name: labelValue // Override name with custom label for SelectRFH display
+        };
+    });
 }

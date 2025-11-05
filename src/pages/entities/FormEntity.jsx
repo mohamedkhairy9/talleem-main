@@ -6,10 +6,15 @@ import InputRFH from '@/components/common/inputs/InputRFH';
 import FileInputRFH from '@/components/common/inputs/FileInputRFH';
 import Btn from '@/components/common/buttons/Btn';
 import { getNestedError } from '@/utils/helpers/getNestedError';
-import { generateOptions } from '@/utils/helpers/global.fns';
+import {
+    generateOptions,
+    getUniqueOptionsByName,
+    generateOptionsWithCustomLabel
+} from '@/utils/helpers/global.fns';
 import useLocale from '@/utils/hooks/global/useLocale';
 import MapPicker from '@/components/common/maps/MapPicker';
 import Accordion from '@/components/common/UIs/Accordion';
+import i18next from 'i18next';
 
 export default function FormEntity({
     onClose,
@@ -45,19 +50,29 @@ export default function FormEntity({
             delete data.manager.profile_image;
         }
 
+        // Remove the helper field from submission
+        const {
+            education_program_entity_type_classification: _classificationHelper,
+            ...submitData
+        } = data;
+
         mutate(
             {
-                ...data,
-                status: data.status,
-                ...(data.main_program_id == 1
+                ...submitData,
+                manager: {
+                    ...submitData.manager,
+                    status: submitData.manager.status ? 1 : 0
+                },
+                status: submitData.status,
+                ...(submitData.main_program_id == 1
                     ? {
                           education_program_entity_type_id:
-                              data.program_entity_types
+                              submitData.entity_category_id
                       }
-                    : data.main_program_id == 2
+                    : submitData.main_program_id == 2
                     ? {
                           memorization_program_entity_type_id:
-                              data.program_entity_types
+                              submitData.entity_category_id
                       }
                     : {})
             },
@@ -71,6 +86,47 @@ export default function FormEntity({
 
     const cityId = watch('city_id');
     const mainProgramId = watch('main_program_id');
+    const educationClassification = watch(
+        'education_program_entity_type_classification'
+    );
+
+    // Get unique options by name for education program entity types (for mainProgramId === 1)
+    const uniqueEducationClassifications = getUniqueOptionsByName(
+        options.education_program_entity_type_id || []
+    );
+
+    // Filter entity categories based on selected classification (for mainProgramId === 1)
+    const filteredEntityCategories =
+        mainProgramId === 1 && educationClassification
+            ? (() => {
+                  const lang = i18next.language;
+                  const selectedClassification =
+                      uniqueEducationClassifications.find(
+                          u =>
+                              u.id === educationClassification ||
+                              u.value === educationClassification
+                      );
+
+                  if (!selectedClassification) return [];
+
+                  const selectedName =
+                      selectedClassification.name?.[lang] ||
+                      selectedClassification.name?.en ||
+                      selectedClassification.name?.ar ||
+                      selectedClassification.name;
+
+                  return (
+                      options.education_program_entity_type_id || []
+                  ).filter(opt => {
+                      const optName =
+                          opt.name?.[lang] ||
+                          opt.name?.en ||
+                          opt.name?.ar ||
+                          opt.name;
+                      return optName === selectedName;
+                  });
+              })()
+            : [];
 
     const enhancedOptions = {
         ...options,
@@ -81,11 +137,16 @@ export default function FormEntity({
         branch_id:
             options.branch_id?.filter(branch => branch.city?.id === cityId) ||
             [],
-        program_entity_types:
+        education_program_entity_type_classification:
+            uniqueEducationClassifications,
+        entity_category_id:
             mainProgramId === 1
-                ? options.education_program_entity_type_id
+                ? generateOptionsWithCustomLabel(
+                      filteredEntityCategories,
+                      'educational_entity_classification'
+                  )
                 : mainProgramId === 2
-                ? options.memorization_program_entity_type_id
+                ? options.memorization_program_entity_type_id || []
                 : []
     };
 
@@ -94,9 +155,75 @@ export default function FormEntity({
             (mainProgramId && mainProgramId != oldData?.main_program_id) ||
             !oldData?.main_program_id
         ) {
-            setValue('program_entity_types', '');
+            setValue('education_program_entity_type_classification', '');
+            setValue('entity_category_id', '');
         }
     }, [mainProgramId, oldData?.main_program_id, setValue]);
+
+    useEffect(() => {
+        if (mainProgramId === 1) {
+            if (
+                (educationClassification &&
+                    educationClassification !=
+                        oldData?.education_program_entity_type_classification) ||
+                !oldData?.education_program_entity_type_classification
+            ) {
+                setValue('entity_category_id', '');
+            }
+        }
+    }, [
+        educationClassification,
+        mainProgramId,
+        oldData?.education_program_entity_type_classification,
+        setValue
+    ]);
+
+    // Set the classification value when editing (based on entity_category_id's name)
+    useEffect(() => {
+        if (
+            mainProgramId === 1 &&
+            oldData?.entity_category_id &&
+            !oldData?.education_program_entity_type_classification
+        ) {
+            // Find the entity type that matches entity_category_id
+            const selectedEntityType = (
+                options.education_program_entity_type_id || []
+            ).find(opt => opt.id === oldData.entity_category_id);
+
+            if (selectedEntityType) {
+                // Find the unique classification that matches this entity type's name
+                const lang = i18next.language;
+                const selectedName =
+                    selectedEntityType.name?.[lang] ||
+                    selectedEntityType.name?.en ||
+                    selectedEntityType.name?.ar ||
+                    selectedEntityType.name;
+                const matchingUniqueClassification =
+                    uniqueEducationClassifications.find(u => {
+                        const uName =
+                            u.name?.[lang] ||
+                            u.name?.en ||
+                            u.name?.ar ||
+                            u.name;
+                        return uName === selectedName;
+                    });
+
+                if (matchingUniqueClassification) {
+                    setValue(
+                        'education_program_entity_type_classification',
+                        matchingUniqueClassification.id ||
+                            matchingUniqueClassification.value
+                    );
+                }
+            }
+        }
+    }, [
+        mainProgramId,
+        oldData,
+        options.education_program_entity_type_id,
+        uniqueEducationClassifications,
+        setValue
+    ]);
 
     useEffect(() => {
         if ((cityId && cityId != oldData?.city_id) || !oldData?.city_id) {
@@ -188,6 +315,16 @@ export default function FormEntity({
             );
         }
 
+        // For entity_category_id when mainProgramId === 1, use the already processed options directly
+        // (they're processed with generateOptionsWithCustomLabel to show educational_entity_classification)
+        const shouldUseProcessedOptions =
+            fieldName === 'entity_category_id' && mainProgramId === 1;
+
+        const fieldOptionsValue =
+            fieldOptions ||
+            enhancedOptions?.[fieldName] ||
+            managerOptions[fieldName];
+
         return (
             <InputRFH
                 p="px-3 py-3"
@@ -197,22 +334,37 @@ export default function FormEntity({
                 disabled={viewMode}
                 {...field}
                 name={fieldName}
-                options={generateOptions(
-                    fieldOptions ||
-                        enhancedOptions?.[fieldName] ||
-                        managerOptions[fieldName]
-                )}
+                options={
+                    shouldUseProcessedOptions
+                        ? fieldOptionsValue
+                        : generateOptions(fieldOptionsValue)
+                }
                 defaultValue={defaultValue}
             />
         );
     };
 
-    const filteredEntityFields = entitiesFields.filter(
-        field =>
+    const filteredEntityFields = entitiesFields.filter(field => {
+        // Check edit/view mode
+        const modeMatch =
             (editMode && field.editMode) ||
             (viewMode && field.viewMode) ||
-            (!editMode && !viewMode)
-    );
+            (!editMode && !viewMode);
+
+        if (!modeMatch) return false;
+
+        // Check conditional fields
+        if (field.conditional && field.showWhen) {
+            const condition = field.showWhen.main_program_id;
+            if (Array.isArray(condition)) {
+                return condition.includes(mainProgramId);
+            } else {
+                return mainProgramId === condition;
+            }
+        }
+
+        return true;
+    });
 
     const filteredManagerFields = managerFields.filter(
         field =>

@@ -377,6 +377,12 @@
             "integer": "Education program entity type must be selected",
             "min": "Please select a valid education program entity type"
         },
+        "education_program_entity_type_classification": {
+            "label": "Education Entity Type Classification",
+            "placeholder": "Select education entity type classification",
+            "integer": "Education entity type classification must be selected",
+            "min": "Please select a valid education entity type classification"
+        },
         "entity_category_id": {
             "label": "Entity Category",
             "placeholder": "Select entity category",

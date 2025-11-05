@@ -39,11 +39,6 @@ export default function useApiCalls({ apiCalls = [] } = {}) {
             enabled: isEnabled(API_KEYS.MAIN_PROGRAMS)
         },
         {
-            queryKey: [API_KEYS.ENTITY_CATEGORIES, allData],
-            queryFn: () => entityCategoriesService.getEntityCategories(allData),
-            enabled: isEnabled(API_KEYS.ENTITY_CATEGORIES)
-        },
-        {
             queryKey: [API_KEYS.EDUCATION_PROGRAM_ENTITY_TYPES, allData],
             queryFn: () =>
                 educationProgramEntityTypesService.getEducationProgramEntityTypes(
@@ -100,7 +95,6 @@ export default function useApiCalls({ apiCalls = [] } = {}) {
         branchesQuery,
         academicQualificationsQuery,
         mainProgramsQuery,
-        entityCategoriesQuery,
         educationProgramEntityTypesQuery,
         memorizationProgramEntityTypesQuery,
         citiesQuery,
@@ -116,7 +110,6 @@ export default function useApiCalls({ apiCalls = [] } = {}) {
         branchesData: branchesQuery?.data,
         academicQualificationsData: academicQualificationsQuery?.data,
         mainProgramsData: mainProgramsQuery?.data,
-        entityCategoriesData: entityCategoriesQuery?.data,
         educationProgramEntityTypesData: educationProgramEntityTypesQuery?.data,
         memorizationProgramEntityTypesData:
             memorizationProgramEntityTypesQuery?.data,

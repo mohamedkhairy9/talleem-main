@@ -46,11 +46,13 @@ export default function Entities() {
         neighborhood_id: item.neighborhood?.id,
         branch_id: item.branch?.id,
         main_program_id: item.main_program?.id,
-        program_entity_types:
+        education_program_entity_type_classification: null, // Will be set in FormEntity based on entity_category_id
+        entity_category_id:
             item.main_program?.id == 1
                 ? item.education_program_entity_type?.id
-                : item.memorization_program_entity_type?.id,
-        entity_category_id: item.entity_category?.id,
+                : item.main_program?.id == 2
+                ? item.memorization_program_entity_type?.id
+                : null,
         location_type_id: item.location_type?.id,
         min_acceptance_age: item.min_acceptance_age,
         phone: item.phone,

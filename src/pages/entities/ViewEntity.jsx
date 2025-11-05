@@ -21,7 +21,6 @@ export default function ViewEntity({ onClose, oldData }) {
     const {
         branchesData,
         mainProgramsData,
-        entityCategoriesData,
         educationProgramEntityTypesData,
         citiesData,
         neighborhoodsData,
@@ -51,7 +50,6 @@ export default function ViewEntity({ onClose, oldData }) {
                     user_id: usersData?.data,
                     branch_id: branchesData?.data,
                     main_program_id: mainProgramsData?.data,
-                    entity_category_id: entityCategoriesData?.data,
                     education_program_entity_type_id:
                         educationProgramEntityTypesData?.data,
                     city_id: citiesData?.data,

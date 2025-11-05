@@ -38,6 +38,9 @@ export default function AcademicQualifications() {
     return (
         <div>
             <Table
+                enableAdd={false}
+                enableEdit={false}
+                enableDelete={false}
                 title={t('table_titles.academic_qualifications')}
                 refresh={refresh}
                 loading={isLoading}

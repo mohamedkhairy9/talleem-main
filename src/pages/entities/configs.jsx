@@ -101,13 +101,15 @@ export const entitiesFields = [
         viewMode: true
     },
     {
-        name: 'program_entity_types',
-        label: 'validation.program_entity_types.label',
+        name: 'education_program_entity_type_classification',
+        label: 'validation.education_program_entity_type_classification.label',
         type: 'select',
-        placeholder: 'validation.program_entity_types.placeholder',
+        placeholder:
+            'validation.education_program_entity_type_classification.placeholder',
         editMode: true,
         viewMode: true,
-        info: 'info.program_entity_types'
+        conditional: true,
+        showWhen: { main_program_id: 1 }
     },
     {
         name: 'entity_category_id',
@@ -115,7 +117,9 @@ export const entitiesFields = [
         type: 'select',
         placeholder: 'validation.entity_category_id.placeholder',
         editMode: true,
-        viewMode: true
+        viewMode: true,
+        conditional: true,
+        showWhen: { main_program_id: [1, 2] }
     },
     {
         name: 'location_type_id',
@@ -424,7 +428,6 @@ export const filtersDefaultValues = {
 export const apiCalls = [
     API_KEYS.BRANCHES,
     API_KEYS.MAIN_PROGRAMS,
-    API_KEYS.ENTITY_CATEGORIES,
     API_KEYS.EDUCATION_PROGRAM_ENTITY_TYPES,
     API_KEYS.MEMORIZATION_PROGRAM_ENTITY_TYPES,
     API_KEYS.CITIES,
