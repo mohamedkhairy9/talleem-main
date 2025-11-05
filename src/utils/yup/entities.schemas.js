@@ -20,36 +20,23 @@ export const entitiesSchema = yup.object({
     status: selectSchema,
     main_program_id: selectSchema,
     education_program_entity_type_classification: yup
-        .number()
+        .string()
         .nullable()
         .when('main_program_id', {
-            is: 1,
-            then: schema =>
-                schema
-                    .required(t('validation.required'))
-                    .integer(
-                        t(
-                            'validation.education_program_entity_type_classification.integer'
-                        )
-                    )
-                    .min(
-                        1,
-                        t(
-                            'validation.education_program_entity_type_classification.min'
-                        )
-                    ),
+            // main_program_id comes as string from selects; coerce safely
+            is: value => Number(value) === 1,
+            then: schema => schema.required(t('validation.required')),
             otherwise: schema => schema.optional()
         }),
     entity_category_id: yup
-        .number()
+        .string()
         .nullable()
         .when('main_program_id', {
-            is: value => value === 1 || value === 2,
+            is: value => [1, 2].includes(Number(value)),
             then: schema =>
                 schema
                     .required(t('validation.required'))
-                    .integer(t('validation.entity_category_id.integer'))
-                    .min(1, t('validation.entity_category_id.min')),
+                    .min(1, t('validation.select.min')),
             otherwise: schema => schema.optional()
         }),
     city_id: selectSchema,

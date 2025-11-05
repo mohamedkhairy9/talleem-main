@@ -90,6 +90,8 @@ export default function FormEntity({
         'education_program_entity_type_classification'
     );
 
+    console.log('mainProgramId', mainProgramId);
+
     // Get unique options by name for education program entity types (for mainProgramId === 1)
     const uniqueEducationClassifications = getUniqueOptionsByName(
         options.education_program_entity_type_id || []
