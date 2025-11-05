@@ -147,6 +147,11 @@ export const sideMenuTabs = [
                         path: '/academic-qualifications',
                         icon: VscDebugBreakpointLog
                     },
+                    {
+                        titleKey: 'sidebar.academic_levels',
+                        path: '/academic-levels',
+                        icon: VscDebugBreakpointLog
+                    },
                 ]
             },
             {
