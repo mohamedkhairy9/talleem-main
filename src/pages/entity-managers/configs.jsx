@@ -186,7 +186,7 @@ export const entityManagersFields = [
     },
     {
         name: 'profile_image',
-        label: 'validation.profile_image.label',
+        label: 'validation.profile_picture.label',
         type: 'file',
         placeholder: 'validation.profile_image.placeholder',
         editMode: true,

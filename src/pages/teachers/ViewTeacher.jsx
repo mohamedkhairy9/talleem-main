@@ -13,20 +13,31 @@ import { useNationalitiesQuery } from '@/api/hooks/useNationalities';
 import { useUsersQuery } from '@/api/hooks/useUsers';
 import Loader from '@/components/common/Loader';
 import { allData } from '@/utils/constants/global.constants';
-import { enabledDisabledOptions, teacherStatusOptions } from '@/utils/constants/options';
+import {
+    enabledDisabledOptions,
+    teacherStatusOptions
+} from '@/utils/constants/options';
+import { useEntitiesQuery } from '@/api/hooks/useEntities';
+import { useMemorizationProgramEntityTypesQuery } from '@/api/hooks/useMemorizationProgramEntityTypes';
+import { useMajorsQuery } from '@/api/hooks/useMajors';
 
 export default function ViewTeacher({ onClose, oldData }) {
     // Fetch all available options
     const { data: branchesData, isLoading: branchesLoading } =
         useBranchesQuery(allData);
+
+    const { data: entitiesData, isLoading: entitiesLoading } =
+        useEntitiesQuery(allData);
     const { data: mainProgramsData, isLoading: mainProgramsLoading } =
         useMainProgramsQuery(allData);
-    const { data: entityCategoriesData, isLoading: entityCategoriesLoading } =
-        useEntityCategoriesQuery(allData);
     const {
         data: educationProgramEntityTypesData,
         isLoading: educationProgramEntityTypesLoading
     } = useEducationProgramEntityTypesQuery(allData);
+    const {
+        data: memorizationProgramEntityTypesData,
+        isLoading: memorizationProgramEntityTypesLoading
+    } = useMemorizationProgramEntityTypesQuery(allData);
     const {
         data: academicQualificationsData,
         isLoading: academicQualificationsLoading
@@ -38,17 +49,21 @@ export default function ViewTeacher({ onClose, oldData }) {
     const { data: nationalitiesData, isLoading: nationalitiesLoading } =
         useNationalitiesQuery(allData);
     const { data: usersData, isLoading: usersLoading } = useUsersQuery(allData);
+    const { data: majorsData, isLoading: majorsLoading } =
+        useMajorsQuery(allData);
 
     const isLoading =
         branchesLoading ||
         mainProgramsLoading ||
-        entityCategoriesLoading ||
         educationProgramEntityTypesLoading ||
         academicQualificationsLoading ||
         specificationsLoading ||
         citiesLoading ||
         nationalitiesLoading ||
-        usersLoading;
+        usersLoading ||
+        majorsLoading ||
+        entitiesLoading ||
+        memorizationProgramEntityTypesLoading;
 
     if (isLoading) return <Loader />;
 
@@ -57,7 +72,7 @@ export default function ViewTeacher({ onClose, oldData }) {
             <ModalHeader onClose={onClose} header="teachers.view" />
             <FormTeacher
                 onClose={onClose}
-                oldData={oldData}
+                oldData={{ ...oldData, status: oldData.status?.toLowerCase() }}
                 viewMode={true}
                 mutate={() => {}}
                 isPending={false}
@@ -66,10 +81,12 @@ export default function ViewTeacher({ onClose, oldData }) {
                     nationality_id: nationalitiesData?.data,
                     branch_id: branchesData?.data,
                     main_program_id: mainProgramsData?.data,
-                    entity_id: entityCategoriesData?.data,
+                    entity_id: entitiesData?.data,
+                    major_id: majorsData?.data,
                     education_program_entity_type_id:
                         educationProgramEntityTypesData?.data,
-                    entity_category_id: entityCategoriesData?.data,
+                    memorization_program_entity_type_id:
+                        memorizationProgramEntityTypesData?.data,
                     academic_qualification_id: academicQualificationsData?.data,
                     specification_id: specificationsData?.data,
                     city_id: citiesData?.data,

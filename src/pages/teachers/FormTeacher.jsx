@@ -1,6 +1,6 @@
 import useRFH from '@/utils/hooks/global/useRFH';
 import { teachersSchema as schema } from '@/utils/yup/teachers.schemas';
-import React, { useEffect } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { teachersFields } from './configs';
 import InputRFH from '@/components/common/inputs/InputRFH';
 import FileInputRFH from '@/components/common/inputs/FileInputRFH';
@@ -32,6 +32,10 @@ export default function FormTeacher({
             }
         }
     );
+    const [profileImagePreview, setProfileImagePreview] = useState(
+        oldData?.profile_image || oldData?.profile_picture || null
+    );
+    const [profileImageChanged, setProfileImageChanged] = useState(false);
 
     const cityId = watch('city_id');
     const branchId = watch('branch_id');
@@ -41,42 +45,41 @@ export default function FormTeacher({
     );
 
     // Get unique options by name for education program entity types (for mainProgramId === 1)
-    const uniqueEducationClassifications = getUniqueOptionsByName(
-        options.education_program_entity_type_id || []
+    const uniqueEducationClassifications = useMemo(
+        () =>
+            getUniqueOptionsByName(
+                options.education_program_entity_type_id || []
+            ),
+        [options.education_program_entity_type_id, i18next.language]
     );
 
     // Filter entity categories based on selected classification (for mainProgramId === 1)
-    const filteredEntityCategories =
-        Number(mainProgramId) === 1 && educationClassification
-            ? (() => {
-                  const lang = i18next.language;
-                  const selectedClassification =
-                      uniqueEducationClassifications.find(
-                          u =>
-                              u.id === educationClassification ||
-                              u.value === educationClassification
-                      );
-
-                  if (!selectedClassification) return [];
-
-                  const selectedName =
-                      selectedClassification.name?.[lang] ||
-                      selectedClassification.name?.en ||
-                      selectedClassification.name?.ar ||
-                      selectedClassification.name;
-
-                  return (
-                      options.education_program_entity_type_id || []
-                  ).filter(opt => {
-                      const optName =
-                          opt.name?.[lang] ||
-                          opt.name?.en ||
-                          opt.name?.ar ||
-                          opt.name;
-                      return optName === selectedName;
-                  });
-              })()
-            : [];
+    const filteredEntityCategories = useMemo(() => {
+        if (Number(mainProgramId) !== 1 || !educationClassification) return [];
+        const lang = i18next.language;
+        const selectedClassification = uniqueEducationClassifications.find(
+            u =>
+                u.id === educationClassification ||
+                u.value === educationClassification
+        );
+        if (!selectedClassification) return [];
+        const selectedName =
+            selectedClassification.name?.[lang] ||
+            selectedClassification.name?.en ||
+            selectedClassification.name?.ar ||
+            selectedClassification.name;
+        return (options.education_program_entity_type_id || []).filter(opt => {
+            const optName =
+                opt.name?.[lang] || opt.name?.en || opt.name?.ar || opt.name;
+            return optName === selectedName;
+        });
+    }, [
+        mainProgramId,
+        educationClassification,
+        uniqueEducationClassifications,
+        options.education_program_entity_type_id,
+        i18next.language
+    ]);
 
     useEffect(() => {
         if ((cityId && cityId != oldData?.city_id) || !oldData?.city_id) {
@@ -104,13 +107,16 @@ export default function FormTeacher({
         }
     }, [mainProgramId, oldData?.main_program_id, setValue]);
 
+    const initializingClassificationRef = useRef(false);
     useEffect(() => {
         if (Number(mainProgramId) === 1) {
+            const isInitializing = initializingClassificationRef.current;
             if (
                 (educationClassification &&
                     educationClassification !=
                         oldData?.education_program_entity_type_classification) ||
-                !oldData?.education_program_entity_type_classification
+                (!oldData?.education_program_entity_type_classification &&
+                    !isInitializing)
             ) {
                 setValue('entity_category_id', '');
             }
@@ -122,52 +128,64 @@ export default function FormTeacher({
         setValue
     ]);
 
-    // Set the classification value when editing (based on entity_category_id's name)
+    const initializedClassificationRef = useRef(false);
     useEffect(() => {
+        if (initializedClassificationRef.current) return;
         if (
             Number(mainProgramId) === 1 &&
             oldData?.entity_category_id &&
             !oldData?.education_program_entity_type_classification
         ) {
-            // Find the entity type that matches entity_category_id
             const selectedEntityType = (
                 options.education_program_entity_type_id || []
             ).find(opt => opt.id === oldData.entity_category_id);
-
-            if (selectedEntityType) {
-                // Find the unique classification that matches this entity type's name
-                const lang = i18next.language;
-                const selectedName =
-                    selectedEntityType.name?.[lang] ||
-                    selectedEntityType.name?.en ||
-                    selectedEntityType.name?.ar ||
-                    selectedEntityType.name;
-                const matchingUniqueClassification =
-                    uniqueEducationClassifications.find(u => {
-                        const uName =
-                            u.name?.[lang] ||
-                            u.name?.en ||
-                            u.name?.ar ||
-                            u.name;
-                        return uName === selectedName;
-                    });
-
-                if (matchingUniqueClassification) {
-                    setValue(
-                        'education_program_entity_type_classification',
-                        matchingUniqueClassification.id ||
-                            matchingUniqueClassification.value
-                    );
-                }
+            if (!selectedEntityType) return;
+            const lang = i18next.language;
+            const selectedName =
+                selectedEntityType.name?.[lang] ||
+                selectedEntityType.name?.en ||
+                selectedEntityType.name?.ar ||
+                selectedEntityType.name;
+            const matchingUniqueClassification =
+                uniqueEducationClassifications.find(u => {
+                    const uName =
+                        u.name?.[lang] || u.name?.en || u.name?.ar || u.name;
+                    return uName === selectedName;
+                });
+            if (matchingUniqueClassification) {
+                setValue(
+                    'education_program_entity_type_classification',
+                    matchingUniqueClassification.id ||
+                        matchingUniqueClassification.value,
+                    { shouldDirty: false, shouldValidate: false }
+                );
+                initializedClassificationRef.current = true;
+                initializingClassificationRef.current = true;
             }
         }
     }, [
         mainProgramId,
         oldData,
-        options.education_program_entity_type_id,
         uniqueEducationClassifications,
+        options.education_program_entity_type_id,
         setValue
     ]);
+
+    // After classification has been initialized in edit mode, set entity_category_id from oldData
+    useEffect(() => {
+        if (
+            Number(mainProgramId) === 1 &&
+            initializedClassificationRef.current &&
+            oldData?.entity_category_id
+        ) {
+            setValue('entity_category_id', oldData.entity_category_id, {
+                shouldDirty: false,
+                shouldValidate: false
+            });
+            // Done with initialization guard
+            initializingClassificationRef.current = false;
+        }
+    }, [mainProgramId, setValue, oldData?.entity_category_id]);
 
     const enhancedOptions = {
         ...options,
@@ -190,20 +208,26 @@ export default function FormTeacher({
     };
 
     function onSubmit(data) {
-        const { education_program_entity_type_classification: _helper, ...rest } = data;
+        const {
+            education_program_entity_type_classification: _helper,
+            ...rest
+        } = data;
         const payload = {
             ...rest,
             ...(Number(rest.main_program_id) === 1
                 ? { education_program_entity_type_id: rest.entity_category_id }
                 : Number(rest.main_program_id) === 2
-                ? { memorization_program_entity_type_id: rest.entity_category_id }
+                ? {
+                      memorization_program_entity_type_id:
+                          rest.entity_category_id
+                  }
                 : {})
         };
 
-        // Map profile image key to requested shape if present
-        if (payload.profile_image && !payload.profile_picture) {
-            payload.profile_picture = payload.profile_image;
+        // In edit mode, if profile image not changed, don't send it
+        if (editMode && !profileImageChanged) {
             delete payload.profile_image;
+            delete payload.profile_picture;
         }
 
         mutate(payload, {
@@ -239,30 +263,19 @@ export default function FormTeacher({
         <form onSubmit={handleSubmit(onSubmit)} className="p-4 space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {filteredTeacherFields.map(field => (
-                        <div
-                            key={field.name}
-                            className={
-                                field.type === 'textarea'
-                                    ? 'md:col-span-2 lg:col-span-3'
-                                    : field.type === 'file'
-                                    ? 'md:col-span-2 lg:col-span-3'
-                                    : ''
-                            }
-                        >
-                            {field.type === 'file' &&
-                            field.name !== 'profile_image' ? (
-                                <FileInputRFH
-                                    register={register}
-                                    control={control}
-                                    error={getNestedError(errors, field.name)}
-                                    placeholder={field.placeholder}
-                                    disabled={viewMode}
-                                    label={field.label}
-                                    name={field.name}
-                                    multiple={field.multiple}
-                                    defaultValue={oldData?.files || []}
-                                />
-                            ) : (
+                    <div
+                        key={field.name}
+                        className={
+                            field.type === 'textarea'
+                                ? 'md:col-span-2 lg:col-span-3'
+                                : field.type === 'file'
+                                ? 'md:col-span-2 lg:col-span-3'
+                                : ''
+                        }
+                    >
+                        {field.type === 'file' &&
+                        field.name === 'profile_image' ? (
+                            <div className="space-y-2">
                                 <InputRFH
                                     info={field.info}
                                     p="px-3 py-3"
@@ -274,22 +287,72 @@ export default function FormTeacher({
                                     disabled={viewMode}
                                     label={field.label}
                                     name={field.name}
-                                    options={
-                                        field.name === 'entity_category_id' &&
-                                        Number(mainProgramId) === 1
-                                            ? enhancedOptions?.[field.name]
-                                            : generateOptions(
-                                                  enhancedOptions?.[field.name]
-                                              )
-                                    }
-                                    defaultValue={
-                                        oldData?.[field.name] ||
-                                        field.defaultValue
-                                    }
+                                    accept={field.accept}
+                                    onChange={e => {
+                                        const file = e.target.files?.[0];
+                                        if (file) {
+                                            setProfileImageChanged(true);
+                                            const reader = new FileReader();
+                                            reader.onloadend = () => {
+                                                setProfileImagePreview(
+                                                    reader.result
+                                                );
+                                            };
+                                            reader.readAsDataURL(file);
+                                        }
+                                    }}
+                                    defaultValue={oldData?.[field.name]}
                                 />
-                            )}
-                        </div>
-                    ))}
+                                {profileImagePreview && (
+                                    <div className="mt-2">
+                                        <img
+                                            src={profileImagePreview}
+                                            alt="Profile Preview"
+                                            className="h-32 w-32 object-cover rounded-full border-2 border-gray-300"
+                                        />
+                                    </div>
+                                )}
+                            </div>
+                        ) : field.type === 'file' ? (
+                            <FileInputRFH
+                                register={register}
+                                control={control}
+                                error={getNestedError(errors, field.name)}
+                                placeholder={field.placeholder}
+                                disabled={viewMode}
+                                label={field.label}
+                                name={field.name}
+                                multiple={field.multiple}
+                                defaultValue={oldData?.[field.name] || []}
+                                setValue={setValue}
+                            />
+                        ) : (
+                            <InputRFH
+                                info={field.info}
+                                p="px-3 py-3"
+                                control={control}
+                                register={register}
+                                error={getNestedError(errors, field.name)}
+                                type={field.type}
+                                placeholder={field.placeholder}
+                                disabled={viewMode}
+                                label={field.label}
+                                name={field.name}
+                                options={
+                                    field.name === 'entity_category_id' &&
+                                    Number(mainProgramId) === 1
+                                        ? enhancedOptions?.[field.name]
+                                        : generateOptions(
+                                              enhancedOptions?.[field.name]
+                                          )
+                                }
+                                defaultValue={
+                                    oldData?.[field.name] || field.defaultValue
+                                }
+                            />
+                        )}
+                    </div>
+                ))}
             </div>
             {!viewMode && (
                 <Btn

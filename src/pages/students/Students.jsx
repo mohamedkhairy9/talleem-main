@@ -34,14 +34,21 @@ export default function Students() {
         main_program_id: 
             item.main_program ? item.main_program.id : item.main_program_id?.id, // leaving it as it is until fixed
         // entity_category_id: item.entity_category?.id,
-        education_program_entity_type_id: 
-            item.education_program_entity_type ? item.education_program_entity_type.id : item.education_program_entity_type_id?.id, // leaving it as it is until fixed
+        education_program_entity_type_classification: null, // Will be set in FormStudent based on entity_category_id
+        entity_category_id:
+            item.main_program?.id == 1
+                ? item.education_program_entity_type?.id
+                : null,
         city_id: item.city?.id,
         kinship_id: item.kinship?.id,
         academic_level_id: item.academic_level?.id,
         entity_id: item.entity?.id,
         nationality_id: item.nationality?.id,
         specification_id: item.specification?.id,
+        qualification: {
+            ...item.qualification,
+            major_id: item.major?.id || item.qualification?.major_id
+        },
         has_medical_issues: +item.has_medical_issues
     }));
 

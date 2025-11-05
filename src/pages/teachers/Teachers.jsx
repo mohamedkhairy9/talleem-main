@@ -40,6 +40,7 @@ export default function Teachers() {
         branch_id: item.branch?.id,
         main_program_id: item.main_program?.id,
         entity_id: item.entity?.id,
+        major_id: item.major?.id,
         nationality_id: item.nationality?.id,
         academic_qualification_id: item.academic_qualification?.id,
         specification_id: item.specification?.id,

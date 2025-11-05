@@ -21,6 +21,20 @@ export const employeesService = {
 
     deleteEmployee: async id => {
         return await axiosInstance.delete(API_URLS.EMPLOYEES.DELETE(id));
+    },
+
+    importEmployees: async data => {
+        return await axiosInstance.post(
+            API_URLS.EMPLOYEES.IMPORT,
+            data,
+            multipartFormData
+        );
+    },
+
+    exportExampleFile: async () => {
+        return await axiosInstance.get(API_URLS.EMPLOYEES.EXPORT_EXAMPLE, {
+            responseType: 'blob'
+        });
     }
 };
 

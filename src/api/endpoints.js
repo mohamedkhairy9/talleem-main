@@ -205,7 +205,9 @@ export const API_URLS = {
         LIST: '/employees',
         DETAILS: id => `/employees/${id}`,
         UPDATE: id => `/employees/${id}`,
-        DELETE: id => `/employees/${id}`
+        DELETE: id => `/employees/${id}`,
+        IMPORT: '/employee-import',
+        EXPORT_EXAMPLE: '/employee-export-example'
     },
     NATIONALITIES: {
         CREATE: '/nationalities',

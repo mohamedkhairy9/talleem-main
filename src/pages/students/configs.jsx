@@ -85,12 +85,25 @@ export const studentsFields = [
         viewMode: true
     },
     {
-        name: 'education_program_entity_type_id',
-        label: 'validation.education_program_entity_type_id.label',
+        name: 'education_program_entity_type_classification',
+        label: 'validation.education_program_entity_type_classification.label',
         type: 'select',
-        placeholder: 'validation.education_program_entity_type_id.placeholder',
+        placeholder:
+            'validation.education_program_entity_type_classification.placeholder',
         editMode: true,
-        viewMode: true
+        viewMode: true,
+        conditional: true,
+        showWhen: { main_program_id: 1 }
+    },
+    {
+        name: 'entity_category_id',
+        label: 'validation.entity_category_id.label',
+        type: 'select',
+        placeholder: 'validation.entity_category_id.placeholder',
+        editMode: true,
+        viewMode: true,
+        conditional: true,
+        showWhen: { main_program_id: 1 }
     },
     {
         name: 'branch_id',
@@ -147,7 +160,9 @@ export const studentsFields = [
         type: 'text',
         placeholder: 'validation.school_name.placeholder',
         editMode: true,
-        viewMode: true
+        viewMode: true,
+        conditional: true,
+        showWhen: { main_program_id: 2 }
     },
     {
         name: 'city_id',
@@ -179,7 +194,9 @@ export const studentsFields = [
         type: 'text',
         placeholder: 'validation.parent_name.placeholder',
         editMode: true,
-        viewMode: true
+        viewMode: true,
+        conditional: true,
+        showWhen: { main_program_id: 2 }
     },
     {
         name: 'kinship_id',
@@ -187,7 +204,9 @@ export const studentsFields = [
         type: 'select',
         placeholder: 'validation.kinship_id.placeholder',
         editMode: true,
-        viewMode: true
+        viewMode: true,
+        conditional: true,
+        showWhen: { main_program_id: 2 }
     },
     {
         name: 'has_medical_issues',
@@ -212,7 +231,9 @@ export const studentsFields = [
         type: 'text',
         placeholder: 'validation.parent_phone_1.placeholder',
         editMode: true,
-        viewMode: true
+        viewMode: true,
+        conditional: true,
+        showWhen: { main_program_id: 2 }
     },
     {
         name: 'parent_phone_2',
@@ -220,7 +241,9 @@ export const studentsFields = [
         type: 'text',
         placeholder: 'validation.parent_phone_2.placeholder',
         editMode: true,
-        viewMode: true
+        viewMode: true,
+        conditional: true,
+        showWhen: { main_program_id: 2 }
     },
     {
         name: 'registration_date',
@@ -236,16 +259,20 @@ export const studentsFields = [
         type: 'select',
         placeholder: 'validation.academic_level_id.placeholder',
         editMode: true,
-        viewMode: true
+        viewMode: true,
+        conditional: true,
+        showWhen: { main_program_id: 2 }
     },
-    // {
-    //     name: 'specification_id',
-    //     label: 'validation.specification_id.label',
-    //     type: 'select',
-    //     placeholder: 'validation.specification_id.placeholder',
-    //     editMode: true,
-    //     viewMode: true
-    // },
+    {
+        name: 'specification_id',
+        label: 'validation.specification_id.label',
+        type: 'select',
+        placeholder: 'validation.specification_id.placeholder',
+        editMode: true,
+        viewMode: true,
+        conditional: true,
+        showWhen: { main_program_id: 2 }
+    },
     {
         name: 'profile_picture',
         label: 'validation.profile_picture.label',
@@ -322,7 +349,7 @@ export const studentsDefaultValues = {
         has_high_school: 0,
         high_school_grade: 0,
         has_bachelors_degree: 0,
-        specification: null,
+        major_id: null,
         has_memorized_quran_5_parts: 0,
         memorized_quran_parts: 0
     }

@@ -157,6 +157,11 @@ export const sideMenuTabs = [
                         path: '/remotely-attendance-platforms',
                         icon: VscDebugBreakpointLog
                     },
+                    {
+                        titleKey: 'sidebar.academic_levels',
+                        path: '/academic-levels',
+                        icon: VscDebugBreakpointLog
+                    },
                 ]
             },
             {

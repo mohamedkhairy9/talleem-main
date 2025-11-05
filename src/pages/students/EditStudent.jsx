@@ -12,6 +12,7 @@ import { useKinshipsQuery } from '@/api/hooks/useKinships';
 import { useAcademicLevelsQuery } from '@/api/hooks/useAcademicLevels';
 import { useEntitiesQuery } from '@/api/hooks/useEntities';
 import { useNationalitiesQuery } from '@/api/hooks/useNationalities';
+import { useMajorsQuery } from '@/api/hooks/useMajors';
 import { useSpecificationsQuery } from '@/api/hooks/useSpecifications';
 import Loader from '@/components/common/Loader';
 import { allData } from '@/utils/constants/global.constants';
@@ -52,6 +53,8 @@ export default function EditStudent({ onClose, oldData }) {
         useEntitiesQuery(allData);
     const { data: nationalitiesData, isLoading: nationalitiesLoading } =
         useNationalitiesQuery(allData);
+    const { data: majorsData, isLoading: majorsLoading } =
+        useMajorsQuery(allData);
     const { data: specificationsData, isLoading: specificationsLoading } =
         useSpecificationsQuery(allData);
 
@@ -65,6 +68,7 @@ export default function EditStudent({ onClose, oldData }) {
         academicLevelsLoading ||
         entitiesLoading ||
         nationalitiesLoading ||
+        majorsLoading ||
         specificationsLoading;
 
     if (isLoading) return <Loader />;
@@ -90,6 +94,7 @@ export default function EditStudent({ onClose, oldData }) {
                     entity_id: entitiesData?.data,
                     nationality_id: nationalitiesData?.data,
                     specification_id: specificationsData?.data,
+                    major_id: majorsData?.data,
                     status: enabledDisabledOptions,
                     gender: genderOptions,
                     has_medical_issues: yesNoOptions,
