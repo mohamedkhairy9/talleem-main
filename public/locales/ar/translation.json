@@ -680,12 +680,12 @@
         "view": "عرض نوع الموقع"
     },
     "memorization_program_entity_types": {
-        "create": "إنشاء برنامج حفظ",
-        "update": "تحديث برنامج الحفظ",
-        "view": "عرض برنامج الحفظ"
+        "create": "إنشاء فئة جهة",
+        "update": "تحديث فئة الجهة",
+        "view": "عرض فئة الجهة"
     },
     "education_program_entity_types": {
-        "create": "إنشاء نوع برنامج تعليمي",
+        "create": "إنشاء تصنيف جهة تعليم",
         "update": "تحديث تصنيف جهة التعليم",
         "view": "عرض تصنيف جهة التعليم"
     },
@@ -837,7 +837,7 @@
         "profile_management": "إدارة الملفات الشخصية",
         "entity_activities": "أنشطة الجهات",
         "education-program-entity-types": "تصنيف جهة التعليم",
-        "memorization-program-entity-types": "نوع البرنامج التحفيظي",
+        "memorization-program-entity-types": "فئة الجهة",
         "lookups": "ملفات الرموز"
     },
     "table_titles": {
@@ -879,7 +879,7 @@
         "parents": "أولياء الأمور",
         "entity_activities": "أنشطة الجهات",
         "education-program-entity-types": "تصنيفات جهة التعليم",
-        "memorization-program-entity-types": "أنواع البرامج التحفيظية"
+        "memorization-program-entity-types": "فئات الجهة"
     },
     "table": {
         "actions": "الإجراءات",
@@ -1003,7 +1003,7 @@
         "check_out": "تسجيل الخروج",
         "activity": "النشاط",
         "education-program-entity-types": "تصنيف جهة التعليم",
-        "memorization-program-entity-types": "نوع البرنامج التحفيظي"
+        "memorization-program-entity-types": "فئة الجهة"
     },
     "nationalities": {
         "create": "إضافة جنسية",
