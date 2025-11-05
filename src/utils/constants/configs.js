@@ -148,6 +148,16 @@ export const sideMenuTabs = [
                         icon: VscDebugBreakpointLog
                     },
                     {
+                        titleKey: 'sidebar.majors',
+                        path: '/majors',
+                        icon: VscDebugBreakpointLog
+                    },
+                    {
+                        titleKey: 'sidebar.remotely_attendance_platforms',
+                        path: '/remotely-attendance-platforms',
+                        icon: VscDebugBreakpointLog
+                    },
+                    {
                         titleKey: 'sidebar.academic_levels',
                         path: '/academic-levels',
                         icon: VscDebugBreakpointLog

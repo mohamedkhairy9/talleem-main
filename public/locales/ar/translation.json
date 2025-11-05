@@ -725,6 +725,11 @@
         "update": "تحديث التخصص",
         "view": "عرض التخصص"
     },
+    "remotely_attendance_platforms": {
+        "create": "إنشاء منصة",
+        "update": "تحديث المنصة",
+        "view": "عرض المنصة"
+    },
     "session_periods": {
         "create": "إنشاء فترة حلقة",
         "update": "تحديث فترة الحلقة",
@@ -844,7 +849,8 @@
         "entity_activities": "أنشطة الجهات",
         "education-program-entity-types": "تصنيف جهة التعليم",
         "memorization-program-entity-types": "فئة الجهة",
-        "lookups": "ملفات الرموز"
+        "lookups": "ملفات الرموز",
+        "remotely_attendance_platforms": "منصات الحضور عن بعد"
     },
     "table_titles": {
         "notification_templates": "قوالب الإشعارات",
@@ -885,7 +891,8 @@
         "parents": "أولياء الأمور",
         "entity_activities": "أنشطة الجهات",
         "education-program-entity-types": "تصنيفات جهة التعليم",
-        "memorization-program-entity-types": "فئات الجهة"
+        "memorization-program-entity-types": "فئات الجهة",
+        "remotely_attendance_platforms": "منصات الحضور عن بعد"
     },
     "table": {
         "actions": "الإجراءات",
@@ -1010,6 +1017,7 @@
         "activity": "النشاط",
         "education-program-entity-types": "تصنيف جهة التعليم",
         "memorization-program-entity-types": "فئة الجهة",
+        "remotely_attendance_platforms": "المنصات",
         "employee": "الموظف"
     },
     "nationalities": {

@@ -719,6 +719,11 @@
         "update": "Update Major",
         "view": "View Major"
     },
+    "remotely_attendance_platforms": {
+        "create": "Create Platform",
+        "update": "Update Platform",
+        "view": "View Platform"
+    },
     "teachers": {
         "create": "Create Teacher",
         "update": "Update Teacher",
@@ -888,7 +893,8 @@
         "entity_activities": "Entity Activities",
         "education-program-entity-types": "Education Program Types",
         "memorization-program-entity-types": "Memorization Program Types",
-        "lookups": "Lookups"
+        "lookups" : "Lookups",
+        "remotely_attendance_platforms": "Remotely Attendance Platforms"
     },
     "table_titles": {
         "notification_templates": "Notification Templates",
@@ -929,7 +935,8 @@
         "parents": "Parents",
         "entity_activities": "Entity Activities",
         "education-program-entity-types": "Education Program Types",
-        "memorization-program-entity-types": "Memorization Program Types"
+        "memorization-program-entity-types": "Memorization Program Types",
+        "remotely_attendance_platforms": "Remotely Attendance Platforms"
     },
     "table": {
         "actions": "Actions",
@@ -1053,7 +1060,8 @@
         "check_out": "Check Out",
         "activity": "Activity",
         "education-program-entity-types": "Education Program Types",
-        "memorization-program-entity-types": "Memorization Program Types"
+        "memorization-program-entity-types": "Memorization Program Types",
+        "remotely_attendance_platforms": "Attendance Platforms"
     },
     "nationalities": {
         "create": "Create Nationality",
