@@ -70,6 +70,12 @@
             "integer": "City must be selected",
             "min": "Please select a valid city"
         },
+        "major_id": {
+            "label": "Major",
+            "placeholder": "Select major",
+            "integer": "Major must be selected",
+            "min": "Please select a valid major"
+        },
         "country_id": {
             "label": "Country",
             "placeholder": "Select country",
@@ -140,12 +146,12 @@
         "file_required": "Please select a file",
         "educational_entity_classification": {
             "label": {
-                "en": "Educational Entity Classification (English)",
-                "ar": "Educational Entity Classification (Arabic)"
+                "en": "Entity Category (English)",
+                "ar": "Entity Category (Arabic)"
             },
             "placeholder": {
-                "en": "Enter educational entity classification in English",
-                "ar": "Enter educational entity classification in Arabic"
+                "en": "Enter Entity Category in English",
+                "ar": "Enter Entity Category in Arabic"
             }
         },
         "status": {
@@ -882,7 +888,7 @@
         "entity_activities": "Entity Activities",
         "education-program-entity-types": "Education Program Types",
         "memorization-program-entity-types": "Memorization Program Types",
-        "lookups" : "Lookups"
+        "lookups": "Lookups"
     },
     "table_titles": {
         "notification_templates": "Notification Templates",

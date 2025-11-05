@@ -140,18 +140,19 @@ export const teachersFields = [
     },
 
     {
+        name: 'major_id',
+        label: 'validation.major_id.label',
+        type: 'select',
+        placeholder: 'validation.major_id.placeholder',
+        editMode: true,
+        viewMode: true
+    },
+
+    {
         name: 'academic_qualification_id',
         label: 'validation.academic_qualification_id.label',
         type: 'select',
         placeholder: 'validation.academic_qualification_id.placeholder',
-        editMode: true,
-        viewMode: true
-    },
-    {
-        name: 'specification_id',
-        label: 'validation.specification_id.label',
-        type: 'select',
-        placeholder: 'validation.specification_id.placeholder',
         editMode: true,
         viewMode: true
     },
@@ -213,9 +214,9 @@ export const teachersFields = [
     },
     {
         name: 'profile_image',
-        label: 'validation.profile_image.label',
+        label: 'validation.profile_picture.label',
         type: 'file',
-        placeholder: 'validation.profile_image.placeholder',
+        placeholder: 'validation.profile_picture.placeholder',
         editMode: true,
         viewMode: true,
         accept: 'image/*'

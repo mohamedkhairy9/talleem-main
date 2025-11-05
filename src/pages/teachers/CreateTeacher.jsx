@@ -16,8 +16,9 @@ import { useNationalitiesQuery } from '@/api/hooks/useNationalities';
 import { useUsersQuery } from '@/api/hooks/useUsers';
 import Loader from '@/components/common/Loader';
 import { allData } from '@/utils/constants/global.constants';
-import { enabledDisabledOptions, teacherStatusOptions } from '@/utils/constants/options';
+import { teacherStatusOptions } from '@/utils/constants/options';
 import { useEntitiesQuery } from '@/api/hooks/useEntities';
+import { useMajorsQuery } from '@/api/hooks/useMajors';
 
 export default function CreateTeacher({ onClose }) {
     const { mutate, isPending } = useCreateTeacherMutation();
@@ -30,8 +31,6 @@ export default function CreateTeacher({ onClose }) {
         useEntitiesQuery(allData);
     const { data: mainProgramsData, isLoading: mainProgramsLoading } =
         useMainProgramsQuery(allData);
-    const { data: entityCategoriesData, isLoading: entityCategoriesLoading } =
-        useEntityCategoriesQuery(allData);
     const {
         data: educationProgramEntityTypesData,
         isLoading: educationProgramEntityTypesLoading
@@ -51,11 +50,11 @@ export default function CreateTeacher({ onClose }) {
     const { data: nationalitiesData, isLoading: nationalitiesLoading } =
         useNationalitiesQuery(allData);
     const { data: usersData, isLoading: usersLoading } = useUsersQuery(allData);
+    const { data: majorsData, isLoading: majorsLoading } = useMajorsQuery(allData);
 
     const isLoading =
         branchesLoading ||
         mainProgramsLoading ||
-        entityCategoriesLoading ||
         educationProgramEntityTypesLoading ||
         memorizationProgramEntityTypesLoading ||
         academicQualificationsLoading ||
@@ -63,7 +62,8 @@ export default function CreateTeacher({ onClose }) {
         citiesLoading ||
         nationalitiesLoading ||
         usersLoading ||
-        entitiesLoading;
+        entitiesLoading ||
+        majorsLoading;
 
     if (isLoading) return <Loader />;
 
@@ -83,11 +83,11 @@ export default function CreateTeacher({ onClose }) {
                     branch_id: branchesData?.data,
                     main_program_id: mainProgramsData?.data,
                     entity_id: entitiesData?.data,
+                    major_id: majorsData?.data,
                     education_program_entity_type_id:
                         educationProgramEntityTypesData?.data,
                     memorization_program_entity_type_id:
                         memorizationProgramEntityTypesData?.data,
-                    entity_category_id: entityCategoriesData?.data,
                     academic_qualification_id: academicQualificationsData?.data,
                     specification_id: specificationsData?.data,
                     city_id: citiesData?.data,

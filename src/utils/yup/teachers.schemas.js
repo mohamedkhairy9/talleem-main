@@ -31,6 +31,11 @@ export const teachersSchema = yup.object({
         .required(t('validation.required'))
         .integer(t('validation.entity_id.integer'))
         .min(1, t('validation.entity_id.min')),
+    major_id: yup
+        .number()
+        .required(t('validation.required'))
+        .integer(t('validation.major_id.integer'))
+        .min(1, t('validation.major_id.min')),
     licence_number: yup
         .string()
         .required(t('validation.required'))
@@ -65,11 +70,6 @@ export const teachersSchema = yup.object({
         .required(t('validation.required'))
         .integer(t('validation.academic_qualification_id.integer'))
         .min(1, t('validation.academic_qualification_id.min')),
-    specification_id: yup
-        .number()
-        .required(t('validation.required'))
-        .integer(t('validation.specification_id.integer'))
-        .min(1, t('validation.specification_id.min')),
     dob: yup.string().required(t('validation.dob.required')),
     years_of_experience: yup
         .number()
