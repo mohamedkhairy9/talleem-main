@@ -1009,7 +1009,8 @@
         "check_out": "تسجيل الخروج",
         "activity": "النشاط",
         "education-program-entity-types": "تصنيف جهة التعليم",
-        "memorization-program-entity-types": "فئة الجهة"
+        "memorization-program-entity-types": "فئة الجهة",
+        "employee": "الموظف"
     },
     "nationalities": {
         "create": "إضافة جنسية",

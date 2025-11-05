@@ -9,7 +9,7 @@ const columnHelper = createColumnHelper();
 
 export const employeesColumns = [
     columnHelper.accessor('name', {
-        header: 'table_headers.employee_name',
+        header: 'table_headers.employee',
         cell: info => <NameCell directValue={info.row.original.name} />
     }),
     columnHelper.accessor('email', {
@@ -182,7 +182,7 @@ export const employeesFields = [
     },
     {
         name: 'profile_picture',
-        label: 'validation.profile_image.label',
+        label: 'validation.profile_picture.label',
         type: 'file',
         placeholder: 'validation.profile_image.placeholder',
         editMode: true,
