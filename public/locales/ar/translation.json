@@ -686,8 +686,8 @@
     },
     "education_program_entity_types": {
         "create": "إنشاء نوع برنامج تعليمي",
-        "update": "تحديث نوع البرنامج التعليمي",
-        "view": "عرض نوع البرنامج التعليمي"
+        "update": "تحديث تصنيف جهة التعليم",
+        "view": "عرض تصنيف جهة التعليم"
     },
     "specifications": {
         "create": "إنشاء تخصص",
@@ -836,9 +836,9 @@
         "parents": "أولياء الأمور",
         "profile_management": "إدارة الملفات الشخصية",
         "entity_activities": "أنشطة الجهات",
-        "education-program-entity-types": "نوع البرنامج التعليمي",
+        "education-program-entity-types": "تصنيف جهة التعليم",
         "memorization-program-entity-types": "نوع البرنامج التحفيظي",
-        "lookups" : "ملفات الرموز"
+        "lookups": "ملفات الرموز"
     },
     "table_titles": {
         "notification_templates": "قوالب الإشعارات",
@@ -878,7 +878,7 @@
         "branch_administrations": "إدارات الفروع",
         "parents": "أولياء الأمور",
         "entity_activities": "أنشطة الجهات",
-        "education-program-entity-types": "أنواع البرامج التعليمية",
+        "education-program-entity-types": "تصنيفات جهة التعليم",
         "memorization-program-entity-types": "أنواع البرامج التحفيظية"
     },
     "table": {
@@ -1002,7 +1002,7 @@
         "check_in": "تسجيل الدخول",
         "check_out": "تسجيل الخروج",
         "activity": "النشاط",
-        "education-program-entity-types": "نوع البرنامج التعليمي",
+        "education-program-entity-types": "تصنيف جهة التعليم",
         "memorization-program-entity-types": "نوع البرنامج التحفيظي"
     },
     "nationalities": {
@@ -1103,5 +1103,5 @@
         "branch_id": "برجاء اختيار مدية أولا حيث ان الفرع يعتمد على المدينة",
         "entity_type": "برجاء اختيار برنامج رئيسي أولا حيث ان نوع الجهة يعتمد على البرنامج الرئيسي"
     },
-    "logout" : "تسجيل الخروج"
+    "logout": "تسجيل الخروج"
 }
