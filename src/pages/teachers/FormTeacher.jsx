@@ -6,7 +6,12 @@ import InputRFH from '@/components/common/inputs/InputRFH';
 import FileInputRFH from '@/components/common/inputs/FileInputRFH';
 import Btn from '@/components/common/buttons/Btn';
 import { getNestedError } from '@/utils/helpers/getNestedError';
-import { generateOptions } from '@/utils/helpers/global.fns';
+import {
+    generateOptions,
+    getUniqueOptionsByName,
+    generateOptionsWithCustomLabel
+} from '@/utils/helpers/global.fns';
+import i18next from 'i18next';
 import { onlyDate } from '@/utils/helpers/global.fns';
 
 export default function FormTeacher({
@@ -31,8 +36,47 @@ export default function FormTeacher({
     const cityId = watch('city_id');
     const branchId = watch('branch_id');
     const mainProgramId = watch('main_program_id');
+    const educationClassification = watch(
+        'education_program_entity_type_classification'
+    );
 
-    console.log(errors);
+    // Get unique options by name for education program entity types (for mainProgramId === 1)
+    const uniqueEducationClassifications = getUniqueOptionsByName(
+        options.education_program_entity_type_id || []
+    );
+
+    // Filter entity categories based on selected classification (for mainProgramId === 1)
+    const filteredEntityCategories =
+        Number(mainProgramId) === 1 && educationClassification
+            ? (() => {
+                  const lang = i18next.language;
+                  const selectedClassification =
+                      uniqueEducationClassifications.find(
+                          u =>
+                              u.id === educationClassification ||
+                              u.value === educationClassification
+                      );
+
+                  if (!selectedClassification) return [];
+
+                  const selectedName =
+                      selectedClassification.name?.[lang] ||
+                      selectedClassification.name?.en ||
+                      selectedClassification.name?.ar ||
+                      selectedClassification.name;
+
+                  return (
+                      options.education_program_entity_type_id || []
+                  ).filter(opt => {
+                      const optName =
+                          opt.name?.[lang] ||
+                          opt.name?.en ||
+                          opt.name?.ar ||
+                          opt.name;
+                      return optName === selectedName;
+                  });
+              })()
+            : [];
 
     useEffect(() => {
         if ((cityId && cityId != oldData?.city_id) || !oldData?.city_id) {
@@ -55,42 +99,106 @@ export default function FormTeacher({
             (mainProgramId && mainProgramId != oldData?.main_program_id) ||
             !oldData?.main_program_id
         ) {
-            setValue('program_entity_types', '');
+            setValue('education_program_entity_type_classification', '');
+            setValue('entity_category_id', '');
         }
     }, [mainProgramId, oldData?.main_program_id, setValue]);
+
+    useEffect(() => {
+        if (Number(mainProgramId) === 1) {
+            if (
+                (educationClassification &&
+                    educationClassification !=
+                        oldData?.education_program_entity_type_classification) ||
+                !oldData?.education_program_entity_type_classification
+            ) {
+                setValue('entity_category_id', '');
+            }
+        }
+    }, [
+        educationClassification,
+        mainProgramId,
+        oldData?.education_program_entity_type_classification,
+        setValue
+    ]);
+
+    // Set the classification value when editing (based on entity_category_id's name)
+    useEffect(() => {
+        if (
+            Number(mainProgramId) === 1 &&
+            oldData?.entity_category_id &&
+            !oldData?.education_program_entity_type_classification
+        ) {
+            // Find the entity type that matches entity_category_id
+            const selectedEntityType = (
+                options.education_program_entity_type_id || []
+            ).find(opt => opt.id === oldData.entity_category_id);
+
+            if (selectedEntityType) {
+                // Find the unique classification that matches this entity type's name
+                const lang = i18next.language;
+                const selectedName =
+                    selectedEntityType.name?.[lang] ||
+                    selectedEntityType.name?.en ||
+                    selectedEntityType.name?.ar ||
+                    selectedEntityType.name;
+                const matchingUniqueClassification =
+                    uniqueEducationClassifications.find(u => {
+                        const uName =
+                            u.name?.[lang] ||
+                            u.name?.en ||
+                            u.name?.ar ||
+                            u.name;
+                        return uName === selectedName;
+                    });
+
+                if (matchingUniqueClassification) {
+                    setValue(
+                        'education_program_entity_type_classification',
+                        matchingUniqueClassification.id ||
+                            matchingUniqueClassification.value
+                    );
+                }
+            }
+        }
+    }, [
+        mainProgramId,
+        oldData,
+        options.education_program_entity_type_id,
+        uniqueEducationClassifications,
+        setValue
+    ]);
 
     const enhancedOptions = {
         ...options,
         branch_id:
             options.branch_id?.filter(branch => branch.city?.id === cityId) ||
             [],
-        program_entity_types:
-            mainProgramId === 1
-                ? options.education_program_entity_type_id
-                : mainProgramId === 2
-                ? options.memorization_program_entity_type_id
+        education_program_entity_type_classification:
+            Number(mainProgramId) === 1 ? uniqueEducationClassifications : [],
+        entity_category_id:
+            Number(mainProgramId) === 1
+                ? educationClassification
+                    ? generateOptionsWithCustomLabel(
+                          filteredEntityCategories,
+                          'educational_entity_classification'
+                      )
+                    : []
+                : Number(mainProgramId) === 2
+                ? options.memorization_program_entity_type_id || []
                 : []
     };
 
     function onSubmit(data) {
+        const { education_program_entity_type_classification: _helper, ...rest } = data;
         const payload = {
-            ...data,
-            // Map program_entity_types to the correct key based on main program
-            ...(data.main_program_id == 1
-                ? {
-                      education_program_entity_type_id:
-                          data.program_entity_types
-                  }
-                : data.main_program_id == 2
-                ? {
-                      memorization_program_entity_type_id:
-                          data.program_entity_types
-                  }
+            ...rest,
+            ...(Number(rest.main_program_id) === 1
+                ? { education_program_entity_type_id: rest.entity_category_id }
+                : Number(rest.main_program_id) === 2
+                ? { memorization_program_entity_type_id: rest.entity_category_id }
                 : {})
         };
-
-        // Remove helper field
-        delete payload.program_entity_types;
 
         // Map profile image key to requested shape if present
         if (payload.profile_image && !payload.profile_picture) {
@@ -105,17 +213,32 @@ export default function FormTeacher({
         });
     }
 
+    const filteredTeacherFields = teachersFields.filter(field => {
+        // Check edit/view mode
+        const modeMatch =
+            (editMode && field.editMode) ||
+            (viewMode && field.viewMode) ||
+            (!editMode && !viewMode);
+
+        if (!modeMatch) return false;
+
+        // Check conditional fields
+        if (field.conditional && field.showWhen) {
+            const condition = field.showWhen.main_program_id;
+            if (Array.isArray(condition)) {
+                return condition.includes(Number(mainProgramId));
+            } else {
+                return Number(mainProgramId) === condition;
+            }
+        }
+
+        return true;
+    });
+
     return (
         <form onSubmit={handleSubmit(onSubmit)} className="p-4 space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {teachersFields
-                    .filter(
-                        field =>
-                            (editMode && field.editMode) ||
-                            (viewMode && field.viewMode) ||
-                            (!editMode && !viewMode)
-                    )
-                    .map(field => (
+                {filteredTeacherFields.map(field => (
                         <div
                             key={field.name}
                             className={
@@ -151,9 +274,14 @@ export default function FormTeacher({
                                     disabled={viewMode}
                                     label={field.label}
                                     name={field.name}
-                                    options={generateOptions(
-                                        enhancedOptions?.[field.name]
-                                    )}
+                                    options={
+                                        field.name === 'entity_category_id' &&
+                                        Number(mainProgramId) === 1
+                                            ? enhancedOptions?.[field.name]
+                                            : generateOptions(
+                                                  enhancedOptions?.[field.name]
+                                              )
+                                    }
                                     defaultValue={
                                         oldData?.[field.name] ||
                                         field.defaultValue
