@@ -121,6 +121,14 @@ export const entityManagersFields = [
         viewMode: true
     },
     {
+        name: 'main_program_id',
+        label: 'validation.main_program_id.label',
+        type: 'select',
+        placeholder: 'validation.main_program_id.placeholder',
+        editMode: true,
+        viewMode: true
+    },
+    {
         name: 'national_id',
         label: 'validation.national_id.label',
         type: 'text',

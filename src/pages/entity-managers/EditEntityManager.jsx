@@ -14,6 +14,7 @@ import { useEntitiesQuery } from '@/api/hooks/useEntities';
 import Loader from '@/components/common/Loader';
 import { allData } from '@/utils/constants/global.constants';
 import { enabledDisabledOptions, genderOptions } from '@/utils/constants/options';
+import { useMainProgramsQuery } from '@/api/hooks/useMainPrograms';
 
 export default function EditEntityManager({ onClose, oldData }) {
     const { mutate, isPending } = useUpdateEntityManagerMutation();
@@ -35,6 +36,8 @@ export default function EditEntityManager({ onClose, oldData }) {
         useCitiesQuery(allData);
     const { data: nationalitiesData, isLoading: nationalitiesLoading } =
         useNationalitiesQuery(allData);
+    const { data: mainProgramsData, isLoading: mainProgramsLoading } = 
+            useMainProgramsQuery(allData);
 
     const isLoading =
         branchesLoading ||
@@ -43,7 +46,8 @@ export default function EditEntityManager({ onClose, oldData }) {
         academicQualificationsLoading ||
         specificationsLoading ||
         citiesLoading ||
-        nationalitiesLoading;
+        nationalitiesLoading ||
+        mainProgramsLoading
 
     if (isLoading) return <Loader />;
 
@@ -64,7 +68,11 @@ export default function EditEntityManager({ onClose, oldData }) {
                     specification_id: specificationsData?.data,
                     city_id: citiesData?.data,
                     gender: genderOptions,
-                    status: enabledDisabledOptions
+                    status: enabledDisabledOptions.map(field => {
+                        field.value = +field.value
+                        return field;
+                    }),
+                    main_program_id: mainProgramsData?.data
                 }}
             />
         </Modal>
