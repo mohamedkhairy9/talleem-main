@@ -15,6 +15,7 @@ import useLocale from '@/utils/hooks/global/useLocale';
 import MapPicker from '@/components/common/maps/MapPicker';
 import Accordion from '@/components/common/UIs/Accordion';
 import i18next from 'i18next';
+import * as yup from 'yup';
 
 export default function FormEntity({
     onClose,
@@ -35,12 +36,25 @@ export default function FormEntity({
     );
     const [profileImageChanged, setProfileImageChanged] = useState(false);
 
+    const [adjustedSchema, setAdjustedSchema] = useState(schema);
     const { register, errors, handleSubmit, control, setValue, watch } = useRFH(
         {
-            schema,
+            schema: adjustedSchema,
             defaultValues: oldData
         }
     );
+
+
+    useEffect(() => {
+        if(openSections.managerInfo){
+            setAdjustedSchema(schema);
+        }else{
+            // exclude the manager field when manger section isn't open
+            const { manager, ...filteredFields } = schema.fields;
+            const newSchema = yup.object(filteredFields);
+            setAdjustedSchema(newSchema);
+        }
+    }, [openSections.managerInfo])
 
     console.log('errors', errors);
 
