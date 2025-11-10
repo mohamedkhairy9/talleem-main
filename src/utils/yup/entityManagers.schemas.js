@@ -36,19 +36,23 @@ export const entityManagersSchema = yup.object({
         .required(t('validation.required'))
         .integer(t('validation.city_id.integer'))
         .min(1, t('validation.city_id.min')),
-    academic_level_id: yup
+    academic_qualification_id: yup
         .number()
         .required(t('validation.required'))
-        .integer(t('validation.academic_level_id.integer'))
-        .min(1, t('validation.academic_level_id.min')),
-    specification_id: yup
-        .number()
-        .integer(t('validation.specification_id.integer'))
-        .min(1, t('validation.specification_id.min')),
+        .integer(t('validation.academic_qualification_id.integer'))
+        .min(1, t('validation.academic_qualification_id.min')),
+    // specification_id: yup
+    //     .number()
+    //     .integer(t('validation.specification_id.integer'))
+    //     .min(1, t('validation.specification_id.min')),
     main_program_id: yup
         .number()
         .integer(t('validation.main_program_id.integer'))
         .min(1, t('validation.main_program_id.min')),
+    major_id: yup
+        .number()
+        .integer(t('validation.major_id.integer'))
+        .min(1, t('validation.major_id.min')),
     national_id: yup
         .string()
         .required(t('validation.required'))
@@ -62,7 +66,9 @@ export const entityManagersSchema = yup.object({
     date_of_birth: yup
         .string()
         .required(t('validation.date_of_birth.required')),
-    years_of_experience: yup.string(),
+    years_of_experience: yup
+        .string()
+        .required('validation.required'),
     manager_phone: yup
         .string()
         .required(t('validation.required'))

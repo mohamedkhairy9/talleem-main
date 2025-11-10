@@ -16,6 +16,7 @@ import Loader from '@/components/common/Loader';
 import { allData } from '@/utils/constants/global.constants';
 import { enabledDisabledOptions, genderOptions } from '@/utils/constants/options';
 import { useMainProgramQuery, useMainProgramsQuery } from '@/api/hooks/useMainPrograms';
+import { useMajorsQuery } from '@/api/hooks/useMajors';
 
 export default function CreateEntityManager({ onClose }) {
     const { mutate, isPending } = useCreateEntityManagerMutation();
@@ -39,6 +40,8 @@ export default function CreateEntityManager({ onClose }) {
         useNationalitiesQuery(allData);
     const { data: mainProgramsData, isLoading: mainProgramsLoading } = 
         useMainProgramsQuery(allData);
+    const { data: majorsData, isLoading: majorsLoading } = 
+        useMajorsQuery(allData);
 
     const isLoading =
         branchesLoading ||
@@ -48,7 +51,8 @@ export default function CreateEntityManager({ onClose }) {
         specificationsLoading ||
         citiesLoading ||
         nationalitiesLoading ||
-        mainProgramsLoading
+        mainProgramsLoading ||
+        majorsLoading
 
     if (isLoading) return <Loader />;
 
@@ -64,7 +68,7 @@ export default function CreateEntityManager({ onClose }) {
                     entity_id: entitiesData?.data,
                     nationality_id: nationalitiesData?.data,
                     branch_id: branchesData?.data,
-                    academic_level_id: academicLevelsData?.data,
+                    academic_qualification_id: academicQualificationsData?.data,
                     specification_id: specificationsData?.data,
                     city_id: citiesData?.data,
                     gender: genderOptions,
@@ -72,7 +76,8 @@ export default function CreateEntityManager({ onClose }) {
                         field.value = +field.value
                         return field;
                     }),
-                    main_program_id: mainProgramsData?.data
+                    main_program_id: mainProgramsData?.data,
+                    major_id: majorsData?.data
                 }}
             />
         </Modal>

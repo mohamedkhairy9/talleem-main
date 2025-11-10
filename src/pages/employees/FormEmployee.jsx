@@ -8,6 +8,7 @@ import Btn from '@/components/common/buttons/Btn';
 import { getNestedError } from '@/utils/helpers/getNestedError';
 import { generateOptions } from '@/utils/helpers/global.fns';
 import { onlyDate } from '@/utils/helpers/global.fns';
+import useFilterBranch from '@/utils/hooks/global/useFilterBranches';
 
 export default function FormEmployee({
     onClose,
@@ -34,6 +35,13 @@ export default function FormEmployee({
 
     const cityId = watch('city_id');
     const branchId = watch('branch_id');
+
+    const filteredBranches = useFilterBranch("city", cityId, options.branch_id);
+
+    const enhancedOptions = {
+        ...options,
+        branch_id: filteredBranches
+    }
 
     useEffect(() => {
         if ((cityId && cityId != oldData?.city_id) || !oldData?.city_id) {
@@ -134,11 +142,11 @@ export default function FormEmployee({
                 options={generateOptions(
                     fieldName === 'entity_id'
                         ? (options?.entity_id || []).filter(
-                              e => !branchId || e.branch?.id === branchId
+                              e => e.branch?.id === branchId
                           )
                         : fieldName === 'branch_id'
                         ? (options?.branch_id || []).filter(
-                              b => !cityId || b.city?.id === cityId
+                              b => b.city?.id === cityId
                           )
                         : options?.[fieldName]
                 )}

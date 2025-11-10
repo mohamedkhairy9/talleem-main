@@ -104,6 +104,8 @@ export default function FormEntity({
         'education_program_entity_type_classification'
     );
 
+    const [prevEducationClassification, setPrevEducationClassification] = useState(null);
+
     console.log("change:", educationClassification)
 
     console.log('mainProgramId', mainProgramId);
@@ -178,23 +180,27 @@ export default function FormEntity({
         }
     }, [mainProgramId, oldData?.main_program_id, setValue]);
 
-    useEffect(() => {
-        if (mainProgramId === 1) {
-            if (
-                (educationClassification &&
-                    educationClassification !=
-                        oldData?.education_program_entity_type_classification) ||
-                !oldData?.education_program_entity_type_classification
-            ) {
-                setValue('entity_category_id', '');
-            }
-        }
-    }, [
-        educationClassification,
-        mainProgramId,
-        oldData?.education_program_entity_type_classification,
-        setValue
-    ]);
+    // useEffect(() => {
+    //     if (mainProgramId === 1) {
+    //         if(educationClassification !== prevEducationClassification && prevEducationClassification !== null){
+    //             setValue('entity_category_id', '');
+    //         } 
+    //         setPrevEducationClassification(educationClassification);
+    //         // if (
+    //         //     (educationClassification &&
+    //         //         educationClassification !=
+    //         //             oldData?.education_program_entity_type_classification) ||
+    //         //     !oldData?.education_program_entity_type_classification
+    //         // ) {
+    //         //     setValue('entity_category_id', '');
+    //         // }
+    //     }
+    // }, [
+    //     educationClassification,
+    //     mainProgramId,
+    //     oldData?.education_program_entity_type_classification,
+    //     setValue
+    // ]);
 
     // Set the classification value when editing (based on entity_category_id's name)
     useEffect(() => {
