@@ -45,6 +45,10 @@ export const entityManagersSchema = yup.object({
         .number()
         .integer(t('validation.specification_id.integer'))
         .min(1, t('validation.specification_id.min')),
+    main_program_id: yup
+        .number()
+        .integer(t('validation.main_program_id.integer'))
+        .min(1, t('validation.main_program_id.min')),
     national_id: yup
         .string()
         .required(t('validation.required'))

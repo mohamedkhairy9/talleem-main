@@ -45,6 +45,8 @@ export default function FormStudent({
         }
     );
 
+    console.log("Entities", options.entity_id)
+
     const mainProgramId = watch('main_program_id');
     const hasMedicalIssues = watch('has_medical_issues');
     const hasHighSchool = watch('qualification.has_high_school');
@@ -53,6 +55,42 @@ export default function FormStudent({
     const educationClassification = watch(
         'education_program_entity_type_classification'
     );
+    const entityCategory = watch('entity_category_id');
+    const city = watch('city_id');
+    
+    console.log("entity category: ", entityCategory)
+
+    // Filter the entities options based on the entity category (for mainProgramId === 1)
+    const filteredEntities = useMemo(() => {
+        if(!mainProgramId) return []; // if no education program was selected
+        const entities = options.entity_id;
+        if(Number(mainProgramId) === 2){ // For memorization program
+            return entities.filter(entity => {
+                return entity.main_program.id === mainProgramId   
+            })
+        }else if(Number(mainProgramId) === 1){ // For education program
+            if(!entityCategory) return []; // if no entity category was selected
+            
+            return entities
+                .filter(entity => {
+                    return entity.main_program.id === mainProgramId   
+                })
+                .filter(entity => { 
+                    // filter based on entity category
+                    return entity.education_program_entity_type?.id === entityCategory
+                })            
+        }
+    }, [mainProgramId, entityCategory, options.entity_id])    
+
+    // Filter branches based on the selected city
+    const filteredBranches = useMemo(() => {
+        if(!city) return []; // if no city is selected
+        const branches = options.branch_id;
+        console.log("Branches: ", branches)
+        return branches.filter(branch => branch.city.id === city);
+    })
+
+    // console.log(filteredBranches)
 
     // Get unique options by name for education program entity types (for mainProgramId === 1)
     const uniqueEducationClassifications = useMemo(
@@ -194,7 +232,9 @@ export default function FormStudent({
                           'educational_entity_classification'
                       )
                     : []
-                : []
+                : [],
+        entity_id: filteredEntities,
+        branch_id: filteredBranches
     };
 
     function onSubmit(data) {
@@ -301,6 +341,7 @@ export default function FormStudent({
                                         disabled={viewMode}
                                         label={field.label}
                                         name={field.name}
+                                        info={field.info}
                                         options={
                                             field.name ===
                                                 'entity_category_id' &&

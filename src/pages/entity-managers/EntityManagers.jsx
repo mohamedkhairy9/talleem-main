@@ -41,8 +41,8 @@ export default function EntityManagers() {
     return (
         <div>
             <Table
-                enableAdd={false}
-                enableDelete={false}
+                enableAdd={true}
+                enableDelete={true}
                 title={t('table_titles.entity_managers')}
                 refresh={refresh}
                 loading={isLoading}

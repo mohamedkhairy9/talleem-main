@@ -1109,7 +1109,9 @@
     "info": {
         "neighborhood_id": "Please select a city first, as the neighborhood depends on the city",
         "branch_id": "Please select a city first, as the branch depends on the city",
-        "entity_type": "Please select a main program first, as the entity type depends on the main program"
+        "entity_type": "Please select a main program first, as the entity type depends on the main program",
+        "entity_category": "Please select an entity type first, as the entity category depends on the entity type",
+        "entity": "Please select an entity category first, as the entity depends on the entity category"
     },
     "logout": "Logout"
 }

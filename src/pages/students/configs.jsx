@@ -103,15 +103,8 @@ export const studentsFields = [
         editMode: true,
         viewMode: true,
         conditional: true,
+        info: 'info.entity_category',
         showWhen: { main_program_id: 1 }
-    },
-    {
-        name: 'branch_id',
-        label: 'validation.branch_id.label',
-        type: 'select',
-        placeholder: 'validation.branch_id.placeholder',
-        editMode: true,
-        viewMode: true
     },
     {
         name: 'entity_id',
@@ -119,7 +112,10 @@ export const studentsFields = [
         type: 'select',
         placeholder: 'validation.entity_id.placeholder',
         editMode: true,
-        viewMode: true
+        viewMode: true,
+        conditional: true,
+        info: 'info.entity',
+        showWhen: { main_program_id: [1, 2] }
     },
     // {
     //     name: 'entity_category_id',
@@ -171,6 +167,15 @@ export const studentsFields = [
         placeholder: 'validation.city_id.placeholder',
         editMode: true,
         viewMode: true
+    },
+    {
+        name: 'branch_id',
+        label: 'validation.branch_id.label',
+        type: 'select',
+        placeholder: 'validation.branch_id.placeholder',
+        editMode: true,
+        viewMode: true,
+        info: 'info.branch_id'
     },
     {
         name: 'address',
@@ -271,7 +276,7 @@ export const studentsFields = [
         editMode: true,
         viewMode: true,
         conditional: true,
-        showWhen: { main_program_id: 2 }
+        showWhen: { main_program_id: [1, 2] }
     },
     {
         name: 'profile_picture',
