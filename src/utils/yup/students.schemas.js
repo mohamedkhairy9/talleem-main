@@ -22,18 +22,12 @@ export const studentsSchema = yup.object({
         .integer(t('validation.main_program_id.integer'))
         .min(1, t('validation.main_program_id.min')),
     education_program_entity_type_classification: yup
-        .string()
+        .number(t('validation.education_program_entity_type_classification.integer'))
         .nullable()
         .when('main_program_id', {
             is: value => Number(value) === 1,
             then: schema =>
-                schema
-                    .string(
-                        t(
-                            'validation.education_program_entity_type_classification.integer'
-                        )
-                    )
-                    .required(t('validation.required')),
+                schema.required(t('validation.required')),
             otherwise: schema => schema.optional()
         }),
     entity_category_id: yup
@@ -43,7 +37,6 @@ export const studentsSchema = yup.object({
             is: value => Number(value) === 1,
             then: schema =>
                 schema
-                    .string()
                     .required(t('validation.required'))
                     .min(1, t('validation.select.min')),
             otherwise: schema => schema.optional()

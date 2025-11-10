@@ -1,6 +1,6 @@
 import useRFH from '@/utils/hooks/global/useRFH';
 import { entitiesSchema as schema } from '@/utils/yup/entities.schemas';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { entitiesFields, managerFields } from './configs';
 import InputRFH from '@/components/common/inputs/InputRFH';
 import FileInputRFH from '@/components/common/inputs/FileInputRFH';
@@ -104,12 +104,14 @@ export default function FormEntity({
         'education_program_entity_type_classification'
     );
 
+    console.log("change:", educationClassification)
+
     console.log('mainProgramId', mainProgramId);
 
     // Get unique options by name for education program entity types (for mainProgramId === 1)
-    const uniqueEducationClassifications = getUniqueOptionsByName(
+    const uniqueEducationClassifications = useMemo(() => getUniqueOptionsByName(
         options.education_program_entity_type_id || []
-    );
+    ), [options.education_program_entity_type_id]);
 
     // Filter entity categories based on selected classification (for mainProgramId === 1)
     const filteredEntityCategories =
