@@ -270,7 +270,10 @@ export const API_URLS = {
         LIST: '/entity-managers',
         DETAILS: id => `/entity-managers/${id}`,
         UPDATE: id => `/entity-managers/${id}`,
-        DELETE: id => `/entity-managers/${id}`
+        DELETE: id => `/entity-managers/${id}`,
+        IMPORT: '/entity-managers-import',
+        EXPORT: '/entity-managers-export',
+        EXPORT_EXAMPLE: '/entity-managers-example-export'
     },
     BRANCH_ADMINISTRATIONS: {
         CREATE: '/branch-administrations',

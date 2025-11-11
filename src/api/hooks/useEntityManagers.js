@@ -56,6 +56,19 @@ export const useUpdateEntityManagerMutation = () => {
     });
 };
 
+export const useImportEntityManagersMutation = () => {
+    const queryClient = useQueryClient();
+    return useCustomMutation({
+        mutationFn: data => entityManagersService.importEntityMangers(data),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: [API_KEYS.ENTITY_MANAGERS] });
+        },
+        onError: error => {
+            console.log(error);
+        }
+    });
+};
+
 export const useDeleteEntityManagerMutation = () => {
     const queryClient = useQueryClient();
     return useCustomMutation({
@@ -65,6 +78,15 @@ export const useDeleteEntityManagerMutation = () => {
                 queryKey: [API_KEYS.ENTITY_MANAGERS]
             });
         },
+        onError: error => {
+            console.log(error);
+        }
+    });
+};
+
+export const useExportExampleFileMutation = () => {
+    return useCustomMutation({
+        mutationFn: () => entityManagersService.exportExampleFile(),
         onError: error => {
             console.log(error);
         }

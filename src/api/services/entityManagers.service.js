@@ -14,7 +14,7 @@ export const entityManagersService = {
     },
 
     createEntityManager: async data => {
-        return await axiosInstance.post(API_URLS.ENTITY_MANAGERS.CREATE, data,multipartFormData);
+        return await axiosInstance.post(API_URLS.ENTITY_MANAGERS.CREATE, data, multipartFormData);
     },
 
     updateEntityManager: async (id, data) => {
@@ -23,6 +23,20 @@ export const entityManagersService = {
             data,
             multipartFormData
         );
+    },
+
+    importEntityMangers: async data => {
+        return await axiosInstance.post(
+            API_URLS.ENTITY_MANAGERS.IMPORT,
+            data,
+            multipartFormData
+        );
+    },
+
+    exportExampleFile: async () => {
+        return await axiosInstance.get(API_URLS.ENTITY_MANAGERS.EXPORT_EXAMPLE, {
+            responseType: 'blob'
+        });
     },
 
     deleteEntityManager: async id => {

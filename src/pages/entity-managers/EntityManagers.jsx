@@ -1,5 +1,5 @@
 import React from 'react';
-import { useEntityManagersQuery } from '@/api/hooks/useEntityManagers';
+import { useEntityManagersQuery, useExportExampleFileMutation } from '@/api/hooks/useEntityManagers';
 import Table from '@/components/common/table/Table';
 import { entityManagersColumns, filtersDefaultValues } from './configs';
 import useIsOpen from '@/utils/hooks/global/useIsOpen';
@@ -12,6 +12,8 @@ import useLocale from '@/utils/hooks/global/useLocale';
 import i18next from 'i18next';
 import { getOriginalObject, onlyDate } from '@/utils/helpers/global.fns';
 import Filters from './Filters';
+import ImportEntityMangers from './ImportEntityMangers';
+import useExportExample from '@/utils/hooks/global/useExportExample';
 
 export default function EntityManagers() {
     const { isOpen, toggle } = useIsOpen();
@@ -19,6 +21,8 @@ export default function EntityManagers() {
         useFiltering(filtersDefaultValues);
     const { data, isLoading, refresh } = useEntityManagersQuery(filters);
     const { t } = useLocale();
+    const { mutate } = useExportExampleFileMutation();
+    const { handleExportExample } = useExportExample({ mutate, filename: 'entity_mangers_example.xlsx' });
 
     const tableData = data?.data?.map(item => ({
         ...item,
@@ -26,7 +30,7 @@ export default function EntityManagers() {
         entity: item.entity?.name?.[i18next.language],
     }));
 
-    const formData = data?.data?.map(({ city, branch, entity, main_program, nationality, user, major, major_id, date_of_birth, created_at, updated_at, ...item}) => ({
+    const formData = data?.data?.map(({ city, branch, entity, main_program, nationality, user, major, major_id, date_of_birth, created_at, updated_at, ...item }) => ({
         ...item,
         entity_id: entity?.id,
         nationality_id: nationality?.id,
@@ -53,6 +57,10 @@ export default function EntityManagers() {
                 columns={entityManagersColumns}
                 toggleModals={toggle}
                 pagination={pagination}
+                enableImport={true}
+                enableExportExample={true}
+                onExportExample={handleExportExample}
+                onImport={toggle.import}
                 setPagination={setter('pagination')}
                 Filters={
                     <Filters filters={filters} handleFilter={handleFilter} />
@@ -79,6 +87,8 @@ export default function EntityManagers() {
                     id={isOpen.delete?.id}
                 />
             )}
+            {isOpen.import && <ImportEntityMangers onClose={toggle.import} />}
+
         </div>
     );
 }
