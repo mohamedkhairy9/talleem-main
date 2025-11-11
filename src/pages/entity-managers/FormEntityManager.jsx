@@ -1,6 +1,6 @@
 import useRFH from '@/utils/hooks/global/useRFH';
 import { entityManagersSchema as schema } from '@/utils/yup/entityManagers.schemas';
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { entityManagersFields } from './configs';
 import InputRFH from '@/components/common/inputs/InputRFH';
 import FileInputRFH from '@/components/common/inputs/FileInputRFH';
@@ -8,6 +8,7 @@ import Btn from '@/components/common/buttons/Btn';
 import { getNestedError } from '@/utils/helpers/getNestedError';
 import { generateOptions, prepareFormData } from '@/utils/helpers/global.fns';
 import { onlyDate } from '@/utils/helpers/global.fns';
+import useFilterBranch from '@/utils/hooks/global/useFilterBranches';
 
 export default function FormEntityManager({
     onClose,
@@ -18,7 +19,7 @@ export default function FormEntityManager({
     mutate,
     options
 }) {
-    const { register, errors, handleSubmit, control, setValue } = useRFH({
+    const { register, errors, handleSubmit, control, setValue, watch } = useRFH({
         schema,
         defaultValues: {
             ...oldData,
@@ -30,6 +31,9 @@ export default function FormEntityManager({
         oldData?.profile_image || null
     );
     const [profileImageChanged, setProfileImageChanged] = useState(false);
+
+    const cityId = watch('city_id');
+    const filteredBranches = useFilterBranch('city', cityId, options.branch_id);
 
     function onSubmit(data) {
         console.log('data', data);
@@ -60,6 +64,29 @@ export default function FormEntityManager({
     };
 
     console.log('oldData', oldData);
+
+    const mainProgramId = watch('main_program_id');
+
+    const filteredEntities = useMemo(() => {
+        console.log("main program id:", mainProgramId)
+        const entities = options.entity_id;
+        if(!mainProgramId) return [];
+        console.log("my entities:", entities);
+        const en =  entities
+            .filter(entity => {
+                return entity.main_program.id === mainProgramId;
+            })
+            console.log("ents.", en)
+            return en;
+    }, [mainProgramId])
+
+    const enhancedOptions = {
+        ...options,
+        entity_id: filteredEntities,
+        branch_id: filteredBranches
+    }
+
+    console.log("enhanced options", enhancedOptions)
 
     return (
         <form onSubmit={handleSubmit(onSubmit)} className="p-4 space-y-4">
@@ -139,11 +166,12 @@ export default function FormEntityManager({
                                     label={field.label}
                                     name={field.name}
                                     options={generateOptions(
-                                        options?.[field.name]
+                                        enhancedOptions?.[field.name]
                                     )}
                                     defaultValue={
                                         oldData?.[field.name] || field.defaultValue
                                     }
+                                    info={field.info}
                                 />
                             )}
                         </div>

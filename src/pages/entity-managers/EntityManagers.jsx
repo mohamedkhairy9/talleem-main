@@ -26,16 +26,17 @@ export default function EntityManagers() {
         entity: item.entity?.name?.[i18next.language],
     }));
 
-    const formData = data?.data?.map(({ city, branch, entity, nationality, user, academic_level, date_of_birth, specification, created_at, updated_at, ...item}) => ({
+    const formData = data?.data?.map(({ city, branch, entity, main_program, nationality, user, major, major_id, date_of_birth, created_at, updated_at, ...item}) => ({
         ...item,
         entity_id: entity?.id,
         nationality_id: nationality?.id,
-        branch_id: branch?.id,
+        branch_id: branch?.id || entity?.branch?.id,
         city_id: city?.id,
-        academic_level_id: academic_level?.id,
-        specification_id: specification?.id,
         user_id: user?.id,
-        date_of_birth: onlyDate(date_of_birth)
+        date_of_birth: onlyDate(date_of_birth),
+        main_program_id: main_program.id,
+        status: +user.status,
+        major_id: major?.id || major_id?.id
     }));
 
     return (

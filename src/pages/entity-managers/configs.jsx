@@ -73,26 +73,27 @@ export const entityManagersFields = [
         viewMode: true
     },
     {
+        name: 'main_program_id',
+        label: 'validation.main_program_id.label',
+        type: 'select',
+        placeholder: 'validation.main_program_id.placeholder',
+        editMode: true,
+        viewMode: true
+    },
+    {
         name: 'entity_id',
         label: 'validation.entity_id.label',
         type: 'select',
         placeholder: 'validation.entity_id.placeholder',
         editMode: true,
-        viewMode: true
+        viewMode: true,
+        info: 'info.entity'
     },
     {
         name: 'nationality_id',
         label: 'validation.nationality_id.label',
         type: 'select',
         placeholder: 'validation.nationality_id.placeholder',
-        editMode: true,
-        viewMode: true
-    },
-    {
-        name: 'branch_id',
-        label: 'validation.branch_id.label',
-        type: 'select',
-        placeholder: 'validation.branch_id.placeholder',
         editMode: true,
         viewMode: true
     },
@@ -105,29 +106,30 @@ export const entityManagersFields = [
         viewMode: true
     },
     {
-        name: 'academic_level_id',
-        label: 'validation.academic_level_id.label',
+        name: 'branch_id',
+        label: 'validation.branch_id.label',
         type: 'select',
-        placeholder: 'validation.academic_level_id.placeholder',
+        placeholder: 'validation.branch_id.placeholder',
         editMode: true,
-        viewMode: true
+        viewMode: true,
+        info: 'info.branch_id'
     },
     {
-        name: 'specification_id',
-        label: 'validation.specification_id.label',
+        name: 'academic_qualification_id',
+        label: 'validation.academic_qualification_id.label',
         type: 'select',
-        placeholder: 'validation.specification_id.placeholder',
+        placeholder: 'validation.academic_qualification_id.placeholder',
         editMode: true,
         viewMode: true
     },
-    {
-        name: 'main_program_id',
-        label: 'validation.main_program_id.label',
-        type: 'select',
-        placeholder: 'validation.main_program_id.placeholder',
-        editMode: true,
-        viewMode: true
-    },
+    // {
+    //     name: 'specification_id',
+    //     label: 'validation.specification_id.label',
+    //     type: 'select',
+    //     placeholder: 'validation.specification_id.placeholder',
+    //     editMode: true,
+    //     viewMode: true
+    // },
     {
         name: 'national_id',
         label: 'validation.national_id.label',
@@ -181,6 +183,14 @@ export const entityManagersFields = [
         label: 'validation.memorization_amount.label',
         type: 'text',
         placeholder: 'validation.memorization_amount.placeholder',
+        editMode: true,
+        viewMode: true
+    },
+    {
+        name: 'major_id',
+        label: 'validation.major_id.label',
+        type: 'select',
+        placeholder: 'validation.major_id.placeholder',
         editMode: true,
         viewMode: true
     },
