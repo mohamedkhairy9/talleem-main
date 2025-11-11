@@ -13,6 +13,7 @@ import {
 } from '@/utils/helpers/global.fns';
 import i18next from 'i18next';
 import { onlyDate } from '@/utils/helpers/global.fns';
+import { useEntityQuery } from '@/api/hooks/useEntities'; // Add this import
 
 export default function FormTeacher({
     onClose,
@@ -40,9 +41,64 @@ export default function FormTeacher({
     const cityId = watch('city_id');
     const branchId = watch('branch_id');
     const mainProgramId = watch('main_program_id');
+    const entityId = watch('entity_id'); // Watch entity_id
     const educationClassification = watch(
         'education_program_entity_type_classification'
     );
+
+    // Fetch entity details when entity_id changes
+    const { data: entityData, isLoading: entityLoading } = useEntityQuery(
+        entityId,
+        {
+            enabled: !!entityId && !editMode // Only fetch when entityId exists and not in edit mode
+        }
+    );
+
+    // Auto-populate fields when entity data is fetched
+    useEffect(() => {
+        if (entityData?.data && entityId && !editMode) {
+            const entity = entityData.data;
+
+            // Handle education program (main_program_id === 1)
+            if (entity.education_program_entity_type) {
+                const educationType = entity.education_program_entity_type;
+
+                // Set the classification (category)
+                if (educationType.educational_entity_classification) {
+                    const lang = i18next.language;
+                    const classificationName =
+                        educationType.educational_entity_classification[lang] ||
+                        educationType.educational_entity_classification.en ||
+                        educationType.educational_entity_classification.ar;
+
+                    // Find matching classification in options
+                    const matchingClassification = uniqueEducationClassifications.find(
+                        opt => {
+                            const optName = opt.name?.[lang] || opt.name?.en || opt.name?.ar || opt.name;
+                            return optName === classificationName;
+                        }
+                    );
+
+                    if (matchingClassification) {
+                        setValue(
+                            'education_program_entity_type_classification',
+                            matchingClassification.id || matchingClassification.value
+                        );
+                    }
+                }
+
+                // Set entity_category_id (will be sent as education_program_entity_type_id)
+                if (educationType.id) {
+                    setValue('entity_category_id', educationType.id);
+                }
+            }
+
+            // Handle memorization program (main_program_id === 2)
+            if (entity.memorization_program_entity_type) {
+                setValue('entity_category_id', entity.memorization_program_entity_type.id);
+            }
+        }
+    }, [entityData, entityId, editMode, setValue, i18next.language]);
 
     // Get unique options by name for education program entity types (for mainProgramId === 1)
     const uniqueEducationClassifications = useMemo(
@@ -114,7 +170,7 @@ export default function FormTeacher({
             if (
                 (educationClassification &&
                     educationClassification !=
-                        oldData?.education_program_entity_type_classification) ||
+                    oldData?.education_program_entity_type_classification) ||
                 (!oldData?.education_program_entity_type_classification &&
                     !isInitializing)
             ) {
@@ -156,7 +212,7 @@ export default function FormTeacher({
                 setValue(
                     'education_program_entity_type_classification',
                     matchingUniqueClassification.id ||
-                        matchingUniqueClassification.value,
+                    matchingUniqueClassification.value,
                     { shouldDirty: false, shouldValidate: false }
                 );
                 initializedClassificationRef.current = true;
@@ -192,21 +248,26 @@ export default function FormTeacher({
         branch_id:
             options.branch_id?.filter(branch => branch.city?.id === cityId) ||
             [],
+        entity_id:
+            branchId
+                ? options.entity_id?.filter(
+                    entity => entity.branch?.id === Number(branchId)
+                ) || []
+                : options.entity_id || [], // Show all entities if no branch selected
         education_program_entity_type_classification:
             Number(mainProgramId) === 1 ? uniqueEducationClassifications : [],
         entity_category_id:
             Number(mainProgramId) === 1
                 ? educationClassification
                     ? generateOptionsWithCustomLabel(
-                          filteredEntityCategories,
-                          'educational_entity_classification'
-                      )
+                        filteredEntityCategories,
+                        'educational_entity_classification'
+                    )
                     : []
                 : Number(mainProgramId) === 2
-                ? options.memorization_program_entity_type_id || []
-                : []
+                    ? options.memorization_program_entity_type_id || []
+                    : []
     };
-
     function onSubmit(data) {
         const {
             education_program_entity_type_classification: _helper,
@@ -217,11 +278,11 @@ export default function FormTeacher({
             ...(Number(rest.main_program_id) === 1
                 ? { education_program_entity_type_id: rest.entity_category_id }
                 : Number(rest.main_program_id) === 2
-                ? {
-                      memorization_program_entity_type_id:
-                          rest.entity_category_id
-                  }
-                : {})
+                    ? {
+                        memorization_program_entity_type_id:
+                            rest.entity_category_id
+                    }
+                    : {})
         };
 
         // In edit mode, if profile image not changed, don't send it
@@ -269,12 +330,12 @@ export default function FormTeacher({
                             field.type === 'textarea'
                                 ? 'md:col-span-2 lg:col-span-3'
                                 : field.type === 'file'
-                                ? 'md:col-span-2 lg:col-span-3'
-                                : ''
+                                    ? 'md:col-span-2 lg:col-span-3'
+                                    : ''
                         }
                     >
                         {field.type === 'file' &&
-                        field.name === 'profile_image' ? (
+                            field.name === 'profile_image' ? (
                             <div className="space-y-2">
                                 <InputRFH
                                     info={field.info}
@@ -340,11 +401,11 @@ export default function FormTeacher({
                                 name={field.name}
                                 options={
                                     field.name === 'entity_category_id' &&
-                                    Number(mainProgramId) === 1
+                                        Number(mainProgramId) === 1
                                         ? enhancedOptions?.[field.name]
                                         : generateOptions(
-                                              enhancedOptions?.[field.name]
-                                          )
+                                            enhancedOptions?.[field.name]
+                                        )
                                 }
                                 defaultValue={
                                     oldData?.[field.name] || field.defaultValue
@@ -356,7 +417,7 @@ export default function FormTeacher({
             </div>
             {!viewMode && (
                 <Btn
-                    loading={isPending}
+                    loading={isPending || entityLoading}
                     className="py-[10px] w-full"
                     type="submit"
                     label="common.submit"
