@@ -115,6 +115,7 @@ export default function FormStudent({
     const educationClassification = watch('education_program_entity_type_classification');
     const entityCategory = watch('entity_category_id');
     const city = watch('city_id');
+    const branchId = watch('branch_id');
     const entityId = watch('entity_id');
     const dateOfBirth = watch('date_of_birth');
     
@@ -135,29 +136,59 @@ export default function FormStudent({
         return null;
     }, [entityId, options.entity_id]);
 
-    // Filter entities based on main program only
+    // Filter entities based on main program AND branch
     const filteredEntities = useMemo(() => {
         console.log('=== FILTERING ENTITIES ===');
         console.log('mainProgramId:', mainProgramId);
+        console.log('branchId:', branchId);
         console.log('All entities:', options.entity_id);
         
         if (!mainProgramId || !options.entity_id) {
-            console.log('No program or entities');
+            console.log('No program selected');
+            return [];
+        }
+
+        // If no branch selected, return empty array
+        if (!branchId) {
+            console.log('No branch selected - entities disabled');
             return [];
         }
         
         const entities = options.entity_id;
         
-        // Filter by main program only
+        // Filter by main program AND branch
         const filtered = entities.filter(entity => {
-            const matches = entity.main_program?.id === Number(mainProgramId);
-            console.log(`Entity ${entity.id} (${entity.name?.[lang]}): main_program.id=${entity.main_program?.id}, matches=${matches}`);
-            return matches;
+            const matchesProgram = entity.main_program?.id === Number(mainProgramId);
+            
+            // Check if entity belongs to the selected branch
+            // Adjust the property name based on your actual data structure:
+            let matchesBranch = false;
+            
+            if (entity.branch_id) {
+                // If entity has direct branch_id
+                matchesBranch = entity.branch_id === Number(branchId);
+            } else if (entity.branch?.id) {
+                // If entity has branch object
+                matchesBranch = entity.branch.id === Number(branchId);
+            } else if (Array.isArray(entity.branches)) {
+                // If entity has multiple branches (many-to-many relationship)
+                matchesBranch = entity.branches.some(branch => 
+                    branch.id === Number(branchId) || branch === Number(branchId)
+                );
+            }
+            
+            console.log(`Entity ${entity.id} (${entity.name?.[lang]}):`, {
+                matchesProgram,
+                matchesBranch,
+                included: matchesProgram && matchesBranch
+            });
+            
+            return matchesProgram && matchesBranch;
         });
         
         console.log('Final filtered entities:', filtered.length);
         return filtered;
-    }, [mainProgramId, options.entity_id, lang]);
+    }, [mainProgramId, branchId, options.entity_id, lang]);
 
     // Filter branches based on selected city
     const filteredBranches = useMemo(() => {
@@ -190,7 +221,7 @@ export default function FormStudent({
         }
     }, [selectedEntityEducationType, setValue, editMode, viewMode, lang]);
 
-    // Reset entity when main program changes
+    // Reset dependent fields when main program changes
     useEffect(() => {
         if (mainProgramId && mainProgramId !== oldData?.main_program_id) {
             console.log('Main program changed, resetting fields');
@@ -199,6 +230,27 @@ export default function FormStudent({
             setValue('education_program_entity_type_classification', '');
         }
     }, [mainProgramId, oldData?.main_program_id, setValue]);
+
+    // Reset branch and entity when city changes
+    useEffect(() => {
+        if (city && city !== oldData?.city_id) {
+            console.log('City changed, resetting branch and entity');
+            setValue('branch_id', '');
+            setValue('entity_id', '');
+            setValue('entity_category_id', '');
+            setValue('education_program_entity_type_classification', '');
+        }
+    }, [city, oldData?.city_id, setValue]);
+
+    // Reset entity when branch changes (only if city hasn't changed)
+    useEffect(() => {
+        if (branchId && branchId !== oldData?.branch_id && city === oldData?.city_id) {
+            console.log('Branch changed, resetting entity');
+            setValue('entity_id', '');
+            setValue('entity_category_id', '');
+            setValue('education_program_entity_type_classification', '');
+        }
+    }, [branchId, city, oldData?.branch_id, oldData?.city_id, setValue]);
 
     // Enhanced options with filtered data
     const enhancedOptions = useMemo(() => ({
@@ -327,6 +379,64 @@ export default function FormStudent({
                                     <p className="mt-1 h-4 text-xs text-red-600" role="alert">
                                         {t(getNestedError(errors, field.name)) || ''}
                                     </p>
+                                </div>
+                            );
+                        }
+
+                        // Special handling for branch field - disabled until city is selected
+                        if (field.name === 'branch_id') {
+                            const isBranchDisabled = !city || viewMode;
+                            
+                            return (
+                                <div key={field.name}>
+                                    <InputRFH
+                                        p="px-3 py-3"
+                                        control={control}
+                                        register={register}
+                                        error={getNestedError(errors, field.name)}
+                                        type={field.type}
+                                        placeholder={field.placeholder}
+                                        disabled={isBranchDisabled}
+                                        label={field.label}
+                                        name={field.name}
+                                        info={field.info}
+                                        options={generateOptions(enhancedOptions[field.name] || [])}
+                                        defaultValue={defaultValues[field.name] || field.defaultValue}
+                                    />
+                                    {!city && !viewMode && (
+                                        <p className="mt-1 text-xs text-gray-500">
+                                            {t('validation.select_city_first')}
+                                        </p>
+                                    )}
+                                </div>
+                            );
+                        }
+
+                        // Special handling for entity field - disabled until branch is selected
+                        if (field.name === 'entity_id') {
+                            const isEntityDisabled = !branchId || viewMode;
+                            
+                            return (
+                                <div key={field.name}>
+                                    <InputRFH
+                                        p="px-3 py-3"
+                                        control={control}
+                                        register={register}
+                                        error={getNestedError(errors, field.name)}
+                                        type={field.type}
+                                        placeholder={field.placeholder}
+                                        disabled={isEntityDisabled}
+                                        label={field.label}
+                                        name={field.name}
+                                        info={field.info}
+                                        options={generateOptions(enhancedOptions[field.name] || [])}
+                                        defaultValue={defaultValues[field.name] || field.defaultValue}
+                                    />
+                                    {!branchId && !viewMode && (
+                                        <p className="mt-1 text-xs text-gray-500">
+                                            {t('validation.select_branch_first')}
+                                        </p>
+                                    )}
                                 </div>
                             );
                         }

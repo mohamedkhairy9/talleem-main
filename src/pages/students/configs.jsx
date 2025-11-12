@@ -83,6 +83,35 @@ export const studentsFields = [
         viewMode: true
     },
     {
+        name: 'city_id',
+        label: 'validation.city_id.label',
+        type: 'select',
+        placeholder: 'validation.city_id.placeholder',
+        editMode: true,
+        viewMode: true
+    },
+    {
+        name: 'branch_id',
+        label: 'validation.branch_id.label',
+        type: 'select',
+        placeholder: 'validation.branch_id.placeholder',
+        editMode: true,
+        viewMode: true,
+        info: 'info.branch_id'
+    },
+
+    {
+        name: 'entity_id',
+        label: 'validation.entity_id.label',
+        type: 'select',
+        placeholder: 'validation.entity_id.placeholder',
+        editMode: true,
+        viewMode: true,
+        conditional: true,
+        info: 'info.entity',
+        showWhen: { main_program_id: [1, 2] }
+    },
+    {
         name: 'education_program_entity_type_classification',
         label: 'validation.education_program_entity_type_classification.label',
         type: 'select',
@@ -103,17 +132,6 @@ export const studentsFields = [
         conditional: true,
         info: 'info.entity_category',
         showWhen: { main_program_id: 1 }
-    },
-    {
-        name: 'entity_id',
-        label: 'validation.entity_id.label',
-        type: 'select',
-        placeholder: 'validation.entity_id.placeholder',
-        editMode: true,
-        viewMode: true,
-        conditional: true,
-        info: 'info.entity',
-        showWhen: { main_program_id: [1, 2] }
     },
     {
         name: 'status',
@@ -151,23 +169,6 @@ export const studentsFields = [
         showWhen: { main_program_id: 2 }
     },
     {
-        name: 'city_id',
-        label: 'validation.city_id.label',
-        type: 'select',
-        placeholder: 'validation.city_id.placeholder',
-        editMode: true,
-        viewMode: true
-    },
-    {
-        name: 'branch_id',
-        label: 'validation.branch_id.label',
-        type: 'select',
-        placeholder: 'validation.branch_id.placeholder',
-        editMode: true,
-        viewMode: true,
-        info: 'info.branch_id'
-    },
-    {
         name: 'address',
         label: 'validation.address.label',
         type: 'textarea',
@@ -186,9 +187,9 @@ export const studentsFields = [
     // UPDATED: Replace single parent_name with bilingual fields
     {
         name: 'parent_name.en',
-        label: 'validation.parent_name.label.en',
+        label: 'validation.parent_name.label_en',
         type: 'text',
-        placeholder: 'validation.parent_name.placeholder.en',
+        placeholder: 'validation.parent_name.placeholder_en',
         editMode: true,
         viewMode: true,
         conditional: true,
@@ -196,9 +197,9 @@ export const studentsFields = [
     },
     {
         name: 'parent_name.ar',
-        label: 'validation.parent_name.label.ar',
+        label: 'validation.parent_name.label_ar',
         type: 'text',
-        placeholder: 'validation.parent_name.placeholder.ar',
+        placeholder: 'validation.parent_name.placeholder_ar',
         editMode: true,
         viewMode: true,
         conditional: true,
