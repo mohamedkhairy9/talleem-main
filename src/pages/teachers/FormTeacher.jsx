@@ -13,7 +13,7 @@ import {
 } from '@/utils/helpers/global.fns';
 import i18next from 'i18next';
 import { onlyDate } from '@/utils/helpers/global.fns';
-import { useEntityQuery } from '@/api/hooks/useEntities'; // Add this import
+import { useEntityQuery } from '@/api/hooks/useEntities';
 
 export default function FormTeacher({
     onClose,
@@ -41,9 +41,22 @@ export default function FormTeacher({
     const cityId = watch('city_id');
     const branchId = watch('branch_id');
     const mainProgramId = watch('main_program_id');
-    const entityId = watch('entity_id'); // Watch entity_id
+    const entityId = watch('entity_id');
     const educationClassification = watch(
         'education_program_entity_type_classification'
+    );
+
+    // Track if entity has been fetched and populated
+    const [entityFieldsPopulated, setEntityFieldsPopulated] = useState(false);
+
+    // Get unique options by name for education program entity types (for mainProgramId === 1)
+    // MOVED THIS BEFORE THE useEffect THAT USES IT
+    const uniqueEducationClassifications = useMemo(
+        () =>
+            getUniqueOptionsByName(
+                options.education_program_entity_type_id || []
+            ),
+        [options.education_program_entity_type_id, i18next.language]
     );
 
     // Fetch entity details when entity_id changes
@@ -54,60 +67,90 @@ export default function FormTeacher({
         }
     );
 
-    // Auto-populate fields when entity data is fetched
-    useEffect(() => {
-        if (entityData?.data && entityId && !editMode) {
-            const entity = entityData.data;
-
-            // Handle education program (main_program_id === 1)
-            if (entity.education_program_entity_type) {
-                const educationType = entity.education_program_entity_type;
-
-                // Set the classification (category)
-                if (educationType.educational_entity_classification) {
-                    const lang = i18next.language;
-                    const classificationName =
-                        educationType.educational_entity_classification[lang] ||
-                        educationType.educational_entity_classification.en ||
-                        educationType.educational_entity_classification.ar;
-
-                    // Find matching classification in options
-                    const matchingClassification = uniqueEducationClassifications.find(
-                        opt => {
-                            const optName = opt.name?.[lang] || opt.name?.en || opt.name?.ar || opt.name;
-                            return optName === classificationName;
-                        }
-                    );
-
-                    if (matchingClassification) {
-                        setValue(
-                            'education_program_entity_type_classification',
-                            matchingClassification.id || matchingClassification.value
-                        );
-                    }
-                }
-
-                // Set entity_category_id (will be sent as education_program_entity_type_id)
-                if (educationType.id) {
-                    setValue('entity_category_id', educationType.id);
-                }
-            }
-
-            // Handle memorization program (main_program_id === 2)
-            if (entity.memorization_program_entity_type) {
-                setValue('entity_category_id', entity.memorization_program_entity_type.id);
-            }
+// Auto-populate fields when entity data is fetched
+useEffect(() => {
+    if (entityData?.data && entityId && !editMode) {
+        const entity = entityData.data;
+        
+        console.log('Entity Data:', entity);
+        
+        // Handle education program (main_program_id === 1)
+        if (Number(mainProgramId) === 1 && entity.education_program_entity_type) {
+            const educationType = entity.education_program_entity_type;
+            
+            console.log('Education Type:', educationType);
+            
+            // Get the classification text based on current language
+            const lang = i18next.language;
+            const classificationText = educationType.educational_entity_classification?.[lang] || 
+                                      educationType.educational_entity_classification?.en ||
+                                      educationType.educational_entity_classification?.ar;
+            
+            const nameText = educationType.name?.[lang] || 
+                           educationType.name?.en ||
+                           educationType.name?.ar;
+            
+            console.log('Setting values:', {
+                classification: classificationText,
+                name: nameText,
+                id: educationType.id
+            });
+            
+            // Set classification (category - e.g., "Teacher training institutes")
+            setValue(
+                'education_program_entity_type_classification',
+                classificationText,
+                { shouldValidate: false, shouldDirty: true }
+            );
+            
+            // Set entity_category_id (name - e.g., "Sharia institutes")
+            // Store the ID in a hidden field for submission
+            setValue('entity_category_id', nameText, {
+                shouldValidate: false,
+                shouldDirty: true
+            });
+            
+            // Store the actual ID in a hidden field
+            setValue('entity_category_id_value', String(educationType.id), {
+                shouldValidate: false,
+                shouldDirty: true
+            });
+            
+            setEntityFieldsPopulated(true);
         }
-    }, [entityData, entityId, editMode, setValue, i18next.language]);
+        
+        // Handle memorization program (main_program_id === 2)
+        if (Number(mainProgramId) === 2 && entity.memorization_program_entity_type) {
+            const lang = i18next.language;
+            const nameText = entity.memorization_program_entity_type.name?.[lang] || 
+                           entity.memorization_program_entity_type.name?.en ||
+                           entity.memorization_program_entity_type.name?.ar;
+            
+            console.log('Memorization Type:', entity.memorization_program_entity_type);
+            
+            setValue('entity_category_id', nameText, {
+                shouldValidate: false,
+                shouldDirty: true
+            });
+            
+            // Store the actual ID in a hidden field
+            setValue('entity_category_id_value', String(entity.memorization_program_entity_type.id), {
+                shouldValidate: false,
+                shouldDirty: true
+            });
+            
+            setEntityFieldsPopulated(true);
+        }
+    }
+}, [entityData, entityId, editMode, mainProgramId, setValue, i18next.language]);
 
-    // Get unique options by name for education program entity types (for mainProgramId === 1)
-    const uniqueEducationClassifications = useMemo(
-        () =>
-            getUniqueOptionsByName(
-                options.education_program_entity_type_id || []
-            ),
-        [options.education_program_entity_type_id, i18next.language]
-    );
+
+// Reset populated flag when entity changes
+    useEffect(() => {
+        if (!editMode && entityId) {
+            setEntityFieldsPopulated(false);
+        }
+    }, [entityId, editMode]);
 
     // Filter entity categories based on selected classification (for mainProgramId === 1)
     const filteredEntityCategories = useMemo(() => {
@@ -141,6 +184,9 @@ export default function FormTeacher({
         if ((cityId && cityId != oldData?.city_id) || !oldData?.city_id) {
             setValue('branch_id', '');
             setValue('entity_id', '');
+            setValue('education_program_entity_type_classification', '');
+            setValue('entity_category_id', '');
+            setEntityFieldsPopulated(false);
         }
     }, [cityId, oldData?.city_id, setValue]);
 
@@ -150,6 +196,9 @@ export default function FormTeacher({
             !oldData?.branch_id
         ) {
             setValue('entity_id', '');
+            setValue('education_program_entity_type_classification', '');
+            setValue('entity_category_id', '');
+            setEntityFieldsPopulated(false);
         }
     }, [branchId, oldData?.branch_id, setValue]);
 
@@ -160,6 +209,7 @@ export default function FormTeacher({
         ) {
             setValue('education_program_entity_type_classification', '');
             setValue('entity_category_id', '');
+            setEntityFieldsPopulated(false);
         }
     }, [mainProgramId, oldData?.main_program_id, setValue]);
 
@@ -170,18 +220,24 @@ export default function FormTeacher({
             if (
                 (educationClassification &&
                     educationClassification !=
-                    oldData?.education_program_entity_type_classification) ||
+                        oldData?.education_program_entity_type_classification) ||
                 (!oldData?.education_program_entity_type_classification &&
-                    !isInitializing)
+                    !isInitializing &&
+                    !entityFieldsPopulated) // Don't clear if entity is being populated
             ) {
-                setValue('entity_category_id', '');
+                // Only clear if not being auto-populated
+                if (!entityLoading) {
+                    setValue('entity_category_id', '');
+                }
             }
         }
     }, [
         educationClassification,
         mainProgramId,
         oldData?.education_program_entity_type_classification,
-        setValue
+        setValue,
+        entityFieldsPopulated,
+        entityLoading
     ]);
 
     const initializedClassificationRef = useRef(false);
@@ -212,7 +268,7 @@ export default function FormTeacher({
                 setValue(
                     'education_program_entity_type_classification',
                     matchingUniqueClassification.id ||
-                    matchingUniqueClassification.value,
+                        matchingUniqueClassification.value,
                     { shouldDirty: false, shouldValidate: false }
                 );
                 initializedClassificationRef.current = true;
@@ -246,28 +302,32 @@ export default function FormTeacher({
     const enhancedOptions = {
         ...options,
         branch_id:
-            options.branch_id?.filter(branch => branch.city?.id === cityId) ||
-            [],
+            cityId
+                ? options.branch_id?.filter(
+                      branch => branch.city?.id === Number(cityId)
+                  ) || []
+                : options.branch_id || [],
         entity_id:
             branchId
                 ? options.entity_id?.filter(
-                    entity => entity.branch?.id === Number(branchId)
-                ) || []
-                : options.entity_id || [], // Show all entities if no branch selected
+                      entity => entity.branch?.id === Number(branchId)
+                  ) || []
+                : [],
         education_program_entity_type_classification:
             Number(mainProgramId) === 1 ? uniqueEducationClassifications : [],
         entity_category_id:
             Number(mainProgramId) === 1
                 ? educationClassification
                     ? generateOptionsWithCustomLabel(
-                        filteredEntityCategories,
-                        'educational_entity_classification'
-                    )
+                          filteredEntityCategories,
+                          'educational_entity_classification'
+                      )
                     : []
                 : Number(mainProgramId) === 2
-                    ? options.memorization_program_entity_type_id || []
-                    : []
+                ? options.memorization_program_entity_type_id || []
+                : []
     };
+
     function onSubmit(data) {
         const {
             education_program_entity_type_classification: _helper,
@@ -278,11 +338,11 @@ export default function FormTeacher({
             ...(Number(rest.main_program_id) === 1
                 ? { education_program_entity_type_id: rest.entity_category_id }
                 : Number(rest.main_program_id) === 2
-                    ? {
-                        memorization_program_entity_type_id:
-                            rest.entity_category_id
-                    }
-                    : {})
+                ? {
+                      memorization_program_entity_type_id:
+                          rest.entity_category_id
+                  }
+                : {})
         };
 
         // In edit mode, if profile image not changed, don't send it
@@ -297,6 +357,36 @@ export default function FormTeacher({
             }
         });
     }
+
+    // Helper function to determine if a field should be disabled
+    const isFieldDisabled = (fieldName) => {
+        if (viewMode) return true;
+
+        // In edit mode, fields are always enabled
+        if (editMode) return false;
+
+        // Entity field disabled until branch is selected
+        if (fieldName === 'entity_id' && !branchId) {
+            return true;
+        }
+
+        // Classification field disabled until entity is selected (but enabled after entity is fetched)
+        if (fieldName === 'education_program_entity_type_classification') {
+            return !entityId || entityLoading;
+        }
+
+        // Category field disabled until classification is selected OR until entity data is loaded
+        if (fieldName === 'entity_category_id') {
+            if (Number(mainProgramId) === 1) {
+                return !educationClassification || entityLoading;
+            }
+            if (Number(mainProgramId) === 2) {
+                return !entityId || entityLoading;
+            }
+        }
+
+        return false;
+    };
 
     const filteredTeacherFields = teachersFields.filter(field => {
         // Check edit/view mode
@@ -330,12 +420,12 @@ export default function FormTeacher({
                             field.type === 'textarea'
                                 ? 'md:col-span-2 lg:col-span-3'
                                 : field.type === 'file'
-                                    ? 'md:col-span-2 lg:col-span-3'
-                                    : ''
+                                ? 'md:col-span-2 lg:col-span-3'
+                                : ''
                         }
                     >
                         {field.type === 'file' &&
-                            field.name === 'profile_image' ? (
+                        field.name === 'profile_image' ? (
                             <div className="space-y-2">
                                 <InputRFH
                                     info={field.info}
@@ -345,7 +435,7 @@ export default function FormTeacher({
                                     error={getNestedError(errors, field.name)}
                                     type={field.type}
                                     placeholder={field.placeholder}
-                                    disabled={viewMode}
+                                    disabled={isFieldDisabled(field.name)}
                                     label={field.label}
                                     name={field.name}
                                     accept={field.accept}
@@ -380,7 +470,7 @@ export default function FormTeacher({
                                 control={control}
                                 error={getNestedError(errors, field.name)}
                                 placeholder={field.placeholder}
-                                disabled={viewMode}
+                                disabled={isFieldDisabled(field.name)}
                                 label={field.label}
                                 name={field.name}
                                 multiple={field.multiple}
@@ -396,16 +486,16 @@ export default function FormTeacher({
                                 error={getNestedError(errors, field.name)}
                                 type={field.type}
                                 placeholder={field.placeholder}
-                                disabled={viewMode}
+                                disabled={isFieldDisabled(field.name)}
                                 label={field.label}
                                 name={field.name}
                                 options={
                                     field.name === 'entity_category_id' &&
-                                        Number(mainProgramId) === 1
+                                    Number(mainProgramId) === 1
                                         ? enhancedOptions?.[field.name]
                                         : generateOptions(
-                                            enhancedOptions?.[field.name]
-                                        )
+                                              enhancedOptions?.[field.name]
+                                          )
                                 }
                                 defaultValue={
                                     oldData?.[field.name] || field.defaultValue
