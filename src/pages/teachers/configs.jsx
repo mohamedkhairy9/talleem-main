@@ -74,28 +74,28 @@ export const teachersFields = [
         editMode: true,
         viewMode: true
     },
-    {
-        name: 'education_program_entity_type_classification',
-        label: 'validation.education_program_entity_type_classification.label',
-        type: 'select',
-        placeholder:
-            'validation.education_program_entity_type_classification.placeholder',
-        editMode: true,
-        viewMode: true,
-        conditional: true,
-        showWhen: { main_program_id: 1 }
-    },
-    {
-        name: 'entity_category_id',
-        label: 'validation.entity_category_id.label',
-        type: 'select',
-        placeholder: 'validation.entity_category_id.placeholder',
-        info: 'info.entity_type',
-        editMode: true,
-        viewMode: true,
-        conditional: true,
-        showWhen: { main_program_id: [1, 2] }
-    },
+    // {
+    //     name: 'education_program_entity_type_classification',
+    //     label: 'validation.education_program_entity_type_classification.label',
+    //     type: 'select',
+    //     placeholder:
+    //         'validation.education_program_entity_type_classification.placeholder',
+    //     editMode: true,
+    //     viewMode: true,
+    //     conditional: true,
+    //     showWhen: { main_program_id: 1 }
+    // },
+    // {
+    //     name: 'entity_category_id',
+    //     label: 'validation.entity_category_id.label',
+    //     type: 'select',
+    //     placeholder: 'validation.entity_category_id.placeholder',
+    //     info: 'info.entity_type',
+    //     editMode: true,
+    //     viewMode: true,
+    //     conditional: true,
+    //     showWhen: { main_program_id: [1, 2] }
+    // },
     {
         name: 'nationality_id',
         label: 'validation.nationality_id.label',
@@ -129,7 +129,29 @@ export const teachersFields = [
         editMode: true,
         viewMode: true
     },
-
+{
+        name: 'education_program_entity_type_classification',
+        label: 'validation.education_program_entity_type_classification.label',
+        type: 'text', // CHANGED TO TEXT
+        placeholder: 'validation.education_program_entity_type_classification.placeholder',
+        editMode: true,
+        viewMode: true,
+        conditional: true,
+        showWhen: { main_program_id: 1 },
+        readOnly: true // ADD THIS
+    },
+    {
+        name: 'entity_category_id',
+        label: 'validation.entity_category_id.label',
+        type: 'text', // CHANGED TO TEXT
+        placeholder: 'validation.entity_category_id.placeholder',
+        info: 'info.entity_type',
+        editMode: true,
+        viewMode: true,
+        conditional: true,
+        showWhen: { main_program_id: [1, 2] },
+        readOnly: true // ADD THIS
+    },
     {
         name: 'licence_number',
         label: 'validation.licence_number.label',
