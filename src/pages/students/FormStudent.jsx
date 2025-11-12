@@ -368,11 +368,6 @@ export default function FormStudent({
                                         options={generateOptions(enhancedOptions[field.name] || [])}
                                         defaultValue={defaultValues[field.name] || field.defaultValue}
                                     />
-                                    {!city && !viewMode && (
-                                        <p className="mt-1 text-xs text-gray-500">
-                                            {t('validation.select_city_first')}
-                                        </p>
-                                    )}
                                 </div>
                             );
                         }
