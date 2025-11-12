@@ -1,6 +1,6 @@
 import useRFH from '@/utils/hooks/global/useRFH';
 import { studentsSchema as schema } from '@/utils/yup/students.schemas';
-import React, { useEffect, useMemo, useRef } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { studentsFields } from './configs';
 import InputRFH from '@/components/common/inputs/InputRFH';
 import FileInputRFH from '@/components/common/inputs/FileInputRFH';
@@ -10,19 +10,7 @@ import { generateOptions } from '@/utils/helpers/global.fns';
 import { onlyDate } from '@/utils/helpers/global.fns';
 import useLocale from '@/utils/hooks/global/useLocale';
 import i18next from 'i18next';
-
-// Helper function to calculate age
-const calculateAge = (dateOfBirth) => {
-    if (!dateOfBirth) return null;
-    const today = new Date();
-    const birthDate = new Date(dateOfBirth);
-    let age = today.getFullYear() - birthDate.getFullYear();
-    const monthDiff = today.getMonth() - birthDate.getMonth();
-    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
-        age--;
-    }
-    return age;
-};
+import calculateAge from '@/utils/helpers/ageCalculation';
 
 // Helper to extract education entity type data from oldData
 const extractEducationEntityTypeData = (oldData) => {
@@ -112,8 +100,6 @@ export default function FormStudent({
     const hasHighSchool = watch('qualification.has_high_school');
     const hasBachelors = watch('qualification.has_bachelors_degree');
     const hasMemorizedFive = watch('qualification.has_memorized_quran_5_parts');
-    const educationClassification = watch('education_program_entity_type_classification');
-    const entityCategory = watch('entity_category_id');
     const city = watch('city_id');
     const branchId = watch('branch_id');
     const entityId = watch('entity_id');
@@ -137,20 +123,13 @@ export default function FormStudent({
     }, [entityId, options.entity_id]);
 
     // Filter entities based on main program AND branch
-    const filteredEntities = useMemo(() => {
-        console.log('=== FILTERING ENTITIES ===');
-        console.log('mainProgramId:', mainProgramId);
-        console.log('branchId:', branchId);
-        console.log('All entities:', options.entity_id);
-        
+    const filteredEntities = useMemo(() => {        
         if (!mainProgramId || !options.entity_id) {
-            console.log('No program selected');
             return [];
         }
 
         // If no branch selected, return empty array
         if (!branchId) {
-            console.log('No branch selected - entities disabled');
             return [];
         }
         
@@ -176,17 +155,10 @@ export default function FormStudent({
                     branch.id === Number(branchId) || branch === Number(branchId)
                 );
             }
-            
-            console.log(`Entity ${entity.id} (${entity.name?.[lang]}):`, {
-                matchesProgram,
-                matchesBranch,
-                included: matchesProgram && matchesBranch
-            });
-            
+                        
             return matchesProgram && matchesBranch;
         });
         
-        console.log('Final filtered entities:', filtered.length);
         return filtered;
     }, [mainProgramId, branchId, options.entity_id, lang]);
 
@@ -198,9 +170,7 @@ export default function FormStudent({
 
     // When entity is selected, auto-fill category and classification (CREATE mode only)
     useEffect(() => {
-        if (!editMode && !viewMode && selectedEntityEducationType) {
-            console.log('Selected entity education type:', selectedEntityEducationType);
-            
+        if (!editMode && !viewMode && selectedEntityEducationType) {            
             // Set entity_category_id to the education_program_entity_type.id
             setValue('entity_category_id', selectedEntityEducationType.id, {
                 shouldValidate: true,
@@ -219,38 +189,35 @@ export default function FormStudent({
                 });
             }
         }
-    }, [selectedEntityEducationType, setValue, editMode, viewMode, lang]);
+    }, [selectedEntityEducationType, editMode, viewMode, lang]);
 
     // Reset dependent fields when main program changes
     useEffect(() => {
         if (mainProgramId && mainProgramId !== oldData?.main_program_id) {
-            console.log('Main program changed, resetting fields');
             setValue('entity_id', '');
             setValue('entity_category_id', '');
             setValue('education_program_entity_type_classification', '');
         }
-    }, [mainProgramId, oldData?.main_program_id, setValue]);
+    }, [mainProgramId, oldData?.main_program_id]);
 
     // Reset branch and entity when city changes
     useEffect(() => {
         if (city && city !== oldData?.city_id) {
-            console.log('City changed, resetting branch and entity');
             setValue('branch_id', '');
             setValue('entity_id', '');
             setValue('entity_category_id', '');
             setValue('education_program_entity_type_classification', '');
         }
-    }, [city, oldData?.city_id, setValue]);
+    }, [city, oldData?.city_id]);
 
     // Reset entity when branch changes (only if city hasn't changed)
     useEffect(() => {
         if (branchId && branchId !== oldData?.branch_id && city === oldData?.city_id) {
-            console.log('Branch changed, resetting entity');
             setValue('entity_id', '');
             setValue('entity_category_id', '');
             setValue('education_program_entity_type_classification', '');
         }
-    }, [branchId, city, oldData?.branch_id, oldData?.city_id, setValue]);
+    }, [branchId, city, oldData?.branch_id, oldData?.city_id]);
 
     // Enhanced options with filtered data
     const enhancedOptions = useMemo(() => ({
@@ -286,8 +253,6 @@ export default function FormStudent({
         if (Number(submitData.main_program_id) === 1) {
             finalData.education_program_entity_type_id = submitData.entity_category_id;
         }
-
-        console.log('Submitting data:', finalData);
 
         mutate(finalData, {
             onSuccess: () => {
