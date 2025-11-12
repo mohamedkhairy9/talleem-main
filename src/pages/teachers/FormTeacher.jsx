@@ -438,11 +438,6 @@ export default function FormTeacher({
                                     options={generateOptions(enhancedOptions[field.name] || [])}
                                     defaultValue={defaultValues[field.name] || field.defaultValue}
                                 />
-                                {!cityId && !viewMode && (
-                                    <p className="mt-1 text-xs text-gray-500">
-                                        {t('validation.select_city_first')}
-                                    </p>
-                                )}
                             </div>
                         );
                     }
@@ -467,11 +462,6 @@ export default function FormTeacher({
                                     options={generateOptions(enhancedOptions[field.name] || [])}
                                     defaultValue={defaultValues[field.name] || field.defaultValue}
                                 />
-                                {!branchId && !viewMode && (
-                                    <p className="mt-1 text-xs text-gray-500">
-                                        {t('validation.select_branch_first')}
-                                    </p>
-                                )}
                             </div>
                         );
                     }
