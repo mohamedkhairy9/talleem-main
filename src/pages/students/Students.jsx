@@ -34,7 +34,8 @@ export default function Students() {
         main_program_id: 
             item.main_program ? item.main_program.id : item.main_program_id?.id, // leaving it as it is until fixed
         // entity_category_id: item.entity_category?.id,
-        education_program_entity_type_classification: null, // Will be set in FormStudent based on entity_category_id
+        education_program_entity_type_classification: item.education_program_entity_type_id.name.en
+, // Will be set in FormStudent based on entity_category_id
         entity_category_id:
             item.main_program?.id == 1
                 ? item.education_program_entity_type?.id

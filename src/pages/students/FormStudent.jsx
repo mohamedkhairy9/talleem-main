@@ -6,14 +6,48 @@ import InputRFH from '@/components/common/inputs/InputRFH';
 import FileInputRFH from '@/components/common/inputs/FileInputRFH';
 import Btn from '@/components/common/buttons/Btn';
 import { getNestedError } from '@/utils/helpers/getNestedError';
-import {
-    generateOptions,
-    getUniqueOptionsByName,
-    generateOptionsWithCustomLabel
-} from '@/utils/helpers/global.fns';
+import { generateOptions } from '@/utils/helpers/global.fns';
 import { onlyDate } from '@/utils/helpers/global.fns';
 import useLocale from '@/utils/hooks/global/useLocale';
 import i18next from 'i18next';
+
+// Helper function to calculate age
+const calculateAge = (dateOfBirth) => {
+    if (!dateOfBirth) return null;
+    const today = new Date();
+    const birthDate = new Date(dateOfBirth);
+    let age = today.getFullYear() - birthDate.getFullYear();
+    const monthDiff = today.getMonth() - birthDate.getMonth();
+    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+        age--;
+    }
+    return age;
+};
+
+// Helper to extract education entity type data from oldData
+const extractEducationEntityTypeData = (oldData) => {
+    if (!oldData?.education_program_entity_type_id) {
+        return { id: null, classification: null, name: null };
+    }
+
+    const educationEntityType = oldData.education_program_entity_type_id;
+    
+    // Check if it's an object (nested data from backend)
+    if (typeof educationEntityType === 'object' && educationEntityType !== null) {
+        const classification = educationEntityType.educational_entity_classification;
+        const name = educationEntityType.name;
+        
+        return {
+            id: educationEntityType.id,
+            classification: classification, // For display in category field
+            name: name, // For display in classification field
+            fullObject: educationEntityType
+        };
+    }
+    
+    // If it's just a number/ID
+    return { id: educationEntityType, classification: null, name: null };
+};
 
 export default function FormStudent({
     onClose,
@@ -25,242 +59,189 @@ export default function FormStudent({
     options
 }) {
     const { t } = useLocale();
-    const { register, errors, handleSubmit, setValue, control, watch } = useRFH(
-        {
-            schema,
-            defaultValues: {
-                ...oldData,
-                date_of_birth: onlyDate(oldData?.date_of_birth),
-                registration_date: onlyDate(oldData?.registration_date),
-                qualification: oldData?.qualification || {
-                    has_high_school: 0,
-                    high_school_grade: 0,
-                    has_bachelors_degree: 0,
-                    major_id: null,
-                    has_memorized_quran_5_parts: 0,
-                    memorized_quran_parts: 0
-                },
-                department: oldData?.department || { en: '', ar: '' }
-            }
-        }
+    const lang = i18next.language;
+    
+    // Extract education entity type info
+    const educationEntityTypeInfo = useMemo(() => 
+        extractEducationEntityTypeData(oldData),
+        [oldData]
     );
 
-    console.log("Entities", options.entity_id)
+    // Prepare default values
+    const defaultValues = useMemo(() => {
+        const baseValues = {
+            ...oldData,
+            date_of_birth: onlyDate(oldData?.date_of_birth),
+            registration_date: onlyDate(oldData?.registration_date),
+            qualification: oldData?.qualification || {
+                has_high_school: 0,
+                high_school_grade: 0,
+                has_bachelors_degree: 0,
+                major_id: null,
+                has_memorized_quran_5_parts: 0,
+                memorized_quran_parts: 0
+            },
+            department: oldData?.department || { en: '', ar: '' },
+            parent_name: oldData?.parent_name || { en: '', ar: '' }
+        };
 
+        // In edit/view mode, set the classification and category from education_program_entity_type
+        if ((editMode || viewMode) && educationEntityTypeInfo.id) {
+            baseValues.entity_category_id = educationEntityTypeInfo.id;
+            
+            // Set classification text (from name)
+            if (educationEntityTypeInfo.name) {
+                baseValues.education_program_entity_type_classification = 
+                    educationEntityTypeInfo.name[lang] || 
+                    educationEntityTypeInfo.name.en || 
+                    educationEntityTypeInfo.name.ar;
+            }
+        }
+
+        return baseValues;
+    }, [oldData, educationEntityTypeInfo, editMode, viewMode, lang]);
+
+    const { register, errors, handleSubmit, setValue, control, watch } = useRFH({
+        schema,
+        defaultValues
+    });
+
+    // Watch values
     const mainProgramId = watch('main_program_id');
     const hasMedicalIssues = watch('has_medical_issues');
     const hasHighSchool = watch('qualification.has_high_school');
     const hasBachelors = watch('qualification.has_bachelors_degree');
     const hasMemorizedFive = watch('qualification.has_memorized_quran_5_parts');
-    const educationClassification = watch(
-        'education_program_entity_type_classification'
-    );
+    const educationClassification = watch('education_program_entity_type_classification');
     const entityCategory = watch('entity_category_id');
     const city = watch('city_id');
+    const entityId = watch('entity_id');
+    const dateOfBirth = watch('date_of_birth');
     
-    console.log("entity category: ", entityCategory)
+    // Calculate age
+    const studentAge = useMemo(() => calculateAge(dateOfBirth), [dateOfBirth]);
+    const isMinor = studentAge !== null && studentAge < 18;
 
-    // Filter the entities options based on the entity category (for mainProgramId === 1)
-    const filteredEntities = useMemo(() => {
-        if(!mainProgramId) return []; // if no education program was selected
-        const entities = options.entity_id;
-        if(Number(mainProgramId) === 2){ // For memorization program
-            return entities.filter(entity => {
-                return entity.main_program.id === mainProgramId   
-            })
-        }else if(Number(mainProgramId) === 1){ // For education program
-            if(!entityCategory) return []; // if no entity category was selected
-            
-            return entities
-                .filter(entity => {
-                    return entity.main_program.id === mainProgramId   
-                })
-                .filter(entity => { 
-                    // filter based on entity category
-                    return entity.education_program_entity_type?.id === entityCategory
-                })            
+    // Get the selected entity's education_program_entity_type
+    const selectedEntityEducationType = useMemo(() => {
+        if (!entityId || !options.entity_id) return null;
+        
+        const selectedEntity = options.entity_id.find(entity => entity.id === Number(entityId));
+        
+        if (selectedEntity?.education_program_entity_type) {
+            return selectedEntity.education_program_entity_type;
         }
-    }, [mainProgramId, entityCategory, options.entity_id])    
+        
+        return null;
+    }, [entityId, options.entity_id]);
 
-    // Filter branches based on the selected city
-    const filteredBranches = useMemo(() => {
-        if(!city) return []; // if no city is selected
-        const branches = options.branch_id;
-        console.log("Branches: ", branches)
-        return branches.filter(branch => branch.city.id === city);
-    })
-
-    // console.log(filteredBranches)
-
-    // Get unique options by name for education program entity types (for mainProgramId === 1)
-    const uniqueEducationClassifications = useMemo(
-        () =>
-            getUniqueOptionsByName(
-                options.education_program_entity_type_id || []
-            ),
-        [options.education_program_entity_type_id]
-    );
-
-    // Filter entity categories based on selected classification (for mainProgramId === 1)
-    const filteredEntityCategories = useMemo(() => {
-        if (Number(mainProgramId) !== 1 || !educationClassification) return [];
-        const lang = i18next.language;
-        const selectedClassification = uniqueEducationClassifications.find(
-            u =>
-                u.id === educationClassification ||
-                u.value === educationClassification
-        );
-        if (!selectedClassification) return [];
-        const selectedName =
-            selectedClassification.name?.[lang] ||
-            selectedClassification.name?.en ||
-            selectedClassification.name?.ar ||
-            selectedClassification.name;
-        return (options.education_program_entity_type_id || []).filter(opt => {
-            const optName =
-                opt.name?.[lang] || opt.name?.en || opt.name?.ar || opt.name;
-            return optName === selectedName;
+    // Filter entities based on main program only
+    const filteredEntities = useMemo(() => {
+        console.log('=== FILTERING ENTITIES ===');
+        console.log('mainProgramId:', mainProgramId);
+        console.log('All entities:', options.entity_id);
+        
+        if (!mainProgramId || !options.entity_id) {
+            console.log('No program or entities');
+            return [];
+        }
+        
+        const entities = options.entity_id;
+        
+        // Filter by main program only
+        const filtered = entities.filter(entity => {
+            const matches = entity.main_program?.id === Number(mainProgramId);
+            console.log(`Entity ${entity.id} (${entity.name?.[lang]}): main_program.id=${entity.main_program?.id}, matches=${matches}`);
+            return matches;
         });
-    }, [
-        mainProgramId,
-        educationClassification,
-        uniqueEducationClassifications,
-        options.education_program_entity_type_id
-    ]);
+        
+        console.log('Final filtered entities:', filtered.length);
+        return filtered;
+    }, [mainProgramId, options.entity_id, lang]);
 
-    // Reset fields when main_program_id changes
+    // Filter branches based on selected city
+    const filteredBranches = useMemo(() => {
+        if (!city || !options.branch_id) return [];
+        return options.branch_id.filter(branch => branch.city?.id === Number(city));
+    }, [city, options.branch_id]);
+
+    // When entity is selected, auto-fill category and classification (CREATE mode only)
     useEffect(() => {
-        if (
-            (mainProgramId && mainProgramId != oldData?.main_program_id) ||
-            !oldData?.main_program_id
-        ) {
-            setValue('education_program_entity_type_classification', '');
+        if (!editMode && !viewMode && selectedEntityEducationType) {
+            console.log('Selected entity education type:', selectedEntityEducationType);
+            
+            // Set entity_category_id to the education_program_entity_type.id
+            setValue('entity_category_id', selectedEntityEducationType.id, {
+                shouldValidate: true,
+                shouldDirty: true
+            });
+            
+            // Set classification to education_program_entity_type.name
+            const classificationText = selectedEntityEducationType.name?.[lang] || 
+                                      selectedEntityEducationType.name?.en || 
+                                      selectedEntityEducationType.name?.ar;
+            
+            if (classificationText) {
+                setValue('education_program_entity_type_classification', classificationText, {
+                    shouldValidate: true,
+                    shouldDirty: true
+                });
+            }
+        }
+    }, [selectedEntityEducationType, setValue, editMode, viewMode, lang]);
+
+    // Reset entity when main program changes
+    useEffect(() => {
+        if (mainProgramId && mainProgramId !== oldData?.main_program_id) {
+            console.log('Main program changed, resetting fields');
+            setValue('entity_id', '');
             setValue('entity_category_id', '');
+            setValue('education_program_entity_type_classification', '');
         }
     }, [mainProgramId, oldData?.main_program_id, setValue]);
 
-    // Reset entity_category_id when classification changes
-    const initializingClassificationRef = useRef(false);
-    useEffect(() => {
-        if (Number(mainProgramId) === 1) {
-            const isInitializing = initializingClassificationRef.current;
-            if (
-                (educationClassification &&
-                    educationClassification !=
-                        oldData?.education_program_entity_type_classification) ||
-                (!oldData?.education_program_entity_type_classification &&
-                    !isInitializing)
-            ) {
-                setValue('entity_category_id', '');
-            }
-        }
-    }, [
-        educationClassification,
-        mainProgramId,
-        oldData?.education_program_entity_type_classification,
-        setValue
-    ]);
-
-    // Set the classification value when editing (based on entity_category_id's name)
-    const initializedClassificationRef = useRef(false);
-    useEffect(() => {
-        if (initializedClassificationRef.current) return;
-        if (
-            Number(mainProgramId) === 1 &&
-            oldData?.entity_category_id &&
-            !oldData?.education_program_entity_type_classification
-        ) {
-            const selectedEntityType = (
-                options.education_program_entity_type_id || []
-            ).find(opt => opt.id === oldData.entity_category_id);
-            if (!selectedEntityType) return;
-            const lang = i18next.language;
-            const selectedName =
-                selectedEntityType.name?.[lang] ||
-                selectedEntityType.name?.en ||
-                selectedEntityType.name?.ar ||
-                selectedEntityType.name;
-            const matchingUniqueClassification =
-                uniqueEducationClassifications.find(u => {
-                    const uName =
-                        u.name?.[lang] || u.name?.en || u.name?.ar || u.name;
-                    return uName === selectedName;
-                });
-            if (matchingUniqueClassification) {
-                setValue(
-                    'education_program_entity_type_classification',
-                    matchingUniqueClassification.id ||
-                        matchingUniqueClassification.value,
-                    { shouldDirty: false, shouldValidate: false }
-                );
-                initializedClassificationRef.current = true;
-                initializingClassificationRef.current = true;
-            }
-        }
-    }, [
-        mainProgramId,
-        oldData,
-        uniqueEducationClassifications,
-        options.education_program_entity_type_id,
-        setValue
-    ]);
-
-    // After classification has been initialized in edit mode, set entity_category_id from oldData
-    useEffect(() => {
-        if (
-            Number(mainProgramId) === 1 &&
-            initializedClassificationRef.current &&
-            oldData?.entity_category_id
-        ) {
-            setValue('entity_category_id', oldData.entity_category_id, {
-                shouldDirty: false,
-                shouldValidate: false
-            });
-            initializingClassificationRef.current = false;
-        }
-    }, [mainProgramId, setValue, oldData?.entity_category_id]);
-
-    const enhancedOptions = {
+    // Enhanced options with filtered data
+    const enhancedOptions = useMemo(() => ({
         ...options,
-        education_program_entity_type_classification:
-            Number(mainProgramId) === 1 ? uniqueEducationClassifications : [],
-        entity_category_id:
-            Number(mainProgramId) === 1
-                ? educationClassification
-                    ? generateOptionsWithCustomLabel(
-                          filteredEntityCategories,
-                          'educational_entity_classification'
-                      )
-                    : []
-                : [],
         entity_id: filteredEntities,
         branch_id: filteredBranches
-    };
+    }), [options, filteredEntities, filteredBranches]);
+
+    // Get display value for category (educational_entity_classification)
+    const categoryDisplayValue = useMemo(() => {
+        if (!selectedEntityEducationType && !educationEntityTypeInfo.classification) return '';
+        
+        const classification = selectedEntityEducationType?.educational_entity_classification || 
+                              educationEntityTypeInfo.classification;
+        
+        if (!classification) return '';
+        
+        return classification[lang] || classification.en || classification.ar || '';
+    }, [selectedEntityEducationType, educationEntityTypeInfo, lang]);
 
     function onSubmit(data) {
-        // Remove the helper field from submission
         const {
             education_program_entity_type_classification: _classificationHelper,
             ...submitData
         } = data;
 
-        mutate(
-            {
-                ...submitData,
-                status: submitData.status ? 1 : 0,
-                ...(submitData.main_program_id == 1
-                    ? {
-                          education_program_entity_type_id:
-                              submitData.entity_category_id
-                      }
-                    : {})
-            },
-            {
-                onSuccess: () => {
-                    onClose();
-                }
+        const finalData = {
+            ...submitData,
+            status: submitData.status ? 1 : 0,
+        };
+
+        // For education program, set education_program_entity_type_id from entity_category_id
+        if (Number(submitData.main_program_id) === 1) {
+            finalData.education_program_entity_type_id = submitData.entity_category_id;
+        }
+
+        console.log('Submitting data:', finalData);
+
+        mutate(finalData, {
+            onSuccess: () => {
+                onClose();
             }
-        );
+        });
     }
 
     return (
@@ -278,47 +259,92 @@ export default function FormStudent({
 
                         // Check conditional fields
                         if (field.conditional && field.showWhen) {
+                            // Check main_program_id condition
                             const condition = field.showWhen.main_program_id;
-                            if (Array.isArray(condition)) {
-                                return condition.includes(
-                                    Number(mainProgramId)
-                                );
-                            } else {
-                                return Number(mainProgramId) === condition;
+                            if (condition !== undefined) {
+                                if (Array.isArray(condition)) {
+                                    if (!condition.includes(Number(mainProgramId))) {
+                                        return false;
+                                    }
+                                } else if (Number(mainProgramId) !== condition) {
+                                    return false;
+                                }
+                            }
+
+                            // Check age-based condition (for parent fields)
+                            if (field.showWhen.isMinor !== undefined) {
+                                if (field.showWhen.isMinor !== isMinor) {
+                                    return false;
+                                }
                             }
                         }
 
                         return true;
                     })
                     .map(field => {
-                        // Conditionally show issue_description only if has_medical_issues is 1
-                        if (
-                            field.name === 'issue_description' &&
-                            hasMedicalIssues !== 1
-                        ) {
+                        // Hide issue_description if has_medical_issues is not 1
+                        if (field.name === 'issue_description' && hasMedicalIssues !== 1) {
                             return null;
                         }
+
+                        // Special handling for classification field (read-only, auto-filled)
+                        if (field.name === 'education_program_entity_type_classification') {
+                            return (
+                                <div key={field.name}>
+                                    <InputRFH
+                                        p="px-3 py-3"
+                                        control={control}
+                                        register={register}
+                                        error={getNestedError(errors, field.name)}
+                                        type="text"
+                                        placeholder={field.placeholder}
+                                        disabled={true} // Always disabled - auto-filled from entity
+                                        label={field.label}
+                                        name={field.name}
+                                        info={field.info}
+                                        defaultValue={defaultValues[field.name] || ''}
+                                    />
+                                </div>
+                            );
+                        }
+
+                        // Special handling for category field (display educational_entity_classification)
+                        if (field.name === 'entity_category_id') {
+                            return (
+                                <div key={field.name}>
+                                    <label className="block font-medium text-gray-700 mb-1">
+                                        {t(field.label)}
+                                    </label>
+                                    <input
+                                        type="text"
+                                        value={categoryDisplayValue}
+                                        disabled={true}
+                                        className="w-full px-3 py-3 border outline-none rounded-lg bg-gray-100 text-gray-700"
+                                        placeholder={t(field.placeholder)}
+                                    />
+                                    {/* Hidden field for the actual ID value */}
+                                    <input type="hidden" {...register('entity_category_id')} />
+                                    <p className="mt-1 h-4 text-xs text-red-600" role="alert">
+                                        {t(getNestedError(errors, field.name)) || ''}
+                                    </p>
+                                </div>
+                            );
+                        }
+
+                        // Determine column span
+                        const isFullWidth = field.type === 'textarea' || 
+                                          (field.type === 'file' && field.name !== 'profile_picture');
 
                         return (
                             <div
                                 key={field.name}
-                                className={
-                                    field.type === 'textarea'
-                                        ? 'md:col-span-2 lg:col-span-3'
-                                        : field.type === 'file'
-                                        ? 'md:col-span-2 lg:col-span-3'
-                                        : ''
-                                }
+                                className={isFullWidth ? 'md:col-span-2 lg:col-span-3' : ''}
                             >
-                                {field.type === 'file' &&
-                                field.name !== 'profile_picture' ? (
+                                {field.type === 'file' && field.name !== 'profile_picture' ? (
                                     <FileInputRFH
                                         register={register}
                                         control={control}
-                                        error={getNestedError(
-                                            errors,
-                                            field.name
-                                        )}
+                                        error={getNestedError(errors, field.name)}
                                         placeholder={field.placeholder}
                                         disabled={viewMode}
                                         label={field.label}
@@ -329,34 +355,19 @@ export default function FormStudent({
                                     />
                                 ) : (
                                     <InputRFH
+                                        key={`${field.name}-${enhancedOptions[field.name]?.length || 0}`}
                                         p="px-3 py-3"
                                         control={control}
                                         register={register}
-                                        error={getNestedError(
-                                            errors,
-                                            field.name
-                                        )}
+                                        error={getNestedError(errors, field.name)}
                                         type={field.type}
                                         placeholder={field.placeholder}
                                         disabled={viewMode}
                                         label={field.label}
                                         name={field.name}
                                         info={field.info}
-                                        options={
-                                            field.name ===
-                                                'entity_category_id' &&
-                                            Number(mainProgramId) === 1
-                                                ? enhancedOptions?.[field.name]
-                                                : generateOptions(
-                                                      enhancedOptions?.[
-                                                          field.name
-                                                      ] || options?.[field.name]
-                                                  )
-                                        }
-                                        defaultValue={
-                                            oldData?.[field.name] ||
-                                            field.defaultValue
-                                        }
+                                        options={generateOptions(enhancedOptions[field.name] || options[field.name])}
+                                        defaultValue={defaultValues[field.name] || field.defaultValue}
                                     />
                                 )}
                             </div>
@@ -370,125 +381,87 @@ export default function FormStudent({
                     <h3 className="text-lg font-semibold text-gray-800">
                         {t('students.qualification')}
                     </h3>
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 p-4 border border-gray-200 rounded-lg ">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 p-4 border border-gray-200 rounded-lg">
                         <InputRFH
                             p="px-3 py-3"
                             control={control}
                             register={register}
-                            error={getNestedError(
-                                errors,
-                                'qualification.has_high_school'
-                            )}
+                            error={getNestedError(errors, 'qualification.has_high_school')}
                             type="select"
                             placeholder="validation.qualification.has_high_school.placeholder"
                             disabled={viewMode}
                             label="validation.qualification.has_high_school.label"
                             name="qualification.has_high_school"
                             options={generateOptions(options?.has_high_school)}
-                            defaultValue={
-                                oldData?.qualification?.has_high_school ?? 0
-                            }
+                            defaultValue={oldData?.qualification?.has_high_school ?? 0}
                         />
                         {Number(hasHighSchool) === 1 && (
                             <InputRFH
                                 p="px-3 py-3"
                                 control={control}
                                 register={register}
-                                error={getNestedError(
-                                    errors,
-                                    'qualification.high_school_grade'
-                                )}
+                                error={getNestedError(errors, 'qualification.high_school_grade')}
                                 type="number"
                                 placeholder="validation.qualification.high_school_grade.placeholder"
                                 disabled={viewMode}
                                 label="validation.qualification.high_school_grade.label"
                                 name="qualification.high_school_grade"
-                                defaultValue={
-                                    oldData?.qualification?.high_school_grade ??
-                                    0
-                                }
+                                defaultValue={oldData?.qualification?.high_school_grade ?? 0}
                             />
                         )}
                         <InputRFH
                             p="px-3 py-3"
                             control={control}
                             register={register}
-                            error={getNestedError(
-                                errors,
-                                'qualification.has_bachelors_degree'
-                            )}
+                            error={getNestedError(errors, 'qualification.has_bachelors_degree')}
                             type="select"
                             placeholder="validation.qualification.has_bachelors_degree.placeholder"
                             disabled={viewMode}
                             label="validation.qualification.has_bachelors_degree.label"
                             name="qualification.has_bachelors_degree"
-                            options={generateOptions(
-                                options?.has_bachelors_degree
-                            )}
-                            defaultValue={
-                                oldData?.qualification?.has_bachelors_degree ??
-                                0
-                            }
+                            options={generateOptions(options?.has_bachelors_degree)}
+                            defaultValue={oldData?.qualification?.has_bachelors_degree ?? 0}
                         />
                         {Number(hasBachelors) === 1 && (
                             <InputRFH
                                 p="px-3 py-3"
                                 control={control}
                                 register={register}
-                                error={getNestedError(
-                                    errors,
-                                    'qualification.major_id'
-                                )}
+                                error={getNestedError(errors, 'qualification.major_id')}
                                 type="select"
                                 placeholder="validation.major_id.placeholder"
                                 disabled={viewMode}
                                 label="validation.major_id.label"
                                 name="qualification.major_id"
                                 options={generateOptions(options?.major_id)}
-                                defaultValue={
-                                    oldData?.qualification?.major_id || ''
-                                }
+                                defaultValue={oldData?.qualification?.major_id || ''}
                             />
                         )}
                         <InputRFH
                             p="px-3 py-3"
                             control={control}
                             register={register}
-                            error={getNestedError(
-                                errors,
-                                'qualification.has_memorized_quran_5_parts'
-                            )}
+                            error={getNestedError(errors, 'qualification.has_memorized_quran_5_parts')}
                             type="select"
                             placeholder="validation.qualification.has_memorized_quran_5_parts.placeholder"
                             disabled={viewMode}
                             label="validation.qualification.has_memorized_quran_5_parts.label"
                             name="qualification.has_memorized_quran_5_parts"
-                            options={generateOptions(
-                                options?.has_memorized_quran_5_parts
-                            )}
-                            defaultValue={
-                                oldData?.qualification
-                                    ?.has_memorized_quran_5_parts ?? 0
-                            }
+                            options={generateOptions(options?.has_memorized_quran_5_parts)}
+                            defaultValue={oldData?.qualification?.has_memorized_quran_5_parts ?? 0}
                         />
                         {Number(hasMemorizedFive) === 0 && (
                             <InputRFH
                                 p="px-3 py-3"
                                 control={control}
                                 register={register}
-                                error={getNestedError(
-                                    errors,
-                                    'qualification.memorized_quran_parts'
-                                )}
+                                error={getNestedError(errors, 'qualification.memorized_quran_parts')}
                                 type="number"
                                 placeholder="validation.qualification.memorized_quran_parts.placeholder"
                                 disabled={viewMode}
                                 label="validation.qualification.memorized_quran_parts.label"
                                 name="qualification.memorized_quran_parts"
-                                defaultValue={
-                                    oldData?.qualification
-                                        ?.memorized_quran_parts ?? 0
-                                }
+                                defaultValue={oldData?.qualification?.memorized_quran_parts ?? 0}
                             />
                         )}
                     </div>

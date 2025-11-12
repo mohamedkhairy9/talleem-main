@@ -1,6 +1,19 @@
 import * as yup from 'yup';
 import { t } from 'i18next';
 
+// Helper to calculate age
+const calculateAge = (dateOfBirth) => {
+    if (!dateOfBirth) return null;
+    const today = new Date();
+    const birthDate = new Date(dateOfBirth);
+    let age = today.getFullYear() - birthDate.getFullYear();
+    const monthDiff = today.getMonth() - birthDate.getMonth();
+    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+        age--;
+    }
+    return age;
+};
+
 export const studentsSchema = yup.object({
     name: yup
         .object({
@@ -21,16 +34,9 @@ export const studentsSchema = yup.object({
         .required(t('validation.required'))
         .integer(t('validation.main_program_id.integer'))
         .min(1, t('validation.main_program_id.min')),
+    
+    // UPDATED: Classification is now a text string, not a number
     education_program_entity_type_classification: yup
-        .number(t('validation.education_program_entity_type_classification.integer'))
-        .nullable()
-        .when('main_program_id', {
-            is: value => Number(value) === 1,
-            then: schema =>
-                schema.required(t('validation.required')),
-            otherwise: schema => schema.optional()
-        }),
-    entity_category_id: yup
         .string()
         .nullable()
         .when('main_program_id', {
@@ -38,36 +44,51 @@ export const studentsSchema = yup.object({
             then: schema =>
                 schema
                     .required(t('validation.required'))
-                    .min(1, t('validation.select.min')),
+                    .min(2, t('validation.education_program_entity_type_classification.min')),
             otherwise: schema => schema.optional()
         }),
+    
+    // Entity category is now the education_program_entity_type_id
+    entity_category_id: yup
+        .number()
+        .nullable()
+        .when('main_program_id', {
+            is: value => Number(value) === 1,
+            then: schema =>
+                schema
+                    .required(t('validation.required'))
+                    .integer(t('validation.entity_category_id.integer'))
+                    .min(1, t('validation.entity_category_id.min')),
+            otherwise: schema => schema.optional()
+        }),
+    
     branch_id: yup
         .number()
         .required(t('validation.required'))
         .integer(t('validation.branch_id.integer'))
         .min(1, t('validation.branch_id.min')),
+    
     entity_id: yup
         .number()
         .required(t('validation.required'))
         .integer(t('validation.entity_id.integer'))
         .min(1, t('validation.entity_id.min')),
-    // entity_category_id: yup
-    //     .number()
-    //     .required(t('validation.required'))
-    //     .integer(t('validation.entity_category_id.integer'))
-    //     .min(1, t('validation.entity_category_id.min')),
+    
     status: yup.boolean().required(t('validation.required')),
+    
     national_id: yup
         .string()
         .required(t('validation.required'))
         .matches(/^[0-9]+$/, t('validation.national_id.numeric'))
         .min(10, t('validation.national_id.min'))
         .max(20, t('validation.national_id.max')),
+    
     nationality_id: yup
         .number()
         .required(t('validation.required'))
         .integer(t('validation.nationality_id.integer'))
         .min(1, t('validation.nationality_id.min')),
+    
     school_name: yup
         .string()
         .nullable()
@@ -80,35 +101,67 @@ export const studentsSchema = yup.object({
                     .max(100, t('validation.school_name.max')),
             otherwise: schema => schema.nullable().optional()
         }),
+    
     city_id: yup
         .number()
         .required(t('validation.required'))
         .integer(t('validation.city_id.integer'))
         .min(1, t('validation.city_id.min')),
+    
     address: yup
         .string()
         .required(t('validation.required'))
         .min(5, t('validation.address.min')),
+    
     date_of_birth: yup
         .string()
         .required(t('validation.date_of_birth.required')),
+    
+    // Parent name as bilingual object - required when age < 18
     parent_name: yup
-        .string()
+        .object({
+            en: yup
+                .string()
+                .nullable()
+                .when('$date_of_birth', {
+                    is: (dateOfBirth) => {
+                        const age = calculateAge(dateOfBirth);
+                        return age !== null && age < 18;
+                    },
+                    then: schema =>
+                        schema
+                            .required(t('validation.required'))
+                            .min(2, t('validation.parent_name.en_min'))
+                            .max(100, t('validation.parent_name.en_max')),
+                    otherwise: schema => schema.nullable().optional()
+                }),
+            ar: yup
+                .string()
+                .nullable()
+                .when('$date_of_birth', {
+                    is: (dateOfBirth) => {
+                        const age = calculateAge(dateOfBirth);
+                        return age !== null && age < 18;
+                    },
+                    then: schema =>
+                        schema
+                            .required(t('validation.required'))
+                            .min(2, t('validation.parent_name.ar_min'))
+                            .max(100, t('validation.parent_name.ar_max')),
+                    otherwise: schema => schema.nullable().optional()
+                })
+        })
         .nullable()
-        .when('main_program_id', {
-            is: value => Number(value) === 2,
-            then: schema =>
-                schema
-                    .required(t('validation.required'))
-                    .min(2, t('validation.parent_name.min'))
-                    .max(100, t('validation.parent_name.max')),
-            otherwise: schema => schema.nullable().optional()
-        }),
+        .default({ en: '', ar: '' }),
+    
     kinship_id: yup
         .number()
         .nullable()
-        .when('main_program_id', {
-            is: value => Number(value) === 2,
+        .when('date_of_birth', {
+            is: (dateOfBirth) => {
+                const age = calculateAge(dateOfBirth);
+                return age !== null && age < 18;
+            },
             then: schema =>
                 schema
                     .required(t('validation.required'))
@@ -116,10 +169,40 @@ export const studentsSchema = yup.object({
                     .min(1, t('validation.kinship_id.min')),
             otherwise: schema => schema.nullable().optional()
         }),
+    
+    parent_phone_1: yup
+        .string()
+        .nullable()
+        .when('date_of_birth', {
+            is: (dateOfBirth) => {
+                const age = calculateAge(dateOfBirth);
+                return age !== null && age < 18;
+            },
+            then: schema =>
+                schema
+                    .required(t('validation.required'))
+                    .matches(/^[+]?[0-9]+$/, t('validation.phone.invalid')),
+            otherwise: schema => schema.nullable().optional()
+        }),
+    
+    parent_phone_2: yup
+        .string()
+        .nullable()
+        .when('date_of_birth', {
+            is: (dateOfBirth) => {
+                const age = calculateAge(dateOfBirth);
+                return age !== null && age < 18;
+            },
+            then: schema =>
+                schema.matches(/^[+]?[0-9]*$/, t('validation.phone.invalid')),
+            otherwise: schema => schema.nullable().optional()
+        }),
+    
     has_medical_issues: yup
         .number()
         .required(t('validation.required'))
         .oneOf([0, 1], t('validation.has_medical_issues.invalid')),
+    
     issue_description: yup
         .string()
         .nullable()
@@ -131,27 +214,9 @@ export const studentsSchema = yup.object({
                     .min(5, t('validation.issue_description.min')),
             otherwise: schema => schema.nullable()
         }),
-    parent_phone_1: yup
-        .string()
-        .nullable()
-        .when('main_program_id', {
-            is: value => Number(value) === 2,
-            then: schema =>
-                schema
-                    .required(t('validation.required'))
-                    .matches(/^[+]?[0-9]+$/, t('validation.phone.invalid')),
-            otherwise: schema => schema.nullable().optional()
-        }),
-    parent_phone_2: yup
-        .string()
-        .nullable()
-        .when('main_program_id', {
-            is: value => Number(value) === 2,
-            then: schema =>
-                schema.matches(/^[+]?[0-9]*$/, t('validation.phone.invalid')),
-            otherwise: schema => schema.nullable().optional()
-        }),
+    
     registration_date: yup.string().required(t('validation.required')),
+    
     academic_level_id: yup
         .number()
         .nullable()
@@ -164,6 +229,7 @@ export const studentsSchema = yup.object({
                     .min(1, t('validation.academic_level_id.min')),
             otherwise: schema => schema.nullable().optional()
         }),
+    
     specification_id: yup
         .number()
         .nullable()
@@ -176,29 +242,19 @@ export const studentsSchema = yup.object({
                     .min(1, t('validation.specification_id.min')),
             otherwise: schema => schema.nullable().optional()
         }),
+    
     gender: yup
         .string()
         .required(t('validation.required'))
         .oneOf(['male', 'female'], t('validation.gender.invalid')),
+    
     phone: yup
         .string()
         .nullable()
         .matches(/^[+]?[0-9]*$/, t('validation.phone.invalid')),
+    
     email: yup.string().nullable().email(t('validation.email.invalid')),
-    // department: yup
-    //     .object({
-    //         en: yup
-    //             .string()
-    //             .nullable()
-    //             .min(2, t('validation.department.en_min'))
-    //             .max(100, t('validation.department.en_max')),
-    //         ar: yup
-    //             .string()
-    //             .nullable()
-    //             .min(2, t('validation.department.ar_min'))
-    //             .max(100, t('validation.department.ar_max'))
-    //     })
-    //     .nullable(),
+    
     qualification: yup
         .object({
             has_high_school: yup
@@ -272,6 +328,8 @@ export const studentsSchema = yup.object({
             then: schema => schema.required(t('validation.required')),
             otherwise: schema => schema.nullable().optional()
         }),
+    
     files: yup.array().of(yup.mixed()).nullable().optional(),
+    
     profile_picture: yup.mixed().required(t('validation.required'))
 });

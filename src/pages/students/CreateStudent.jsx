@@ -37,8 +37,6 @@ export default function CreateStudent({ onClose }) {
         useBranchesQuery(allData);
     const { data: mainProgramsData, isLoading: mainProgramsLoading } =
         useMainProgramsQuery(allData);
-    const { data: entityCategoriesData, isLoading: entityCategoriesLoading } =
-        useEntityCategoriesQuery(allData);
     const {
         data: educationProgramEntityTypesData,
         isLoading: educationProgramEntityTypesLoading
@@ -61,7 +59,6 @@ export default function CreateStudent({ onClose }) {
     const isLoading =
         branchesLoading ||
         mainProgramsLoading ||
-        entityCategoriesLoading ||
         educationProgramEntityTypesLoading ||
         citiesLoading ||
         kinshipsLoading ||

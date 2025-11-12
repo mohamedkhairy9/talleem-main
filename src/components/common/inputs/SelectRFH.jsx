@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Controller } from 'react-hook-form';
 import Select from 'react-select';
 import useLocale from '@/utils/hooks/global/useLocale';
@@ -21,10 +21,14 @@ export default function SelectRFH({
 }) {
     const { t, isRTL } = useLocale();
     const [showInfo, setShowInfo] = useState(false);
-    const getValue = valueToTransform => {
+    
+    const getValue = (valueToTransform, optionsList) => {
+        // Use the provided options list or fall back to the options prop
+        const availableOptions = optionsList || options || [];
+        
         if (valueToTransform !== undefined && valueToTransform !== null) {
             if (isMulti) {
-                return options
+                return availableOptions
                     ?.filter(item =>
                         valueToTransform
                             ?.map(el =>
@@ -44,11 +48,12 @@ export default function SelectRFH({
                         label: option.name || option.label
                     }));
             } else {
-                const x = options?.find(
+                const x = availableOptions?.find(
                     el =>
                         (el.id !== undefined &&
                             Number(el.id) === Number(valueToTransform)) ||
-                        el.value === valueToTransform
+                        (el.value !== undefined && 
+                            el.value === valueToTransform)
                 );
                 return x
                     ? {
@@ -81,76 +86,81 @@ export default function SelectRFH({
             <Controller
                 name={name}
                 control={control}
-                defaultValue={getValue(defaultValue)}
-                render={({ field }) => (
-                    <Select
-                        value={getValue(field.value)}
-                        isMulti={isMulti}
-                        className={`react-select ${
-                            width ? width : 'w-full min-w-[300px]'
-                        } ${classes || ''}`}
-                        classNamePrefix="react-select"
-                        options={options}
-                        isDisabled={disabled}
-                        placeholder={t(placeholder)}
-                        menuPortalTarget={document.body}
-                        menuPosition="fixed"
-                        styles={{
-                            control: (provided, state) => ({
-                                ...provided,
-                                padding: !isRTL
-                                    ? '6px 0px 6px 16px'
-                                    : '6px 16px 6px 0px',
-                                minHeight: '44px',
-                                borderRadius: '8px',
-                                boxShadow: state.isFocused
-                                    ? '0 0 0 3px rgba(59, 130, 246, 0.1)'
-                                    : 'none',
-                                '&:hover': {
-                                    borderColor: ''
-                                },
-                                borderColor: error ? '#ef4444' : '#d1d5db'
-                            }),
-                            valueContainer: provided => ({
-                                ...provided,
-                                padding: '0'
-                            }),
-                            input: provided => ({
-                                ...provided,
-                                margin: '0',
-                                padding: '0'
-                            }),
-                            placeholder: provided => ({
-                                ...provided,
-                                margin: '0',
-                                color: '#9ca3af'
-                            }),
-                            menuPortal: provided => ({
-                                ...provided,
-                                zIndex: 9999
-                            }),
-                            singleValue: (provided, state) => ({
-                                ...provided,
-                                color: state.isDisabled
-                                    ? '#000000'
-                                    : provided.color
-                            })
-                        }}
-                        onChange={selected => {
-                            const newValue = isMulti
-                                ? selected.map(option =>
-                                      option.value !== undefined
-                                          ? option.value
-                                          : option.id
-                                  )
-                                : selected?.value !== undefined
-                                ? selected?.value
-                                : selected?.id;
+                defaultValue={defaultValue}
+                render={({ field }) => {
+                    // Recalculate value whenever field.value or options change
+                    const selectedValue = getValue(field.value, options);
+                    
+                    return (
+                        <Select
+                            value={selectedValue}
+                            isMulti={isMulti}
+                            className={`react-select ${
+                                width ? width : 'w-full min-w-[300px]'
+                            } ${classes || ''}`}
+                            classNamePrefix="react-select"
+                            options={options}
+                            isDisabled={disabled}
+                            placeholder={t(placeholder)}
+                            menuPortalTarget={document.body}
+                            menuPosition="fixed"
+                            styles={{
+                                control: (provided, state) => ({
+                                    ...provided,
+                                    padding: !isRTL
+                                        ? '6px 0px 6px 16px'
+                                        : '6px 16px 6px 0px',
+                                    minHeight: '44px',
+                                    borderRadius: '8px',
+                                    boxShadow: state.isFocused
+                                        ? '0 0 0 3px rgba(59, 130, 246, 0.1)'
+                                        : 'none',
+                                    '&:hover': {
+                                        borderColor: ''
+                                    },
+                                    borderColor: error ? '#ef4444' : '#d1d5db'
+                                }),
+                                valueContainer: provided => ({
+                                    ...provided,
+                                    padding: '0'
+                                }),
+                                input: provided => ({
+                                    ...provided,
+                                    margin: '0',
+                                    padding: '0'
+                                }),
+                                placeholder: provided => ({
+                                    ...provided,
+                                    margin: '0',
+                                    color: '#9ca3af'
+                                }),
+                                menuPortal: provided => ({
+                                    ...provided,
+                                    zIndex: 9999
+                                }),
+                                singleValue: (provided, state) => ({
+                                    ...provided,
+                                    color: state.isDisabled
+                                        ? '#000000'
+                                        : provided.color
+                                })
+                            }}
+                            onChange={selected => {
+                                const newValue = isMulti
+                                    ? selected.map(option =>
+                                          option.value !== undefined
+                                              ? option.value
+                                              : option.id
+                                      )
+                                    : selected?.value !== undefined
+                                    ? selected?.value
+                                    : selected?.id;
 
-                            field.onChange(newValue);
-                        }}
-                    />
-                )}
+                                field.onChange(newValue);
+                            }}
+                        />
+                    );
+                }}
             />
             <p
                 className="mt-1 h-4 text-xs text-red-600 font-montserrat"
