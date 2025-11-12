@@ -35,16 +35,14 @@ export const studentsColumns = [
             return (
                 <div className="flex items-center space-x-2">
                     <div
-                        className={`w-2 h-2 rounded-full ${
-                            isActive ? 'bg-green-500' : 'bg-red-500'
-                        }`}
+                        className={`w-2 h-2 rounded-full ${isActive ? 'bg-green-500' : 'bg-red-500'
+                            }`}
                     />
                     <span
-                        className={`inline-flex px-2 py-1 text-xs font-medium rounded-full border ${
-                            isActive
-                                ? 'bg-green-100 text-green-800 border-green-200'
-                                : 'bg-red-100 text-red-800 border-red-200'
-                        }`}
+                        className={`inline-flex px-2 py-1 text-xs font-medium rounded-full border ${isActive
+                            ? 'bg-green-100 text-green-800 border-green-200'
+                            : 'bg-red-100 text-red-800 border-red-200'
+                            }`}
                     >
                         {isActive ? 'Active' : 'Inactive'}
                     </span>
@@ -85,6 +83,35 @@ export const studentsFields = [
         viewMode: true
     },
     {
+        name: 'city_id',
+        label: 'validation.city_id.label',
+        type: 'select',
+        placeholder: 'validation.city_id.placeholder',
+        editMode: true,
+        viewMode: true
+    },
+    {
+        name: 'branch_id',
+        label: 'validation.branch_id.label',
+        type: 'select',
+        placeholder: 'validation.branch_id.placeholder',
+        editMode: true,
+        viewMode: true,
+        info: 'info.branch_id'
+    },
+
+    {
+        name: 'entity_id',
+        label: 'validation.entity_id.label',
+        type: 'select',
+        placeholder: 'validation.entity_id.placeholder',
+        editMode: true,
+        viewMode: true,
+        conditional: true,
+        info: 'info.entity',
+        showWhen: { main_program_id: [1, 2] }
+    },
+    {
         name: 'education_program_entity_type_classification',
         label: 'validation.education_program_entity_type_classification.label',
         type: 'select',
@@ -106,25 +133,6 @@ export const studentsFields = [
         info: 'info.entity_category',
         showWhen: { main_program_id: 1 }
     },
-    {
-        name: 'entity_id',
-        label: 'validation.entity_id.label',
-        type: 'select',
-        placeholder: 'validation.entity_id.placeholder',
-        editMode: true,
-        viewMode: true,
-        conditional: true,
-        info: 'info.entity',
-        showWhen: { main_program_id: [1, 2] }
-    },
-    // {
-    //     name: 'entity_category_id',
-    //     label: 'validation.entity_category_id.label',
-    //     type: 'select',
-    //     placeholder: 'validation.entity_category_id.placeholder',
-    //     editMode: true,
-    //     viewMode: true
-    // },
     {
         name: 'status',
         label: 'validation.status.label',
@@ -161,23 +169,6 @@ export const studentsFields = [
         showWhen: { main_program_id: 2 }
     },
     {
-        name: 'city_id',
-        label: 'validation.city_id.label',
-        type: 'select',
-        placeholder: 'validation.city_id.placeholder',
-        editMode: true,
-        viewMode: true
-    },
-    {
-        name: 'branch_id',
-        label: 'validation.branch_id.label',
-        type: 'select',
-        placeholder: 'validation.branch_id.placeholder',
-        editMode: true,
-        viewMode: true,
-        info: 'info.branch_id'
-    },
-    {
         name: 'address',
         label: 'validation.address.label',
         type: 'textarea',
@@ -193,15 +184,26 @@ export const studentsFields = [
         editMode: true,
         viewMode: true
     },
+    // UPDATED: Replace single parent_name with bilingual fields
     {
-        name: 'parent_name',
-        label: 'validation.parent_name.label',
+        name: 'parent_name.en',
+        label: 'validation.parent_name.label_en',
         type: 'text',
-        placeholder: 'validation.parent_name.placeholder',
+        placeholder: 'validation.parent_name.placeholder_en',
         editMode: true,
         viewMode: true,
         conditional: true,
-        showWhen: { main_program_id: 2 }
+        showWhen: { isMinor: true }
+    },
+    {
+        name: 'parent_name.ar',
+        label: 'validation.parent_name.label_ar',
+        type: 'text',
+        placeholder: 'validation.parent_name.placeholder_ar',
+        editMode: true,
+        viewMode: true,
+        conditional: true,
+        showWhen: { isMinor: true }
     },
     {
         name: 'kinship_id',
@@ -211,7 +213,7 @@ export const studentsFields = [
         editMode: true,
         viewMode: true,
         conditional: true,
-        showWhen: { main_program_id: 2 }
+        showWhen: { isMinor: true }
     },
     {
         name: 'has_medical_issues',
@@ -238,7 +240,7 @@ export const studentsFields = [
         editMode: true,
         viewMode: true,
         conditional: true,
-        showWhen: { main_program_id: 2 }
+        showWhen: { isMinor: true }
     },
     {
         name: 'parent_phone_2',
@@ -248,7 +250,7 @@ export const studentsFields = [
         editMode: true,
         viewMode: true,
         conditional: true,
-        showWhen: { main_program_id: 2 }
+        showWhen: { isMinor: true }
     },
     {
         name: 'registration_date',
@@ -266,7 +268,6 @@ export const studentsFields = [
         editMode: true,
         viewMode: true,
         conditional: true,
-        showWhen: { main_program_id: 2 }
     },
     {
         name: 'specification_id',
@@ -285,7 +286,6 @@ export const studentsFields = [
         placeholder: 'validation.profile_picture.placeholder',
         editMode: true,
         viewMode: true,
-        // accept: 'image/*'
     },
     {
         name: 'gender',
@@ -311,22 +311,6 @@ export const studentsFields = [
         editMode: true,
         viewMode: true
     },
-    // {
-    //     name: 'department.en',
-    //     label: 'validation.department.label.en',
-    //     type: 'text',
-    //     placeholder: 'validation.department.placeholder.en',
-    //     editMode: true,
-    //     viewMode: true
-    // },
-    // {
-    //     name: 'department.ar',
-    //     label: 'validation.department.label.ar',
-    //     type: 'text',
-    //     placeholder: 'validation.department.placeholder.ar',
-    //     editMode: true,
-    //     viewMode: true
-    // },
     {
         name: 'files',
         label: 'validation.files.label',
@@ -336,7 +320,6 @@ export const studentsFields = [
         viewMode: true,
         multiple: true
     },
-
 ];
 
 export const studentsDefaultValues = {
@@ -350,6 +333,10 @@ export const studentsDefaultValues = {
         en: '',
         ar: ''
     },
+    parent_name: { // Add this
+        en: '',
+        ar: ''
+    },
     qualification: {
         has_high_school: 0,
         high_school_grade: 0,
@@ -359,7 +346,6 @@ export const studentsDefaultValues = {
         memorized_quran_parts: 0
     }
 };
-
 export const studentsFilters = [
     {
         name: 'search',
