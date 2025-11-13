@@ -1,7 +1,7 @@
 import Cell from '@/components/common/table/cells/Cell';
-import ActiveCell from '@/components/common/table/cells/ActiveCell';
 import DateCell from '@/components/common/table/cells/DateCell';
 import NameCell from '@/components/common/table/cells/NameCell';
+import { getMaxDateForMinAge } from '@/utils/helpers/dateHelpers';
 import { createColumnHelper } from '@tanstack/react-table';
 import React from 'react';
 
@@ -81,15 +81,6 @@ export const entityManagersFields = [
         viewMode: true
     },
     {
-        name: 'entity_id',
-        label: 'validation.entity_id.label',
-        type: 'select',
-        placeholder: 'validation.entity_id.placeholder',
-        editMode: true,
-        viewMode: true,
-        info: 'info.entity'
-    },
-    {
         name: 'nationality_id',
         label: 'validation.nationality_id.label',
         type: 'select',
@@ -113,6 +104,15 @@ export const entityManagersFields = [
         editMode: true,
         viewMode: true,
         info: 'info.branch_id'
+    },
+        {
+        name: 'entity_id',
+        label: 'validation.entity_id.label',
+        type: 'select',
+        placeholder: 'validation.entity_id.placeholder',
+        editMode: true,
+        viewMode: true,
+        info: 'info.entity'
     },
     {
         name: 'academic_qualification_id',
@@ -152,7 +152,9 @@ export const entityManagersFields = [
         type: 'date',
         placeholder: 'validation.date_of_birth.placeholder',
         editMode: true,
-        viewMode: true
+        viewMode: true,
+        max: getMaxDateForMinAge(18),
+        min: getMaxDateForMinAge(90)
     },
     {
         name: 'years_of_experience',
