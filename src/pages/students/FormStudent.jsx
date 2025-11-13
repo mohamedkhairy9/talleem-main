@@ -19,12 +19,12 @@ const extractEducationEntityTypeData = (oldData) => {
     }
 
     const educationEntityType = oldData.education_program_entity_type_id;
-    
+
     // Check if it's an object (nested data from backend)
     if (typeof educationEntityType === 'object' && educationEntityType !== null) {
         const classification = educationEntityType.educational_entity_classification;
         const name = educationEntityType.name;
-        
+
         return {
             id: educationEntityType.id,
             classification: classification, // For display in category field
@@ -32,7 +32,7 @@ const extractEducationEntityTypeData = (oldData) => {
             fullObject: educationEntityType
         };
     }
-    
+
     // If it's just a number/ID
     return { id: educationEntityType, classification: null, name: null };
 };
@@ -48,9 +48,9 @@ export default function FormStudent({
 }) {
     const { t } = useLocale();
     const lang = i18next.language;
-    
+
     // Extract education entity type info
-    const educationEntityTypeInfo = useMemo(() => 
+    const educationEntityTypeInfo = useMemo(() =>
         extractEducationEntityTypeData(oldData),
         [oldData]
     );
@@ -76,12 +76,12 @@ export default function FormStudent({
         // In edit/view mode, set the classification and category from education_program_entity_type
         if ((editMode || viewMode) && educationEntityTypeInfo.id) {
             baseValues.entity_category_id = educationEntityTypeInfo.id;
-            
+
             // Set classification text (from name)
             if (educationEntityTypeInfo.name) {
-                baseValues.education_program_entity_type_classification = 
-                    educationEntityTypeInfo.name[lang] || 
-                    educationEntityTypeInfo.name.en || 
+                baseValues.education_program_entity_type_classification =
+                    educationEntityTypeInfo.name[lang] ||
+                    educationEntityTypeInfo.name.en ||
                     educationEntityTypeInfo.name.ar;
             }
         }
@@ -104,26 +104,38 @@ export default function FormStudent({
     const branchId = watch('branch_id');
     const entityId = watch('entity_id');
     const dateOfBirth = watch('date_of_birth');
-    
+
+    // Calculate age
     // Calculate age
     const studentAge = useMemo(() => calculateAge(dateOfBirth), [dateOfBirth]);
     const isMinor = studentAge !== null && studentAge < 18;
 
+    // Determine if parent fields should be shown
+    const shouldShowParentFields = useMemo(() => {
+        if (Number(mainProgramId) === 1) {
+            // Education program: show only if minor (age < 18)
+            return isMinor;
+        } else if (Number(mainProgramId) === 2) {
+            // Memorization program: always show
+            return true;
+        }
+        return false;
+    }, [mainProgramId, isMinor]);
     // Get the selected entity's education_program_entity_type
     const selectedEntityEducationType = useMemo(() => {
         if (!entityId || !options.entity_id) return null;
-        
+
         const selectedEntity = options.entity_id.find(entity => entity.id === Number(entityId));
-        
+
         if (selectedEntity?.education_program_entity_type) {
             return selectedEntity.education_program_entity_type;
         }
-        
+
         return null;
     }, [entityId, options.entity_id]);
 
     // Filter entities based on main program AND branch
-    const filteredEntities = useMemo(() => {        
+    const filteredEntities = useMemo(() => {
         if (!mainProgramId || !options.entity_id) {
             return [];
         }
@@ -132,17 +144,17 @@ export default function FormStudent({
         if (!branchId) {
             return [];
         }
-        
+
         const entities = options.entity_id;
-        
+
         // Filter by main program AND branch
         const filtered = entities.filter(entity => {
             const matchesProgram = entity.main_program?.id === Number(mainProgramId);
-            
+
             // Check if entity belongs to the selected branch
             // Adjust the property name based on your actual data structure:
             let matchesBranch = false;
-            
+
             if (entity.branch_id) {
                 // If entity has direct branch_id
                 matchesBranch = entity.branch_id === Number(branchId);
@@ -151,14 +163,14 @@ export default function FormStudent({
                 matchesBranch = entity.branch.id === Number(branchId);
             } else if (Array.isArray(entity.branches)) {
                 // If entity has multiple branches (many-to-many relationship)
-                matchesBranch = entity.branches.some(branch => 
+                matchesBranch = entity.branches.some(branch =>
                     branch.id === Number(branchId) || branch === Number(branchId)
                 );
             }
-                        
+
             return matchesProgram && matchesBranch;
         });
-        
+
         return filtered;
     }, [mainProgramId, branchId, options.entity_id, lang]);
 
@@ -170,18 +182,18 @@ export default function FormStudent({
 
     // When entity is selected, auto-fill category and classification (CREATE mode only)
     useEffect(() => {
-        if (!editMode && !viewMode && selectedEntityEducationType) {            
+        if (!editMode && !viewMode && selectedEntityEducationType) {
             // Set entity_category_id to the education_program_entity_type.id
             setValue('entity_category_id', selectedEntityEducationType.id, {
                 shouldValidate: true,
                 shouldDirty: true
             });
-            
+
             // Set classification to education_program_entity_type.name
-            const classificationText = selectedEntityEducationType.name?.[lang] || 
-                                      selectedEntityEducationType.name?.en || 
-                                      selectedEntityEducationType.name?.ar;
-            
+            const classificationText = selectedEntityEducationType.name?.[lang] ||
+                selectedEntityEducationType.name?.en ||
+                selectedEntityEducationType.name?.ar;
+
             if (classificationText) {
                 setValue('education_program_entity_type_classification', classificationText, {
                     shouldValidate: true,
@@ -229,12 +241,12 @@ export default function FormStudent({
     // Get display value for category (educational_entity_classification)
     const categoryDisplayValue = useMemo(() => {
         if (!selectedEntityEducationType && !educationEntityTypeInfo.classification) return '';
-        
-        const classification = selectedEntityEducationType?.educational_entity_classification || 
-                              educationEntityTypeInfo.classification;
-        
+
+        const classification = selectedEntityEducationType?.educational_entity_classification ||
+            educationEntityTypeInfo.classification;
+
         if (!classification) return '';
-        
+
         return classification[lang] || classification.en || classification.ar || '';
     }, [selectedEntityEducationType, educationEntityTypeInfo, lang]);
 
@@ -288,17 +300,17 @@ export default function FormStudent({
                                 }
                             }
 
-                            // Check age-based condition (for parent fields)
+                            // Check parent fields condition
                             if (field.showWhen.isMinor !== undefined) {
-                                if (field.showWhen.isMinor !== isMinor) {
-                                    return false;
-                                }
+                                // Parent fields logic:
+                                // - For Education (1): show only if minor
+                                // - For Memorization (2): always show
+                                return shouldShowParentFields;
                             }
                         }
 
                         return true;
-                    })
-                    .map(field => {
+                    }).map(field => {
                         // Hide issue_description if has_medical_issues is not 1
                         if (field.name === 'issue_description' && hasMedicalIssues !== 1) {
                             return null;
@@ -351,7 +363,7 @@ export default function FormStudent({
                         // Special handling for branch field - disabled until city is selected
                         if (field.name === 'branch_id') {
                             const isBranchDisabled = !city || viewMode;
-                            
+
                             return (
                                 <div key={field.name}>
                                     <InputRFH
@@ -375,7 +387,7 @@ export default function FormStudent({
                         // Special handling for entity field - disabled until branch is selected
                         if (field.name === 'entity_id') {
                             const isEntityDisabled = !branchId || viewMode;
-                            
+
                             return (
                                 <div key={field.name}>
                                     <InputRFH
@@ -402,8 +414,8 @@ export default function FormStudent({
                         }
 
                         // Determine column span
-                        const isFullWidth = field.type === 'textarea' || 
-                                          (field.type === 'file' && field.name !== 'profile_picture');
+                        const isFullWidth = field.type === 'textarea' ||
+                            (field.type === 'file' && field.name !== 'profile_picture');
 
                         return (
                             <div
@@ -438,6 +450,8 @@ export default function FormStudent({
                                         info={field.info}
                                         options={generateOptions(enhancedOptions[field.name] || options[field.name])}
                                         defaultValue={defaultValues[field.name] || field.defaultValue}
+                                        min={field.min}
+                                        max={field.max}
                                     />
                                 )}
                             </div>

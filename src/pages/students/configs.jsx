@@ -1,6 +1,7 @@
 import Cell from '@/components/common/table/cells/Cell';
 import DateCell from '@/components/common/table/cells/DateCell';
 import NameCell from '@/components/common/table/cells/NameCell';
+import { getMaxDateForMinAge } from '@/utils/helpers/dateHelpers';
 import { createColumnHelper } from '@tanstack/react-table';
 import React from 'react';
 
@@ -182,7 +183,9 @@ export const studentsFields = [
         type: 'date',
         placeholder: 'validation.date_of_birth.placeholder',
         editMode: true,
-        viewMode: true
+        viewMode: true,
+        max: getMaxDateForMinAge(2), // Students must be at least 2 years old
+        min: getMaxDateForMinAge(70)
     },
     // UPDATED: Replace single parent_name with bilingual fields
     {

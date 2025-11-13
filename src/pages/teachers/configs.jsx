@@ -4,6 +4,7 @@ import DateCell from '@/components/common/table/cells/DateCell';
 import NameCell from '@/components/common/table/cells/NameCell';
 import { createColumnHelper } from '@tanstack/react-table';
 import React from 'react';
+import { getMaxDateForMinAge } from '@/utils/helpers/dateHelpers';
 
 const columnHelper = createColumnHelper();
 
@@ -129,7 +130,7 @@ export const teachersFields = [
         editMode: true,
         viewMode: true
     },
-{
+    {
         name: 'education_program_entity_type_classification',
         label: 'validation.education_program_entity_type_classification.label',
         type: 'text', // CHANGED TO TEXT
@@ -184,7 +185,9 @@ export const teachersFields = [
         type: 'date',
         placeholder: 'validation.dob.placeholder',
         editMode: true,
-        viewMode: true
+        viewMode: true,
+        max: getMaxDateForMinAge(18),
+        min: getMaxDateForMinAge(80)
     },
     {
         name: 'years_of_experience',

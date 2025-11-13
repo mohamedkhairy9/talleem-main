@@ -16,7 +16,9 @@ export default function InputRFH({
     disabled,
     accept,
     isMulti = false,
-    info = ''
+    info = '',
+    min, 
+    max 
 }) {
     const { t } = useLocale();
 
@@ -80,6 +82,8 @@ export default function InputRFH({
                     placeholder={t(placeholder) || ''}
                     disabled={disabled}
                     accept={accept}
+                    min={min} 
+                    max={max}
                 />
             )}
             {type === 'textarea' && (
