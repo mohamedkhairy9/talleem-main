@@ -43,6 +43,7 @@ import Students from '@/pages/students/Students';
 import EntityActivities from '@/pages/entity-activities/EntityActivities';
 import Majors from '@/pages/majors/Majors';
 import RemotelyAttendancePlatforms from '@/pages/remotely-attendance-platforms/RemotelyAttendancePlatforms';
+import WarningReasons from '@/pages/warning-reasons/WarningReasons';
 
 export const routes = [
     {
@@ -140,6 +141,10 @@ export const routes = [
     {
         path: '/activities',
         element: <Activities />
+    },
+    {
+        path: '/warning-reasons',
+        element: <WarningReasons />
     },
     {
         path: '/session-periods',
