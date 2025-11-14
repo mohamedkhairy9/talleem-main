@@ -27,17 +27,17 @@ export const sessionPeriodsColumns = [
 export const sessionPeriodsFields = [
     {
         name: 'name.en',
-        label: 'validation.name.label.en',
+        label: 'validation.description.label.en',
         type: 'text',
-        placeholder: 'validation.name.placeholder.en',
+        placeholder: 'validation.description.placeholder.en',
         editMode: true,
         viewMode: true
     },
     {
         name: 'name.ar',
-        label: 'validation.name.label.ar',
+        label: 'validation.description.label.ar',
         type: 'text',
-        placeholder: 'validation.name.placeholder.ar',
+        placeholder: 'validation.description.placeholder.ar',
         editMode: true,
         viewMode: true
     },
