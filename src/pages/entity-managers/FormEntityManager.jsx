@@ -43,92 +43,68 @@ export default function FormEntityManager({
     const mainProgramId = watch('main_program_id');
 
     // Filter branches based on selected city
-    const filteredBranches = useMemo(() => {
-        console.log('=== FILTERING BRANCHES ===');
-        console.log('cityId:', cityId);
-
+    const filteredBranches = useMemo(() => {        
         if (!cityId || !options.branch_id) {
-            console.log('No city selected or no branches available');
             return [];
         }
-
+        
         const branches = options.branch_id;
         const filtered = branches.filter(branch => branch.city?.id === Number(cityId));
-
-        console.log('Filtered branches:', filtered.length);
         return filtered;
     }, [cityId, options.branch_id]);
 
     // Filter entities based on main program AND branch
-    const filteredEntities = useMemo(() => {
-        console.log('=== FILTERING ENTITIES ===');
-        console.log('mainProgramId:', mainProgramId);
-        console.log('branchId:', branchId);
-
+    const filteredEntities = useMemo(() => {        
         if (!mainProgramId || !options.entity_id) {
-            console.log('No program selected');
             return [];
         }
 
         if (!branchId) {
-            console.log('No branch selected - entities disabled');
             return [];
         }
-
+        
         const entities = options.entity_id;
-
+        
         const filtered = entities.filter(entity => {
             const matchesProgram = entity.main_program?.id === Number(mainProgramId);
-
+            
             let matchesBranch = false;
-
+            
             if (entity.branch_id) {
                 matchesBranch = entity.branch_id === Number(branchId);
             } else if (entity.branch?.id) {
                 matchesBranch = entity.branch.id === Number(branchId);
             } else if (Array.isArray(entity.branches)) {
-                matchesBranch = entity.branches.some(branch =>
+                matchesBranch = entity.branches.some(branch => 
                     branch.id === Number(branchId) || branch === Number(branchId)
                 );
-            }
-
-            console.log(`Entity ${entity.id} (${entity.name?.[lang]}):`, {
-                matchesProgram,
-                matchesBranch,
-                included: matchesProgram && matchesBranch
-            });
-
+            }            
             return matchesProgram && matchesBranch;
         });
-
-        console.log('Final filtered entities:', filtered.length);
         return filtered;
     }, [mainProgramId, branchId, options.entity_id, lang]);
 
-    // Reset branch and entity when city changes
+    // Reset branch and entity when city changes (only in create mode)
     useEffect(() => {
-        if (cityId && cityId !== oldData?.city_id) {
-            console.log('City changed, resetting branch and entity');
+        if (!editMode && !viewMode && cityId && cityId !== oldData?.city_id) {
             setValue('branch_id', '');
             setValue('entity_id', '');
         }
-    }, [cityId, oldData?.city_id, setValue]);
+    }, [cityId, oldData?.city_id, setValue, editMode, viewMode]);
 
-    // Reset entity when branch changes (only if city hasn't changed)
+    // Reset entity when branch changes (only in create mode and if city hasn't changed)
     useEffect(() => {
-        if (branchId && branchId !== oldData?.branch_id && cityId === oldData?.city_id) {
-            console.log('Branch changed, resetting entity');
+        if (!editMode && !viewMode && branchId && branchId !== oldData?.branch_id && cityId === oldData?.city_id) {
             setValue('entity_id', '');
         }
-    }, [branchId, cityId, oldData?.branch_id, oldData?.city_id, setValue]);
+    }, [branchId, cityId, oldData?.branch_id, oldData?.city_id, setValue, editMode, viewMode]);
 
-    // Reset entity when main program changes
+    // Reset entity when main program changes (only in create mode)
     useEffect(() => {
-        if (mainProgramId && mainProgramId !== oldData?.main_program_id) {
-            console.log('Main program changed, resetting entity');
+        if (!editMode && !viewMode && mainProgramId && mainProgramId !== oldData?.main_program_id) {
             setValue('entity_id', '');
         }
-    }, [mainProgramId, oldData?.main_program_id, setValue]);
+    }, [mainProgramId, oldData?.main_program_id, setValue, editMode, viewMode]);
 
     // Enhanced options with filtered data
     const enhancedOptions = useMemo(() => ({
@@ -137,13 +113,8 @@ export default function FormEntityManager({
         branch_id: filteredBranches
     }), [options, filteredEntities, filteredBranches]);
 
-    console.log('Enhanced options:', enhancedOptions);
-
     function onSubmit(data) {
-        console.log('Submitting data:', data);
-
         const submissionData = { ...data };
-
         // In edit mode, if profile image not changed, don't send it
         if (editMode && !profileImageChanged) {
             delete submissionData.profile_image;
@@ -185,6 +156,17 @@ export default function FormEntityManager({
         return false;
     };
 
+    // Helper function to get the correct options for a field
+    const getFieldOptions = (fieldName) => {
+        // For fields that shouldn't be filtered, always use original options
+        if (['main_program_id', 'academic_qualification_id', 'major_id', 'nationality_id', 'city_id', 'gender', 'status'].includes(fieldName)) {
+            return generateOptions(options[fieldName]);
+        }
+        
+        // For filtered fields, use enhanced options
+        return generateOptions(enhancedOptions[fieldName] || options[fieldName]);
+    };
+
     return (
         <form onSubmit={handleSubmit(onSubmit)} className="p-4 space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -199,7 +181,7 @@ export default function FormEntityManager({
                         // Special handling for branch field - disabled until city is selected
                         if (field.name === 'branch_id') {
                             const isBranchDisabled = !cityId || viewMode;
-
+                            
                             return (
                                 <div key={field.name}>
                                     <InputRFH
@@ -213,7 +195,7 @@ export default function FormEntityManager({
                                         label={field.label}
                                         name={field.name}
                                         info={field.info}
-                                        options={generateOptions(enhancedOptions[field.name] || [])}
+                                        options={getFieldOptions(field.name)}
                                         defaultValue={oldData?.[field.name] || field.defaultValue}
                                     />
                                 </div>
@@ -223,7 +205,7 @@ export default function FormEntityManager({
                         // Special handling for entity field - disabled until branch is selected
                         if (field.name === 'entity_id') {
                             const isEntityDisabled = !branchId || viewMode;
-
+                            
                             return (
                                 <div key={field.name}>
                                     <InputRFH
@@ -237,7 +219,7 @@ export default function FormEntityManager({
                                         label={field.label}
                                         name={field.name}
                                         info={field.info}
-                                        options={generateOptions(enhancedOptions[field.name] || [])}
+                                        options={getFieldOptions(field.name)}
                                         defaultValue={oldData?.[field.name] || field.defaultValue}
                                     />
                                 </div>
@@ -245,8 +227,8 @@ export default function FormEntityManager({
                         }
 
                         // Determine column span
-                        const isFullWidth = field.type === 'textarea' ||
-                            (field.type === 'file' && field.name !== 'profile_image');
+                        const isFullWidth = field.type === 'textarea' || 
+                                          (field.type === 'file' && field.name !== 'profile_image');
 
                         return (
                             <div
@@ -295,7 +277,7 @@ export default function FormEntityManager({
                                     )
                                 ) : (
                                     <InputRFH
-                                        key={`${field.name}-${enhancedOptions[field.name]?.length || 0}`}
+                                        key={`${field.name}-${getFieldOptions(field.name)?.length || 0}`}
                                         p="px-3 py-3"
                                         control={control}
                                         register={register}
@@ -305,7 +287,7 @@ export default function FormEntityManager({
                                         disabled={isFieldDisabled(field.name)}
                                         label={field.label}
                                         name={field.name}
-                                        options={generateOptions(enhancedOptions[field.name] || options[field.name])}
+                                        options={getFieldOptions(field.name)}
                                         defaultValue={oldData?.[field.name] || field.defaultValue}
                                         info={field.info}
                                         min={field.min}
