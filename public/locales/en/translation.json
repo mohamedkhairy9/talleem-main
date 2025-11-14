@@ -847,6 +847,7 @@
         "home": "Home",
         "roles": "Roles",
         "permissions": "Permissions",
+        "warning_reasons": "Warning Reasons",
         "resources": "Resources",
         "notifications_system": "Notifications System",
         "notification_templates": "Notification Templates",
@@ -897,7 +898,7 @@
         "entity_activities": "Entity Activities",
         "education-program-entity-types": "Education Program Types",
         "memorization-program-entity-types": "Memorization Program Types",
-        "lookups" : "Lookups",
+        "lookups": "Lookups",
         "remotely_attendance_platforms": "Remotely Attendance Platforms"
     },
     "table_titles": {
@@ -907,6 +908,7 @@
         "permissions": "Permissions",
         "roles": "Roles",
         "activity_logs": "Activity Logs",
+        "warning_reasons": "Warning Reasons",
         "academic_qualifications": "Academic Qualifications",
         "jobs": "Jobs",
         "countries": "Countries",
@@ -1044,6 +1046,7 @@
         "date_of_birth": "Date of Birth",
         "licence_number": "Licence Number",
         "main_program": "Main Program",
+        "program": "Program",
         "gender": "Gender",
         "entity": "Entity",
         "nationalities": "Nationalities",
@@ -1084,6 +1087,17 @@
         "edit": "Edit Online Attendance",
         "view": "View Online Attendance",
         "delete": "Delete Online Attendance"
+    },
+    "warning_reasons": {
+        "create": "Create Warning Reason",
+        "update": "Update Warning Reason",
+        "view": "View Warning Reason"
+    },
+    "program": {
+        "label": "Program",
+        "placeholder": "Select Program",
+        "required": "Program is required",
+        "invalid": "Please select a valid program"
     },
     "users": {
         "create": "Create User",

@@ -803,6 +803,7 @@
         "home": "الرئيسية",
         "roles": "الأدوار",
         "permissions": "الصلاحيات",
+        "warning_reasons": "أسباب الإنذارات",
         "resources": "الموارد",
         "notifications_system": "نظام الإشعارات",
         "notification_templates": "قوالب الإشعارات",
@@ -863,6 +864,7 @@
         "permissions": "الصلاحيات",
         "roles": "الأدوار",
         "activity_logs": "سجل الحركات",
+        "warning_reasons": "أسباب الإنذارات",
         "academic_qualifications": "المؤهلات الدراسية",
         "jobs": "الوظائف",
         "countries": "الدول",
@@ -977,6 +979,7 @@
         "area": "المنطقة",
         "branch": "الفرع",
         "main_program": "البرنامج الرئيسي",
+        "program": "البرنامج",
         "academic_qualifications": "المؤهلات الدراسية",
         "jobs": "الوظائف",
         "cities": "المدن",
@@ -1091,6 +1094,17 @@
         "edit": "تعديل الحضور الإلكتروني",
         "view": "عرض الحضور الإلكتروني",
         "delete": "حذف الحضور الإلكتروني"
+    },
+    "warning_reasons": {
+        "create": "إنشاء سبب إنذار",
+        "update": "تحديث سبب الإنذار",
+        "view": "عرض سبب الإنذار"
+    },
+    "program": {
+        "label": "البرنامج",
+        "placeholder": "اختر البرنامج",
+        "required": "البرنامج مطلوب",
+        "invalid": "الرجاء اختيار برنامج صالح"
     },
     "users": {
         "create": "إضافة مستخدم",

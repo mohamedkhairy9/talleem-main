@@ -275,6 +275,13 @@ export const API_URLS = {
         EXPORT: '/entity-managers-export',
         EXPORT_EXAMPLE: '/entity-managers-example-export'
     },
+    WARNING_REASONS: {
+        CREATE: '/warning-reasons',
+        LIST: '/warning-reasons',
+        DETAILS: id => `/warning-reasons/${id}`,
+        UPDATE: id => `/warning-reasons/${id}`,
+        DELETE: id => `/warning-reasons/${id}`
+    },
     BRANCH_ADMINISTRATIONS: {
         CREATE: '/branch-administrations',
         LIST: '/branch-administrations',
@@ -329,6 +336,7 @@ export const API_KEYS = {
     LANGUAGE: 'language',
     ACTIVITY_LOGS: 'activity-logs',
     ACADEMIC_QUALIFICATIONS: 'academic-qualifications',
+    WARNING_REASONS: 'warning-reasons',
     BRANCHES: 'branches',
     MAIN_PROGRAMS: 'main-programs',
     QUORAN_PARTS: 'quoran-parts',
