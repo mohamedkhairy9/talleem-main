@@ -44,6 +44,7 @@ import EntityActivities from '@/pages/entity-activities/EntityActivities';
 import Majors from '@/pages/majors/Majors';
 import RemotelyAttendancePlatforms from '@/pages/remotely-attendance-platforms/RemotelyAttendancePlatforms';
 import WarningReasons from '@/pages/warning-reasons/WarningReasons';
+import EvaluationParameters from '@/pages/evaluation-parameters/EvaluationParameters';
 
 export const routes = [
     {
@@ -89,6 +90,10 @@ export const routes = [
     {
         path: '/main-programs',
         element: <MainPrograms />
+    },
+    {
+        path: '/evaluation-parameters',
+        element: <EvaluationParameters />
     },
     {
         path: '/quoran-parts',

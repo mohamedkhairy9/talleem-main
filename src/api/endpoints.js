@@ -87,6 +87,13 @@ export const API_URLS = {
         UPDATE: id => `/attendance-types/${id}`,
         DELETE: id => `/attendance-types/${id}`
     },
+    EVALUATION_PARAMETERS: {
+        CREATE: '/evaluation-parameters',
+        LIST: '/evaluation-parameters',
+        DETAILS: id => `/evaluation-parameters/${id}`,
+        UPDATE: id => `/evaluation-parameters/${id}`,
+        DELETE: id => `/evaluation-parameters/${id}`
+    },
     MEMORIZATION_PROGRAM_ENTITY_TYPES: {
         CREATE: '/memorization-program-entity-types',
         LIST: '/memorization-program-entity-types',
@@ -341,6 +348,7 @@ export const API_KEYS = {
     MAIN_PROGRAMS: 'main-programs',
     QUORAN_PARTS: 'quoran-parts',
     ATTENDANCES_TYPES: 'attendances-types',
+    EVALUATION_PARAMETERS: 'evaluation-parameters',
     MEMORIZATION_PROGRAM_ENTITY_TYPES: 'memorization-program-entity-types',
     EDUCATION_PROGRAM_ENTITY_TYPES: 'education-program-entity-types',
     KINSHIPS: 'kinships',

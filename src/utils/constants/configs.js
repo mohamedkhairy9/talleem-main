@@ -55,7 +55,6 @@ export const sideMenuTabs = [
                 path: '/warning-reasons',
                 icon: VscDebugBreakpointLog
             },
-
             {
                 titleKey: 'sidebar.users',
                 path: '/users',
@@ -161,6 +160,11 @@ export const sideMenuTabs = [
                     {
                         titleKey: 'sidebar.academic_levels',
                         path: '/academic-levels',
+                        icon: VscDebugBreakpointLog
+                    },
+                    {
+                        titleKey: 'sidebar.evaluation-parameters',
+                        path: '/evaluation-parameters',
                         icon: VscDebugBreakpointLog
                     },
                 ]
