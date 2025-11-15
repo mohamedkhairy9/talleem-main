@@ -40,6 +40,69 @@
                 "ar": "Enter entity name in Arabic"
             }
         },
+        "program": {
+            "label": "Program",
+            "placeholder": "Select Program",
+            "required": "Program is required",
+            "invalid": "Please select a valid program"
+        },
+        "evaluation_for": {
+            "label": "Evaluation For",
+            "placeholder": "Select who to evaluate",
+            "required": "Evaluation for is required"
+        },
+        "evaluation_system": {
+            "label": "Evaluation System",
+            "placeholder": "Select evaluation system",
+            "required": "Evaluation system is required"
+        },
+        "total_grade": {
+            "label": "Total Grade",
+            "placeholder": "Enter total grade (e.g., 100)",
+            "required": "Total grade is required",
+            "positive": "Total grade must be positive",
+            "integer": "Total grade must be an integer"
+        },
+        "dashboards": {
+            "label": "Dashboards",
+            "placeholder": "Select dashboards",
+            "required": "At least one dashboard is required",
+            "min": "Select at least one dashboard"
+        },
+        "receivers": {
+            "label": "Receivers",
+            "placeholder": "Select receivers",
+            "required": "At least one receiver is required",
+            "min": "Select at least one receiver"
+        },
+        "criteria_name": {
+            "label": {
+                "en": "Criteria Name (English)",
+                "ar": "Criteria Name (Arabic)"
+            },
+            "placeholder": {
+                "en": "Enter criteria name in English",
+                "ar": "Enter criteria name in Arabic"
+            },
+            "required": {
+                "en": "Criteria name in English is required",
+                "ar": "Criteria name in Arabic is required"
+            }
+        },
+        "degree": {
+            "label": "Degree",
+            "placeholder": "Enter degree",
+            "required": "Degree is required",
+            "positive": "Degree must be positive"
+        },
+        "criteria": {
+            "min": "At least one criterion is required",
+            "required": "Criteria are required"
+        },
+        "is_active": {
+            "label": "Active",
+            "required": "Status is required"
+        },
         "description": {
             "en_min": "English description must be at least 10 characters",
             "ar_min": "Arabic description must be at least 10 characters",
@@ -848,6 +911,7 @@
         "roles": "Roles",
         "permissions": "Permissions",
         "warning_reasons": "Warning Reasons",
+        "evaluation-parameters": "Evaluation Parameters",
         "resources": "Resources",
         "notifications_system": "Notifications System",
         "notification_templates": "Notification Templates",
@@ -942,7 +1006,8 @@
         "entity_activities": "Entity Activities",
         "education-program-entity-types": "Education Program Types",
         "memorization-program-entity-types": "Memorization Program Types",
-        "remotely_attendance_platforms": "Remotely Attendance Platforms"
+        "remotely_attendance_platforms": "Remotely Attendance Platforms",
+        "evaluation_parameters": "Evaluation Parameters"
     },
     "table": {
         "actions": "Actions",
@@ -999,6 +1064,8 @@
         "created_at": "Created Date",
         "updated_at": "Updated Date",
         "name": "Name",
+        "evaluation_for": "Evaluation For",
+        "total_grade": "Total Grade",
         "role": "Role",
         "guard": "Guard",
         "guard_name": "Guard Name",
@@ -1092,6 +1159,15 @@
         "create": "Create Warning Reason",
         "update": "Update Warning Reason",
         "view": "View Warning Reason"
+    },
+    "evaluation_parameters": {
+        "create": "Create Evaluation Parameter",
+        "update": "Update Evaluation Parameter",
+        "view": "View Evaluation Parameter",
+        "basic_info": "Basic Information",
+        "criteria": "Evaluation Criteria",
+        "add_criteria": "Add Criteria",
+        "criterion": "Criterion"
     },
     "program": {
         "label": "Program",

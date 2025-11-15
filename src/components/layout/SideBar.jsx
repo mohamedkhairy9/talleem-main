@@ -152,10 +152,9 @@ export default function SideBar() {
                                     w-full flex items-center gap-1 text-sm px-3 py-2 rounded-lg transition-all duration-200
                                     group relative
                                     ${isRTL ? 'text-right' : 'text-left'}
-                                    ${
-                                        subActive || nestedActive
-                                            ? 'bg-primary-100/50 text-primary-700 font-medium'
-                                            : 'text-gray-500 hover:gap-2 hover:text-primary hover:bg-gray-50'
+                                    ${subActive || nestedActive
+                                        ? 'bg-primary-100/50 text-primary-700 font-medium'
+                                        : 'text-gray-500 hover:gap-2 hover:text-primary hover:bg-gray-50'
                                     }
                                 `}
                                 aria-label={subTitle}
@@ -163,10 +162,9 @@ export default function SideBar() {
                                 <div
                                     className={`
                                         flex items-center justify-center transition-all duration-200 shrink-0
-                                        ${
-                                            subActive || nestedActive
-                                                ? 'text-primary-700'
-                                                : 'group-hover:scale-105'
+                                        ${subActive || nestedActive
+                                            ? 'text-primary-700'
+                                            : 'group-hover:scale-105'
                                         }
                                     `}
                                 >
@@ -177,10 +175,9 @@ export default function SideBar() {
                                     className={`
                                         font-medium transition-all duration-200 overflow-hidden whitespace-nowrap flex-1
                                         ${isRTL ? 'text-right' : 'text-left'}
-                                        ${
-                                            subActive || nestedActive
-                                                ? 'font-semibold'
-                                                : ''
+                                        ${subActive || nestedActive
+                                            ? 'font-semibold'
+                                            : ''
                                         }
                                     `}
                                 >
@@ -189,9 +186,8 @@ export default function SideBar() {
 
                                 {hasNested && (
                                     <div
-                                        className={`transition-transform duration-200 shrink-0 ${
-                                            isExpanded ? 'rotate-180' : ''
-                                        }`}
+                                        className={`transition-transform duration-200 shrink-0 ${isExpanded ? 'rotate-180' : ''
+                                            }`}
                                     >
                                         <HiChevronDown size={14} />
                                     </div>
@@ -200,13 +196,11 @@ export default function SideBar() {
 
                             {hasNested && (
                                 <div
-                                    className={`overflow-hidden transition-all duration-300 ease-in-out ${
-                                        isRTL ? 'pr-4' : 'pl-4'
-                                    } ${
-                                        isExpanded
+                                    className={`overflow-hidden transition-all duration-300 ease-in-out ${isRTL ? 'pr-4' : 'pl-4'
+                                        } ${isExpanded
                                             ? ' opacity-100 mt-1'
                                             : 'max-h-0 opacity-0'
-                                    }`}
+                                        }`}
                                 >
                                     {renderSubItems(subItem.subMenu, key)}
                                 </div>
@@ -229,18 +223,16 @@ export default function SideBar() {
 
             {!isMobile && (
                 <div
-                    className={`${
-                        isOpen ? 'w-[270px]' : 'w-[70px]'
-                    } h-screen shrink-0 transition-all duration-200`}
+                    className={`${isOpen ? 'w-[270px]' : 'w-[70px]'
+                        } h-screen shrink-0 transition-all duration-200`}
                 ></div>
             )}
 
             {isMobile && !isOpen && (
                 <button
                     onClick={toggleSidebar}
-                    className={`fixed top-4 z-50 p-2 bg-accent text-white rounded-lg shadow-lg hover:bg-primary-500 transition-colors duration-200 ${
-                        isRTL ? 'right-4' : 'left-4'
-                    }`}
+                    className={`fixed top-4 z-50 p-2 bg-accent text-white rounded-lg shadow-lg hover:bg-primary-500 transition-colors duration-200 ${isRTL ? 'right-4' : 'left-4'
+                        }`}
                     aria-label="Toggle menu"
                 >
                     {isOpen ? <HiX size={24} /> : <HiMenuAlt3 size={24} />}
@@ -252,18 +244,16 @@ export default function SideBar() {
                 fixed top-0 h-screen bg-white shadow-xl z-40
                 transition-all duration-200 ease-in-out
                 ${isOpen ? 'w-[270px]' : 'w-[70px]'}
-                ${
-                    isRTL
+                ${isRTL
                         ? 'right-0 border-l border-gray-200'
                         : 'left-0 border-r border-gray-200'
-                }
-                ${
-                    isMobile && !isOpen
+                    }
+                ${isMobile && !isOpen
                         ? isRTL
                             ? 'translate-x-full'
                             : '-translate-x-full'
                         : 'translate-x-0'
-                }
+                    }
             `}
             >
                 <div className="flex justify-between items-center p-4 gap-2 border-b border-gray-200">
@@ -275,11 +265,10 @@ export default function SideBar() {
                     />
                     {isOpen && (
                         <div
-                            className={`transition-all duration-200 overflow-hidden ${
-                                isOpen
+                            className={`transition-all duration-200 overflow-hidden ${isOpen
                                     ? 'opacity-100 max-w-full'
                                     : 'opacity-0 max-w-0'
-                            }`}
+                                }`}
                         >
                             <span className="font-semibold text-lg text-gray-800 tracking-wide whitespace-nowrap">
                                 DASHBOARD
@@ -300,7 +289,10 @@ export default function SideBar() {
                     {isOpen && <span></span>}
                 </div>
 
-                <nav className="flex-1 p-3 space-y-1 scrollbar-hide overflow-y-auto">
+                <nav
+                    className="flex-1 p-3 space-y-1 overflow-y-auto custom-scrollbar"
+                    tabIndex={0}
+                >
                     {sideMenuTabs.map((tab, index) => {
                         const Icon = tab.icon;
                         const title = t(tab.titleKey);
@@ -323,10 +315,9 @@ export default function SideBar() {
                                         w-full flex items-center gap-1 text-base px-3 py-2.5 rounded-lg transition-all duration-200
                                         group relative
                                         ${isRTL ? 'text-right' : 'text-left'}
-                                        ${
-                                            active || submenuIsActive
-                                                ? 'bg-gradient-to-br from-primary-500 to-accent text-white shadow-sm'
-                                                : 'text-gray-500 hover:gap-2 hover:text-primary hover:bg-gray-100'
+                                        ${active || submenuIsActive
+                                            ? 'bg-gradient-to-br from-primary-500 to-accent text-white shadow-sm'
+                                            : 'text-gray-500 hover:gap-2 hover:text-primary hover:bg-gray-100'
                                         }
                                     `}
                                     aria-label={title}
@@ -335,11 +326,10 @@ export default function SideBar() {
                                     <div
                                         className={`
                                         flex items-center justify-center transition-all duration-200 shrink-0
-                                        ${
-                                            active || submenuIsActive
+                                        ${active || submenuIsActive
                                                 ? 'text-white'
                                                 : 'group-hover:scale-105'
-                                        }
+                                            }
                                     `}
                                     >
                                         <Icon size={20} />
@@ -349,16 +339,14 @@ export default function SideBar() {
                                         className={`
                                         font-medium transition-all duration-200 overflow-hidden whitespace-nowrap flex-1
                                         ${isRTL ? 'text-right' : 'text-left'}
-                                        ${
-                                            isOpen
+                                        ${isOpen
                                                 ? 'opacity-100 max-w-full'
                                                 : 'opacity-0 max-w-0'
-                                        }
-                                        ${
-                                            active || submenuIsActive
+                                            }
+                                        ${active || submenuIsActive
                                                 ? 'font-semibold'
                                                 : ''
-                                        }
+                                            }
                                     `}
                                     >
                                         {title}
@@ -378,15 +366,13 @@ export default function SideBar() {
                                     {hasSubmenu && !isOpen && (
                                         <div
                                             className={`
-                                            absolute ${
-                                                isRTL ? 'left-1' : 'right-1'
-                                            } top-1/2 -translate-y-1/2
+                                            absolute ${isRTL ? 'left-1' : 'right-1'
+                                                } top-1/2 -translate-y-1/2
                                             w-1 h-1 rounded-full
-                                            ${
-                                                active || submenuIsActive
+                                            ${active || submenuIsActive
                                                     ? 'bg-white'
                                                     : 'bg-primary-500'
-                                            }
+                                                }
                                         `}
                                         />
                                     )}
@@ -394,13 +380,11 @@ export default function SideBar() {
 
                                 {hasSubmenu && isOpen && (
                                     <div
-                                        className={`overflow-hidden transition-all duration-300 ease-in-out ${
-                                            isRTL ? 'pr-4' : 'pl-4'
-                                        } ${
-                                            isExpanded
+                                        className={`overflow-hidden transition-all duration-300 ease-in-out ${isRTL ? 'pr-4' : 'pl-4'
+                                            } ${isExpanded
                                                 ? ' opacity-100 mt-1'
                                                 : 'max-h-0 opacity-0'
-                                        }`}
+                                            }`}
                                     >
                                         {renderSubItems(
                                             tab.subMenu,
@@ -416,11 +400,10 @@ export default function SideBar() {
                                         <div
                                             className={`
                                              floating-submenu fixed z-50 w-56 bg-white shadow-2xl rounded-lg border border-gray-200 py-2
-                                             ${
-                                                 isRTL
-                                                     ? 'right-[70px]'
-                                                     : 'left-[70px]'
-                                             }
+                                             ${isRTL
+                                                    ? 'right-[70px]'
+                                                    : 'left-[70px]'
+                                                }
                                          `}
                                             style={{
                                                 top: `${submenuPosition.top}px`
@@ -458,16 +441,14 @@ export default function SideBar() {
                                                                 className={`
                                                             w-full flex items-center gap-3 text-sm px-3 py-2.5 rounded-lg transition-all duration-200
                                                             group
-                                                            ${
-                                                                isRTL
-                                                                    ? 'text-right'
-                                                                    : 'text-left'
-                                                            }
-                                                            ${
-                                                                subActive
-                                                                    ? 'bg-gradient-to-r from-primary-500 to-accent text-white shadow-sm'
-                                                                    : 'text-gray-700 hover:bg-gray-50 hover:text-primary'
-                                                            }
+                                                            ${isRTL
+                                                                        ? 'text-right'
+                                                                        : 'text-left'
+                                                                    }
+                                                            ${subActive
+                                                                        ? 'bg-gradient-to-r from-primary-500 to-accent text-white shadow-sm'
+                                                                        : 'text-gray-700 hover:bg-gray-50 hover:text-primary'
+                                                                    }
                                                         `}
                                                                 aria-label={
                                                                     subTitle
@@ -476,11 +457,10 @@ export default function SideBar() {
                                                                 <div
                                                                     className={`
                                                             flex items-center justify-center transition-all duration-200 shrink-0
-                                                            ${
-                                                                subActive
-                                                                    ? 'text-white'
-                                                                    : 'group-hover:scale-110'
-                                                            }
+                                                            ${subActive
+                                                                            ? 'text-white'
+                                                                            : 'group-hover:scale-110'
+                                                                        }
                                                         `}
                                                                 >
                                                                     <SubIcon
@@ -493,11 +473,10 @@ export default function SideBar() {
                                                                 <span
                                                                     className={`
                                                             font-medium transition-all duration-200 whitespace-nowrap
-                                                            ${
-                                                                subActive
-                                                                    ? 'font-semibold'
-                                                                    : ''
-                                                            }
+                                                            ${subActive
+                                                                            ? 'font-semibold'
+                                                                            : ''
+                                                                        }
                                                         `}
                                                                 >
                                                                     {subTitle}
@@ -517,11 +496,10 @@ export default function SideBar() {
                     <div
                         className={`
                         flex items-center gap-3 px-3 py-2 text-gray-500 transition-all duration-200 overflow-hidden
-                        ${
-                            isOpen
+                        ${isOpen
                                 ? 'opacity-100 max-w-full'
                                 : 'opacity-0 max-w-0'
-                        }
+                            }
                     `}
                     >
                         <div className="w-2 h-2 bg-primary-500 rounded-full animate-pulse shrink-0" />
