@@ -658,6 +658,7 @@
         "submit": "Submit",
         "yes": "Yes",
         "no": "No",
+        "save": "Save",
         "cancel": "Cancel",
         "delete": "Delete",
         "back": "Back",
@@ -1195,6 +1196,24 @@
         "update": "Update Employee",
         "view": "View Employee"
     },
+        "configurations": {
+            "title": "System Configuration",
+            "general": "General",
+            "taaleem": "Education Program",
+            "tahfiz": "Memorization Program",
+            "general_settings": "General Settings",
+            "taaleem_settings": "Education Program Settings",
+            "tahfiz_settings": "Memorization Program Settings",
+            "edit": "Edit Configuration",
+            "value": "Value",
+            "select_day": "Select day of the week",
+            "select_method": "Select teaching method",
+            "select_platforms": "Select platforms (multiple)",
+            "enter_value": "Enter value",
+            "platform_helper": "You can select multiple platforms",
+            "no_configurations": "No configurations found",
+            "no_configurations_desc": "There are no configurations available for this program."
+        },
     "note-zone-pick": "Click on the map to draw a zone, or use the polygon tool.",
     "zone-search": "Search location...",
     "reset": {

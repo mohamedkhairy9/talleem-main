@@ -45,6 +45,7 @@ import Majors from '@/pages/majors/Majors';
 import RemotelyAttendancePlatforms from '@/pages/remotely-attendance-platforms/RemotelyAttendancePlatforms';
 import WarningReasons from '@/pages/warning-reasons/WarningReasons';
 import EvaluationParameters from '@/pages/evaluation-parameters/EvaluationParameters';
+import Configurations from '@/pages/configurations/Configurations';
 
 export const routes = [
     {
@@ -150,6 +151,10 @@ export const routes = [
     {
         path: '/warning-reasons',
         element: <WarningReasons />
+    },
+    {
+        path: '/configurations',
+        element: <Configurations />
     },
     {
         path: '/session-periods',

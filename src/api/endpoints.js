@@ -323,7 +323,12 @@ export const API_URLS = {
         DETAILS: id => `/remotely-attendance-platforms/${id}`,
         UPDATE: id => `/remotely-attendance-platforms/${id}`,
         DELETE: id => `/remotely-attendance-platforms/${id}`,
-    }
+    },
+    CONFIGURATIONS: {
+        LIST: '/configurations',
+        SHOW: (program, key) => `/configurations/${program}/${key}`,
+        UPDATE: (program) => `/configurations/${program}`
+    },
 };
 
 export const API_KEYS = {
@@ -333,6 +338,7 @@ export const API_KEYS = {
     LOGOUT: 'logout',
     ROLES: 'roles',
     PERMISSIONS: 'permissions',
+    CONFIGURATIONS: 'configurations',
     RESOURCES: 'resources',
     ROLE_ASSIGNMENT: 'role-assignment',
     PERMISSION_ASSIGNMENT: 'permission-assignment',
