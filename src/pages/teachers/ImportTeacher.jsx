@@ -12,6 +12,7 @@ export default function ImportTeacher({ onClose }) {
             mutate={mutate}
             header="teachers.import"
             importInfo="teachers.import_info"
+            
         />
     );
 }
