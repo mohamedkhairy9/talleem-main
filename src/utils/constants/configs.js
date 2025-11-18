@@ -284,6 +284,12 @@ export const sideMenuTabs = [
             },
         ]
     },
+    // config file
+    {
+        titleKey: 'sidebar.configurations',
+        path: '/configurations',
+        icon: HiDocumentText
+    },
 
     // صلة القربى
 

@@ -78,9 +78,6 @@ export default function EditConfigurationModal({ config, onClose }) {
                 })
                 .filter(Boolean);
 
-            console.log('Platform names from config:', platformNames);
-            console.log('Matched platform IDs:', platformIds);
-
             return platformIds;
         }
 
@@ -96,11 +93,8 @@ export default function EditConfigurationModal({ config, onClose }) {
 
     // Watch the value to see what's selected
     const currentValue = watch('value');
-    console.log('Current form value:', currentValue);
 
     function onSubmit(data) {
-        console.log('Form submitted with data:', data);
-
         let valueToSend = data.value;
 
         // Handle multi-select platforms - convert IDs back to names
@@ -113,7 +107,6 @@ export default function EditConfigurationModal({ config, onClose }) {
                 .filter(Boolean);
 
             valueToSend = platformNames.join(', ');
-            console.log('Converted IDs to names:', valueToSend);
         }
 
         const payload = {
@@ -121,8 +114,6 @@ export default function EditConfigurationModal({ config, onClose }) {
                 ? (data.value ? '1' : '0')
                 : valueToSend.toString()
         };
-
-        console.log('Submitting payload:', payload);
 
         mutate(
             { program: config.program, data: payload },
@@ -214,7 +205,7 @@ export default function EditConfigurationModal({ config, onClose }) {
                     register={register}
                     error={errors.value?.message}
                     type={fieldConfig.type}
-                    label={t('configurations.value')}
+                    label={fieldConfig.type === "checkbox" ? t('validation.is_active.label') : t('configurations.value')}
                     name="value"
                     options={fieldConfig.options}
                     isMulti={fieldConfig.isMulti}
