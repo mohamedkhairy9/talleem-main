@@ -5,7 +5,7 @@ import { usersFields } from './configs';
 import InputRFH from '@/components/common/inputs/InputRFH';
 import Btn from '@/components/common/buttons/Btn';
 import { getNestedError } from '@/utils/helpers/getNestedError';
-import { generateOptions, prepareFormData } from '@/utils/helpers/global.fns';
+import { generateOptions } from '@/utils/helpers/global.fns';
 
 export default function FormUser({
     onClose,
@@ -22,15 +22,8 @@ export default function FormUser({
     });
 
     function onSubmit(data) {
-        console.log('data', data);
 
-        // Add static user_type for all requests
-        const userData = {
-            ...data,
-            user_type: 'employee' // Static constant as specified
-        };
-
-        mutate(userData, {
+        mutate(data, {
             onSuccess: () => {
                 onClose();
             }
