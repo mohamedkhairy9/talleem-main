@@ -9,7 +9,7 @@ import { API_KEYS } from '@/api/endpoints';
 const columnHelper = createColumnHelper();
 
 export const warningReasonsColumns = [
-    columnHelper.accessor('description', {
+    columnHelper.accessor('name', {
         header: 'table_headers.description',
         cell: info => <NameCell directValue={info.row.original.name} />
     }),

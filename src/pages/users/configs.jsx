@@ -144,7 +144,7 @@ export const usersFields = [
 export const usersDefaultValues = {
     locale: 'en',
     current_app_locale: 'en',
-    user_type: 'employee',
+    user_type: '',
     status: true
 };
 
