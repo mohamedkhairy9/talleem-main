@@ -1,5 +1,4 @@
 import Cell from '@/components/common/table/cells/Cell';
-import ActiveCell from '@/components/common/table/cells/ActiveCell';
 import DateCell from '@/components/common/table/cells/DateCell';
 import NameCell from '@/components/common/table/cells/NameCell';
 import { createColumnHelper } from '@tanstack/react-table';
@@ -10,9 +9,9 @@ const columnHelper = createColumnHelper();
 
 // Table Columns
 export const notificationsColumns = [
-    columnHelper.accessor('data.title', {
+    columnHelper.accessor('title', {
         header: 'table_headers.subject',
-        cell: info => <NameCell directValue={info.row.original.data.title} />
+        cell: info => <NameCell directValue={info.row.original.title} />
     }),
     columnHelper.accessor('notifiable', {
         header: 'table_headers.user',
@@ -111,35 +110,13 @@ export const filtersDefaultValues = {
     search: ''
 };
 
-// API Calls Configuration
+// API Calls Configuration - All from APIs now
 export const notificationApiCalls = [
-    {
-        key: API_KEYS.MAIN_PROGRAMS,
-        name: 'programsData'
-    },
-    {
-        key: API_KEYS.BRANCHES,
-        name: 'branchesData'
-    },
-    {
-        key: API_KEYS.ENTITY_TYPES,
-        name: 'entityTypesData'
-    },
-    {
-        key: API_KEYS.ENTITIES,
-        name: 'entitiesData'
-    }
-];
-
-// User Type Options
-export const getUserTypeOptions = (t) => [
-    { id: 'teacher', name: t('notifications.teacher'), value: 'teacher' },
-    { id: 'student', name: t('notifications.student'), value: 'student' },
-    { id: 'guardian', name: t('notifications.guardian'), value: 'guardian' },
-    { id: 'entity_manager', name: t('notifications.entity_manager'), value: 'entity_manager' },
-    { id: 'supervisor', name: t('notifications.supervisor'), value: 'supervisor' },
-    { id: 'branch_manager', name: t('notifications.branch_manager'), value: 'branch_manager' }
-];
+    API_KEYS.MAIN_PROGRAMS,
+    API_KEYS.BRANCHES,
+    API_KEYS.ENTITY_CATEGORIES,
+    API_KEYS.ENTITIES,
+]
 
 // Sending Methods Configuration
 export const sendingMethods = [
@@ -174,18 +151,16 @@ export const prepareNotificationPayload = (data, selectedMethods) => {
 
     // Prepare base filters
     const filters = {
-        user_type: data.user_type,
         ...(data.branch_id && { branch_id: data.branch_id }),
         ...(data.program_id && { program_id: data.program_id }),
         ...(data.entity_type_id && { entity_type_id: data.entity_type_id }),
         ...(data.entity_id && { entity_id: data.entity_id }),
-        ...(data.relation_owner_name && { relation_owner_name: data.relation_owner_name })
     };
 
     // Prepare payload
     const payload = {
         filters,
-        sending_type: sendingTypes[0] // Backend should handle this
+        sending_type: sendingTypes[0] // Backend should handle multiple
     };
 
     // Add title and content based on first selected method
@@ -206,10 +181,8 @@ export const prepareNotificationPayload = (data, selectedMethods) => {
 
 // Default values for form
 export const getDefaultFormValues = () => ({
-    user_type: [],
     program_id: null,
     branch_id: null,
     entity_type_id: null,
     entity_id: null,
-    relation_owner_name: ''
 });

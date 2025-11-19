@@ -8,6 +8,8 @@ import useIsOpen from '@/utils/hooks/global/useIsOpen';
 import { getOriginalObject } from '@/utils/helpers/global.fns';
 import Filters from './Filters';
 import ViewNotification from './ViewNotification';
+import SendNotification from './SendNotification';
+import i18next from 'i18next';
 
 export default function Notifications() {
     const { isOpen, toggle } = useIsOpen();
@@ -15,6 +17,10 @@ export default function Notifications() {
         useFiltering(filtersDefaultValues);
     const { data, isLoading, refresh } = useNotificationsQuery(filters);
     const { t } = useLocale();
+    const tableData = data?.map(item => ({
+        ...item,
+        title: item?.data?.title?.[i18next.language],
+    }));
 
     return (
         <div>
@@ -22,9 +28,9 @@ export default function Notifications() {
                 title={t('table_titles.notifications')}
                 refresh={refresh}
                 loading={isLoading}
-                data={data}
+                data={tableData}
                 serverPagination={true}
-                totalCount={data?.length}
+                totalCount={data?.meta?.total}
                 columns={notificationsColumns}
                 toggleModals={toggle}
                 pagination={pagination}
@@ -34,12 +40,13 @@ export default function Notifications() {
                 }
                 setFilters={setFilters}
                 filters={filters}
-                enableAdd={false}
+                enableAdd={true}
                 enableEdit={false}
                 enableDelete={false}
                 enableCopy={false}
                 enableView={true}
             />
+            {isOpen.add && <SendNotification onClose={toggle.add} />}
             {isOpen.view && (
                 <ViewNotification
                     onClose={toggle.view}
