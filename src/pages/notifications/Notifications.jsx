@@ -44,15 +44,15 @@ export default function Notifications() {
                 enableEdit={false}
                 enableDelete={false}
                 enableCopy={false}
-                enableView={true}
+                enableView={false}
             />
             {isOpen.add && <SendNotification onClose={toggle.add} />}
-            {isOpen.view && (
+            {/* {isOpen.view && (
                 <ViewNotification
                     onClose={toggle.view}
                     notification={getOriginalObject(isOpen.view, data)}
                 />
-            )}
+            )} */}
         </div>
     );
 }
