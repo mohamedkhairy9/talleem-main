@@ -13,34 +13,33 @@ import {
     sendingMethods,
     prepareNotificationPayload,
     getDefaultFormValues,
+    userTypeOptions,
+    notificationFields
 } from './configs';
 import SendingMethodCard from './SendingMethodCard';
-import NotificationContentForm from './NotificationContentForm';
+import { generateOptions } from '@/utils/helpers/global.fns';
+import { getNestedError } from '@/utils/helpers/getNestedError';
 import { getSendNotificationSchema } from '@/utils/yup/notificationSchema';
-import { userTypeOptions } from '@/utils/constants/options';
 
 export default function SendNotification({ onClose }) {
     const { t } = useLocale();
     const currentLang = i18next.language;
     const { mutate, isPending } = useTriggerNotificationMutation();
+    
+    // Default: push is selected
     const [selectedMethods, setSelectedMethods] = useState({
         sms: false,
         email: false,
-        push: false,
+        push: true,
         whatsapp: false
     });
 
-    // Fetch all required data from APIs (without USER_TYPES)
-    const {
-        programsData,
-        branchesData,
-        entityTypesData,
-        entitiesData,
-        isLoading
-    } = useApiCalls({ apiCalls: notificationApiCalls });
+    // Fetch all required data from APIs
+    const apiData = useApiCalls({ apiCalls: notificationApiCalls });
+    const { isLoading, branches, entities, roles } = apiData;
 
     // Transform user types with current language
-    const transformedUserTypeOptions = useMemo(() => {
+    const transformedUserTypes = useMemo(() => {
         return userTypeOptions.map(option => ({
             id: option.id,
             name: option.label[currentLang] || option.label.en,
@@ -48,50 +47,49 @@ export default function SendNotification({ onClose }) {
         }));
     }, [currentLang]);
 
-    // Transform programs from API to options
-    const programOptions = useMemo(() => {
-        if (!programsData?.data) return [];
-        return programsData.data.map(program => ({
-            id: program.id,
-            name: program.name?.[currentLang] || program.name?.ar || program.name?.en || program.name,
-            value: program.id
-        }));
-    }, [programsData, currentLang]);
+    // Filter roles to exclude super-admin
+    const filteredRoles = useMemo(() => {
+        if (!roles?.data) return [];
+        return roles.data.filter(role => {
+            // Check if name is string or object
+            const roleName = typeof role.name === 'string' 
+                ? role.name 
+                : role.name?.en || role.name?.ar || '';
+            
+            return roleName.toLowerCase() !== 'super-admin' && roleName !== 'super_admin';
+        });
+    }, [roles]);
 
-    // Transform branches from API to options
-    const branchOptions = useMemo(() => {
-        if (!branchesData?.data) return [];
-        return branchesData.data.map(branch => ({
-            id: branch.id,
-            name: branch.name?.[currentLang] || branch.name?.ar || branch.name?.en || branch.name,
-            value: branch.id
-        }));
-    }, [branchesData, currentLang]);
-
-    // Transform entity types from API to options
-    const entityTypeOptions = useMemo(() => {
-        if (!entityTypesData?.data) return [];
-        return entityTypesData.data.map(entityType => ({
-            id: entityType.id,
-            name: entityType.name?.[currentLang] || entityType.name?.ar || entityType.name?.en || entityType.name,
-            value: entityType.id
-        }));
-    }, [entityTypesData, currentLang]);
-
-    // Transform entities from API to options
-    const entityOptions = useMemo(() => {
-        if (!entitiesData?.data) return [];
-        return entitiesData.data.map(entity => ({
-            id: entity.id,
-            name: entity.name?.[currentLang] || entity.name?.ar || entity.name?.en || entity.name,
-            value: entity.id
-        }));
-    }, [entitiesData, currentLang]);
-
-    const { register, errors, handleSubmit, control } = useRFH({
+    const { register, errors, handleSubmit, control, watch } = useRFH({
         schema: getSendNotificationSchema(selectedMethods, t),
         defaultValues: getDefaultFormValues()
     });
+
+    // Watch branch_id to filter entities
+    const watchedBranchId = watch('branch_id');
+
+    // Filter entities based on selected branch
+    const filteredEntities = useMemo(() => {
+        if (!entities?.data) return [];
+        
+        // If no branch selected, show all entities
+        if (!watchedBranchId) {
+            return entities.data;
+        }
+        
+        // Filter entities by branch_id
+        const filtered = entities.data.filter(entity => {
+            // Make sure to compare as numbers or strings consistently
+            const entityBranchId = entity.branch.id;
+            const selectedBranchId = watchedBranchId;
+            
+            // Try both strict and loose comparison
+            return entityBranchId === selectedBranchId || 
+                   Number(entityBranchId) === Number(selectedBranchId);
+        });
+        
+        return filtered;
+    }, [entities, watchedBranchId]);
 
     const isAnyMethodSelected = Object.values(selectedMethods).some(Boolean);
 
@@ -108,7 +106,6 @@ export default function SendNotification({ onClose }) {
         }
 
         const payload = prepareNotificationPayload(data, selectedMethods);
-        console.log('Sending notification:', payload);
 
         mutate(payload, {
             onSuccess: () => {
@@ -127,6 +124,14 @@ export default function SendNotification({ onClose }) {
             </Modal>
         );
     }
+
+    // Prepare options object
+    const options = {
+        user_type: transformedUserTypes,
+        role_id: filteredRoles,
+        branch_id: branches?.data,
+        entity_id: filteredEntities
+    };
 
     return (
         <Modal onClose={onClose} size="5xl">
@@ -155,22 +160,59 @@ export default function SendNotification({ onClose }) {
                     )}
                 </div>
 
-                {/* Content Forms for each selected method */}
-                {sendingMethods.map(method => (
-                    selectedMethods[method.key] && (
-                        <NotificationContentForm
-                            key={method.key}
-                            method={method.key}
-                            icon={method.icon}
-                            title={t(`notifications.${method.key}_content`)}
+                {/* Single Content Form */}
+                <div className="p-4 bg-gray-50 rounded-lg space-y-4 border-t pt-6">
+                    <h3 className="font-semibold text-lg text-gray-900 flex items-center gap-2">
+                        <span>✉️</span> {t('notifications.notification_content')}
+                    </h3>
+                    
+                    {/* Title & Description Fields */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <InputRFH
                             control={control}
                             register={register}
-                            errors={errors}
-                            t={t}
+                            error={errors.title_ar?.message}
+                            type="text"
+                            label={t('notifications.title_ar')}
+                            name="title_ar"
+                            placeholder={t('notifications.enter_title_ar')}
+                            p="px-3 py-3"
                         />
-                    )
-                )
-                )}
+                        <InputRFH
+                            control={control}
+                            register={register}
+                            error={errors.title_en?.message}
+                            type="text"
+                            label={t('notifications.title_en')}
+                            name="title_en"
+                            placeholder={t('notifications.enter_title_en')}
+                            p="px-3 py-3"
+                        />
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <InputRFH
+                            control={control}
+                            register={register}
+                            error={errors.description_ar?.message}
+                            type="textarea"
+                            label={t('notifications.description_ar')}
+                            name="description_ar"
+                            placeholder={t('notifications.enter_description_ar')}
+                            p="px-3 py-3"
+                        />
+                        <InputRFH
+                            control={control}
+                            register={register}
+                            error={errors.description_en?.message}
+                            type="textarea"
+                            label={t('notifications.description_en')}
+                            name="description_en"
+                            placeholder={t('notifications.enter_description_en')}
+                            p="px-3 py-3"
+                        />
+                    </div>
+                </div>
 
                 {/* Target Users Filters */}
                 <div className="border-t pt-6 space-y-4">
@@ -178,68 +220,50 @@ export default function SendNotification({ onClose }) {
                         {t('notifications.target_users')}
                     </h3>
                     
-                    {/* User Type - Required - Multi-select */}
-                    <InputRFH
-                        control={control}
-                        register={register}
-                        error={errors.user_type?.message}
-                        type="select"
-                        label={t('notifications.user_type')}
-                        name="user_type"
-                        options={transformedUserTypeOptions}
-                        isMulti={true}
-                        placeholder={t('notifications.select_user_type')}
-                    />
+                    {/* Dynamic Fields */}
+                    <div className="space-y-4">
+                        {notificationFields.map(field => (
+                            <div 
+                                key={field.name}
+                                className={field.gridColumn === 'full' ? 'w-full' : ''}
+                            >
+                                {field.gridColumn === 'full' ? (
+                                    <InputRFH
+                                        control={control}
+                                        register={register}
+                                        error={getNestedError(errors, field.name)}
+                                        type={field.type}
+                                        label={field.label}
+                                        name={field.name}
+                                        options={generateOptions(options?.[field.name])}
+                                        isMulti={field.isMulti}
+                                        placeholder={field.placeholder}
+                                        p="px-3 py-3"
+                                    />
+                                ) : null}
+                            </div>
+                        ))}
 
-                    {/* Optional Filters - All from APIs */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        {/* Program */}
-                        <InputRFH
-                            control={control}
-                            register={register}
-                            error={errors.program_id?.message}
-                            type="select"
-                            label={t('notifications.program')}
-                            name="program_id"
-                            options={programOptions}
-                            placeholder={t('notifications.select_program')}
-                        />
-
-                        {/* Branch */}
-                        <InputRFH
-                            control={control}
-                            register={register}
-                            error={errors.branch_id?.message}
-                            type="select"
-                            label={t('notifications.branch')}
-                            name="branch_id"
-                            options={branchOptions}
-                            placeholder={t('notifications.select_branch')}
-                        />
-
-                        {/* Entity Type */}
-                        <InputRFH
-                            control={control}
-                            register={register}
-                            error={errors.entity_type_id?.message}
-                            type="select"
-                            label={t('notifications.entity_type')}
-                            name="entity_type_id"
-                            options={entityTypeOptions}
-                            placeholder={t('notifications.select_entity_type')}
-                        />
-
-                        {/* Entity */}
-                        <InputRFH
-                            control={control}
-                            register={register}
-                            error={errors.entity_id?.message}
-                            type="select"
-                            label={t('notifications.entity')}
-                            name="entity_id"
-                            options={entityOptions}
-                            placeholder={t('notifications.select_entity')}
-                        />
+                        {/* Half width fields in grid */}
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            {notificationFields
+                                .filter(field => field.gridColumn === 'half')
+                                .map(field => (
+                                    <InputRFH
+                                        key={field.name}
+                                        control={control}
+                                        register={register}
+                                        error={getNestedError(errors, field.name)}
+                                        type={field.type}
+                                        label={field.label}
+                                        name={field.name}
+                                        options={generateOptions(options?.[field.name])}
+                                        isMulti={field.isMulti}
+                                        placeholder={field.placeholder}
+                                        p="px-3 py-3"
+                                    />
+                                ))}
+                        </div>
                     </div>
                 </div>
 

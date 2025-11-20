@@ -12,7 +12,6 @@ export default function CreateEvaluationParameter({ onClose }) {
     const { mainProgramsData, isLoading } = useApiCalls({ apiCalls });
 
     if (isLoading) return <Loader />;
-    console.log(mainProgramsData)
     return (
         <Modal onClose={onClose} size="4xl">
             <ModalHeader onClose={onClose} header="evaluation_parameters.create" />

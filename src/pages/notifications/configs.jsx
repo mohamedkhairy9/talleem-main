@@ -4,6 +4,9 @@ import NameCell from '@/components/common/table/cells/NameCell';
 import { createColumnHelper } from '@tanstack/react-table';
 import React from 'react';
 import { API_KEYS } from '@/api/endpoints';
+import { FaSms, FaWhatsapp } from 'react-icons/fa';
+import { MdEmail } from 'react-icons/md';
+import { IoNotifications } from 'react-icons/io5';
 
 const columnHelper = createColumnHelper();
 
@@ -110,35 +113,159 @@ export const filtersDefaultValues = {
     search: ''
 };
 
-// API Calls Configuration - All from APIs now
+// API Calls Configuration
 export const notificationApiCalls = [
-    API_KEYS.MAIN_PROGRAMS,
+    //    API_KEYS.MAIN_PROGRAMS,
     API_KEYS.BRANCHES,
-    API_KEYS.ENTITY_CATEGORIES,
+    //     API_KEYS.ENTITY_TYPES,
     API_KEYS.ENTITIES,
-]
+    API_KEYS.ROLES
+];
+
+// User Type Options - From database (as shown in image)
+export const userTypeOptions = [
+    { id: 'entity', label: { ar: 'جهة', en: 'Entity' }, value: 'entity' },
+    { id: 'student', label: { ar: 'طالب', en: 'Student' }, value: 'student' },
+    { id: 'teacher', label: { ar: 'معلم', en: 'Teacher' }, value: 'teacher' },
+    { id: 'guest', label: { ar: 'ضيف', en: 'Guest' }, value: 'guest' },
+    {
+        id: 'employee',
+        label: { ar: 'موظف', en: 'Employee' },
+        value: 'employee'
+    },
+    { id: 'parent', label: { ar: 'ولي أمر', en: 'Parent' }, value: 'parent' }
+];
 
 // Sending Methods Configuration
 export const sendingMethods = [
     {
         key: 'sms',
-        icon: '📱',
+        icon: <FaSms/>,
         labelKey: 'notifications.sms'
     },
     {
         key: 'email',
-        icon: '📧',
+        icon: <MdEmail/>,
         labelKey: 'notifications.email'
     },
     {
         key: 'push',
-        icon: '📬',
+        icon: <IoNotifications/>,
         labelKey: 'notifications.push'
     },
     {
         key: 'whatsapp',
-        icon: '💬',
+        icon: <FaWhatsapp/>,
         labelKey: 'notifications.whatsapp'
+    }
+];
+
+// Dynamic Filter Fields Configuration
+export const getFilterFields = t => [
+    {
+        name: 'user_type',
+        type: 'select',
+        label: t('notifications.user_type'),
+        placeholder: t('notifications.select_user_type'),
+        isMulti: true,
+        required: true,
+        optionsSource: 'static', // Options from userTypeOptions
+        gridColumn: 'full' // Full width
+    },
+    {
+        name: 'role_id',
+        type: 'select',
+        label: t('notifications.role'),
+        placeholder: t('notifications.select_role'),
+        isMulti: false,
+        required: false,
+        optionsSource: 'api', // Options from API
+        apiKey: 'rolesData',
+        filterFunction: roles =>
+            roles.filter(role => role.name !== 'super-admin'), // Exclude super-admin
+        gridColumn: 'half'
+    },
+    // {
+    //     name: 'program_id',
+    //     type: 'select',
+    //     label: t('notifications.program'),
+    //     placeholder: t('notifications.select_program'),
+    //     isMulti: false,
+    //     required: false,
+    //     optionsSource: 'api',
+    //     apiKey: 'programsData',
+    //     gridColumn: 'half',
+    //     disabled: true // On hold
+    // },
+    {
+        name: 'branch_id',
+        type: 'select',
+        label: t('notifications.branch'),
+        placeholder: t('notifications.select_branch'),
+        isMulti: false,
+        required: false,
+        optionsSource: 'api',
+        apiKey: 'branchesData',
+        gridColumn: 'half'
+    },
+    // {
+    //     name: 'entity_type_id',
+    //     type: 'select',
+    //     label: t('notifications.entity_type'),
+    //     placeholder: t('notifications.select_entity_type'),
+    //     isMulti: false,
+    //     required: false,
+    //     optionsSource: 'api',
+    //     apiKey: 'entityTypesData',
+    //     gridColumn: 'half',
+    //     disabled: true // On hold
+    // },
+    {
+        name: 'entity_id',
+        type: 'select',
+        label: t('notifications.entity'),
+        placeholder: t('notifications.select_entity'),
+        isMulti: false,
+        required: false,
+        optionsSource: 'api',
+        apiKey: 'entitiesData',
+        dependsOn: 'branch_id', // Depends on branch selection
+        gridColumn: 'half'
+    }
+];
+
+export const notificationFields = [
+    {
+        name: 'user_type',
+        type: 'select',
+        label: 'notifications.user_type',
+        placeholder: 'notifications.select_user_type',
+        isMulti: true,
+        gridColumn: 'full'
+    },
+    {
+        name: 'role_id',
+        type: 'select',
+        label: 'notifications.role',
+        placeholder: 'notifications.select_role',
+        isMulti: false,
+        gridColumn: 'half'
+    },
+    {
+        name: 'branch_id',
+        type: 'select',
+        label: 'notifications.branch',
+        placeholder: 'notifications.select_branch',
+        isMulti: false,
+        gridColumn: 'half'
+    },
+    {
+        name: 'entity_id',
+        type: 'select',
+        label: 'notifications.entity',
+        placeholder: 'notifications.select_entity',
+        isMulti: false,
+        gridColumn: 'half'
     }
 ];
 
@@ -151,38 +278,37 @@ export const prepareNotificationPayload = (data, selectedMethods) => {
 
     // Prepare base filters
     const filters = {
+        user_type: data.user_type,
         ...(data.branch_id && { branch_id: data.branch_id }),
-        ...(data.program_id && { program_id: data.program_id }),
-        ...(data.entity_type_id && { entity_type_id: data.entity_type_id }),
-        ...(data.entity_id && { entity_id: data.entity_id }),
+        ...(data.role_id && { role_id: data.role_id }),
+        ...(data.entity_id && { entity_id: data.entity_id })
     };
 
-    // Prepare payload
+    // Prepare payload with single title and description
     const payload = {
         filters,
-        sending_type: sendingTypes[0] // Backend should handle multiple
+        sending_type: sendingTypes, // Send all selected types as array
+        title: {
+            en: data.title_en,
+            ar: data.title_ar
+        },
+        content: {
+            en: data.description_en,
+            ar: data.description_ar
+        }
     };
-
-    // Add title and content based on first selected method
-    const firstMethod = sendingTypes[0];
-    if (firstMethod) {
-        payload.title = {
-            en: data[`${firstMethod}_title_en`],
-            ar: data[`${firstMethod}_title_ar`]
-        };
-        payload.content = {
-            en: data[`${firstMethod}_content_en`],
-            ar: data[`${firstMethod}_content_ar`]
-        };
-    }
 
     return payload;
 };
 
-// Default values for form
+// Default values for form - Updated with title and description
 export const getDefaultFormValues = () => ({
-    program_id: null,
+    user_type: [],
+    role_id: null,
     branch_id: null,
-    entity_type_id: null,
     entity_id: null,
+    title_ar: '',
+    title_en: '',
+    description_ar: '',
+    description_en: ''
 });

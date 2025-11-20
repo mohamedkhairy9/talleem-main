@@ -17,7 +17,7 @@ export default function Notifications() {
         useFiltering(filtersDefaultValues);
     const { data, isLoading, refresh } = useNotificationsQuery(filters);
     const { t } = useLocale();
-    const tableData = data?.map(item => ({
+    const tableData = data?.data?.map(item => ({
         ...item,
         title: item?.data?.title?.[i18next.language],
     }));
