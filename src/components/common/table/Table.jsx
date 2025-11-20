@@ -676,7 +676,7 @@ const Table = ({
             } ${className}`}
         >
             <div
-                className={`bg-white rounded-xl shadow-sm border border-gray-200 ${
+                className={`bg-white rounded-xl shadow-sm border border-gray-200 min-w-fit ${
                     isFullscreen ? 'h-full flex flex-col' : ''
                 }`}
             >
@@ -781,7 +781,7 @@ const Table = ({
                                 {enableAdd && (
                                     <button
                                         onClick={toggleModals?.add}
-                                        className="flex items-center space-x-2 px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary transition-colors"
+                                        className="flex items-center space-x-2 px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary transition-colors min-w-fit"
                                     >
                                         <MdAdd className="w-4 h-4" />
                                         <span className="text-sm font-medium">
