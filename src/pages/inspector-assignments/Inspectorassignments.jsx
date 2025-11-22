@@ -10,7 +10,7 @@ import { getOriginalObject } from '@/utils/helpers/global.fns';
 import ViewInspectorAssignment from './ViewInspectorAssignment';
 import useFiltering from '@/utils/hooks/global/useFiltering';
 import Filters from './Filters';
-import CreateInspectorAssignment from './CreateInspectorAssignment';
+import CreateInspectorAssignment from './Createinspectorassignment';
 
 export default function InspectorAssignments() {
     const { isOpen, toggle } = useIsOpen();
