@@ -1,5 +1,4 @@
 import React from 'react';
-import FormInspectorAssignment from './FormInspectorAssignment';
 import Modal from '@/components/common/form/Modal';
 import ModalHeader from '@/components/common/form/ModalHeader';
 import { useCreateInspectorAssignmentMutation } from '@/api/hooks/useInspectorAssignments';
@@ -7,6 +6,7 @@ import { apiCalls, inspectorAssignmentsDefaultValues } from './configs';
 import Loader from '@/components/common/Loader';
 import useApiCalls from './useApiCalls';
 import { enabledDisabledOptions } from '@/utils/constants/options';
+import FormInspectorAssignment from './Forminspectorassignment';
 
 export default function CreateInspectorAssignment({ onClose }) {
     const { mutate, isPending } = useCreateInspectorAssignmentMutation();
