@@ -3,7 +3,6 @@ import { useInspectorAssignmentsQuery } from '@/api/hooks/useInspectorAssignment
 import Table from '@/components/common/table/Table';
 import { inspectorAssignmentsColumns, filtersDefaultValues } from './configs';
 import useIsOpen from '@/utils/hooks/global/useIsOpen';
-import CreateInspectorAssignment from './CreateInspectorAssignment';
 import EditInspectorAssignment from './EditInspectorAssignment';
 import DeleteInspectorAssignment from './DeleteInspectorAssignment';
 import useLocale from '@/utils/hooks/global/useLocale';
@@ -11,6 +10,7 @@ import { getOriginalObject } from '@/utils/helpers/global.fns';
 import ViewInspectorAssignment from './ViewInspectorAssignment';
 import useFiltering from '@/utils/hooks/global/useFiltering';
 import Filters from './Filters';
+import CreateInspectorAssignment from './Createinspectorassignment';
 
 export default function InspectorAssignments() {
     const { isOpen, toggle } = useIsOpen();
