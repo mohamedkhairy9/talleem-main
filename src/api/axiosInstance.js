@@ -25,6 +25,31 @@ axiosInstance.interceptors.request.use(
         const currentLanguage = i18n.language || 'en';
         config.headers['Accept-Language'] = currentLanguage;
 
+        // حذف الـ parameters الفاضية من الـ GET requests
+        if (config.params) {
+            const cleanedParams = {};
+            
+            Object.keys(config.params).forEach(key => {
+                const value = config.params[key];
+                
+                // إضافة القيمة فقط إذا كانت:
+                // - ليست null
+                // - ليست undefined
+                // - ليست string فاضي
+                // - ليست array فاضي
+                if (
+                    value !== null && 
+                    value !== undefined && 
+                    value !== '' &&
+                    !(Array.isArray(value) && value.length === 0)
+                ) {
+                    cleanedParams[key] = value;
+                }
+            });
+            
+            config.params = cleanedParams;
+        }
+
         return config;
     },
     error => Promise.reject(error)

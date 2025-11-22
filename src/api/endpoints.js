@@ -66,6 +66,13 @@ export const API_URLS = {
         UPDATE: id => `/branches/${id}`,
         DELETE: id => `/branches/${id}`
     },
+    INSPECTOR_ASSIGNMENTS: {
+        LIST: '/supervisor-assignments',
+        DETAILS: id => `/supervisor-assignments/${id}`,
+        CREATE: '/supervisor-assignments',
+        UPDATE: id => `/supervisor-assignments/${id}`,
+        DELETE: id => `/supervisor-assignments/${id}`
+    },
     MAIN_PROGRAMS: {
         CREATE: '/main-programs',
         LIST: '/main-programs',
@@ -322,13 +329,13 @@ export const API_URLS = {
         LIST: '/remotely-attendance-platforms',
         DETAILS: id => `/remotely-attendance-platforms/${id}`,
         UPDATE: id => `/remotely-attendance-platforms/${id}`,
-        DELETE: id => `/remotely-attendance-platforms/${id}`,
+        DELETE: id => `/remotely-attendance-platforms/${id}`
     },
     CONFIGURATIONS: {
         LIST: '/configurations',
         SHOW: (program, key) => `/configurations/${program}/${key}`,
-        UPDATE: (program) => `/configurations/${program}`
-    },
+        UPDATE: program => `/configurations/${program}`
+    }
 };
 
 export const API_KEYS = {
@@ -340,6 +347,7 @@ export const API_KEYS = {
     PERMISSIONS: 'permissions',
     CONFIGURATIONS: 'configurations',
     RESOURCES: 'resources',
+    INSPECTOR_ASSIGNMENTS: 'supervisor-assignments',
     ROLE_ASSIGNMENT: 'role-assignment',
     PERMISSION_ASSIGNMENT: 'permission-assignment',
     NOTIFICATIONS: 'notifications',

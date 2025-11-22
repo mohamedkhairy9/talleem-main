@@ -632,6 +632,26 @@
             "min": "Time must be at least 1",
             "integer": "Time must be a whole number"
         },
+        "assignment_type": {
+            "label": "Assignment Type",
+            "placeholder": "Select assignment type"
+        },
+        "entity_ids": {
+            "label": "Entities",
+            "placeholder": "Select entities"
+        },
+        "supervisor_ids": {
+            "label": "Supervisors",
+            "placeholder": "Select supervisors"
+        },
+        "notes": {
+            "label": "Notes",
+            "placeholder": "Enter notes"
+        },
+        "at_least_one": "At least one item must be selected",
+        "regular_one_supervisor": "In regular educational supervision, only one supervisor must be selected",
+        "end_date_after_start": "End date must be after or equal to start date",
+        "invalid_value": "Invalid value",
         "time_unit": {
             "label": "Time Unit",
             "placeholder": "Select unit...",
@@ -932,6 +952,7 @@
         "entity_categories": "Entity Categories",
         "session_periods": "Session Periods",
         "kinships": "Relationships",
+        "inspector-assignments": "Supervisor Assignments",
         "attendance_types": "Absence Types",
         "quoran_parts": "Quran Parts",
         "main_programs": "Main Programs",
@@ -1009,7 +1030,8 @@
         "education-program-entity-types": "Education Program Types",
         "memorization-program-entity-types": "Memorization Program Types",
         "remotely_attendance_platforms": "Remotely Attendance Platforms",
-        "evaluation_parameters": "Evaluation Parameters"
+        "evaluation_parameters": "Evaluation Parameters",
+        "inspector_assignments": "Inspector Assignments to Entities"
     },
     "table": {
         "actions": "Actions",
@@ -1137,7 +1159,11 @@
         "activity": "Activity",
         "education-program-entity-types": "Education Program Types",
         "memorization-program-entity-types": "Memorization Program Types",
-        "remotely_attendance_platforms": "Attendance Platforms"
+        "remotely_attendance_platforms": "Attendance Platforms",
+        "assignment_type": "Assignment Type",
+        "entities": "Entities",
+        "supervisors": "Supervisors",
+        "notes": "Notes"
     },
     "nationalities": {
         "create": "Create Nationality",
@@ -1270,6 +1296,13 @@
     "zone-search": "Search location...",
     "reset": {
         "title": "Reset"
+    },
+    "inspector_assignments": {
+        "create": "Add Inspector Assignment",
+        "update": "Edit Inspector Assignment",
+        "view": "View Inspector Assignment",
+        "regular": "Regular Educational Supervision",
+        "committee": "Supervision Committee Formation"
     },
     "info": {
         "neighborhood_id": "Please select a city first, as the neighborhood depends on the city",

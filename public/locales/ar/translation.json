@@ -430,6 +430,26 @@
             "required": "تاريخ الميلاد مطلوب",
             "invalid": "الرجاء إدخال تاريخ ميلاد صحيح"
         },
+        "assignment_type": {
+            "label": "نوع الإسناد",
+            "placeholder": "اختر نوع الإسناد"
+        },
+        "entity_ids": {
+            "label": "الجهات",
+            "placeholder": "اختر الجهات"
+        },
+        "supervisor_ids": {
+            "label": "المشرفين",
+            "placeholder": "اختر المشرفين"
+        },
+        "notes": {
+            "label": "ملاحظات",
+            "placeholder": "أدخل الملاحظات"
+        },
+        "at_least_one": "يجب اختيار عنصر واحد على الأقل",
+        "regular_one_supervisor": "في الإشراف التربوي الاعتيادي، يجب اختيار مشرف واحد فقط",
+        "end_date_after_start": "تاريخ النهاية يجب أن يكون بعد أو يساوي تاريخ البداية",
+        "invalid_value": "قيمة غير صالحة",
         "main_program_id": {
             "label": "البرنامج الرئيسي",
             "placeholder": "اختر البرنامج الرئيسي",
@@ -889,6 +909,7 @@
         "location_types": "نوعية المكان",
         "specifications": "المواصفات",
         "activities": "الأنشطة",
+        "inspector-assignments": "إسناد المشرفين على الجهات",
         "entity_categories": "فئة الجهة",
         "session_periods": "فترات الحلقة",
         "kinships": "صلة القربى",
@@ -969,7 +990,8 @@
         "entity_activities": "أنشطة الجهات",
         "education-program-entity-types": "تصنيفات جهة التعليم",
         "memorization-program-entity-types": "فئات الجهة",
-        "remotely_attendance_platforms": "منصات الحضور عن بعد"
+        "remotely_attendance_platforms": "منصات الحضور عن بعد",
+        "inspector_assignments": "إسناد المشرفين على الجهات"
     },
     "table": {
         "actions": "الإجراءات",
@@ -1098,7 +1120,11 @@
         "education-program-entity-types": "تصنيف جهة التعليم",
         "memorization-program-entity-types": "فئة الجهة",
         "remotely_attendance_platforms": "المنصات",
-        "employee": "الموظف"
+        "employee": "الموظف",
+        "assignment_type": "نوع الإسناد",
+        "entities": "الجهات",
+        "supervisors": "المشرفين",
+        "notes": "ملاحظات"
     },
     "nationalities": {
         "create": "إضافة جنسية",
@@ -1281,6 +1307,13 @@
     "zone-search": "ابحث عن موقع...",
     "reset": {
         "title": "إعادة تعيين"
+    },
+    "inspector_assignments": {
+        "create": "إضافة إسناد مشرف",
+        "update": "تعديل إسناد مشرف",
+        "view": "عرض إسناد مشرف",
+        "regular": "إشراف تربوي اعتيادي",
+        "committee": "تشكيل لجنة إشراف"
     },
     "info": {
         "neighborhood_id": "برجاء اختيار مدية أولا حيث ان الحي يعتمد على المدينة",

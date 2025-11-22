@@ -1,4 +1,3 @@
-import { multipartFormData } from '@/utils/constants/global.constants';
 import { axiosInstance } from '../axiosInstance';
 import { API_URLS } from '../endpoints';
 

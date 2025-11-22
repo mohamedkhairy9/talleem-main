@@ -30,7 +30,7 @@ import {
     HiTemplate
 } from 'react-icons/hi';
 import { VscDebugBreakpointLog } from 'react-icons/vsc';
-import { IoGrid } from "react-icons/io5";
+import { IoGrid } from 'react-icons/io5';
 
 export const sideMenuTabs = [
     { titleKey: 'sidebar.home', path: '/', icon: HiHome },
@@ -148,6 +148,11 @@ export const sideMenuTabs = [
                         icon: VscDebugBreakpointLog
                     },
                     {
+                        titleKey: 'sidebar.inspector-assignments',
+                        path: '/inspector-assignments',
+                        icon: VscDebugBreakpointLog
+                    },
+                    {
                         titleKey: 'sidebar.academic_qualifications',
                         path: '/academic-qualifications',
                         icon: VscDebugBreakpointLog
@@ -166,7 +171,7 @@ export const sideMenuTabs = [
                         titleKey: 'sidebar.evaluation-parameters',
                         path: '/evaluation-parameters',
                         icon: VscDebugBreakpointLog
-                    },
+                    }
                 ]
             },
             {
@@ -281,7 +286,7 @@ export const sideMenuTabs = [
                 titleKey: 'sidebar.education-program-entity-types',
                 path: '/education-program-entity-types',
                 icon: VscDebugBreakpointLog
-            },
+            }
         ]
     },
     // config file

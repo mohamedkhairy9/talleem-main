@@ -46,6 +46,7 @@ import RemotelyAttendancePlatforms from '@/pages/remotely-attendance-platforms/R
 import WarningReasons from '@/pages/warning-reasons/WarningReasons';
 import EvaluationParameters from '@/pages/evaluation-parameters/EvaluationParameters';
 import Configurations from '@/pages/configurations/Configurations';
+import InspectorAssignments from '@/pages/inspector-assignments/Inspectorassignments';
 
 export const routes = [
     {
@@ -91,6 +92,10 @@ export const routes = [
     {
         path: '/main-programs',
         element: <MainPrograms />
+    },
+    {
+        path: '/inspector-assignments',
+        element: <InspectorAssignments />
     },
     {
         path: '/evaluation-parameters',
