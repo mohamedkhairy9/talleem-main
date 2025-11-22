@@ -1,11 +1,11 @@
 import Modal from '@/components/common/form/Modal';
 import ModalHeader from '@/components/common/form/ModalHeader';
 import React from 'react';
-import FormInspectorAssignment from './FormInspectorAssignment';
 import { enabledDisabledOptions } from '@/utils/constants/options';
 import Loader from '@/components/common/Loader';
 import useApiCalls from './useApiCalls';
 import { apiCalls } from './configs';
+import FormInspectorAssignment from './Forminspectorassignment';
 
 export default function ViewInspectorAssignment({ onClose, oldData }) {
     console.log('oldData', oldData);
