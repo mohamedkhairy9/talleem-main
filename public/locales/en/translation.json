@@ -63,6 +63,35 @@
             "positive": "Total grade must be positive",
             "integer": "Total grade must be an integer"
         },
+        "warning_type": {
+            "label": "Warning Type",
+            "placeholder": "Select warning type"
+        },
+        "program_id": {
+            "label": "Program",
+            "placeholder": "Select program"
+        },
+        "student_id": {
+            "label": "Student",
+            "placeholder": "Select student"
+        },
+        "teacher_id": {
+            "label": "Teacher",
+            "placeholder": "Select teacher"
+        },
+        "warning_reason_id": {
+            "label": "Warning Reason",
+            "placeholder": "Select warning reason"
+        },
+        "warning_date": {
+            "label": "Warning Date",
+            "placeholder": "Select warning date"
+        },
+        "note": {
+            "label": "Notes",
+            "placeholder": "Enter notes"
+        },
+        "date_must_be_today_or_future": "Date must be today or in the future",
         "dashboards": {
             "label": "Dashboards",
             "placeholder": "Select dashboards",
@@ -932,6 +961,7 @@
         "roles": "Roles",
         "permissions": "Permissions",
         "warning_reasons": "Warning Reasons",
+        "warning": "Issuing Warnings",
         "evaluation-parameters": "Evaluation Parameters",
         "resources": "Resources",
         "notifications_system": "Notifications System",
@@ -996,6 +1026,7 @@
         "roles": "Roles",
         "activity_logs": "Activity Logs",
         "warning_reasons": "Warning Reasons",
+        "warnings": "Issuing Warnings",
         "academic_qualifications": "Academic Qualifications",
         "jobs": "Jobs",
         "countries": "Countries",
@@ -1097,6 +1128,11 @@
         "countries": "Countries",
         "city": "City",
         "neighborhood": "Neighborhood",
+        "warning_type": "Warning Type",
+        "student": "Student",
+        "teacher": "Teacher",
+        "warning_reason": "Warning Reason",
+        "warning_date": "Warning Date",
         "job": "Job",
         "activity_description": "Activity Description",
         "event_type": "Event Type",
@@ -1187,6 +1223,14 @@
         "create": "Create Warning Reason",
         "update": "Update Warning Reason",
         "view": "View Warning Reason"
+    },
+    "warnings": {
+        "create": "Add Warning",
+        "update": "Edit Warning",
+        "view": "View Warning",
+        "student": "Student Warning",
+        "teacher": "Teacher Warning",
+        "entity": "Entity Warning"
     },
     "evaluation_parameters": {
         "create": "Create Evaluation Parameter",

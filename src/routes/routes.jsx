@@ -47,6 +47,7 @@ import WarningReasons from '@/pages/warning-reasons/WarningReasons';
 import EvaluationParameters from '@/pages/evaluation-parameters/EvaluationParameters';
 import Configurations from '@/pages/configurations/Configurations';
 import InspectorAssignments from '@/pages/inspector-assignments/Inspectorassignments';
+import IssuingWarnings from '@/pages/issuing-warnings/Warnings';
 
 export const routes = [
     {
@@ -157,6 +158,11 @@ export const routes = [
         path: '/warning-reasons',
         element: <WarningReasons />
     },
+    {
+        path: '/issuing-warnings',
+        element: <IssuingWarnings />
+    },
+
     {
         path: '/configurations',
         element: <Configurations />

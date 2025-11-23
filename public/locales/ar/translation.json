@@ -55,6 +55,35 @@
             "positive": "يجب أن تكون الدرجة الكلية موجبة",
             "integer": "يجب أن تكون الدرجة الكلية رقمًا صحيحًا"
         },
+        "warning_type": {
+            "label": "نوع الإنذار",
+            "placeholder": "اختر نوع الإنذار"
+        },
+        "program_id": {
+            "label": "البرنامج",
+            "placeholder": "اختر البرنامج"
+        },
+        "student_id": {
+            "label": "الطالب",
+            "placeholder": "اختر الطالب"
+        },
+        "teacher_id": {
+            "label": "المعلم",
+            "placeholder": "اختر المعلم"
+        },
+        "warning_reason_id": {
+            "label": "سبب الإنذار",
+            "placeholder": "اختر سبب الإنذار"
+        },
+        "warning_date": {
+            "label": "تاريخ الإنذار",
+            "placeholder": "اختر تاريخ الإنذار"
+        },
+        "note": {
+            "label": "ملاحظات",
+            "placeholder": "أدخل الملاحظات"
+        },
+        "date_must_be_today_or_future": "التاريخ يجب أن يكون اليوم أو في المستقبل",
         "dashboards": {
             "label": "لوحات المعلومات",
             "placeholder": "اختر لوحات المعلومات",
@@ -892,6 +921,7 @@
         "roles": "الأدوار",
         "permissions": "الصلاحيات",
         "warning_reasons": "أسباب الإنذارات",
+        "warning": "إصدار الإنذارات",
         "evaluation-parameters": "معايير التقييم",
         "resources": "الموارد",
         "notifications_system": "نظام الإشعارات",
@@ -957,6 +987,7 @@
         "roles": "الأدوار",
         "activity_logs": "سجل الحركات",
         "warning_reasons": "أسباب الإنذارات",
+        "warnings": "إصدار الإنذارات",
         "academic_qualifications": "المؤهلات الدراسية",
         "jobs": "الوظائف",
         "countries": "الدول",
@@ -1059,6 +1090,11 @@
         "neighborhood": "الحي",
         "job": "الوظيفة",
         "activity_description": "وصف النشاط",
+        "warning_type": "نوع الإنذار",
+        "student": "الطالب",
+        "teacher": "المعلم",
+        "warning_reason": "سبب الإنذار",
+        "warning_date": "تاريخ الإنذار",
         "event_type": "نوع الحدث",
         "subject_type": "نوع الموضوع",
         "subject_id": "معرف الموضوع",
@@ -1198,6 +1234,14 @@
         "create": "إنشاء سبب إنذار",
         "update": "تحديث سبب الإنذار",
         "view": "عرض سبب الإنذار"
+    },
+    "warnings": {
+        "create": "إضافة إنذار",
+        "update": "تعديل إنذار",
+        "view": "عرض إنذار",
+        "student": "إنذار طالب",
+        "teacher": "إنذار معلم",
+        "entity": "إنذار جهة"
     },
     "evaluation_parameters": {
         "create": "إنشاء معيار تقييم",

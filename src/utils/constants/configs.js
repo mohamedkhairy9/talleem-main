@@ -55,6 +55,12 @@ export const sideMenuTabs = [
                 path: '/warning-reasons',
                 icon: VscDebugBreakpointLog
             },
+                        {
+                titleKey: 'sidebar.warning',
+                path: '/issuing-warnings',
+                icon: VscDebugBreakpointLog
+            },
+
             {
                 titleKey: 'sidebar.users',
                 path: '/users',
