@@ -920,6 +920,7 @@
         "home": "الرئيسية",
         "roles": "الأدوار",
         "permissions": "الصلاحيات",
+        "mushaf_management" : "تقسيم المصحف",
         "warning_reasons": "أسباب الإنذارات",
         "warning": "إصدار الإنذارات",
         "evaluation-parameters": "معايير التقييم",

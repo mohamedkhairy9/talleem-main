@@ -302,6 +302,13 @@ export const sideMenuTabs = [
         icon: HiDocumentText
     },
 
+        {
+        titleKey: 'sidebar.mushaf_management',
+        path: '/quran-viewer',
+        icon: HiDocumentText
+    },
+
+
     // صلة القربى
 
     // الأنشطة
