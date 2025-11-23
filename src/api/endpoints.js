@@ -296,6 +296,13 @@ export const API_URLS = {
         UPDATE: id => `/warning-reasons/${id}`,
         DELETE: id => `/warning-reasons/${id}`
     },
+    WARNINGS: {
+        LIST: '/warnings',
+        DETAILS: (id) => `/warnings/${id}`,
+        CREATE: '/warnings',
+        UPDATE: (id) => `/warnings/${id}`,
+        DELETE: (id) => `/warnings/${id}`
+    },
     BRANCH_ADMINISTRATIONS: {
         CREATE: '/branch-administrations',
         LIST: '/branch-administrations',
@@ -358,6 +365,7 @@ export const API_KEYS = {
     ACTIVITY_LOGS: 'activity-logs',
     ACADEMIC_QUALIFICATIONS: 'academic-qualifications',
     WARNING_REASONS: 'warning-reasons',
+    WARNINGS: 'warnings',
     BRANCHES: 'branches',
     MAIN_PROGRAMS: 'main-programs',
     QUORAN_PARTS: 'quoran-parts',
