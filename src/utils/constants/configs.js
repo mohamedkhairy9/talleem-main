@@ -55,7 +55,7 @@ export const sideMenuTabs = [
                 path: '/warning-reasons',
                 icon: VscDebugBreakpointLog
             },
-                        {
+            {
                 titleKey: 'sidebar.warning',
                 path: '/issuing-warnings',
                 icon: VscDebugBreakpointLog
@@ -143,6 +143,12 @@ export const sideMenuTabs = [
                         path: '/kinships',
                         icon: VscDebugBreakpointLog
                     },
+                    {
+                        titleKey: 'sidebar.certification-names',
+                        path: '/certification-names',
+                        icon: VscDebugBreakpointLog
+                    },
+
                     {
                         titleKey: 'sidebar.entity_activities',
                         path: '/entity-activities',

@@ -48,6 +48,7 @@ import EvaluationParameters from '@/pages/evaluation-parameters/EvaluationParame
 import Configurations from '@/pages/configurations/Configurations';
 import InspectorAssignments from '@/pages/inspector-assignments/Inspectorassignments';
 import IssuingWarnings from '@/pages/issuing-warnings/Warnings';
+import CertificationNames from '@/pages/certification-names/CertificationNames';
 
 export const routes = [
     {
@@ -162,7 +163,10 @@ export const routes = [
         path: '/issuing-warnings',
         element: <IssuingWarnings />
     },
-
+    {
+        path: '/certification-names',
+        element: <CertificationNames />
+    },
     {
         path: '/configurations',
         element: <Configurations />
