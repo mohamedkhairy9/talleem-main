@@ -101,6 +101,13 @@ export const API_URLS = {
         UPDATE: id => `/evaluation-parameters/${id}`,
         DELETE: id => `/evaluation-parameters/${id}`
     },
+    SESSION_MODES: {
+        LIST: '/session-modes',
+        DETAILS: id => `/session-modes/${id}`,
+        CREATE: '/session-modes',
+        UPDATE: id => `/session-modes/${id}`,
+        DELETE: id => `/session-modes/${id}`
+    },
     MEMORIZATION_PROGRAM_ENTITY_TYPES: {
         CREATE: '/memorization-program-entity-types',
         LIST: '/memorization-program-entity-types',
@@ -357,6 +364,7 @@ export const API_KEYS = {
     INSPECTOR_ASSIGNMENTS: 'supervisor-assignments',
     ROLE_ASSIGNMENT: 'role-assignment',
     PERMISSION_ASSIGNMENT: 'permission-assignment',
+    SESSION_MODES: 'session-modes',
     NOTIFICATIONS: 'notifications',
     NOTIFICATION_TEMPLATES: 'notification-templates',
     NOTIFICATION_TRIGGER: 'notification-trigger',

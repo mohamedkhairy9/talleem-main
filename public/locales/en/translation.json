@@ -745,6 +745,12 @@
         "view": "View Role",
         "assign_permission": "Assign Permissions"
     },
+    "session_modes": {
+        "create": "Create Session Mode",
+        "update": "Update Session Mode",
+        "view": "View Session Mode",
+        "delete": "Delete Session Mode"
+    },
     "academic_qualifications": {
         "create": "Create Academic Qualification",
         "update": "Update Academic Qualification",
@@ -1024,6 +1030,7 @@
         "notifications": "Notifications",
         "general_banners": "General Banners",
         "permissions": "Permissions",
+        "session_modes": "Session Modes",
         "roles": "Roles",
         "activity_logs": "Activity Logs",
         "warning_reasons": "Warning Reasons",
@@ -1116,6 +1123,7 @@
         "sms": "SMS",
         "inbox": "Inbox",
         "scheduled": "Scheduled",
+        "session_mode": "Session Mode",
         "sent_via": "Sent Via",
         "created_at": "Created Date",
         "updated_at": "Updated Date",
