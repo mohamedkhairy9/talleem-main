@@ -1,0 +1,684 @@
+import React, { useEffect, useState } from 'react';
+import { fontLoader } from '@/utils/helpers/fontLoader';
+import './QuranSegmentationView.css';
+import { dbLoader } from '@/utils/helpers/databaseLoader';
+import QuranSegmentsService from '@/api/services/quranSegments.service';
+import toastService from '@/utils/helpers/Toastservice';
+import { FaEye } from 'react-icons/fa';
+import { HiSave } from 'react-icons/hi';
+import useLocale from '@/utils/hooks/global/useLocale';
+
+/**
+ * Quran Segmentation View Component
+ * Displays Quran page on right, segments table on left
+ * Allows viewing and editing segments
+ */
+const QuranSegmentationView = () => {
+    const { t } = useLocale();
+    
+    // Database state
+    const [linesDb, setLinesDb] = useState(null);
+    const [wordsDb, setWordsDb] = useState(null);
+    const [surahData, setSurahData] = useState(null);
+    
+    // UI state
+    const [currentPage, setCurrentPage] = useState(1);
+    const [pageLines, setPageLines] = useState([]);
+    const [segments, setSegments] = useState([]);
+    const [config, setConfig] = useState(null);
+    
+    // Selection state
+    const [editingSegment, setEditingSegment] = useState(null);
+    const [selectedAyahs, setSelectedAyahs] = useState(new Set());
+    
+    // Loading states
+    const [isLoading, setIsLoading] = useState(true);
+    const [isFontLoading, setIsFontLoading] = useState(false);
+    const [error, setError] = useState(null);
+
+    // Initialize databases
+    useEffect(() => {
+        initializeDatabases();
+        return () => dbLoader.cleanup();
+    }, []);
+
+    // Load page and segments when page changes
+    useEffect(() => {
+        if (linesDb && wordsDb && surahData) {
+            loadPageWithFont(currentPage);
+            fetchSegments(currentPage);
+            fetchConfig();
+        }
+    }, [currentPage, linesDb, wordsDb, surahData]);
+
+    /**
+     * Initialize databases
+     */
+    const initializeDatabases = async () => {
+        try {
+            setIsLoading(true);
+            const { linesDb, wordsDb, surahData } = await dbLoader.initialize();
+            setLinesDb(linesDb);
+            setWordsDb(wordsDb);
+            setSurahData(surahData);
+            setIsLoading(false);
+        } catch (err) {
+            setError(`${t('mushaf_management.loadError')}: ${err.message}`);
+            setIsLoading(false);
+        }
+    };
+
+    /**
+     * Load page with font wait
+     */
+    const loadPageWithFont = async (pageNum) => {
+        try {
+            setIsFontLoading(true);
+            fontLoader.loadPageFont(pageNum);
+            
+            if (document.fonts) {
+                await document.fonts.load(`1em QuranicFont-${pageNum}`);
+                await new Promise(resolve => setTimeout(resolve, 100));
+            } else {
+                await new Promise(resolve => setTimeout(resolve, 300));
+            }
+            
+            loadPage(pageNum);
+            setIsFontLoading(false);
+        } catch (error) {
+            console.error('Error loading font:', error);
+            loadPage(pageNum);
+            setIsFontLoading(false);
+        }
+    };
+
+    /**
+     * Load page data
+     */
+    const loadPage = (pageNum) => {
+        if (!linesDb) return;
+
+        try {
+            const query = `SELECT * FROM pages WHERE page_number = ${pageNum} ORDER BY line_number`;
+            const result = linesDb.exec(query);
+
+            if (result.length === 0 || result[0].values.length === 0) {
+                setPageLines([]);
+                return;
+            }
+
+            const columns = result[0].columns;
+            const rows = result[0].values;
+
+            const lines = rows.map(row => {
+                const line = {};
+                columns.forEach((col, idx) => {
+                    line[col] = row[idx];
+                });
+                return line;
+            });
+
+            setPageLines(lines);
+        } catch (err) {
+            setError(`${t('mushaf_management.loadError')}: ${err.message}`);
+        }
+    };
+
+    /**
+     * Fetch segments for current page
+     */
+    const fetchSegments = async (pageNum) => {
+        try {
+            const response = await QuranSegmentsService.getSegmentsByPage(pageNum);
+            
+            // Handle different response formats
+            let segs = [];
+            if (Array.isArray(response)) {
+                segs = response;
+            } else if (response && Array.isArray(response.data)) {
+                segs = response.data;
+            } else if (response && response.data && Array.isArray(response.data.data)) {
+                segs = response.data.data;
+            }
+            
+            setSegments(segs);
+        } catch (error) {
+            console.error('Error fetching segments:', error);
+            setSegments([]);
+        }
+    };
+
+    /**
+     * Fetch configuration (segments per page)
+     */
+    const fetchConfig = async () => {
+        try {
+            // TODO: Replace with actual config API
+            const mockConfig = {
+                segments_per_page: 'variable'
+            };
+            
+            setConfig(mockConfig);
+        } catch (error) {
+            console.error('Error fetching config:', error);
+            setConfig({ segments_per_page: 'variable' });
+        }
+    };
+
+    /**
+     * Get words for line
+     */
+    const getWordsForLine = (firstWordId, lastWordId) => {
+        if (!wordsDb) return [];
+
+        try {
+            const query = `SELECT id, text, location FROM words WHERE id >= ${firstWordId} AND id <= ${lastWordId} ORDER BY id`;
+            const result = wordsDb.exec(query);
+
+            if (result.length > 0 && result[0].values.length > 0) {
+                return result[0].values.map(row => ({
+                    id: row[0],
+                    text: row[1],
+                    location: row[2]
+                }));
+            }
+        } catch (error) {
+            console.error('Error fetching words:', error);
+        }
+
+        return [];
+    };
+
+    /**
+     * Get surah name
+     */
+    const getSurahName = (surahNumber) => {
+        if (!surahData || !surahData[surahNumber]) return '';
+        const surah = surahData[surahNumber];
+        return surah.glyph || (surah.name_arabic ? `سُورَةُ ${surah.name_arabic}` : surah.name || '');
+    };
+
+    /**
+     * Handle word click for selection
+     */
+    const handleWordClick = (wordId, location) => {
+        if (!editingSegment) return;
+        if (!location) return;
+
+        // Check if verse is already used
+        if (isVerseUsed(location)) {
+            toastService.warning(t('mushaf_management.verseAlreadyUsed'));
+            return;
+        }
+
+        const [surah, ayah] = location.split(':');
+        const surahAyah = `${surah}:${ayah}`;
+
+        if (editingSegment.field === 'start') {
+            setSelectedAyahs(new Set([surahAyah]));
+            
+            const newSegments = [...segments];
+            newSegments[editingSegment.index] = {
+                ...newSegments[editingSegment.index],
+                first_verse_key: surahAyah
+            };
+            setSegments(newSegments);
+            
+            toastService.info(`${t('mushaf_management.startSelected')}: ${surahAyah}`);
+            setEditingSegment(null);
+            setSelectedAyahs(new Set());
+        }
+        else if (editingSegment.field === 'end') {
+            setSelectedAyahs(new Set([surahAyah]));
+            
+            const newSegments = [...segments];
+            newSegments[editingSegment.index] = {
+                ...newSegments[editingSegment.index],
+                last_verse_key: surahAyah
+            };
+            setSegments(newSegments);
+            
+            toastService.info(`${t('mushaf_management.endSelected')}: ${surahAyah}`);
+            setEditingSegment(null);
+            setSelectedAyahs(new Set());
+        }
+    };
+
+    /**
+     * Check if word is selected
+     */
+    const isWordSelected = (location) => {
+        if (!location) return false;
+        const [surah, ayah] = location.split(':');
+        return selectedAyahs.has(`${surah}:${ayah}`);
+    };
+
+    /**
+     * Get all used verses from existing segments
+     */
+    const getUsedVerses = () => {
+        const usedVerses = new Set();
+        
+        segments.forEach(segment => {
+            // Skip if segment is incomplete or is the one being edited
+            if (!segment.first_verse_key || !segment.last_verse_key) return;
+            
+            // Skip if this is the segment we're currently editing
+            if (editingSegment && segments[editingSegment.index]?.id === segment.id) return;
+            
+            const [startSurah, startAyah] = segment.first_verse_key.split(':').map(Number);
+            const [endSurah, endAyah] = segment.last_verse_key.split(':').map(Number);
+            
+            // Add all verses in range
+            for (let s = startSurah; s <= endSurah; s++) {
+                const startA = (s === startSurah) ? startAyah : 1;
+                const endA = (s === endSurah) ? endAyah : 999;
+                
+                for (let a = startA; a <= endA; a++) {
+                    usedVerses.add(`${s}:${a}`);
+                }
+            }
+        });
+        
+        return usedVerses;
+    };
+
+    /**
+     * Check if verse is already used in another segment
+     */
+    const isVerseUsed = (location) => {
+        if (!location) return false;
+        if (!editingSegment) return false; // Only check when editing
+        
+        const [surah, ayah] = location.split(':');
+        const verseKey = `${surah}:${ayah}`;
+        
+        const usedVerses = getUsedVerses();
+        return usedVerses.has(verseKey);
+    };
+
+    /**
+     * Start editing segment field
+     */
+    const startEditing = (index, field) => {
+        setEditingSegment({ index, field });
+        setSelectedAyahs(new Set());
+        const message = field === 'start' ? t('mushaf_management.clickStart') : t('mushaf_management.clickEnd');
+        toastService.info(message);
+    };
+
+    /**
+     * View segment (highlight in Quran)
+     */
+    const viewSegment = (segment) => {
+        if (!segment.first_verse_key || !segment.last_verse_key) {
+            toastService.warning(t('mushaf_management.segmentIncomplete'));
+            return;
+        }
+
+        const [startSurah, startAyah] = segment.first_verse_key.split(':').map(Number);
+        const [endSurah, endAyah] = segment.last_verse_key.split(':').map(Number);
+
+        const rangeAyahs = new Set();
+        for (let s = startSurah; s <= endSurah; s++) {
+            const startA = (s === startSurah) ? startAyah : 1;
+            const endA = (s === endSurah) ? endAyah : 999;
+            
+            for (let a = startA; a <= endA; a++) {
+                rangeAyahs.add(`${s}:${a}`);
+            }
+        }
+
+        setSelectedAyahs(rangeAyahs);
+        setEditingSegment(null);
+        toastService.info(`${t('mushaf_management.viewingSegment')}: ${segment.first_verse_key} - ${segment.last_verse_key}`);
+    };
+
+    /**
+     * Add new empty segment
+     */
+    const addNewSegment = () => {
+        const newSegment = {
+            id: null,
+            page_number: currentPage,
+            segment_number: segments.length + 1,
+            first_verse_key: '',
+            last_verse_key: '',
+            is_active: 1
+        };
+        
+        setSegments([...segments, newSegment]);
+        toastService.info(t('mushaf_management.segmentAdded'));
+    };
+
+    /**
+     * Save segment
+     */
+    const saveSegment = async (segment, index) => {
+        if (!segment.first_verse_key || !segment.last_verse_key) {
+            toastService.warning(t('mushaf_management.mustSelectBoth'));
+            return;
+        }
+
+        try {
+            const segmentData = {
+                first_verse_key: segment.first_verse_key,
+                last_verse_key: segment.last_verse_key,
+                page_number: currentPage,
+                segment_number: index + 1
+            };
+
+            if (segment.id) {
+                await QuranSegmentsService.updateSegment(segment.id, segmentData);
+                toastService.success(t('mushaf_management.segmentUpdated'));
+            } else {
+                const result = await QuranSegmentsService.createSegment(segmentData);
+                
+                let newId = null;
+                if (result && result.data && result.data.id) {
+                    newId = result.data.id;
+                } else if (result && result.id) {
+                    newId = result.id;
+                }
+                
+                if (newId) {
+                    const newSegments = [...segments];
+                    newSegments[index] = { ...segment, id: newId };
+                    setSegments(newSegments);
+                }
+                
+                toastService.success(t('mushaf_management.segmentSaved'));
+            }
+            
+            await fetchSegments(currentPage);
+            
+        } catch (error) {
+            if (error.response && error.response.status >= 200 && error.response.status < 300) {
+                toastService.success(t('mushaf_management.segmentSaved'));
+                await fetchSegments(currentPage);
+            } else {
+                const errorMessage = error.response?.data?.message || error.message || '';
+                toastService.error(`${t('mushaf_management.saveFailed')}${errorMessage ? ': ' + errorMessage : ''}`);
+            }
+        }
+    };
+
+    /**
+     * Delete segment
+     */
+    const deleteSegment = async (segment, index) => {
+        if (!window.confirm(t('mushaf_management.deleteConfirm'))) {
+            return;
+        }
+
+        try {
+            if (segment.id) {
+                await QuranSegmentsService.deleteSegment(segment.id);
+            }
+            
+            const newSegments = segments.filter((_, i) => i !== index);
+            setSegments(newSegments);
+            
+            toastService.success(t('mushaf_management.segmentDeleted'));
+        } catch (error) {
+            console.error('Error deleting segment:', error);
+            toastService.error(t('mushaf_management.deleteFailed'));
+        }
+    };
+
+    /**
+     * Render line
+     */
+    const renderLine = (line) => {
+        switch (line.line_type) {
+            case 'surah_name':
+                return (
+                    <div 
+                        key={`${line.page_number}-${line.line_number}`} 
+                        className={`line surah-name ${line.is_centered ? 'centered' : ''}`}
+                    >
+                        {getSurahName(line.surah_number)}
+                    </div>
+                );
+
+            case 'basmallah':
+                return (
+                    <div 
+                        key={`${line.page_number}-${line.line_number}`} 
+                        className={`line basmallah ${line.is_centered ? 'centered' : ''}`}
+                    >
+                        ﷽
+                    </div>
+                );
+
+            case 'ayah':
+                { const words = getWordsForLine(line.first_word_id, line.last_word_id);
+                return (
+                    <div 
+                        key={`${line.page_number}-${line.line_number}`} 
+                        className={`line ayah ${line.is_centered ? 'centered' : ''}`}
+                        ref={el => {
+                            if (el) {
+                                el.style.setProperty('font-family', `'QuranicFont-${currentPage}', Arial, sans-serif`, 'important');
+                            }
+                        }}
+                    >
+                        {words.map(word => {
+                            const isUsed = isVerseUsed(word.location);
+                            const isSelected = isWordSelected(word.location);
+                            
+                            return (
+                                <span
+                                    key={word.id}
+                                    data-word-id={word.id}
+                                    data-location={word.location}
+                                    className={`word 
+                                        ${isSelected ? 'selected' : ''} 
+                                        ${editingSegment ? 'editable' : ''} 
+                                        ${isUsed ? 'disabled' : ''}
+                                    `}
+                                    onClick={() => !isUsed && handleWordClick(word.id, word.location)}
+                                    style={{ cursor: isUsed ? 'not-allowed' : (editingSegment ? 'pointer' : 'default') }}
+                                    ref={el => {
+                                        if (el) {
+                                            el.style.setProperty('font-family', 'inherit', 'important');
+                                        }
+                                    }}
+                                >
+                                    {word.text}
+                                </span>
+                            );
+                        })}
+                    </div>
+                ); }
+
+            default:
+                return null;
+        }
+    };
+
+    // Loading state
+    if (isLoading) {
+        return (
+            <div className="segmentation-view loading">
+                <div className="spinner"></div>
+                <p>{t('mushaf_management.loadingData')}</p>
+            </div>
+        );
+    }
+
+    // Error state
+    if (error) {
+        return (
+            <div className="segmentation-view error">
+                <h2>{t('mushaf_management.loadError')}</h2>
+                <p>{error}</p>
+                <button onClick={() => window.location.reload()}>{t('mushaf_management.retry')}</button>
+            </div>
+        );
+    }
+
+    return (
+        <div className="segmentation-view">
+            {/* Header */}
+            <div className="header">
+                <h1>{t('mushaf_management.title')}</h1>
+                <div className="page-navigation">
+                    <button 
+                        onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                        disabled={currentPage === 1}
+                    >
+                        ← {t('mushaf_management.previous')}
+                    </button>
+                    
+                    <div className="page-input">
+                        <label>{t('mushaf_management.page')}:</label>
+                        <input
+                            type="number"
+                            min="1"
+                            max="604"
+                            value={currentPage}
+                            onChange={(e) => {
+                                const page = parseInt(e.target.value);
+                                if (page >= 1 && page <= 604) {
+                                    setCurrentPage(page);
+                                }
+                            }}
+                        />
+                        <span>{t('mushaf_management.of')} 604</span>
+                    </div>
+
+                    <button 
+                        onClick={() => setCurrentPage(p => Math.min(604, p + 1))}
+                        disabled={currentPage === 604}
+                    >
+                        {t('mushaf_management.next')} →
+                    </button>
+                </div>
+            </div>
+
+            {/* Main Content */}
+            <div className="main-content">
+                {/* Segments Table (Left) */}
+                <div className="segments-panel">
+                    <div className="panel-header">
+                        <h2>{t('mushaf_management.segments')}</h2>
+                        {config?.segments_per_page === 'variable' && (
+                            <button className="btn-add" onClick={addNewSegment}>
+                                + {t('mushaf_management.addSegment')}
+                            </button>
+                        )}
+                    </div>
+
+                    <table className="segments-table">
+                        <thead>
+                            <tr>
+                                <th style={{textAlign: "center"}}>{t('mushaf_management.segmentColumn')}</th>
+                                <th style={{textAlign: "center"}}>{t('mushaf_management.fromVerse')}</th>
+                                <th style={{textAlign: "center"}}>{t('mushaf_management.toVerse')}</th>
+                                <th style={{textAlign: "center"}}>{t('mushaf_management.actions')}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {segments.length === 0 ? (
+                                <tr>
+                                    <td colSpan="4" style={{textAlign: 'center', padding: '20px', color: '#666'}}>
+                                        {t('mushaf_management.noSegments')}
+                                    </td>
+                                </tr>
+                            ) : (
+                                segments.map((segment, index) => (
+                                    <tr key={segment.id || index}>
+                                        <td style={{textAlign: "center"}}>{segment.segment_number || (index + 1)}</td>
+                                        <td style={{textAlign: "center"}}>
+                                            {segment.first_verse_key || (
+                                                <button 
+                                                    className="btn-select"
+                                                    onClick={() => startEditing(index, 'start')}
+                                                >
+                                                    {t('mushaf_management.selectStart')}
+                                                </button>
+                                            )}
+                                        </td>
+                                        <td style={{textAlign: "center"}}>
+                                            {segment.last_verse_key || (
+                                                <button 
+                                                    className="btn-select"
+                                                    onClick={() => startEditing(index, 'end')}
+                                                >
+                                                    {t('mushaf_management.selectEnd')}
+                                                </button>
+                                            )}
+                                        </td>
+                                        <td style={{textAlign: "center"}}>
+                                            <div className="actions">
+                                                {segment.first_verse_key && segment.last_verse_key && (
+                                                    <button 
+                                                        className="btn-view"
+                                                        onClick={() => viewSegment(segment)}
+                                                        title={t('mushaf_management.view')}
+                                                    >
+                                                        <FaEye color='#fffe'/>
+                                                    </button>
+                                                )}
+                                                <button 
+                                                    className="btn-save"
+                                                    onClick={() => saveSegment(segment, index)}
+                                                    disabled={!segment.first_verse_key || !segment.last_verse_key}
+                                                    title={t('mushaf_management.save')}
+                                                >
+                                                    <HiSave color='#fffe'/>
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                ))
+                            )}
+                        </tbody>
+                    </table>
+
+                    {editingSegment && (
+                        <div className="editing-notice">
+                            ⚠️ {t('mushaf_management.editingNotice')} {editingSegment.field === 'start' ? t('mushaf_management.start') : t('mushaf_management.end')} {t('mushaf_management.inQuran')}
+                            <button onClick={() => {
+                                setEditingSegment(null);
+                                setSelectedAyahs(new Set());
+                            }}>
+                                {t('mushaf_management.cancel')}
+                            </button>
+                        </div>
+                    )}
+                </div>
+
+                {/* Quran Page (Right) */}
+                <div className="quran-panel">
+                    {isFontLoading ? (
+                        <div className="font-loading">
+                            <div className="spinner"></div>
+                            <p>{t('mushaf_management.loadingFont')}</p>
+                        </div>
+                    ) : (
+                        <div 
+                            className="page-content"
+                            ref={el => {
+                                if (el) {
+                                    el.style.setProperty('font-family', `'QuranicFont-${currentPage}', Arial, sans-serif`, 'important');
+                                }
+                            }}
+                        >
+                            {pageLines.length > 0 ? (
+                                pageLines.map(line => renderLine(line))
+                            ) : (
+                                <div className="no-content">
+                                    {t('mushaf_management.noContent')}
+                                </div>
+                            )}
+                        </div>
+                    )}
+                </div>
+            </div>
+        </div>
+    );
+};
+
+export default QuranSegmentationView;

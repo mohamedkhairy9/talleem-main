@@ -55,7 +55,7 @@ export const sideMenuTabs = [
                 path: '/warning-reasons',
                 icon: VscDebugBreakpointLog
             },
-                        {
+            {
                 titleKey: 'sidebar.warning',
                 path: '/issuing-warnings',
                 icon: VscDebugBreakpointLog
@@ -302,9 +302,9 @@ export const sideMenuTabs = [
         icon: HiDocumentText
     },
 
-        {
+    {
         titleKey: 'sidebar.mushaf_management',
-        path: '/quran-viewer',
+        path: '/quran-segmentation',
         icon: HiDocumentText
     },
 

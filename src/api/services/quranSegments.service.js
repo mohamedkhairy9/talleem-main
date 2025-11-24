@@ -17,16 +17,17 @@ const QuranSegmentsService = {
             const response = await axiosInstance.get('/quran/segments', {
                 params: { page_number: pageNumber }
             });
-            
+            console.log(response)
             // Backend may return array directly or wrapped in { data: [] }
             // Handle both cases
-            if (Array.isArray(response.data)) {
-                return response.data;
-            } else if (response.data && Array.isArray(response.data.data)) {
-                return response.data.data;
+            if (Array.isArray(response)) {
+                return response;
+            // eslint-disable-next-line no-dupe-else-if
+            } else if (response && Array.isArray(response)) {
+                return response;
             } else {
                 // Fallback to empty array
-                console.warn('Unexpected response format:', response.data);
+                console.warn('Unexpected response format:', response);
                 return [];
             }
         } catch (error) {
