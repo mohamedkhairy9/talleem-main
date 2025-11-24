@@ -34,6 +34,7 @@ const QuranSegmentationView = () => {
     // Loading states
     const [isLoading, setIsLoading] = useState(true);
     const [isFontLoading, setIsFontLoading] = useState(false);
+    const [isSegmentsLoading, setIsSegmentsLoading] = useState(false);
     const [error, setError] = useState(null);
 
     // Initialize databases
@@ -129,6 +130,7 @@ const QuranSegmentationView = () => {
      */
     const fetchSegments = async (pageNum) => {
         try {
+            setIsSegmentsLoading(true);
             const response = await QuranSegmentsService.getSegmentsByPage(pageNum);
             
             // Handle different response formats
@@ -145,6 +147,8 @@ const QuranSegmentationView = () => {
         } catch (error) {
             console.error('Error fetching segments:', error);
             setSegments([]);
+        } finally {
+            setIsSegmentsLoading(false);
         }
     };
 
@@ -196,6 +200,15 @@ const QuranSegmentationView = () => {
         if (!surahData || !surahData[surahNumber]) return '';
         const surah = surahData[surahNumber];
         return surah.glyph || (surah.name_arabic ? `سُورَةُ ${surah.name_arabic}` : surah.name || '');
+    };
+
+    /**
+     * Extract verse number from verse_key (e.g., "1:5" → "5")
+     */
+    const getVerseNumber = (verseKey) => {
+        if (!verseKey) return '';
+        const parts = verseKey.split(':');
+        return parts.length > 1 ? parts[1] : verseKey;
     };
 
     /**
@@ -580,7 +593,14 @@ const QuranSegmentationView = () => {
                             </tr>
                         </thead>
                         <tbody>
-                            {segments.length === 0 ? (
+                            {isSegmentsLoading ? (
+                                <tr>
+                                    <td colSpan="4" style={{textAlign: 'center', padding: '20px'}}>
+                                        <div className="spinner  mx-auto"></div>
+                                        <p>{t('mushaf_management.loadingSegments')}</p>
+                                    </td>
+                                </tr>
+                            ) : segments.length === 0 ? (
                                 <tr>
                                     <td colSpan="4" style={{textAlign: 'center', padding: '20px', color: '#666'}}>
                                         {t('mushaf_management.noSegments')}
@@ -591,7 +611,9 @@ const QuranSegmentationView = () => {
                                     <tr key={segment.id || index}>
                                         <td style={{textAlign: "center"}}>{segment.segment_number || (index + 1)}</td>
                                         <td style={{textAlign: "center"}}>
-                                            {segment.first_verse_key || (
+                                            {segment.first_verse_key ? (
+                                                getVerseNumber(segment.first_verse_key)
+                                            ) : (
                                                 <button 
                                                     className="btn-select"
                                                     onClick={() => startEditing(index, 'start')}
@@ -601,7 +623,9 @@ const QuranSegmentationView = () => {
                                             )}
                                         </td>
                                         <td style={{textAlign: "center"}}>
-                                            {segment.last_verse_key || (
+                                            {segment.last_verse_key ? (
+                                                getVerseNumber(segment.last_verse_key)
+                                            ) : (
                                                 <button 
                                                     className="btn-select"
                                                     onClick={() => startEditing(index, 'end')}
@@ -622,7 +646,7 @@ const QuranSegmentationView = () => {
                                                     </button>
                                                 )}
                                                 <button 
-                                                    className="btn-save text-amber-50"
+                                                    className="btn-save text-amber-50 text-sm"
                                                     onClick={() => saveSegment(segment, index)}
                                                     disabled={!segment.first_verse_key || !segment.last_verse_key}
                                                     title={t('mushaf_management.save')}
