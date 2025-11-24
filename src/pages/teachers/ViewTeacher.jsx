@@ -4,7 +4,6 @@ import Modal from '@/components/common/form/Modal';
 import ModalHeader from '@/components/common/form/ModalHeader';
 import { useBranchesQuery } from '@/api/hooks/useBranches';
 import { useMainProgramsQuery } from '@/api/hooks/useMainPrograms';
-import { useEntityCategoriesQuery } from '@/api/hooks/useEntityCategories';
 import { useEducationProgramEntityTypesQuery } from '@/api/hooks/useEducationProgramEntityTypes';
 import { useAcademicQualificationsQuery } from '@/api/hooks/useAcademicQualifications';
 import { useSpecificationsQuery } from '@/api/hooks/useSpecifications';
@@ -13,10 +12,7 @@ import { useNationalitiesQuery } from '@/api/hooks/useNationalities';
 import { useUsersQuery } from '@/api/hooks/useUsers';
 import Loader from '@/components/common/Loader';
 import { allData } from '@/utils/constants/global.constants';
-import {
-    enabledDisabledOptions,
-    teacherStatusOptions
-} from '@/utils/constants/options';
+import { genderOptions, teacherStatusOptions } from '@/utils/constants/options';
 import { useEntitiesQuery } from '@/api/hooks/useEntities';
 import { useMemorizationProgramEntityTypesQuery } from '@/api/hooks/useMemorizationProgramEntityTypes';
 import { useMajorsQuery } from '@/api/hooks/useMajors';
@@ -90,7 +86,8 @@ export default function ViewTeacher({ onClose, oldData }) {
                     academic_qualification_id: academicQualificationsData?.data,
                     specification_id: specificationsData?.data,
                     city_id: citiesData?.data,
-                    status: teacherStatusOptions
+                    status: teacherStatusOptions,
+                    gender: genderOptions
                 }}
             />
         </Modal>

@@ -1122,6 +1122,7 @@
         "type": "Type",
         "sms": "SMS",
         "inbox": "Inbox",
+        "registration_date": "Registration Date",
         "scheduled": "Scheduled",
         "session_mode": "Session Mode",
         "sent_via": "Sent Via",
