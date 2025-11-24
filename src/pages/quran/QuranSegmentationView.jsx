@@ -622,12 +622,12 @@ const QuranSegmentationView = () => {
                                                     </button>
                                                 )}
                                                 <button 
-                                                    className="btn-save"
+                                                    className="btn-save text-amber-50"
                                                     onClick={() => saveSegment(segment, index)}
                                                     disabled={!segment.first_verse_key || !segment.last_verse_key}
                                                     title={t('mushaf_management.save')}
                                                 >
-                                                    <HiSave color='#fffe'/>
+                                                    {t('common.save')}
                                                 </button>
                                             </div>
                                         </td>
