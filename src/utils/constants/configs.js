@@ -149,6 +149,12 @@ export const sideMenuTabs = [
                         icon: VscDebugBreakpointLog
                     },
                     {
+                        titleKey: 'sidebar.session_modes',
+                        path: '/session-modes',
+                        icon: VscDebugBreakpointLog
+                    },
+
+                    {
                         titleKey: 'sidebar.attendance_types',
                         path: '/attendances-types',
                         icon: VscDebugBreakpointLog
