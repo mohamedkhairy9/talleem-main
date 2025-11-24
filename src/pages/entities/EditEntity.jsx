@@ -36,6 +36,7 @@ export default function EditEntity({ onClose, oldData }) {
         nationalitiesData,
         academicLevelsData,
         specificationsData,
+        sessionModesData,
         isLoading
     } = useApiCalls({ apiCalls });
 
@@ -67,6 +68,7 @@ export default function EditEntity({ onClose, oldData }) {
                     academic_level_id: academicLevelsData?.data,
                     specification_id: specificationsData?.data,
                     gender: genderOptions,
+                    session_mode_id: sessionModesData?.data,
                     'manager.city_id': citiesData?.data,
                     'manager.nationality_id': nationalitiesData?.data,
                     'manager.specification_id': specificationsData?.data,

@@ -19,6 +19,10 @@ export const entitiesSchema = yup.object({
         .required(t('validation.required')),
     status: selectSchema,
     main_program_id: selectSchema,
+    session_mode_id: yup
+        .number()
+        .required(t('validation.required'))
+        .positive(t('validation.required')),
     education_program_entity_type_classification: yup
         .string()
         .nullable()

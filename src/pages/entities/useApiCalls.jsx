@@ -5,16 +5,15 @@ import { activitiesService } from '@/api/services/activities.service';
 import { branchesService } from '@/api/services/branches.service';
 import { citiesService } from '@/api/services/cities.service';
 import { educationProgramEntityTypesService } from '@/api/services/educationProgramEntityTypes.service';
-import { entityCategoriesService } from '@/api/services/entityCategories.service';
 import { locationTypesService } from '@/api/services/locationTypes.service';
 import { mainProgramsService } from '@/api/services/mainPrograms.service';
 import { neighborhoodsService } from '@/api/services/neighborhoods.service';
 import { usersService } from '@/api/services/users.service';
 import { memorizationProgramEntityTypesService } from '@/api/services/memorizationProgramEntityTypes.service';
 import { nationalitiesService } from '@/api/services/nationalities.service';
-import { academicLevelsService } from '@/api/services/academicLevels.service';
 import { specificationsService } from '@/api/services/specifications.service';
 import { academicQualificationsService } from '@/api/services/academicQualifications.service';
+import { sessionModesService } from '@/api/services/essionModes.service';
 
 export default function useApiCalls({ apiCalls = [] } = {}) {
     const isEnabled = key => apiCalls.includes(key);
@@ -88,6 +87,11 @@ export default function useApiCalls({ apiCalls = [] } = {}) {
             queryKey: [API_KEYS.SPECIFICATIONS, allData],
             queryFn: () => specificationsService.getSpecifications(allData),
             enabled: isEnabled(API_KEYS.SPECIFICATIONS)
+        },
+        {
+            queryKey: [API_KEYS.SESSION_MODES, allData], 
+            queryFn: () => sessionModesService.getSessionModes(allData),
+            enabled: isEnabled(API_KEYS.SESSION_MODES)
         }
     ]);
 
@@ -103,7 +107,8 @@ export default function useApiCalls({ apiCalls = [] } = {}) {
         usersQuery,
         activitiesQuery,
         nationalitiesQuery,
-        specificationsQuery
+        specificationsQuery,
+        sessionModesQuery
     ] = queries;
 
     return {
@@ -120,6 +125,7 @@ export default function useApiCalls({ apiCalls = [] } = {}) {
         activitiesData: activitiesQuery?.data,
         nationalitiesData: nationalitiesQuery?.data,
         specificationsData: specificationsQuery?.data,
+        sessionModesData: sessionModesQuery?.data,
         isLoading: isAnyLoading
     };
 }

@@ -32,6 +32,7 @@ export default function ViewEntity({ onClose, oldData }) {
         academicLevelsData,
         specificationsData,
         academicQualificationsData,
+        sessionModesData, 
         isLoading
     } = useApiCalls({ apiCalls });
 
@@ -63,6 +64,7 @@ export default function ViewEntity({ onClose, oldData }) {
                     academic_level_id: academicLevelsData?.data,
                     specification_id: specificationsData?.data,
                     gender: genderOptions,
+                    session_mode_id: sessionModesData?.data, 
                     'manager.city_id': citiesData?.data,
                     'manager.nationality_id': nationalitiesData?.data,
                     'manager.academic_qualification_id':
