@@ -3,7 +3,7 @@ import './QuranViewer.css';
 import { dbLoader } from '@/utils/helpers/databaseLoader';
 import { fontLoader } from '@/utils/helpers/fontLoader';
 import QuranSegmentsService from '@/api/services/quranSegments.service';
-import { errorHandler, successHandler } from '@/api/handler';
+import toastService from '@/utils/helpers/Toastservice';
 
 const QuranViewer = () => {
     // Database state
@@ -148,23 +148,21 @@ const QuranViewer = () => {
             
             console.log(`📊 Found ${segments.length} existing segments:`, segments);
             
-            // Find the highest segment_number on this page
-            let maxSegmentNumber = 0;
-            segments.forEach(segment => {
-                if (segment.segment_number > maxSegmentNumber) {
-                    maxSegmentNumber = segment.segment_number;
-                }
-            });
+            // Count actual segments (number of records, not max segment_number)
+            // Since backend has bug where all have segment_number: 1
+            const actualSegmentCount = segments.length;
             
-            // Next segment number is max + 1
-            const nextSegmentNumber = maxSegmentNumber + 1;
+            // Next segment number is count + 1
+            const nextSegmentNumber = actualSegmentCount + 1;
             setSegmentNumber(nextSegmentNumber);
             
-            console.log(`✅ Next segment number: ${nextSegmentNumber} (max was ${maxSegmentNumber})`);
+            
+            return segments; // Return for validation checks
         } catch (error) {
             console.error('❌ Error fetching segment count:', error);
             // Default to 1 if fetch fails
             setSegmentNumber(1);
+            return [];
         }
     };
 
@@ -211,6 +209,7 @@ const QuranViewer = () => {
 
     /**
      * Handle word click to toggle ayah selection
+     * Auto-selects all ayahs between first and last selected
      */
     const handleWordClick = (wordId, location) => {
         if (!location) return;
@@ -221,13 +220,85 @@ const QuranViewer = () => {
 
         setSelectedAyahs(prev => {
             const newSet = new Set(prev);
+            
+            // If clicking already selected ayah, deselect it
             if (newSet.has(surahAyah)) {
                 newSet.delete(surahAyah);
+                
+                // If this was the only one, clear all
+                if (newSet.size === 0) {
+                    return newSet;
+                }
+                
+                // Re-calculate range after deletion
+                return autoSelectRange(newSet);
             } else {
+                // Add the clicked ayah
                 newSet.add(surahAyah);
+                
+                // Auto-select all ayahs in between
+                return autoSelectRange(newSet);
             }
-            return newSet;
         });
+    };
+
+    /**
+     * Auto-select all ayahs between first and last selected
+     * @param {Set} selectedSet - Current set of selected ayahs
+     * @returns {Set} - New set with range filled
+     */
+    const autoSelectRange = (selectedSet) => {
+        if (selectedSet.size === 0) return selectedSet;
+        if (selectedSet.size === 1) return selectedSet; // Single ayah, no range
+        
+        // Convert to array and sort
+        const ayahsArray = Array.from(selectedSet)
+            .map(sa => {
+                const [surah, ayah] = sa.split(':').map(Number);
+                return { surah, ayah, key: sa };
+            })
+            .sort((a, b) => {
+                if (a.surah !== b.surah) return a.surah - b.surah;
+                return a.ayah - b.ayah;
+            });
+        
+        const first = ayahsArray[0];
+        const last = ayahsArray[ayahsArray.length - 1];
+        
+        console.log(`🎯 Auto-selecting range: ${first.key} to ${last.key}`);
+        
+        // Get all words on current page to find available ayahs
+        const allAyahs = new Set();
+        pageLines.forEach(line => {
+            if (line.line_type === 'ayah') {
+                const words = getWordsForLine(line.first_word_id, line.last_word_id);
+                words.forEach(word => {
+                    if (word.location) {
+                        const [surah, ayah] = word.location.split(':');
+                        allAyahs.add(`${surah}:${ayah}`);
+                    }
+                });
+            }
+        });
+        
+        // Fill in the range
+        const rangeSet = new Set();
+        
+        // Add all ayahs in the range that exist on this page
+        Array.from(allAyahs).forEach(ayahKey => {
+            const [surah, ayah] = ayahKey.split(':').map(Number);
+            const ayahNum = surah * 1000 + ayah;
+            const firstNum = first.surah * 1000 + first.ayah;
+            const lastNum = last.surah * 1000 + last.ayah;
+            
+            if (ayahNum >= firstNum && ayahNum <= lastNum) {
+                rangeSet.add(ayahKey);
+            }
+        });
+        
+        console.log(`✅ Selected ${rangeSet.size} ayahs in range`);
+        
+        return rangeSet;
     };
 
     /**
@@ -237,6 +308,38 @@ const QuranViewer = () => {
         if (!location) return false;
         const [surah, ayah] = location.split(':');
         return selectedAyahs.has(`${surah}:${ayah}`);
+    };
+
+    /**
+     * Check if selected verses overlap with existing segments
+     * @param {Object} selection - Current selection {first_verse_key, last_verse_key}
+     * @param {Array} existingSegments - Existing segments from backend
+     * @returns {Object} - {hasOverlap: boolean, overlappingSegments: []}
+     */
+    const checkVerseOverlap = (selection, existingSegments) => {
+        const [newStartSurah, newStartAyah] = selection.first_verse_key.split(':').map(Number);
+        const [newEndSurah, newEndAyah] = selection.last_verse_key.split(':').map(Number);
+        
+        const overlappingSegments = existingSegments.filter(segment => {
+            const [existStartSurah, existStartAyah] = segment.first_verse_key.split(':').map(Number);
+            const [existEndSurah, existEndAyah] = segment.last_verse_key.split(':').map(Number);
+            
+            // Check if ranges overlap
+            // Assuming all on same page, so surah might be same
+            const newStart = newStartSurah * 1000 + newStartAyah;
+            const newEnd = newEndSurah * 1000 + newEndAyah;
+            const existStart = existStartSurah * 1000 + existStartAyah;
+            const existEnd = existEndSurah * 1000 + existEndAyah;
+            
+            // Check overlap: new segment overlaps with existing if:
+            // newStart <= existEnd && newEnd >= existStart
+            return newStart <= existEnd && newEnd >= existStart;
+        });
+        
+        return {
+            hasOverlap: overlappingSegments.length > 0,
+            overlappingSegments
+        };
     };
 
     /**
@@ -278,12 +381,50 @@ const QuranViewer = () => {
     const handleSubmit = async () => {
         const selection = getSelectionRanges();
         if (!selection) {
-            errorHandler('الرجاء تحديد آية واحدة على الأقل');
+            toastService.error('الرجاء تحديد آية واحدة على الأقل');
             return;
         }
 
         try {
             setIsSubmitting(true);
+            
+            // Fetch existing segments for validation
+            const existingSegments = await QuranSegmentsService.getSegmentsByPage(currentPage);
+            const segments = Array.isArray(existingSegments) ? existingSegments : (existingSegments.data || []);
+            
+            // Check for overlaps
+            const overlapCheck = checkVerseOverlap(selection, segments);
+            
+            if (overlapCheck.hasOverlap) {
+                // Show confirmation dialog
+                const overlappingDetails = overlapCheck.overlappingSegments
+                    .map(s => `(${s.first_verse_key} - ${s.last_verse_key})`)
+                    .join('، ');
+                
+                const confirmMessage = `⚠️ تحذير!\n\nالآيات المحددة تتداخل مع مقاطع موجودة:\n${overlappingDetails}\n\nسيؤدي المتابعة إلى مسح جميع التقسيمات القديمة وإعادة تقسيم المصحف من جديد.\n\nهل تريد المتابعة؟`;
+                
+                const userConfirmed = window.confirm(confirmMessage);
+                
+                if (!userConfirmed) {
+                    toastService.info('تم إلغاء العملية');
+                    setIsSubmitting(false);
+                    return;
+                }
+                
+                // User confirmed - delete existing segments first
+                console.log('⚠️ User confirmed overlap. Deleting existing segments...');
+                toastService.warning('جاري مسح التقسيمات القديمة...');
+                
+                // Delete overlapping segments
+                for (const segment of overlapCheck.overlappingSegments) {
+                    try {
+                        await QuranSegmentsService.deleteSegment(segment.id);
+                        console.log(`🗑️ Deleted segment ${segment.id}`);
+                    } catch (deleteError) {
+                        console.error('Error deleting segment:', deleteError);
+                    }
+                }
+            }
             
             const segmentData = {
                 first_verse_key: selection.first_verse_key,
@@ -298,17 +439,21 @@ const QuranViewer = () => {
             
             console.log('✅ Segment created:', result);
 
+            // Show success toast
+            toastService.success(`تم حفظ القطعة بنجاح! (${selection.first_verse_key} - ${selection.last_verse_key})`);
+
             // Refresh segment count
             await fetchSegmentCount(currentPage);
 
             // Clear selection
             clearSelection();
 
-            successHandler(`✅ تم حفظ القطعة بنجاح!\n\nالصفحة: ${currentPage}\nالقطعة: #${segmentNumber}\nمن: ${selection.first_verse_key}\nإلى: ${selection.last_verse_key}`);
-
         } catch (error) {
             console.error('❌ Submission failed:', error);
-            errorHandler(`فشل حفظ القطعة: ${error.message}`);
+            
+            // Show error toast with details
+            const errorMessage = error.response?.data?.message || error.message || 'حدث خطأ غير متوقع';
+            toastService.error(`فشل حفظ القطعة: ${errorMessage}`);
         } finally {
             setIsSubmitting(false);
         }
