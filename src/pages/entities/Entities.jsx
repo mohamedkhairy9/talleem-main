@@ -46,6 +46,7 @@ export default function Entities() {
         neighborhood_id: item.neighborhood?.id,
         branch_id: item.branch?.id,
         main_program_id: item.main_program?.id,
+        session_mode_id: item.session_mode?.id, 
         education_program_entity_type_classification: null, // Will be set in FormEntity based on entity_category_id
         entity_category_id:
             item.main_program?.id == 1

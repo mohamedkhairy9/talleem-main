@@ -5,6 +5,7 @@ import DateCell from '@/components/common/table/cells/DateCell';
 import NameCell from '@/components/common/table/cells/NameCell';
 import { createColumnHelper } from '@tanstack/react-table';
 import React from 'react';
+import { getMaxDateForMinAge } from '@/utils/helpers/dateHelpers';
 
 const columnHelper = createColumnHelper();
 
@@ -139,6 +140,14 @@ export const entitiesFields = [
         viewMode: true
     },
     {
+        name: 'session_mode_id',
+        label: 'validation.session_mode_id.label',
+        type: 'select',
+        placeholder: 'validation.session_mode_id.placeholder',
+        editMode: true,
+        viewMode: true
+    },
+    {
         name: 'phone',
         label: 'validation.phone.label',
         type: 'text',
@@ -209,7 +218,8 @@ export const entitiesFields = [
         type: 'date',
         placeholder: 'validation.registration_date.placeholder',
         editMode: true,
-        viewMode: true
+        viewMode: true,
+        max: new Date().toISOString().split('T')[0]
     },
     {
         name: 'license_number',
@@ -338,7 +348,10 @@ export const managerFields = [
         placeholder: 'validation.date_of_birth.placeholder',
         editMode: true,
         viewMode: true,
-        section: 'manager'
+        section: 'manager',
+        max: getMaxDateForMinAge(18),
+        min: getMaxDateForMinAge(80)
+
     },
     {
         name: 'manager.address',
@@ -438,5 +451,6 @@ export const apiCalls = [
     API_KEYS.NATIONALITIES,
     API_KEYS.ACADEMIC_LEVELS,
     API_KEYS.SPECIFICATIONS,
-    API_KEYS.ACADEMIC_QUALIFICATIONS
+    API_KEYS.ACADEMIC_QUALIFICATIONS,
+    API_KEYS.SESSION_MODES
 ];

@@ -21,6 +21,10 @@ export const teachersColumns = [
         header: 'table_headers.phone',
         cell: info => <Cell value={info.getValue()} />
     }),
+    columnHelper.accessor('gender', {
+    header: 'table_headers.gender',
+    cell: info => <Cell value={info.getValue()} />
+}),
     columnHelper.accessor('licence_number', {
         header: 'table_headers.licence_number',
         cell: info => <Cell value={info.getValue()} />
@@ -34,8 +38,8 @@ export const teachersColumns = [
         header: 'table_headers.status',
         cell: info => <ActiveCell info={info} />
     }),
-    columnHelper.accessor('created_at', {
-        header: 'table_headers.created_at',
+    columnHelper.accessor('registration_date', {
+        header: 'table_headers.registration_date',
         cell: info => <DateCell fullDate value={info.getValue()} />,
         enableColumnFilter: false
     })
@@ -58,6 +62,14 @@ export const teachersFields = [
         editMode: true,
         viewMode: true
     },
+    {
+    name: 'gender',
+    label: 'validation.gender.label',
+    type: 'select',
+    placeholder: 'validation.gender.placeholder',
+    editMode: true,
+    viewMode: true
+},
     {
         name: 'status',
         label: 'validation.status.label',
@@ -190,6 +202,15 @@ export const teachersFields = [
         min: getMaxDateForMinAge(80)
     },
     {
+    name: 'registration_date',
+    label: 'validation.registration_date.label',
+    type: 'date',
+    placeholder: 'validation.registration_date.placeholder',
+    editMode: true,
+    viewMode: true,
+    max: new Date().toISOString().split('T')[0] // Can't register in future
+},
+    {
         name: 'years_of_experience',
         label: 'validation.years_of_experience.label',
         type: 'number',
@@ -262,7 +283,9 @@ export const teachersDefaultValues = {
     name: {
         en: '',
         ar: ''
-    }
+    },
+     gender: '',
+    registration_date: ''
 };
 
 export const teachersFilters = [

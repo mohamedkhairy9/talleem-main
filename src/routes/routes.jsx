@@ -50,6 +50,7 @@ import InspectorAssignments from '@/pages/inspector-assignments/Inspectorassignm
 import IssuingWarnings from '@/pages/issuing-warnings/Warnings';
 import QuranViewer from '@/pages/quran/QuranViewer';
 import QuranSegmentationView from '@/pages/quran/QuranSegmentationView';
+import SessionModes from '@/pages/ sessionModes /SessionModes';
 
 export const routes = [
     {
@@ -79,6 +80,10 @@ export const routes = [
     {
         path: '/notification-templates',
         element: <NotificationTemplates />
+    },
+    {
+        path: '/session-modes',
+        element: <SessionModes />
     },
     {
         path: '/activity-logs',

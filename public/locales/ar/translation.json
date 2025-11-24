@@ -760,6 +760,12 @@
         "update": "تحديث المؤهل الدراسى",
         "view": "عرض المؤهل الدراسى"
     },
+    "session_modes": {
+        "create": "إضافة نمط جلسة",
+        "update": "تعديل نمط جلسة",
+        "view": "عرض نمط جلسة",
+        "delete": "حذف نمط جلسة"
+    },
     "jobs": {
         "create": "إنشاء وظيفة",
         "update": "تحديث الوظيفة",
@@ -920,7 +926,7 @@
         "home": "الرئيسية",
         "roles": "الأدوار",
         "permissions": "الصلاحيات",
-        "mushaf_management" : "تقسيم المصحف",
+        "mushaf_management": "تقسيم المصحف",
         "warning_reasons": "أسباب الإنذارات",
         "warning": "إصدار الإنذارات",
         "evaluation-parameters": "معايير التقييم",
@@ -984,6 +990,7 @@
         "notifications": "الإشعارات",
         "general_banners": "البانرات العامة",
         "permissions": "الصلاحيات",
+        "session_modes": "أنماط الجلسات",
         "evaluation_parameters": "معايير التقييم",
         "roles": "الأدوار",
         "activity_logs": "سجل الحركات",
@@ -1074,6 +1081,12 @@
         "subject": "الموضوع",
         "type": "النوع",
         "sms": "رسالة نصية",
+        "session_mode": "نمط الجلسة",
+        "title": "العنوان",
+        "content": "المحتوى",
+        "recipient_count": "عدد المستلمين",
+        "sent_at": "تم الإرسال في",
+        "registration_date": "تاريخ التسجيل",
         "inbox": "صندوق الوارد",
         "scheduled": "مجدول",
         "sent_via": "أرسلت عبر",
@@ -1205,7 +1218,7 @@
         "saveFailed": "فشل حفظ المقطع",
         "deleteFailed": "فشل حذف المقطع",
         "deleteConfirm": "هل تريد حذف هذا المقطع؟"
-        },
+    },
     "nationalities": {
         "create": "إضافة جنسية",
         "edit": "تعديل الجنسية",
