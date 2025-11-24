@@ -1265,6 +1265,7 @@
         "segmentColumn": "Segment",
         "fromVerse": "From Verse",
         "toVerse": "To Verse",
+        "loadingSegments": "Loading segments...",
         "actions": "Actions",
         "selectStart": "Select Start",
         "selectEnd": "Select End",

@@ -1175,6 +1175,7 @@
         "fromVerse": "من الآية",
         "toVerse": "إلى الآية",
         "actions": "إجراءات",
+        "loadingSegments": "جاري تحميل المقاطع...",
         "selectStart": "اختر البداية",
         "selectEnd": "اختر النهاية",
         "view": "عرض في المصحف",
