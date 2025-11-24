@@ -927,6 +927,7 @@
         "roles": "الأدوار",
         "permissions": "الصلاحيات",
         "mushaf_management": "تقسيم المصحف",
+        "session_modes": "أنماط الجلسات",
         "warning_reasons": "أسباب الإنذارات",
         "warning": "إصدار الإنذارات",
         "evaluation-parameters": "معايير التقييم",
