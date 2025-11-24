@@ -48,6 +48,7 @@ import EvaluationParameters from '@/pages/evaluation-parameters/EvaluationParame
 import Configurations from '@/pages/configurations/Configurations';
 import InspectorAssignments from '@/pages/inspector-assignments/Inspectorassignments';
 import IssuingWarnings from '@/pages/issuing-warnings/Warnings';
+import QuranViewer from '@/pages/quran/QuranViewer';
 
 export const routes = [
     {
@@ -82,6 +83,11 @@ export const routes = [
         path: '/activity-logs',
         element: <ActivityLogs />
     },
+        {
+        path: '/quran-viewer',
+        element: <QuranViewer />
+    },
+
     {
         path: '/academic-qualifications',
         element: <AcademicQualifications />
