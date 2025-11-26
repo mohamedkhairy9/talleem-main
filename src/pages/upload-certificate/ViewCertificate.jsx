@@ -1,0 +1,40 @@
+import React from 'react';
+import FormCertificate from './FormCertificate';
+import Modal from '@/components/common/form/Modal';
+import ModalHeader from '@/components/common/form/ModalHeader';
+import { apiCalls } from './configs';
+import Loader from '@/components/common/Loader';
+import useApiCalls from './useApiCalls';
+
+export default function ViewCertificate({ onClose, oldData }) {
+    const {
+        mainProgramsData,
+        branchesData,
+        entitiesData,
+        studentsData,
+        certificateNamesData,
+        isLoading
+    } = useApiCalls({ apiCalls });
+
+    if (isLoading) return <Loader />;
+
+    return (
+        <Modal onClose={onClose} size="3xl">
+            <ModalHeader onClose={onClose} header="certificates.view" />
+            <FormCertificate
+                onClose={onClose}
+                oldData={oldData}
+                viewMode={true}
+                mutate={() => {}}
+                isPending={false}
+                options={{
+                    main_program_id: mainProgramsData?.data,
+                    branch_id: branchesData?.data,
+                    entity_id: entitiesData?.data,
+                    student_id: studentsData?.data,
+                    certificate_name_id: certificateNamesData?.data
+                }}
+            />
+        </Modal>
+    );
+}
