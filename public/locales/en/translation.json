@@ -16,6 +16,19 @@
             "label": "Entity Living Address",
             "placeholder": "Enter the living address"
         },
+        "certificate_names": {
+            "label": "Certificate Name",
+            "placeholder": "Enter certificate name",
+            "create": "Create Certificate Name"
+        },
+        "certificate_name_ar": {
+            "label": "Arabic Name",
+            "placeholder": "Enter certificate name in Arabic"
+        },
+        "certificate_name_en": {
+            "label": "English Name",
+            "placeholder": "Enter certificate name in English"
+        },
         "name": {
             "en_min": "English name must be at least 2 characters",
             "ar_min": "Arabic name must be at least 2 characters",
@@ -685,7 +698,8 @@
             "label": "Time Unit",
             "placeholder": "Select unit...",
             "invalid": "Invalid time unit"
-        }
+        },
+        "min_length": "Minimum length must be {{min}} characters"
     },
     "auth": {
         "email": {
@@ -780,6 +794,11 @@
         "create": "Create Main Program",
         "update": "Update Main Program",
         "view": "View Main Program"
+    },
+    "certificate_names": {
+        "create": "Add Certificate Name",
+        "update": "Edit Certificate Name",
+        "view": "View Certificate Name"
     },
     "academic_levels": {
         "create": "Create Academic Level",
@@ -982,6 +1001,7 @@
         "entity_categories": "Entity Categories",
         "session_periods": "Session Periods",
         "kinships": "Relationships",
+        "certification-names": "Certificate Names",
         "inspector-assignments": "Supervisor Assignments",
         "attendance_types": "Absence Types",
         "quoran_parts": "Quran Parts",
@@ -1022,6 +1042,7 @@
         "notification_templates": "Notification Templates",
         "notifications": "Notifications",
         "general_banners": "General Banners",
+        "certificate_names": "Certificate Names",
         "permissions": "Permissions",
         "roles": "Roles",
         "activity_logs": "Activity Logs",
@@ -1113,6 +1134,7 @@
         "subject": "Subject",
         "type": "Type",
         "sms": "SMS",
+        "certificate_name": "Certificate Name",
         "inbox": "Inbox",
         "scheduled": "Scheduled",
         "sent_via": "Sent Via",
