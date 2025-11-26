@@ -24,6 +24,31 @@
             "label": "الإسم الإنجليزي",
             "placeholder": "Enter certificate name in English"
         },
+        "issued_by": {
+            "label": "شهادة صادرة عن",
+            "placeholder": "اختر مصدر الشهادة"
+        },
+        "issued_from": {
+            "label": "صادر من",
+            "placeholder": "اختر صادر من"
+        },
+        "issued_date": {
+            "label": "تاريخ الصدور",
+            "placeholder": "اختر تاريخ الصدور"
+        },
+        "certificate_name_id": {
+            "label": "اسم الشهادة",
+            "placeholder": "اختر اسم الشهادة"
+        },
+        "obtained_date": {
+            "label": "تاريخ الحصول",
+            "placeholder": "اختر التاريخ"
+        },
+        "certificate_image": {
+            "label": "إدراج الشهادة",
+            "placeholder": "ارفع صورة الشهادة"
+        },
+        "invalid_issued_by": "مصدر الشهادة غير صحيح",
         "name": {
             "en_required": "الاسم بالإنجليزية مطلوب",
             "ar_required": "الاسم بالعربية مطلوب",
@@ -40,6 +65,17 @@
                 "ar": "أدخل الاسم بالعربية"
             }
         },
+        "parts_count": {
+            "label": "عدد الأجزاء",
+            "placeholder": "أدخل عدد الأجزاء (1-30)"
+        },
+        "segments_required": {
+            "label": "عدد المقاطع المطلوبة",
+            "placeholder": "أدخل عدد المقاطع المطلوبة"
+        },
+        "min_value": "الحد الأدنى {{min}}",
+        "max_value": "الحد الأقصى {{max}}",
+        "must_be_integer": "يجب أن يكون رقم صحيح",
         "program": {
             "label": "البرنامج",
             "placeholder": "اختر البرنامج",
@@ -775,6 +811,18 @@
         "view": "عرض نمط جلسة",
         "delete": "حذف نمط جلسة"
     },
+    "certificates": {
+        "create": "إدراج شهادة",
+        "edit": "تعديل شهادة",
+        "view": "عرض شهادة",
+        "delete": "حذف شهادة"
+    },
+    "exam_segments_count": {
+        "create": "إضافة مقاطع مطلوبة",
+        "edit": "تعديل مقاطع مطلوبة",
+        "view": "عرض مقاطع مطلوبة",
+        "delete": "حذف مقاطع مطلوبة"
+    },
     "jobs": {
         "create": "إنشاء وظيفة",
         "update": "تحديث الوظيفة",
@@ -944,6 +992,8 @@
         "session_modes": "أنماط الجلسات",
         "warning_reasons": "أسباب الإنذارات",
         "warning": "إصدار الإنذارات",
+        "certificates": "إدراج الشهادات",
+        "exam_segments_count": "عدد أجزاء الامتحان",
         "evaluation-parameters": "معايير التقييم",
         "resources": "الموارد",
         "notifications_system": "نظام الإشعارات",
@@ -1006,8 +1056,10 @@
         "notifications": "الإشعارات",
         "general_banners": "البانرات العامة",
         "certificate_names": "وصف أسماء الشهادات",
+        "certificates": "الشهادات",
         "permissions": "الصلاحيات",
         "session_modes": "أنماط الجلسات",
+        "exam_segments_count": "عدد المقاطع المطلوبة للاختبار",
         "evaluation_parameters": "معايير التقييم",
         "roles": "الأدوار",
         "activity_logs": "سجل الحركات",
@@ -1099,6 +1151,14 @@
         "type": "النوع",
         "sms": "رسالة نصية",
         "certificate_name": "اسم الشهادة",
+        "student_name": "اسم الطالب",
+        "issued_by": "صادرة عن",
+        "issued_from": "صادر من",
+        "parts_count": "عدد الأجزاء",
+        "segments_required": "عدد المقاطع المطلوبة",
+        "issued_date": "تاريخ الصدور",
+        "obtained_date": "تاريخ الحصول",
+        "certificate_image": "الشهادة",
         "session_mode": "نمط الجلسة",
         "title": "العنوان",
         "content": "المحتوى",

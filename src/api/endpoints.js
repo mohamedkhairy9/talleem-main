@@ -317,6 +317,13 @@ export const API_URLS = {
         UPDATE: (id) => `/certification-names/${id}`,
         DELETE: (id) => `/certification-names/${id}`
     },
+    CERTIFICATES: {
+        LIST: '/certificates',
+        DETAILS: id => `/certificates/${id}`,
+        CREATE: '/certificates',
+        UPDATE: id => `/certificates/${id}`,
+        DELETE: id => `/certificates/${id}`
+    },
     BRANCH_ADMINISTRATIONS: {
         CREATE: '/branch-administrations',
         LIST: '/branch-administrations',
@@ -356,7 +363,14 @@ export const API_URLS = {
         LIST: '/configurations',
         SHOW: (program, key) => `/configurations/${program}/${key}`,
         UPDATE: program => `/configurations/${program}`
-    }
+    },
+    EXAM_SEGMENTS_COUNT: {
+        LIST: '/exam-segments-count',
+        DETAILS: id => `/exam-segments-count/${id}`,
+        CREATE: '/exam-segments-count',
+        UPDATE: id => `/exam-segments-count/${id}`,
+        DELETE: id => `/exam-segments-count/${id}`
+    },
 };
 
 export const API_KEYS = {
@@ -381,10 +395,12 @@ export const API_KEYS = {
     ACADEMIC_QUALIFICATIONS: 'academic-qualifications',
     WARNING_REASONS: 'warning-reasons',
     WARNINGS: 'warnings',
-    CERTIFICATE_NAMES: 'CERTIFICATE_NAMES',
+    CERTIFICATE_NAMES: 'certification-names',
+    CERTIFICATES: 'certificates',
     BRANCHES: 'branches',
     MAIN_PROGRAMS: 'main-programs',
     QUORAN_PARTS: 'quoran-parts',
+    EXAM_SEGMENTS_COUNT: 'exam-segments-count',
     ATTENDANCES_TYPES: 'attendances-types',
     EVALUATION_PARAMETERS: 'evaluation-parameters',
     MEMORIZATION_PROGRAM_ENTITY_TYPES: 'memorization-program-entity-types',
