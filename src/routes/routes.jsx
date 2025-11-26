@@ -49,6 +49,8 @@ import Configurations from '@/pages/configurations/Configurations';
 import InspectorAssignments from '@/pages/inspector-assignments/Inspectorassignments';
 import IssuingWarnings from '@/pages/issuing-warnings/Warnings';
 import CertificationNames from '@/pages/certification-names/CertificationNames';
+import QuranSegmentationView from '@/pages/quran/QuranSegmentationView';
+import SessionModes from '@/pages/ sessionModes /SessionModes';
 
 export const routes = [
     {
@@ -80,8 +82,16 @@ export const routes = [
         element: <NotificationTemplates />
     },
     {
+        path: '/session-modes',
+        element: <SessionModes />
+    },
+    {
         path: '/activity-logs',
         element: <ActivityLogs />
+    },
+    {
+        path: '/quran-segmentation',
+        element: <QuranSegmentationView />
     },
     {
         path: '/academic-qualifications',

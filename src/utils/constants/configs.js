@@ -155,6 +155,12 @@ export const sideMenuTabs = [
                         icon: VscDebugBreakpointLog
                     },
                     {
+                        titleKey: 'sidebar.session_modes',
+                        path: '/session-modes',
+                        icon: VscDebugBreakpointLog
+                    },
+
+                    {
                         titleKey: 'sidebar.attendance_types',
                         path: '/attendances-types',
                         icon: VscDebugBreakpointLog
@@ -307,6 +313,13 @@ export const sideMenuTabs = [
         path: '/configurations',
         icon: HiDocumentText
     },
+
+    {
+        titleKey: 'sidebar.mushaf_management',
+        path: '/quran-segmentation',
+        icon: HiDocumentText
+    },
+
 
     // صلة القربى
 
