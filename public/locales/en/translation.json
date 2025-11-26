@@ -33,6 +33,14 @@
             "label": "Certificate Issued By",
             "placeholder": "Select who issued the certificate"
         },
+        "issued_from": {
+            "label": "Issued From",
+            "placeholder": "Select issued from"
+        }, 
+        "issued_date": {
+            "label": "Issued Date",
+            "placeholder": "Select issued date"
+        },
         "certificate_name_id": {
             "label": "Certificate Name",
             "placeholder": "Select certificate name"
@@ -1023,6 +1031,7 @@
         "location_types": "Location Types",
         "specifications": "Specifications",
         "activities": "Activities",
+        "certificates": "Certificates Upload",
         "entity_categories": "Entity Categories",
         "session_periods": "Session Periods",
         "kinships": "Relationships",

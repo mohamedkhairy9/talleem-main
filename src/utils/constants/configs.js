@@ -148,7 +148,11 @@ export const sideMenuTabs = [
                         path: '/certification-names',
                         icon: VscDebugBreakpointLog
                     },
-
+                    {
+                        titleKey: 'sidebar.certificates',
+                        path: '/certificates',
+                        icon: VscDebugBreakpointLog
+                    },
                     {
                         titleKey: 'sidebar.entity_activities',
                         path: '/entity-activities',

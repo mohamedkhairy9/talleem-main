@@ -28,6 +28,14 @@
             "label": "شهادة صادرة عن",
             "placeholder": "اختر مصدر الشهادة"
         },
+        "issued_from": {
+            "label": "صادر من",
+            "placeholder": "اختر صادر من"
+        },
+        "issued_date": {
+            "label": "تاريخ الصدور",
+            "placeholder": "اختر تاريخ الصدور"
+        },
         "certificate_name_id": {
             "label": "اسم الشهادة",
             "placeholder": "اختر اسم الشهادة"
@@ -967,6 +975,7 @@
         "session_modes": "أنماط الجلسات",
         "warning_reasons": "أسباب الإنذارات",
         "warning": "إصدار الإنذارات",
+        "certificates": "إدراج الشهادات",
         "evaluation-parameters": "معايير التقييم",
         "resources": "الموارد",
         "notifications_system": "نظام الإشعارات",
