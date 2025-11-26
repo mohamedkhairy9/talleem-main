@@ -51,6 +51,7 @@ import IssuingWarnings from '@/pages/issuing-warnings/Warnings';
 import CertificationNames from '@/pages/certification-names/CertificationNames';
 import QuranSegmentationView from '@/pages/quran/QuranSegmentationView';
 import SessionModes from '@/pages/ sessionModes /SessionModes';
+import Certificates from '@/pages/upload-certificate/Certificates';
 
 export const routes = [
     {
@@ -177,6 +178,11 @@ export const routes = [
         path: '/certification-names',
         element: <CertificationNames />
     },
+    {
+        path: '/certificates',
+        element: <Certificates />
+    },
+
     {
         path: '/configurations',
         element: <Configurations />

@@ -1,13 +1,13 @@
 import useRFH from '@/utils/hooks/global/useRFH';
 import { certificatesSchema as schema } from '@/utils/yup/certificates.schemas';
 import React, { useEffect, useMemo, useState } from 'react';
-import { certificatesFields } from './configs';
+import { certificatesFields, issuedFromOptions } from './configs';
 import InputRFH from '@/components/common/inputs/InputRFH';
 import Btn from '@/components/common/buttons/Btn';
 import { getNestedError } from '@/utils/helpers/getNestedError';
 import { generateOptions, onlyDate } from '@/utils/helpers/global.fns';
-import useLocale from '@/utils/hooks/global/useLocale';
-import i18next from 'i18next';
+import { useStudentsQuery } from '@/api/hooks/useStudents';
+import { enabledDisabledOptions } from '@/utils/constants/options';
 
 export default function FormCertificate({
     onClose,
@@ -18,17 +18,15 @@ export default function FormCertificate({
     mutate,
     options
 }) {
-    const { t } = useLocale();
-    const lang = i18next.language;
 
     const [certificateImagePreview, setCertificateImagePreview] = useState(
-        oldData?.certificate_image || null
+        oldData?.file || null
     );
     const [certificateImageChanged, setCertificateImageChanged] = useState(false);
 
     const defaultValues = useMemo(() => ({
         ...oldData,
-        obtained_date: onlyDate(oldData?.obtained_date)
+        issued_date: onlyDate(oldData?.issued_date)
     }), [oldData]);
 
     const { register, errors, handleSubmit, control, setValue, watch } = useRFH({
@@ -41,13 +39,22 @@ export default function FormCertificate({
     const branchId = watch('branch_id');
     const entityId = watch('entity_id');
 
-    // Filter branches based on main program
-    const filteredBranches = useMemo(() => {
-        if (!mainProgramId || !options.branch_id) return [];
-        return options.branch_id.filter(
-            branch => branch.main_program?.id === Number(mainProgramId)
-        );
-    }, [mainProgramId, options.branch_id]);
+    // Fetch students dynamically based on program and entity
+    const studentsParams = useMemo(() => {
+        if (!mainProgramId || !entityId) return null;
+        return {
+            main_program_id: mainProgramId,
+            entity_id: entityId,
+            status: 'all'
+        };
+    }, [mainProgramId, entityId]);
+
+    const { data: studentsData, isLoading: studentsLoading } = useStudentsQuery(
+        studentsParams || {},
+        {
+            enabled: !!studentsParams
+        }
+    );
 
     // Filter entities based on branch and main program
     const filteredEntities = useMemo(() => {
@@ -59,20 +66,9 @@ export default function FormCertificate({
         });
     }, [branchId, mainProgramId, options.entity_id]);
 
-    // Filter students based on branch and entity
-    const filteredStudents = useMemo(() => {
-        if (!branchId || !entityId || !options.student_id) return [];
-        return options.student_id.filter(student => {
-            const matchesBranch = student.branch?.id === Number(branchId);
-            const matchesEntity = student.entity?.id === Number(entityId);
-            return matchesBranch && matchesEntity;
-        });
-    }, [branchId, entityId, options.student_id]);
-
     // Reset dependent fields when main program changes
     useEffect(() => {
         if (mainProgramId && mainProgramId !== oldData?.main_program_id) {
-            setValue('branch_id', '');
             setValue('entity_id', '');
             setValue('student_id', '');
         }
@@ -95,43 +91,60 @@ export default function FormCertificate({
 
     const enhancedOptions = useMemo(() => ({
         ...options,
-        branch_id: filteredBranches,
+        issued_from: issuedFromOptions,
+        branch_id: options.branch_id || [],
         entity_id: filteredEntities,
-        student_id: filteredStudents
-    }), [options, filteredBranches, filteredEntities, filteredStudents]);
+        student_id: studentsData?.data || [],
+        is_active: enabledDisabledOptions
+    }), [options, filteredEntities, studentsData]);
 
     function onSubmit(data) {
+        // Remove filter-only fields from submission
+        const { main_program_id, branch_id, entity_id, ...submissionData } = data;
+    
+        // Convert is_active to number
+        if (typeof submissionData.is_active === 'boolean') {
+            submissionData.is_active = submissionData.is_active ? 1 : 0;
+        }
+    
+        // Handle file - make sure it's a single file, not an array
+        if (submissionData.file) {
+            // If it's a FileList or array, get the first file
+            if (submissionData.file instanceof FileList || Array.isArray(submissionData.file)) {
+                submissionData.file = submissionData.file[0];
+            }
+        }
+    
         // In edit mode, if certificate image not changed, don't send it
         if (editMode && !certificateImageChanged) {
-            delete data.certificate_image;
+            delete submissionData.file;
         }
-
-        const submissionData = editMode ? { ...data, id: oldData.id } : data;
-
-        mutate(submissionData, {
+    
+        const finalData = editMode 
+            ? { ...submissionData, id: oldData.id } 
+            : submissionData;
+    
+        console.log('Submitting certificate data:', finalData);
+    
+        mutate(finalData, {
             onSuccess: () => {
                 onClose();
             }
         });
     }
-
+        
     // Helper function to determine if a field should be disabled
     const isFieldDisabled = (fieldName) => {
         if (viewMode) return true;
 
-        // Branch disabled until program is selected
-        if (fieldName === 'branch_id' && !mainProgramId) {
+        // Entity disabled until branch AND program are selected
+        if (fieldName === 'entity_id' && (!branchId || !mainProgramId)) {
             return true;
         }
 
-        // Entity disabled until branch is selected
-        if (fieldName === 'entity_id' && !branchId) {
-            return true;
-        }
-
-        // Student disabled until entity is selected
-        if (fieldName === 'student_id' && !entityId) {
-            return true;
+        // Student disabled until entity is selected OR students are loading
+        if (fieldName === 'student_id') {
+            return !entityId || studentsLoading;
         }
 
         return false;
@@ -142,7 +155,7 @@ export default function FormCertificate({
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {certificatesFields.map(field => {
                     // Special handling for certificate image with preview
-                    if (field.name === 'certificate_image') {
+                    if (field.name === 'file') {
                         return (
                             <div key={field.name} className="md:col-span-2 space-y-2">
                                 <InputRFH
@@ -193,10 +206,7 @@ export default function FormCertificate({
                                 disabled={isFieldDisabled(field.name)}
                                 label={field.label}
                                 name={field.name}
-                                options={
-                                    field.options || 
-                                    generateOptions(enhancedOptions[field.name] || options[field.name])
-                                }
+                                options={generateOptions(enhancedOptions[field.name])}
                                 defaultValue={defaultValues[field.name] || field.defaultValue}
                                 max={field.max}
                             />

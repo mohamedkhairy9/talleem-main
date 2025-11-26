@@ -24,6 +24,23 @@
             "label": "الإسم الإنجليزي",
             "placeholder": "Enter certificate name in English"
         },
+        "issued_by": {
+            "label": "شهادة صادرة عن",
+            "placeholder": "اختر مصدر الشهادة"
+        },
+        "certificate_name_id": {
+            "label": "اسم الشهادة",
+            "placeholder": "اختر اسم الشهادة"
+        },
+        "obtained_date": {
+            "label": "تاريخ الحصول",
+            "placeholder": "اختر التاريخ"
+        },
+        "certificate_image": {
+            "label": "إدراج الشهادة",
+            "placeholder": "ارفع صورة الشهادة"
+        },
+        "invalid_issued_by": "مصدر الشهادة غير صحيح",
         "name": {
             "en_required": "الاسم بالإنجليزية مطلوب",
             "ar_required": "الاسم بالعربية مطلوب",
@@ -775,6 +792,12 @@
         "view": "عرض نمط جلسة",
         "delete": "حذف نمط جلسة"
     },
+    "certificates": {
+        "create": "إدراج شهادة",
+        "edit": "تعديل شهادة",
+        "view": "عرض شهادة",
+        "delete": "حذف شهادة"
+    },
     "jobs": {
         "create": "إنشاء وظيفة",
         "update": "تحديث الوظيفة",
@@ -1006,6 +1029,7 @@
         "notifications": "الإشعارات",
         "general_banners": "البانرات العامة",
         "certificate_names": "وصف أسماء الشهادات",
+        "certificates": "الشهادات",
         "permissions": "الصلاحيات",
         "session_modes": "أنماط الجلسات",
         "evaluation_parameters": "معايير التقييم",
@@ -1099,6 +1123,12 @@
         "type": "النوع",
         "sms": "رسالة نصية",
         "certificate_name": "اسم الشهادة",
+        "student_name": "اسم الطالب",
+        "issued_by": "صادرة عن",
+        "issued_from": "صادر من",
+        "issued_date": "تاريخ الصدور",
+        "obtained_date": "تاريخ الحصول",
+        "certificate_image": "الشهادة",
         "session_mode": "نمط الجلسة",
         "title": "العنوان",
         "content": "المحتوى",

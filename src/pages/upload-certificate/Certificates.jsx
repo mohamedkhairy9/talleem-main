@@ -23,22 +23,22 @@ export default function Certificates() {
     const tableData = data?.data?.map(item => ({
         ...item,
         student_name: item.student?.name?.[i18next.language],
-        certificate_name: item.certificate_name?.name?.[i18next.language],
-        branch: item.branch?.name?.[i18next.language],
-        entity: item.entity?.name?.[i18next.language],
-        issued_by: item.issued_by
+        certificate_name: item.certificate_name?.[i18next.language], // Changed: removed .name
+        issued_from: item.issued_from,
+        is_active: item.is_active
     }));
 
     const formData = data?.data?.map(item => ({
         id: item.id,
-        issued_by: item.issued_by,
+        issued_from: item.issued_from,
         main_program_id: item.main_program?.id,
         branch_id: item.branch?.id,
         entity_id: item.entity?.id,
         student_id: item.student?.id,
         certificate_name_id: item.certificate_name?.id,
-        obtained_date: item.obtained_date,
-        certificate_image: item.certificate_image
+        issued_date: item.issued_date,
+        is_active: item.is_active,
+        file: item.image_url  // Changed: use image_url from response
     }));
 
     return (

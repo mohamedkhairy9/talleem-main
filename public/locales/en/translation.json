@@ -29,6 +29,23 @@
             "label": "English Name",
             "placeholder": "Enter certificate name in English"
         },
+        "issued_by": {
+            "label": "Certificate Issued By",
+            "placeholder": "Select who issued the certificate"
+        },
+        "certificate_name_id": {
+            "label": "Certificate Name",
+            "placeholder": "Select certificate name"
+        },
+        "obtained_date": {
+            "label": "Date Obtained",
+            "placeholder": "Select date"
+        },
+        "certificate_image": {
+            "label": "Upload Certificate",
+            "placeholder": "Upload certificate image"
+        },
+        "invalid_issued_by": "Invalid issuer selected",
         "name": {
             "en_min": "English name must be at least 2 characters",
             "ar_min": "Arabic name must be at least 2 characters",
@@ -1051,6 +1068,7 @@
         "notifications": "Notifications",
         "general_banners": "General Banners",
         "certificate_names": "Certificate Names",
+        "certificates": "Certificates",
         "permissions": "Permissions",
         "session_modes": "Session Modes",
         "roles": "Roles",
@@ -1144,6 +1162,12 @@
         "type": "Type",
         "sms": "SMS",
         "certificate_name": "Certificate Name",
+        "student_name": "Student Name",
+        "issued_by": "Issued By",
+        "issued_from": "Issued From",
+        "issued_date": "Issued Date",
+        "obtained_date": "Obtained Date",
+        "certificate_image": "Certificate",
         "inbox": "Inbox",
         "registration_date": "Registration Date",
         "scheduled": "Scheduled",
@@ -1264,6 +1288,12 @@
         "student": "Student Warning",
         "teacher": "Teacher Warning",
         "entity": "Entity Warning"
+    },
+    "certificates": {
+        "create": "Upload Certificate",
+        "edit": "Edit Certificate",
+        "view": "View Certificate",
+        "delete": "Delete Certificate"
     },
     "evaluation_parameters": {
         "create": "Create Evaluation Parameter",

@@ -16,21 +16,17 @@ export const certificatesColumns = [
         header: 'table_headers.certificate_name',
         cell: info => <Cell value={info.row.original.certificate_name} />
     }),
-    columnHelper.accessor('issued_by', {
-        header: 'table_headers.issued_by',
-        cell: info => <Cell value={info.row.original.issued_by} />
+    columnHelper.accessor('issued_from', {
+        header: 'table_headers.issued_from',
+        cell: info => <Cell value={info.row.original.issued_from} />
     }),
-    columnHelper.accessor('branch', {
-        header: 'table_headers.branch',
-        cell: info => <Cell value={info.row.original.branch} />
-    }),
-    columnHelper.accessor('entity', {
-        header: 'table_headers.entity',
-        cell: info => <Cell value={info.row.original.entity} />
-    }),
-    columnHelper.accessor('obtained_date', {
-        header: 'table_headers.obtained_date',
+    columnHelper.accessor('issued_date', {
+        header: 'table_headers.issued_date',
         cell: info => <DateCell fullDate value={info.getValue()} />
+    }),
+    columnHelper.accessor('is_active', {
+        header: 'table_headers.status',
+        cell: info => <Cell value={info.getValue() ? 'Active' : 'Inactive'} />
     }),
     columnHelper.accessor('created_at', {
         header: 'table_headers.created_at',
@@ -39,19 +35,21 @@ export const certificatesColumns = [
     })
 ];
 
+// Options for issued_from - always send English value
+export const issuedFromOptions = [
+    { label: { en: 'Main Administration', ar: 'الإدارة العامة' }, value: 'high management' },
+    { label: { en: 'Branch Management', ar: 'إدارة الفرع' }, value: 'branch management' },
+    { label: { en: 'Entity Management', ar: 'إدارة الجهة' }, value: 'entity management' }
+];
+
 export const certificatesFields = [
     {
-        name: 'issued_by',
-        label: 'validation.issued_by.label',
-        type: 'radio',
-        placeholder: 'validation.issued_by.placeholder',
+        name: 'issued_from',
+        label: 'validation.issued_from.label',
+        type: 'select',
+        placeholder: 'validation.issued_from.placeholder',
         editMode: true,
-        viewMode: true,
-        options: [
-            { value: 'main_administration', label: { en: 'Main Administration', ar: 'الإدارة العامة' } },
-            { value: 'branch', label: { en: 'Branch Management', ar: 'إدارة الفرع' } },
-            { value: 'entity', label: { en: 'Entity Management', ar: 'إدارة الجهة' } }
-        ]
+        viewMode: true
     },
     {
         name: 'main_program_id',
@@ -59,7 +57,8 @@ export const certificatesFields = [
         type: 'select',
         placeholder: 'validation.main_program_id.placeholder',
         editMode: true,
-        viewMode: true
+        viewMode: true,
+        isFilterOnly: true  // Mark as filter only
     },
     {
         name: 'branch_id',
@@ -67,7 +66,8 @@ export const certificatesFields = [
         type: 'select',
         placeholder: 'validation.branch_id.placeholder',
         editMode: true,
-        viewMode: true
+        viewMode: true,
+        isFilterOnly: true  // Mark as filter only
     },
     {
         name: 'entity_id',
@@ -75,7 +75,8 @@ export const certificatesFields = [
         type: 'select',
         placeholder: 'validation.entity_id.placeholder',
         editMode: true,
-        viewMode: true
+        viewMode: true,
+        isFilterOnly: true  // Mark as filter only
     },
     {
         name: 'student_id',
@@ -94,19 +95,28 @@ export const certificatesFields = [
         viewMode: true
     },
     {
-        name: 'obtained_date',
-        label: 'validation.obtained_date.label',
+        name: 'issued_date',
+        label: 'validation.issued_date.label',
         type: 'date',
-        placeholder: 'validation.obtained_date.placeholder',
+        placeholder: 'validation.issued_date.placeholder',
         editMode: true,
         viewMode: true,
         max: new Date().toISOString().split('T')[0]
     },
     {
-        name: 'certificate_image',
-        label: 'validation.certificate_image.label',
+        name: 'is_active',
+        label: 'validation.is_active.label',
+        type: 'select',
+        placeholder: 'validation.is_active.placeholder',
+        defaultValue: 1,
+        editMode: true,
+        viewMode: true
+    },
+    {
+        name: 'file',
+        label: 'validation.file.label',
         type: 'file',
-        placeholder: 'validation.certificate_image.placeholder',
+        placeholder: 'validation.file.placeholder',
         editMode: true,
         viewMode: true,
         accept: 'image/*'
@@ -127,9 +137,9 @@ export const certificatesFilters = [
         defaultValue: ''
     },
     {
-        name: 'issued_by',
+        name: 'issued_from',
         type: 'select',
-        placeholder: 'validation.issued_by.placeholder',
+        placeholder: 'validation.issued_from.placeholder',
         defaultValue: ''
     }
 ];
@@ -137,24 +147,24 @@ export const certificatesFilters = [
 export const filtersDefaultValues = {
     search: '',
     branch_id: '',
-    issued_by: ''
+    issued_from: ''
 };
 
 export const certificatesDefaultValues = {
-    issued_by: 'main_administration',
+    issued_from: '',
     main_program_id: '',
     branch_id: '',
     entity_id: '',
     student_id: '',
     certificate_name_id: '',
-    obtained_date: '',
-    certificate_image: null
+    issued_date: '',
+    is_active: 1,
+    file: null
 };
 
 export const apiCalls = [
     API_KEYS.MAIN_PROGRAMS,
     API_KEYS.BRANCHES,
     API_KEYS.ENTITIES,
-    API_KEYS.STUDENTS,
     API_KEYS.CERTIFICATE_NAMES
 ];

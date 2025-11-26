@@ -4,7 +4,6 @@ import useCustomQueries from '@/utils/hooks/global/useCustomQueries';
 import { mainProgramsService } from '@/api/services/mainPrograms.service';
 import { branchesService } from '@/api/services/branches.service';
 import { entitiesService } from '@/api/services/entities.service';
-import { studentsService } from '@/api/services/students.service';
 import { certificateNamesService } from '@/api/services/certificateNames.service';
 
 export default function useApiCalls({ apiCalls = [] } = {}) {
@@ -27,11 +26,6 @@ export default function useApiCalls({ apiCalls = [] } = {}) {
             enabled: isEnabled(API_KEYS.ENTITIES)
         },
         {
-            queryKey: [API_KEYS.STUDENTS, allData],
-            queryFn: () => studentsService.getStudents(allData),
-            enabled: isEnabled(API_KEYS.STUDENTS)
-        },
-        {
             queryKey: [API_KEYS.CERTIFICATE_NAMES, allData],
             queryFn: () => certificateNamesService.getCertificateNames(allData),
             enabled: isEnabled(API_KEYS.CERTIFICATE_NAMES)
@@ -42,7 +36,6 @@ export default function useApiCalls({ apiCalls = [] } = {}) {
         mainProgramsQuery,
         branchesQuery,
         entitiesQuery,
-        studentsQuery,
         certificateNamesQuery
     ] = queries;
 
@@ -50,7 +43,6 @@ export default function useApiCalls({ apiCalls = [] } = {}) {
         mainProgramsData: mainProgramsQuery?.data,
         branchesData: branchesQuery?.data,
         entitiesData: entitiesQuery?.data,
-        studentsData: studentsQuery?.data,
         certificateNamesData: certificateNamesQuery?.data,
         isLoading: isAnyLoading
     };

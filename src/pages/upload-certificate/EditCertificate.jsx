@@ -14,7 +14,6 @@ export default function EditCertificate({ onClose, oldData }) {
         mainProgramsData,
         branchesData,
         entitiesData,
-        studentsData,
         certificateNamesData,
         isLoading
     } = useApiCalls({ apiCalls });
@@ -34,8 +33,8 @@ export default function EditCertificate({ onClose, oldData }) {
                     main_program_id: mainProgramsData?.data,
                     branch_id: branchesData?.data,
                     entity_id: entitiesData?.data,
-                    student_id: studentsData?.data,
                     certificate_name_id: certificateNamesData?.data
+                    // student_id will be fetched dynamically in the form
                 }}
             />
         </Modal>

@@ -1,23 +1,17 @@
 import React from 'react';
-import { certificatesFilters } from './configs';
+import { certificatesFilters, issuedFromOptions } from './configs';
 import FilterSelect from '@/components/common/inputs/FilterSelect';
 import { generateOptions } from '@/utils/helpers/global.fns';
 import FilterText from '@/components/common/inputs/FilterText';
 import { useBranchesQuery } from '@/api/hooks/useBranches';
 import { allData } from '@/utils/constants/global.constants';
 
-const issuedByOptions = [
-    { label: { en: 'Main Administration', ar: 'الإدارة العامة' }, value: 'main_administration' },
-    { label: { en: 'Branch Management', ar: 'إدارة الفرع' }, value: 'branch' },
-    { label: { en: 'Entity Management', ar: 'إدارة الجهة' }, value: 'entity' }
-];
-
 export default function Filters({ filters, handleFilter }) {
     const { data: branchesData } = useBranchesQuery(allData);
 
     const options = {
         branch_id: branchesData?.data,
-        issued_by: issuedByOptions
+        issued_from: issuedFromOptions
     };
 
     return certificatesFilters.map(filter =>
