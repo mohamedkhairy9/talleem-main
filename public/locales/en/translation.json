@@ -36,7 +36,7 @@
         "issued_from": {
             "label": "Issued From",
             "placeholder": "Select issued from"
-        }, 
+        },
         "issued_date": {
             "label": "Issued Date",
             "placeholder": "Select issued date"
@@ -268,6 +268,17 @@
             "integer": "Activity must be selected",
             "min": "Please select a valid activity"
         },
+        "parts_count": {
+            "label": "Parts Count",
+            "placeholder": "Enter parts count (1-30)"
+        },
+        "segments_required": {
+            "label": "Segments Required",
+            "placeholder": "Enter segments required"
+        },
+        "min_value": "Minimum value is {{min}}",
+        "max_value": "Maximum value is {{max}}",
+        "must_be_integer": "Must be an integer",
         "files": {
             "label": "Files",
             "placeholder": "Upload files"
@@ -1032,6 +1043,7 @@
         "specifications": "Specifications",
         "activities": "Activities",
         "certificates": "Certificates Upload",
+        "exam_segments_count": "Exam Segments Count",
         "entity_categories": "Entity Categories",
         "session_periods": "Session Periods",
         "kinships": "Relationships",
@@ -1082,6 +1094,7 @@
         "session_modes": "Session Modes",
         "roles": "Roles",
         "activity_logs": "Activity Logs",
+        "exam_segments_count": "Required Segments in Exam",
         "warning_reasons": "Warning Reasons",
         "warnings": "Issuing Warnings",
         "academic_qualifications": "Academic Qualifications",
@@ -1179,6 +1192,8 @@
         "certificate_image": "Certificate",
         "inbox": "Inbox",
         "registration_date": "Registration Date",
+        "parts_count": "Parts Count",
+        "segments_required": "Segments Required",
         "scheduled": "Scheduled",
         "session_mode": "Session Mode",
         "sent_via": "Sent Via",
@@ -1303,6 +1318,12 @@
         "edit": "Edit Certificate",
         "view": "View Certificate",
         "delete": "Delete Certificate"
+    },
+    "exam_segments_count": {
+        "create": "Create Required Segments",
+        "edit": "Edit Required Segments",
+        "view": "View Required Segments",
+        "delete": "Delete Required Segments"
     },
     "evaluation_parameters": {
         "create": "Create Evaluation Parameter",

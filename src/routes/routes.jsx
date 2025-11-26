@@ -52,6 +52,7 @@ import CertificationNames from '@/pages/certification-names/CertificationNames';
 import QuranSegmentationView from '@/pages/quran/QuranSegmentationView';
 import SessionModes from '@/pages/ sessionModes /SessionModes';
 import Certificates from '@/pages/upload-certificate/Certificates';
+import ExamSegmentsCount from '@/pages/exam-segments/ExamSegmentsCount';
 
 export const routes = [
     {
@@ -190,6 +191,10 @@ export const routes = [
     {
         path: '/session-periods',
         element: <SessionPeriods />
+    },
+    {
+        path: '/exam-segments-count',
+        element: <ExamSegmentsCount />
     },
     {
         path: '/neighborhoods',

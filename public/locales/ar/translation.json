@@ -65,6 +65,17 @@
                 "ar": "أدخل الاسم بالعربية"
             }
         },
+        "parts_count": {
+            "label": "عدد الأجزاء",
+            "placeholder": "أدخل عدد الأجزاء (1-30)"
+        },
+        "segments_required": {
+            "label": "عدد المقاطع المطلوبة",
+            "placeholder": "أدخل عدد المقاطع المطلوبة"
+        },
+        "min_value": "الحد الأدنى {{min}}",
+        "max_value": "الحد الأقصى {{max}}",
+        "must_be_integer": "يجب أن يكون رقم صحيح",
         "program": {
             "label": "البرنامج",
             "placeholder": "اختر البرنامج",
@@ -806,6 +817,12 @@
         "view": "عرض شهادة",
         "delete": "حذف شهادة"
     },
+    "exam_segments_count": {
+        "create": "إضافة مقاطع مطلوبة",
+        "edit": "تعديل مقاطع مطلوبة",
+        "view": "عرض مقاطع مطلوبة",
+        "delete": "حذف مقاطع مطلوبة"
+    },
     "jobs": {
         "create": "إنشاء وظيفة",
         "update": "تحديث الوظيفة",
@@ -976,6 +993,7 @@
         "warning_reasons": "أسباب الإنذارات",
         "warning": "إصدار الإنذارات",
         "certificates": "إدراج الشهادات",
+        "exam_segments_count": "عدد أجزاء الامتحان",
         "evaluation-parameters": "معايير التقييم",
         "resources": "الموارد",
         "notifications_system": "نظام الإشعارات",
@@ -1041,6 +1059,7 @@
         "certificates": "الشهادات",
         "permissions": "الصلاحيات",
         "session_modes": "أنماط الجلسات",
+        "exam_segments_count": "عدد المقاطع المطلوبة للاختبار",
         "evaluation_parameters": "معايير التقييم",
         "roles": "الأدوار",
         "activity_logs": "سجل الحركات",
@@ -1135,6 +1154,8 @@
         "student_name": "اسم الطالب",
         "issued_by": "صادرة عن",
         "issued_from": "صادر من",
+        "parts_count": "عدد الأجزاء",
+        "segments_required": "عدد المقاطع المطلوبة",
         "issued_date": "تاريخ الصدور",
         "obtained_date": "تاريخ الحصول",
         "certificate_image": "الشهادة",

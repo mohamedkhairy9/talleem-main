@@ -363,7 +363,14 @@ export const API_URLS = {
         LIST: '/configurations',
         SHOW: (program, key) => `/configurations/${program}/${key}`,
         UPDATE: program => `/configurations/${program}`
-    }
+    },
+    EXAM_SEGMENTS_COUNT: {
+        LIST: '/exam-segments-count',
+        DETAILS: id => `/exam-segments-count/${id}`,
+        CREATE: '/exam-segments-count',
+        UPDATE: id => `/exam-segments-count/${id}`,
+        DELETE: id => `/exam-segments-count/${id}`
+    },
 };
 
 export const API_KEYS = {
@@ -393,6 +400,7 @@ export const API_KEYS = {
     BRANCHES: 'branches',
     MAIN_PROGRAMS: 'main-programs',
     QUORAN_PARTS: 'quoran-parts',
+    EXAM_SEGMENTS_COUNT: 'exam-segments-count',
     ATTENDANCES_TYPES: 'attendances-types',
     EVALUATION_PARAMETERS: 'evaluation-parameters',
     MEMORIZATION_PROGRAM_ENTITY_TYPES: 'memorization-program-entity-types',
