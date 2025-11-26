@@ -16,6 +16,14 @@
             "label": "عنوان السكن",
             "placeholder": "أدخل عنوان السكن"
         },
+        "certificate_name_ar": {
+            "label": "الإسم العربي",
+            "placeholder": "أدخل اسم الشهادة بالعربي"
+        },
+        "certificate_name_en": {
+            "label": "الإسم الإنجليزي",
+            "placeholder": "Enter certificate name in English"
+        },
         "name": {
             "en_required": "الاسم بالإنجليزية مطلوب",
             "ar_required": "الاسم بالعربية مطلوب",
@@ -691,7 +699,8 @@
             "label": "وحدة الوقت",
             "placeholder": "اختر الوحدة...",
             "invalid": "وحدة زمنية غير صالحة"
-        }
+        },
+        "min_length": "يجب أن يكون الحد الأدنى {{min}} حروف"
     },
     "auth": {
         "email": {
@@ -796,6 +805,11 @@
         "create": "إنشاء البرنامج الرئيسي",
         "update": "تحديث البرنامج الرئيسي",
         "view": "عرض البرنامج الرئيسي"
+    },
+    "certificate_names": {
+        "create": "إضافة وصف اسم شهادة",
+        "update": "تعديل وصف اسم شهادة",
+        "view": "عرض وصف اسم شهادة"
     },
     "academic_levels": {
         "create": "إنشاء مستوى دراسي",
@@ -951,6 +965,7 @@
         "entity_categories": "فئة الجهة",
         "session_periods": "فترات الحلقة",
         "kinships": "صلة القربى",
+        "certification-names": "وصف أسماء الشهادات",
         "attendance_types": "أنواع الغياب",
         "quoran_parts": "أجزاء القرآن",
         "main_programs": "البرامج الرئيسية",
@@ -990,6 +1005,7 @@
         "notification_templates": "قوالب الإشعارات",
         "notifications": "الإشعارات",
         "general_banners": "البانرات العامة",
+        "certificate_names": "وصف أسماء الشهادات",
         "permissions": "الصلاحيات",
         "session_modes": "أنماط الجلسات",
         "evaluation_parameters": "معايير التقييم",
@@ -1082,6 +1098,7 @@
         "subject": "الموضوع",
         "type": "النوع",
         "sms": "رسالة نصية",
+        "certificate_name": "اسم الشهادة",
         "session_mode": "نمط الجلسة",
         "title": "العنوان",
         "content": "المحتوى",

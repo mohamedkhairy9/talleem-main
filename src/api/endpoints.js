@@ -310,6 +310,13 @@ export const API_URLS = {
         UPDATE: (id) => `/warnings/${id}`,
         DELETE: (id) => `/warnings/${id}`
     },
+    CERTIFICATE_NAMES: {
+        LIST: '/certification-names',
+        DETAILS: (id) => `/certification-names/${id}`,
+        CREATE: '/certification-names',
+        UPDATE: (id) => `/certification-names/${id}`,
+        DELETE: (id) => `/certification-names/${id}`
+    },
     BRANCH_ADMINISTRATIONS: {
         CREATE: '/branch-administrations',
         LIST: '/branch-administrations',
@@ -374,6 +381,7 @@ export const API_KEYS = {
     ACADEMIC_QUALIFICATIONS: 'academic-qualifications',
     WARNING_REASONS: 'warning-reasons',
     WARNINGS: 'warnings',
+    CERTIFICATE_NAMES: 'CERTIFICATE_NAMES',
     BRANCHES: 'branches',
     MAIN_PROGRAMS: 'main-programs',
     QUORAN_PARTS: 'quoran-parts',

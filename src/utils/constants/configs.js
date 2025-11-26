@@ -144,6 +144,12 @@ export const sideMenuTabs = [
                         icon: VscDebugBreakpointLog
                     },
                     {
+                        titleKey: 'sidebar.certification-names',
+                        path: '/certification-names',
+                        icon: VscDebugBreakpointLog
+                    },
+
+                    {
                         titleKey: 'sidebar.entity_activities',
                         path: '/entity-activities',
                         icon: VscDebugBreakpointLog

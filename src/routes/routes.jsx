@@ -48,7 +48,7 @@ import EvaluationParameters from '@/pages/evaluation-parameters/EvaluationParame
 import Configurations from '@/pages/configurations/Configurations';
 import InspectorAssignments from '@/pages/inspector-assignments/Inspectorassignments';
 import IssuingWarnings from '@/pages/issuing-warnings/Warnings';
-import QuranViewer from '@/pages/quran/QuranViewer';
+import CertificationNames from '@/pages/certification-names/CertificationNames';
 import QuranSegmentationView from '@/pages/quran/QuranSegmentationView';
 import SessionModes from '@/pages/ sessionModes /SessionModes';
 
@@ -173,7 +173,10 @@ export const routes = [
         path: '/issuing-warnings',
         element: <IssuingWarnings />
     },
-
+    {
+        path: '/certification-names',
+        element: <CertificationNames />
+    },
     {
         path: '/configurations',
         element: <Configurations />
