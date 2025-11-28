@@ -1,0 +1,1495 @@
+{
+    "validation": {
+        "required": "This field is required",
+        "search": {
+            "placeholder": "Enter search keyword"
+        },
+        "program_entity_types": {
+            "label": "Entity Program Type",
+            "placeholder": "Select entity program type"
+        },
+        "license_number": {
+            "label": "License Number",
+            "placeholder": "Enter license number"
+        },
+        "entity_manager_address": {
+            "label": "Entity Living Address",
+            "placeholder": "Enter the living address"
+        },
+        "certificate_names": {
+            "label": "Certificate Name",
+            "placeholder": "Enter certificate name",
+            "create": "Create Certificate Name"
+        },
+        "certificate_name_ar": {
+            "label": "Arabic Name",
+            "placeholder": "Enter certificate name in Arabic"
+        },
+        "certificate_name_en": {
+            "label": "English Name",
+            "placeholder": "Enter certificate name in English"
+        },
+        "issued_by": {
+            "label": "Certificate Issued By",
+            "placeholder": "Select who issued the certificate"
+        },
+        "issued_from": {
+            "label": "Issued From",
+            "placeholder": "Select issued from"
+        },
+        "issued_date": {
+            "label": "Issued Date",
+            "placeholder": "Select issued date"
+        },
+        "certificate_name_id": {
+            "label": "Certificate Name",
+            "placeholder": "Select certificate name"
+        },
+        "obtained_date": {
+            "label": "Date Obtained",
+            "placeholder": "Select date"
+        },
+        "certificate_image": {
+            "label": "Upload Certificate",
+            "placeholder": "Upload certificate image"
+        },
+        "invalid_issued_by": "Invalid issuer selected",
+        "name": {
+            "en_min": "English name must be at least 2 characters",
+            "ar_min": "Arabic name must be at least 2 characters",
+            "en_max": "English name must not exceed 100 characters",
+            "ar_max": "Arabic name must not exceed 100 characters",
+            "label": {
+                "en": "Name (English)",
+                "ar": "Name (Arabic)"
+            },
+            "placeholder": {
+                "en": "Enter name in English",
+                "ar": "Enter name in Arabic"
+            }
+        },
+        "entity_name": {
+            "label": {
+                "en": "Entity Name (English)",
+                "ar": "Entity Name (Arabic)"
+            },
+            "placeholder": {
+                "en": "Enter entity name in English",
+                "ar": "Enter entity name in Arabic"
+            }
+        },
+        "program": {
+            "label": "Program",
+            "placeholder": "Select Program",
+            "required": "Program is required",
+            "invalid": "Please select a valid program"
+        },
+        "evaluation_for": {
+            "label": "Evaluation For",
+            "placeholder": "Select who to evaluate",
+            "required": "Evaluation for is required"
+        },
+        "evaluation_system": {
+            "label": "Evaluation System",
+            "placeholder": "Select evaluation system",
+            "required": "Evaluation system is required"
+        },
+        "total_grade": {
+            "label": "Total Grade",
+            "placeholder": "Enter total grade (e.g., 100)",
+            "required": "Total grade is required",
+            "positive": "Total grade must be positive",
+            "integer": "Total grade must be an integer"
+        },
+        "warning_type": {
+            "label": "Warning Type",
+            "placeholder": "Select warning type"
+        },
+        "program_id": {
+            "label": "Program",
+            "placeholder": "Select program"
+        },
+        "student_id": {
+            "label": "Student",
+            "placeholder": "Select student"
+        },
+        "teacher_id": {
+            "label": "Teacher",
+            "placeholder": "Select teacher"
+        },
+        "warning_reason_id": {
+            "label": "Warning Reason",
+            "placeholder": "Select warning reason"
+        },
+        "warning_date": {
+            "label": "Warning Date",
+            "placeholder": "Select warning date"
+        },
+        "note": {
+            "label": "Notes",
+            "placeholder": "Enter notes"
+        },
+        "date_must_be_today_or_future": "Date must be today or in the future",
+        "dashboards": {
+            "label": "Dashboards",
+            "placeholder": "Select dashboards",
+            "required": "At least one dashboard is required",
+            "min": "Select at least one dashboard"
+        },
+        "receivers": {
+            "label": "Receivers",
+            "placeholder": "Select receivers",
+            "required": "At least one receiver is required",
+            "min": "Select at least one receiver"
+        },
+        "criteria_name": {
+            "label": {
+                "en": "Criteria Name (English)",
+                "ar": "Criteria Name (Arabic)"
+            },
+            "placeholder": {
+                "en": "Enter criteria name in English",
+                "ar": "Enter criteria name in Arabic"
+            },
+            "required": {
+                "en": "Criteria name in English is required",
+                "ar": "Criteria name in Arabic is required"
+            }
+        },
+        "degree": {
+            "label": "Degree",
+            "placeholder": "Enter degree",
+            "required": "Degree is required",
+            "positive": "Degree must be positive"
+        },
+        "criteria": {
+            "min": "At least one criterion is required",
+            "required": "Criteria are required"
+        },
+        "is_active": {
+            "label": "Active",
+            "required": "Status is required"
+        },
+        "description": {
+            "en_min": "English description must be at least 10 characters",
+            "ar_min": "Arabic description must be at least 10 characters",
+            "en_max": "English description must not exceed 500 characters",
+            "ar_max": "Arabic description must not exceed 500 characters",
+            "label": {
+                "en": "Description (English)",
+                "ar": "Description (Arabic)"
+            },
+            "placeholder": {
+                "en": "Enter description in English",
+                "ar": "Enter description in Arabic"
+            }
+        },
+        "level": {
+            "label": "Academic Level",
+            "placeholder": "Select academic level"
+        },
+        "code": {
+            "label": "Code",
+            "placeholder": "Enter code",
+            "integer": "Code must be an integer",
+            "min": "Code must be at least 1"
+        },
+        "city_id": {
+            "label": "City",
+            "placeholder": "Select city",
+            "integer": "City must be selected",
+            "min": "Please select a valid city"
+        },
+        "major_id": {
+            "label": "Major",
+            "placeholder": "Select major",
+            "integer": "Major must be selected",
+            "min": "Please select a valid major"
+        },
+        "country_id": {
+            "label": "Country",
+            "placeholder": "Select country",
+            "integer": "Country must be selected",
+            "min": "Please select a valid country"
+        },
+        "neighborhood_id": {
+            "label": "Neighborhood",
+            "placeholder": "Select neighborhood",
+            "integer": "Neighborhood must be selected",
+            "min": "Please select a valid neighborhood"
+        },
+        "location_type_id": {
+            "label": "Location Type",
+            "placeholder": "Select location type",
+            "integer": "Location type must be selected",
+            "min": "Please select a valid location type"
+        },
+        "min_acceptance_age": {
+            "label": "Minimum Acceptance Age",
+            "placeholder": "Enter minimum acceptance age",
+            "integer": "Age must be a number",
+            "min": "Age must be at least 1",
+            "max": "Age cannot exceed 100"
+        },
+        "area": {
+            "label": "Area",
+            "placeholder": "Enter area",
+            "min": "Area must be at least 2 characters",
+            "max": "Area must not exceed 100 characters"
+        },
+        "class_count": {
+            "label": "Class Count",
+            "placeholder": "Enter number of classes",
+            "integer": "Class count must be a number",
+            "min": "Class count cannot be negative"
+        },
+        "management_rooms_count": {
+            "label": "Management Rooms Count",
+            "placeholder": "Enter number of management rooms",
+            "integer": "Management rooms count must be a number",
+            "min": "Management rooms count cannot be negative"
+        },
+        "lecture_holes_count": {
+            "label": "Lecture Holes Count",
+            "placeholder": "Enter number of lecture holes",
+            "integer": "Lecture holes count must be a number",
+            "min": "Lecture holes count cannot be negative"
+        },
+        "activities": {
+            "min": "At least one activity is required"
+        },
+        "activity_ids": {
+            "label": "Activities",
+            "placeholder": "Select activities"
+        },
+        "activity_id": {
+            "label": "Activity",
+            "placeholder": "Select activity",
+            "integer": "Activity must be selected",
+            "min": "Please select a valid activity"
+        },
+        "parts_count": {
+            "label": "Parts Count",
+            "placeholder": "Enter parts count (1-30)"
+        },
+        "segments_required": {
+            "label": "Segments Required",
+            "placeholder": "Enter segments required"
+        },
+        "min_value": "Minimum value is {{min}}",
+        "max_value": "Maximum value is {{max}}",
+        "must_be_integer": "Must be an integer",
+        "files": {
+            "label": "Files",
+            "placeholder": "Upload files"
+        },
+        "file_type_invalid": "Please select an Excel file (.xlsx, .xls, or .csv)",
+        "file_required": "Please select a file",
+        "educational_entity_classification": {
+            "label": {
+                "en": "Entity Category (English)",
+                "ar": "Entity Category (Arabic)"
+            },
+            "placeholder": {
+                "en": "Enter Entity Category in English",
+                "ar": "Enter Entity Category in Arabic"
+            }
+        },
+        "status": {
+            "label": "Status",
+            "placeholder": "Select status",
+            "invalid": "Status must be either enabled or disabled"
+        },
+        "enabled": {
+            "label": "Enabled"
+        },
+        "disabled": {
+            "label": "Disabled"
+        },
+        "start_date": {
+            "label": "Start Date",
+            "placeholder": "Select start date",
+            "required": "Start date is required",
+            "invalid": "Please enter a valid start date"
+        },
+        "end_date": {
+            "label": "End Date",
+            "placeholder": "Select end date",
+            "required": "End date is required",
+            "invalid": "Please enter a valid end date",
+            "after_start": "End date must be after start date"
+        },
+        "link": {
+            "label": "Link",
+            "placeholder": "Enter link URL",
+            "url": "Please enter a valid URL"
+        },
+        "image": {
+            "label": "Image",
+            "placeholder": "Upload image",
+            "size": "Image size must be less than 5MB",
+            "type": "Image must be JPEG, PNG, or WEBP format"
+        },
+        "profile_picture": {
+            "label": "Profile Image",
+            "placeholder": "Upload profile image",
+            "size": "Image size must be less than 5MB",
+            "type": "Image must be JPEG, PNG, or WEBP format"
+        },
+        "user_id": {
+            "label": "User",
+            "placeholder": "Select user",
+            "integer": "User must be selected",
+            "min": "Please select a valid user"
+        },
+        "job_id": {
+            "label": "Job",
+            "placeholder": "Select job",
+            "integer": "Job must be selected",
+            "min": "Please select a valid job"
+        },
+        "branch_id": {
+            "label": "Branch",
+            "placeholder": "Select branch",
+            "integer": "Branch must be selected",
+            "min": "Please select a valid branch"
+        },
+        "entity_id": {
+            "label": "Entity",
+            "placeholder": "Select entity",
+            "integer": "Entity must be selected",
+            "min": "Please select a valid entity"
+        },
+        "entity_type": {
+            "label": "Entity Type",
+            "placeholder": "Select entity type",
+            "integer": "Entity type must be selected",
+            "min": "Please select a valid entity type"
+        },
+        "nationality_id": {
+            "label": "Nationality",
+            "placeholder": "Select nationality",
+            "integer": "Nationality must be selected",
+            "min": "Please select a valid nationality"
+        },
+        "academic_qualification_id": {
+            "label": "Academic Qualification",
+            "placeholder": "Select academic qualification",
+            "integer": "Academic qualification must be selected",
+            "min": "Please select a valid academic qualification"
+        },
+        "specification_id": {
+            "label": "Specification",
+            "placeholder": "Select specification",
+            "integer": "Specification must be selected",
+            "min": "Please select a valid specification"
+        },
+        "national_id": {
+            "label": "National ID",
+            "placeholder": "Enter national ID",
+            "numeric": "National ID must contain only numbers",
+            "min": "National ID must be at least 10 characters",
+            "max": "National ID must not exceed 20 characters"
+        },
+        "phone": {
+            "label": "Phone",
+            "placeholder": "Enter phone number",
+            "invalid": "Please enter a valid phone number"
+        },
+        "phone_1": {
+            "label": "Phone 1",
+            "placeholder": "Enter primary phone number",
+            "invalid": "Please enter a valid phone number"
+        },
+        "phone_2": {
+            "label": "Phone 2",
+            "placeholder": "Enter secondary phone number (optional)",
+            "invalid": "Please enter a valid phone number"
+        },
+        "email": {
+            "label": "Email",
+            "placeholder": "Enter email address",
+            "invalid": "Please enter a valid email address"
+        },
+        "password": {
+            "label": "Password",
+            "placeholder": "Enter password",
+            "min": "Password must be at least 6 characters"
+        },
+        "locale": {
+            "label": "Locale",
+            "placeholder": "Select locale",
+            "invalid": "Please select a valid locale"
+        },
+        "current_app_locale": {
+            "label": "App Locale",
+            "placeholder": "Select app locale",
+            "invalid": "Please select a valid app locale"
+        },
+        "user_type": {
+            "label": "User Type",
+            "placeholder": "Select user type",
+            "invalid": "Please select a valid user type"
+        },
+        "users": {
+            "name": {
+                "label": "Name",
+                "placeholder": "Enter name"
+            },
+            "email": {
+                "label": "Email",
+                "placeholder": "Enter email address"
+            },
+            "password": {
+                "label": "Password",
+                "placeholder": "Enter password"
+            },
+            "phone": {
+                "label": "Phone",
+                "placeholder": "Enter phone number"
+            },
+            "branch_id": {
+                "label": "Branch",
+                "placeholder": "Select branch"
+            },
+            "locale": {
+                "label": "Locale",
+                "placeholder": "Select locale"
+            },
+            "current_app_locale": {
+                "label": "App Locale",
+                "placeholder": "Select app locale"
+            },
+            "status": {
+                "label": "Status",
+                "placeholder": "Select status"
+            },
+            "user_type": {
+                "label": "User Type",
+                "placeholder": "Select user type"
+            }
+        },
+        "date_of_birth": {
+            "label": "Date of Birth",
+            "placeholder": "Select date of birth",
+            "required": "Date of birth is required",
+            "invalid": "Please enter a valid date of birth"
+        },
+        "years_of_experience": {
+            "label": "Years of Experience",
+            "placeholder": "Enter years of experience",
+            "integer": "Years of experience must be a number",
+            "min": "Years of experience cannot be negative"
+        },
+        "address": {
+            "label": "Address",
+            "placeholder": "Enter address",
+            "min": "Address must be at least 5 characters"
+        },
+        "latitude": {
+            "label": "Latitude",
+            "placeholder": "Enter/select latitude",
+            "invalid": "Please enter a valid latitude",
+            "min": "Latitude cannot be less than -90",
+            "max": "Latitude cannot be greater than 90"
+        },
+        "longitude": {
+            "label": "Longitude",
+            "placeholder": "Enter/select longitude",
+            "invalid": "Please select a location",
+            "min": "Longitude cannot be less than -180",
+            "max": "Longitude cannot be greater than 180"
+        },
+        "dob": {
+            "label": "Date of Birth",
+            "placeholder": "Select date of birth",
+            "required": "Date of birth is required",
+            "invalid": "Please enter a valid date of birth"
+        },
+        "main_program_id": {
+            "label": "Main Program",
+            "placeholder": "Select main program",
+            "integer": "Main program must be selected",
+            "min": "Please select a valid main program"
+        },
+        "licence_number": {
+            "label": "Licence Number",
+            "placeholder": "Enter licence number",
+            "min": "Licence number must be at least 3 characters",
+            "max": "Licence number must not exceed 50 characters"
+        },
+        "education_program_entity_type_id": {
+            "label": "Education Program Entity Type",
+            "placeholder": "Select program entity type",
+            "integer": "Education program entity type must be selected",
+            "min": "Please select a valid education program entity type"
+        },
+        "education_program_entity_type_classification": {
+            "label": "Education Entity Type Classification",
+            "placeholder": "Select a classification",
+            "integer": "Education entity type classification must be selected",
+            "min": "Please select a valid education entity type classification"
+        },
+        "entity_category_id": {
+            "label": "Entity Category",
+            "placeholder": "Select entity category",
+            "integer": "Entity category must be selected",
+            "min": "Please select a valid entity category"
+        },
+        "memorization_amount": {
+            "label": "Memorization Amount",
+            "placeholder": "Enter memorization amount (e.g., 15 Juz)",
+            "min": "Memorization amount is required",
+            "max": "Memorization amount must not exceed 50 characters"
+        },
+        "fles": {
+            "label": "Files",
+            "placeholder": "Select files"
+        },
+        "gender": {
+            "label": "Gender",
+            "placeholder": "Select gender",
+            "invalid": "Gender must be either male or female"
+        },
+        "manager_phone": {
+            "label": "Manager Phone",
+            "placeholder": "Enter manager phone number",
+            "invalid": "Please enter a valid phone number"
+        },
+        "manager_email": {
+            "label": "Manager Email",
+            "placeholder": "Enter manager email address",
+            "invalid": "Please enter a valid email address"
+        },
+        "academic_level_id": {
+            "label": "Academic Level",
+            "placeholder": "Select academic level",
+            "integer": "Academic level must be selected",
+            "min": "Please select a valid academic level"
+        },
+        "school_name": {
+            "label": "School Name",
+            "placeholder": "Enter school name",
+            "min": "School name must be at least 2 characters",
+            "max": "School name must not exceed 100 characters"
+        },
+        "parent_name": {
+            "label": "Parent Name",
+            "label_en": "Parent Name (English)",
+            "label_ar": "Parent Name (Arabic)",
+            "placeholder": "Enter parent name",
+            "placeholder_en": "Enter parent name in English",
+            "placeholder_ar": "Enter parent name in Arabic",
+            "min": "Parent name must be at least 2 characters",
+            "max": "Parent name must not exceed 100 characters"
+        },
+        "kinship_id": {
+            "label": "Kinship",
+            "placeholder": "Select kinship",
+            "integer": "Kinship must be selected",
+            "min": "Please select a valid kinship"
+        },
+        "has_medical_issues": {
+            "label": "Has Medical Issues",
+            "placeholder": "Select if student has medical issues",
+            "invalid": "Medical issues must be either yes or no"
+        },
+        "issue_description": {
+            "label": "Issue Description",
+            "placeholder": "Enter medical issue description",
+            "min": "Issue description must be at least 5 characters"
+        },
+        "parent_phone_1": {
+            "label": "Parent Phone 1",
+            "placeholder": "Enter primary parent phone number",
+            "invalid": "Please enter a valid phone number"
+        },
+        "parent_phone_2": {
+            "label": "Parent Phone 2",
+            "placeholder": "Enter secondary parent phone number (optional)",
+            "invalid": "Please enter a valid phone number"
+        },
+        "registration_date": {
+            "label": "Registration Date",
+            "placeholder": "Select registration date"
+        },
+        "department": {
+            "label": {
+                "en": "Department (English)",
+                "ar": "Department (Arabic)"
+            },
+            "placeholder": {
+                "en": "Enter department in English",
+                "ar": "Enter department in Arabic"
+            },
+            "en_min": "English department must be at least 2 characters",
+            "en_max": "English department must not exceed 100 characters",
+            "ar_min": "Arabic department must be at least 2 characters",
+            "ar_max": "Arabic department must not exceed 100 characters"
+        },
+        "qualification": {
+            "has_high_school": {
+                "label": "Has High School",
+                "placeholder": "Select if student has high school certificate",
+                "invalid": "Must be either yes or no"
+            },
+            "high_school_grade": {
+                "label": "High School Grade",
+                "placeholder": "Enter high school grade",
+                "integer": "Grade must be a number",
+                "min": "Grade cannot be negative",
+                "max": "Grade cannot exceed 100"
+            },
+            "has_bachelors_degree": {
+                "label": "Has Bachelor's Degree",
+                "placeholder": "Select if student has bachelor's degree",
+                "invalid": "Must be either yes or no"
+            },
+            "specification": {
+                "label": "Specification",
+                "placeholder": "Select specification",
+                "integer": "Specification must be selected",
+                "min": "Please select a valid specification"
+            },
+            "has_memorized_quran_5_parts": {
+                "label": "Has Memorized Quran 5 Parts",
+                "placeholder": "Select if student has memorized 5 parts of Quran",
+                "invalid": "Must be either yes or no"
+            },
+            "memorized_quran_parts": {
+                "label": "Memorized Quran Parts",
+                "placeholder": "Enter number of memorized Quran parts",
+                "integer": "Must be a number",
+                "min": "Cannot be negative",
+                "max": "Cannot exceed 30 parts"
+            }
+        },
+        "short_name": {
+            "label": "Short Name",
+            "placeholder": "Enter short name (e.g., USA, ITA)",
+            "min": "Short name must be at least 2 characters",
+            "max": "Short name must not exceed 10 characters"
+        },
+        "phone_code": {
+            "label": "Phone Code",
+            "placeholder": "Enter phone code (e.g., +1, +39)",
+            "pattern": "Phone code must start with + followed by numbers"
+        },
+        "check_out": {
+            "label": "Check Out Date & Time",
+            "placeholder": "Select check out date and time"
+        },
+        "attendance_type": {
+            "label": "Attendance Type",
+            "placeholder": "Select attendance type",
+            "invalid": "Please select either Check In or Check Out"
+        },
+        "attendance_date": {
+            "label": "Attendance Date",
+            "placeholder": "Select attendance date"
+        },
+        "attendance_time": {
+            "label": "Attendance Time",
+            "placeholder": "Select attendance time"
+        },
+        "attendance_datetime": {
+            "label": "Attendance date",
+            "placeholder": "Select attendance date"
+        },
+        "departure_datetime": {
+            "label": "Departure date",
+            "placeholder": "Select departure date"
+        },
+        "permission_ids": {
+            "label": "Permissions",
+            "placeholder": "Select permissions"
+        },
+        "time": {
+            "label": "Time",
+            "placeholder": "Enter time...",
+            "min": "Time must be at least 1",
+            "integer": "Time must be a whole number"
+        },
+        "assignment_type": {
+            "label": "Assignment Type",
+            "placeholder": "Select assignment type"
+        },
+        "entity_ids": {
+            "label": "Entities",
+            "placeholder": "Select entities"
+        },
+        "supervisor_ids": {
+            "label": "Supervisors",
+            "placeholder": "Select supervisors"
+        },
+        "notes": {
+            "label": "Notes",
+            "placeholder": "Enter notes"
+        },
+        "at_least_one": "At least one item must be selected",
+        "regular_one_supervisor": "In regular educational supervision, only one supervisor must be selected",
+        "end_date_after_start": "End date must be after or equal to start date",
+        "invalid_value": "Invalid value",
+        "time_unit": {
+            "label": "Time Unit",
+            "placeholder": "Select unit...",
+            "invalid": "Invalid time unit"
+        },
+        "min_length": "Minimum length must be {{min}} characters"
+    },
+    "auth": {
+        "email": {
+            "label": "البريد الإلكتروني",
+            "placeholder": "أدخل بريدك الإلكتروني"
+        },
+        "password": {
+            "label": "كلمة المرور",
+            "placeholder": "أدخل كلمة المرور"
+        },
+        "login": "تسجيل الدخول",
+        "forgot_password": "هل نسيت كلمة المرور ؟",
+        "recover": "إستعادة",
+        "or": "أو",
+        "start_journey": "ابدأ رحلتك مع القرآن الكريم"
+    },
+    "common": {
+        "close": "Close",
+        "submit": "Submit",
+        "yes": "Yes",
+        "no": "No",
+        "save": "Save",
+        "cancel": "Cancel",
+        "delete": "Delete",
+        "back": "Back",
+        "wait": "Wait",
+        "enabled": "Enabled",
+        "disabled": "Disabled",
+        "are_you_sure_you_want_to_delete_this_item": "Are you sure you want to delete this item?",
+        "select_file": "Select File",
+        "remove": "Remove",
+        "click_to_select_file": "Click to select Excel file",
+        "supported_formats": "Supported: .xlsx, .xls, .csv",
+        "upload": "Upload"
+    },
+    "activity_logs": {
+        "view_title": "Activity Log Details",
+        "basic_info": "Basic Information",
+        "description": "Description",
+        "log_name": "Log Name",
+        "created_at": "Created At",
+        "user_info": "User Information",
+        "user_name": "User Name",
+        "user_email": "User Email",
+        "user_id": "User ID",
+        "no_user_info": "No user information available",
+        "subject_info": "Subject Information",
+        "subject_type": "Subject Type",
+        "subject_id": "Subject ID",
+        "subject_name": "Subject Name",
+        "no_subject_info": "No subject information available",
+        "properties": "Properties"
+    },
+    "roles": {
+        "create": "Create Role",
+        "update": "Update Role",
+        "view": "View Role",
+        "assign_permission": "Assign Permissions"
+    },
+    "session_modes": {
+        "create": "Create Session Mode",
+        "update": "Update Session Mode",
+        "view": "View Session Mode",
+        "delete": "Delete Session Mode"
+    },
+    "academic_qualifications": {
+        "create": "Create Academic Qualification",
+        "update": "Update Academic Qualification",
+        "view": "View Academic Qualification"
+    },
+    "jobs": {
+        "create": "Create Job",
+        "update": "Update Job",
+        "view": "View Job"
+    },
+    "cities": {
+        "create": "Create City",
+        "edit": "Edit City",
+        "update": "Update City",
+        "view": "View City"
+    },
+    "kinships": {
+        "create": "Create Relationship",
+        "update": "Update Relationship",
+        "view": "View Relationship"
+    },
+    "attendance_types": {
+        "create": "Create Attendance Type",
+        "update": "Update Attendance Type",
+        "view": "View Attendance Type"
+    },
+    "quoran_parts": {
+        "create": "Create Quoran Part",
+        "update": "Update Quoran Part",
+        "view": "View Quoran Part"
+    },
+    "main_programs": {
+        "create": "Create Main Program",
+        "update": "Update Main Program",
+        "view": "View Main Program"
+    },
+    "certificate_names": {
+        "create": "Add Certificate Name",
+        "update": "Edit Certificate Name",
+        "view": "View Certificate Name"
+    },
+    "academic_levels": {
+        "create": "Create Academic Level",
+        "update": "Update Academic Level",
+        "view": "View Academic Level"
+    },
+    "academic_years": {
+        "create": "Create Academic Year",
+        "update": "Update Academic Year",
+        "view": "View Academic Year"
+    },
+    "location_types": {
+        "create": "Create Location Type",
+        "update": "Update Location Type",
+        "view": "View Location Type"
+    },
+    "memorization_program_entity_types": {
+        "create": "Create Memorization Program",
+        "update": "Update Memorization Program",
+        "view": "View Memorization Program"
+    },
+    "education_program_entity_types": {
+        "create": "Create Education Program Type",
+        "update": "Update Education Program Type",
+        "view": "View Education Program Type"
+    },
+    "specifications": {
+        "create": "Create Specification",
+        "update": "Update Specification",
+        "view": "View Specification"
+    },
+    "activities": {
+        "create": "Create Activity",
+        "update": "Update Activity",
+        "view": "View Activity"
+    },
+    "entity_categories": {
+        "create": "Create Entity Category",
+        "update": "Update Entity Category",
+        "view": "View Entity Category"
+    },
+    "neighborhoods": {
+        "create": "Create Neighborhood",
+        "update": "Update Neighborhood",
+        "view": "View Neighborhood"
+    },
+    "branches": {
+        "create": "Create Branch",
+        "update": "Update Branch",
+        "view": "View Branch"
+    },
+    "majors": {
+        "create": "Create Major",
+        "update": "Update Major",
+        "view": "View Major"
+    },
+    "remotely_attendance_platforms": {
+        "create": "Create Platform",
+        "update": "Update Platform",
+        "view": "View Platform"
+    },
+    "teachers": {
+        "create": "Create Teacher",
+        "update": "Update Teacher",
+        "view": "View Teacher",
+        "import": "Import Teachers",
+        "import_info": "Make sure your Excel file matches the example format. Download the example file to see the correct format.",
+        "example_downloaded": "Example file downloaded successfully"
+    },
+    "entities": {
+        "create": "Create Entity",
+        "edit": "Edit Entity",
+        "view": "View Entity",
+        "activities": "Activities",
+        "add_activity": "Add Activity",
+        "activity": "Activity",
+        "entity_information": "Entity Information",
+        "import": "Import Entities",
+        "import_info": "Make sure your Excel file matches the example format. Download the example file to see the correct format.",
+        "example_downloaded": "Example file downloaded successfully"
+    },
+    "students": {
+        "create": "Create Student",
+        "edit": "Edit Student",
+        "view": "View Student",
+        "qualification": "Qualification",
+        "import": "Import Students",
+        "import_info": "Make sure your Excel file matches the example format. Download the example file to see the correct format.",
+        "example_downloaded": "Example file downloaded successfully"
+    },
+    "entity_managers": {
+        "create": "Create Entity Manager",
+        "update": "Update Entity Manager",
+        "view": "View Entity Manager",
+        "manager_information": "Manager Information"
+    },
+    "branch_administrations": {
+        "create": "Create Branch Administration",
+        "update": "Update Branch Administration",
+        "view": "View Branch Administration"
+    },
+    "parents": {
+        "create": "Create Parent",
+        "update": "Update Parent",
+        "view": "View Parent"
+    },
+    "entity_activities": {
+        "create": "Create Entity Activity",
+        "update": "Update Entity Activity",
+        "view": "View Entity Activity"
+    },
+    "session_periods": {
+        "create": "Create Session Period",
+        "update": "Update Session Period",
+        "view": "View Session Period"
+    },
+    "about_us": {
+        "description": "Manage the About Us page content and visibility"
+    },
+    "terms_and_conditions": {
+        "description": "Manage the Terms and Conditions page content and visibility"
+    },
+    "privacy_policies": {
+        "description": "Manage the Privacy Policies page content and visibility"
+    },
+    "general_banners": {
+        "create": "Create Banner",
+        "update": "Update Banner",
+        "view": "View Banner"
+    },
+    "home": {
+        "welcome": {
+            "title": "Welcome to Tallam",
+            "subtitle": "Comprehensive Management System for Quranic Education & Memorization Programs",
+            "status": "System Online"
+        },
+        "features": {
+            "title": "Powerful Features",
+            "subtitle": "Everything you need to manage your educational institution efficiently",
+            "quran_management": "Quran Management",
+            "quran_management_desc": "Track and manage Quran memorization progress, parts, and sessions with ease",
+            "education_programs": "Education Programs",
+            "education_programs_desc": "Organize and manage educational programs for students and entities",
+            "user_management": "User Management",
+            "user_management_desc": "Complete user system with roles, permissions, and activity tracking",
+            "entity_management": "Entity Management",
+            "entity_management_desc": "Manage branches, entities, teachers, and students all in one place",
+            "analytics": "Analytics & Reports",
+            "analytics_desc": "Get insights with comprehensive analytics and detailed reporting tools",
+            "notifications": "Smart Notifications",
+            "notifications_desc": "Send automated notifications and keep everyone informed in real-time"
+        },
+        "about": {
+            "title": "About Tallam",
+            "description": "Tallam is a modern, comprehensive management system designed specifically for Quranic education institutions. Manage every aspect of your educational institution from one centralized platform.",
+            "feature1": "Streamlined administration for entities, branches, and programs",
+            "feature2": "Advanced tracking for student progress and memorization",
+            "feature3": "Integrated notification and communication system"
+        },
+        "quick_start": {
+            "title": "Quick Start Guide",
+            "description": "Get started with Tallam in just a few simple steps",
+            "step1_title": "1. Navigate the Menu",
+            "step1_desc": "Use the sidebar menu to access different sections of the system",
+            "step2_title": "2. Explore Features",
+            "step2_desc": "Start by managing entities, students, or programs from the main sections"
+        },
+        "stats": {
+            "entities": "Entities",
+            "entities_label": "Manage Educational Entities",
+            "students": "Students",
+            "students_label": "Track Student Progress",
+            "programs": "Programs",
+            "programs_label": "Educational & Memorization Programs"
+        }
+    },
+    "sidebar": {
+        "home": "Home",
+        "roles": "Roles",
+        "permissions": "Permissions",
+        "warning_reasons": "Warning Reasons",
+        "mushaf_management": "Mushaf Management",
+        "session_modes": "Session Modes",
+        "warning": "Issuing Warnings",
+        "evaluation-parameters": "Evaluation Parameters",
+        "resources": "Resources",
+        "notifications_system": "Notifications System",
+        "notification_templates": "Notification Templates",
+        "notifications": "Notifications",
+        "activity_logs": "Activity Log",
+        "academic_qualifications": "Academic Qualifications",
+        "jobs": "Jobs",
+        "countries": "Countries",
+        "cities": "Cities",
+        "configurations": "System Configurations",
+        "neighborhoods": "Neighborhoods",
+        "academic_years": "Academic Years",
+        "academic_levels": "Academic Levels",
+        "location_types": "Location Types",
+        "specifications": "Specifications",
+        "activities": "Activities",
+        "certificates": "Certificates Upload",
+        "exam_segments_count": "Exam Segments Count",
+        "entity_categories": "Entity Categories",
+        "session_periods": "Session Periods",
+        "kinships": "Relationships",
+        "certification-names": "Certificate Names",
+        "inspector-assignments": "Supervisor Assignments",
+        "attendance_types": "Absence Types",
+        "quoran_parts": "Quran Parts",
+        "main_programs": "Main Programs",
+        "memorization_programs": "Memorization Programs",
+        "education_programs": "Education Programs",
+        "branches": "Branches",
+        "majors": "Majors",
+        "security_system": "Security System",
+        "system_settings": "System Settings",
+        "main_education_programs": "Main Programs",
+        "policies_and_banners": "Policies & Banners",
+        "memorization_program_settings": "Memorization Program",
+        "education_program_settings": "Education Program",
+        "about_us": "About Us",
+        "terms_and_conditions": "Terms and Conditions",
+        "privacy_policies": "Policies",
+        "general_banners": "General Banners",
+        "system_online": "System Online",
+        "employees": "Employees",
+        "nationalities": "Nationalities",
+        "users": "Users",
+        "online_attendances": "Online Attendances",
+        "teachers": "Teachers",
+        "entities": "Entities",
+        "students": "Students",
+        "entity_managers": "Entity Managers",
+        "branch_administrations": "Branch Administrations",
+        "parents": "Parents",
+        "profile_management": "Profile Management",
+        "entity_activities": "Entity Activities",
+        "education-program-entity-types": "Education Program Types",
+        "memorization-program-entity-types": "Memorization Program Types",
+        "lookups": "Lookups",
+        "remotely_attendance_platforms": "Remotely Attendance Platforms"
+    },
+    "table_titles": {
+        "notification_templates": "Notification Templates",
+        "notifications": "Notifications",
+        "general_banners": "General Banners",
+        "certificate_names": "Certificate Names",
+        "certificates": "Certificates",
+        "permissions": "Permissions",
+        "session_modes": "Session Modes",
+        "roles": "Roles",
+        "activity_logs": "Activity Logs",
+        "exam_segments_count": "Required Segments in Exam",
+        "warning_reasons": "Warning Reasons",
+        "warnings": "Issuing Warnings",
+        "academic_qualifications": "Academic Qualifications",
+        "jobs": "Jobs",
+        "countries": "Countries",
+        "cities": "Cities",
+        "neighborhoods": "Neighborhoods",
+        "academic_years": "Academic Years",
+        "academic_levels": "Academic Levels",
+        "location_types": "Location Types",
+        "specifications": "Specifications",
+        "activities": "Activities",
+        "entity_categories": "Entity Categories",
+        "session_periods": "Session Periods",
+        "kinships": "Relationships",
+        "attendance_types": "Attendance Types",
+        "quoran_parts": "Quran Parts",
+        "main_programs": "Main Programs",
+        "memorization_programs": "Memorization Programs",
+        "education_programs": "Education Programs",
+        "branches": "Branches",
+        "majors": "Majors",
+        "employees": "Employees",
+        "nationalities": "Nationalities",
+        "users": "Users",
+        "online_attendances": "Online Attendances",
+        "teachers": "Teachers",
+        "entities": "Entities",
+        "students": "Students",
+        "entity_managers": "Entity Managers",
+        "branch_administrations": "Branch Administrations",
+        "parents": "Parents",
+        "entity_activities": "Entity Activities",
+        "education-program-entity-types": "Education Program Types",
+        "memorization-program-entity-types": "Memorization Program Types",
+        "remotely_attendance_platforms": "Remotely Attendance Platforms",
+        "evaluation_parameters": "Evaluation Parameters",
+        "inspector_assignments": "Inspector Assignments to Entities"
+    },
+    "table": {
+        "actions": "Actions",
+        "view": "View",
+        "edit": "Edit",
+        "copy": "Copy",
+        "delete": "Delete",
+        "filter_value": "Filter Value",
+        "clear": "Clear",
+        "close": "Close",
+        "selected": "Selected",
+        "compact": "Compact",
+        "normal": "Normal",
+        "comfortable": "Comfortable",
+        "exit_fullscreen": "Exit Fullscreen",
+        "enter_fullscreen": "Enter Fullscreen",
+        "search_across_columns": "Search Across Columns",
+        "add_new": "Add New",
+        "column_settings": "Column Settings",
+        "column_visibility": "Column Visibility",
+        "export": "Export",
+        "export_as_csv": "Export as CSV",
+        "export_as_json": "Export as JSON",
+        "print_table": "Print Table",
+        "refresh_data": "Refresh Data",
+        "item": "Item",
+        "export_selected": "Export Selected",
+        "print_selected": "Print Selected",
+        "export_all": "Export All",
+        "clear_selection": "Clear Selection",
+        "active_filters": "Active Filters",
+        "search": "Search",
+        "rows_per_page": "Rows per page",
+        "entries": "Entries",
+        "first_page": "First page",
+        "previous_page": "Previous page",
+        "next_page": "Next page",
+        "last_page": "Last page",
+        "of": "of",
+        "page": "Page",
+        "page_size": "Page Size",
+        "total": "Total",
+        "import": "Import",
+        "download_example": "Download Example"
+    },
+    "table_headers": {
+        "id": "ID",
+        "subject": "Subject",
+        "type": "Type",
+        "sms": "SMS",
+        "certificate_name": "Certificate Name",
+        "student_name": "Student Name",
+        "issued_by": "Issued By",
+        "issued_from": "Issued From",
+        "issued_date": "Issued Date",
+        "obtained_date": "Obtained Date",
+        "certificate_image": "Certificate",
+        "inbox": "Inbox",
+        "registration_date": "Registration Date",
+        "parts_count": "Parts Count",
+        "segments_required": "Segments Required",
+        "scheduled": "Scheduled",
+        "session_mode": "Session Mode",
+        "sent_via": "Sent Via",
+        "created_at": "Created Date",
+        "updated_at": "Updated Date",
+        "name": "Name",
+        "evaluation_for": "Evaluation For",
+        "total_grade": "Total Grade",
+        "role": "Role",
+        "guard": "Guard",
+        "guard_name": "Guard Name",
+        "country": "Country",
+        "countries": "Countries",
+        "city": "City",
+        "neighborhood": "Neighborhood",
+        "warning_type": "Warning Type",
+        "student": "Student",
+        "teacher": "Teacher",
+        "warning_reason": "Warning Reason",
+        "warning_date": "Warning Date",
+        "job": "Job",
+        "activity_description": "Activity Description",
+        "event_type": "Event Type",
+        "subject_type": "Subject Type",
+        "subject_id": "Subject ID",
+        "user": "User",
+        "date_time": "Date & Time",
+        "description": "Description",
+        "status": "Status",
+        "email": "Email",
+        "phone": "Phone",
+        "phone_1": "Phone 1",
+        "phone_2": "Phone 2",
+        "address": "Address",
+        "area": "Area",
+        "branch": "Branch",
+        "academic_qualifications": "Academic Qualifications",
+        "jobs": "Jobs",
+        "cities": "Cities",
+        "neighborhoods": "Neighborhoods",
+        "academic_years": "Academic Years",
+        "academic_levels": "Academic Levels",
+        "location_types": "Location Types",
+        "specifications": "Specifications",
+        "activities": "Activities",
+        "entity_categories": "Entity Categories",
+        "session_periods": "Session Periods",
+        "kinships": "Relationships",
+        "attendance_types": "Attendance Types",
+        "quoran_parts": "Quran Parts",
+        "main_programs": "Main Programs",
+        "memorization_programs": "Memorization Programs",
+        "education_programs": "Education Programs",
+        "branches": "Branches",
+        "majors": "Majors",
+        "national_id": "National ID",
+        "years_of_experience": "Years of Experience",
+        "date_of_birth": "Date of Birth",
+        "licence_number": "Licence Number",
+        "main_program": "Main Program",
+        "program": "Program",
+        "gender": "Gender",
+        "entity": "Entity",
+        "nationalities": "Nationalities",
+        "nationality": "Nationality",
+        "academic_qualification": "Academic Qualification",
+        "specification": "Specification",
+        "link": "Link",
+        "image": "Image",
+        "start_date": "Start Date",
+        "end_date": "End Date",
+        "code": "Code",
+        "level": "Level",
+        "permission": "Permission",
+        "permissions": "Permissions",
+        "short_name": "Short Name",
+        "phone_code": "Phone Code",
+        "check_in": "Check In",
+        "check_out": "Check Out",
+        "activity": "Activity",
+        "education-program-entity-types": "Education Program Types",
+        "memorization-program-entity-types": "Memorization Program Types",
+        "remotely_attendance_platforms": "Attendance Platforms",
+        "assignment_type": "Assignment Type",
+        "entities": "Entities",
+        "supervisors": "Supervisors",
+        "notes": "Notes"
+    },
+    "nationalities": {
+        "create": "Create Nationality",
+        "edit": "Edit Nationality",
+        "view": "View Nationality",
+        "delete": "Delete Nationality"
+    },
+    "countries": {
+        "create": "Create Country",
+        "edit": "Edit Country",
+        "view": "View Country",
+        "delete": "Delete Country"
+    },
+    "online_attendances": {
+        "create": "Create Online Attendance",
+        "edit": "Edit Online Attendance",
+        "view": "View Online Attendance",
+        "delete": "Delete Online Attendance"
+    },
+    "warning_reasons": {
+        "create": "Create Warning Reason",
+        "update": "Update Warning Reason",
+        "view": "View Warning Reason"
+    },
+    "warnings": {
+        "create": "Add Warning",
+        "update": "Edit Warning",
+        "view": "View Warning",
+        "student": "Student Warning",
+        "teacher": "Teacher Warning",
+        "entity": "Entity Warning"
+    },
+    "certificates": {
+        "create": "Upload Certificate",
+        "edit": "Edit Certificate",
+        "view": "View Certificate",
+        "delete": "Delete Certificate"
+    },
+    "exam_segments_count": {
+        "create": "Create Required Segments",
+        "edit": "Edit Required Segments",
+        "view": "View Required Segments",
+        "delete": "Delete Required Segments"
+    },
+    "evaluation_parameters": {
+        "create": "Create Evaluation Parameter",
+        "update": "Update Evaluation Parameter",
+        "view": "View Evaluation Parameter",
+        "basic_info": "Basic Information",
+        "criteria": "Evaluation Criteria",
+        "add_criteria": "Add Criteria",
+        "criterion": "Criterion"
+    },
+    "program": {
+        "label": "Program",
+        "placeholder": "Select Program",
+        "required": "Program is required",
+        "invalid": "Please select a valid program"
+    },
+    "users": {
+        "create": "Create User",
+        "edit": "Edit User",
+        "view": "View User",
+        "delete": "Delete User"
+    },
+    "mushaf_management": {
+        "title": "Quran Pages Segmentation",
+        "previous": "Previous",
+        "next": "Next",
+        "page": "Page",
+        "of": "of",
+        "segments": "Segments",
+        "addSegment": "Add Segment",
+        "segmentColumn": "Segment",
+        "fromVerse": "From Verse",
+        "toVerse": "To Verse",
+        "loadingSegments": "Loading segments...",
+        "actions": "Actions",
+        "selectStart": "Select Start",
+        "selectEnd": "Select End",
+        "view": "View in Quran",
+        "save": "Save",
+        "noSegments": "No segments for this page",
+        "editingNotice": "Selecting... Click on",
+        "start": "start",
+        "end": "end",
+        "inQuran": "in Quran",
+        "cancel": "Cancel",
+        "loadingData": "Loading Quran data...",
+        "loadingFont": "Loading font...",
+        "loadError": "Error loading data",
+        "retry": "Retry",
+        "noContent": "No content for this page",
+        "startSelected": "Start selected",
+        "endSelected": "End selected",
+        "clickStart": "Click on start in Quran",
+        "clickEnd": "Click on end in Quran",
+        "segmentIncomplete": "Segment incomplete",
+        "viewingSegment": "Viewing segment",
+        "segmentAdded": "New segment added. Select start and end.",
+        "mustSelectBoth": "Must select start and end",
+        "segmentUpdated": "Segment updated",
+        "segmentSaved": "Segment saved",
+        "segmentDeleted": "Segment deleted",
+        "saveFailed": "Failed to save segment",
+        "deleteFailed": "Failed to delete segment",
+        "deleteConfirm": "Do you want to delete this segment?"
+    },
+    "notifications": {
+        "send": "Send Notification",
+        "view": "View Notification",
+        "how_to_send": "How to Send",
+        "select_at_least_one_method": "Please select at least one sending method",
+        "sms": "SMS",
+        "email": "Email",
+        "push": "Push / Inbox",
+        "whatsapp": "WhatsApp",
+        "notification_content": "Notification Content",
+        "title_ar": "Title (Arabic)",
+        "title_en": "Title (English)",
+        "description_ar": "Description (Arabic)",
+        "description_en": "Description (English)",
+        "enter_title_ar": "Enter title in Arabic",
+        "enter_title_en": "Enter title in English",
+        "enter_description_ar": "Enter description in Arabic",
+        "enter_description_en": "Enter description in English",
+        "target_users": "Target Users",
+        "user_type": "User Type",
+        "select_user_type": "Select user types",
+        "role": "Role",
+        "select_role": "Select role",
+        "program": "Program",
+        "select_program": "Select program",
+        "branch": "Branch",
+        "select_branch": "Select branch",
+        "entity_type": "Entity Type",
+        "select_entity_type": "Select entity type",
+        "entity": "Entity",
+        "select_entity": "Select entity",
+        "teacher": "Teacher",
+        "student": "Student",
+        "guardian": "Guardian",
+        "entity_manager": "Entity Manager",
+        "supervisor": "Supervisor",
+        "branch_manager": "Branch Manager",
+        "sms_content": "SMS Content",
+        "email_content": "Email Content",
+        "push_content": "Push Notification Content",
+        "whatsapp_content": "WhatsApp Content",
+        "notification_info": "Notification Information",
+        "content": "Content",
+        "message": "Message",
+        "bilingual_content": "Bilingual Content",
+        "recipient_info": "Recipient Information",
+        "sending_method": "Sending Method",
+        "read_status": "Read Status",
+        "read_at": "Read At",
+        "user_active": "User Active",
+        "email_verified": "Email Verified",
+        "timestamps": "Timestamps",
+        "technical_details": "Technical Details",
+        "notifiable_type": "Notifiable Type",
+        "notifiable_id": "Notifiable",
+        "template_id": "Template",
+        "locale": "Locale",
+        "branch_id": "Branch ",
+        "entity_id": "Entity"
+    },
+    "employees": {
+        "create": "Create Employee",
+        "update": "Update Employee",
+        "view": "View Employee"
+    },
+    "configurations": {
+        "title": "System Configuration",
+        "general": "General",
+        "taaleem": "Education Program",
+        "tahfiz": "Memorization Program",
+        "general_settings": "General Settings",
+        "taaleem_settings": "Education Program Settings",
+        "tahfiz_settings": "Memorization Program Settings",
+        "edit": "Edit Configuration",
+        "value": "Value",
+        "select_day": "Select day of the week",
+        "select_method": "Select teaching method",
+        "select_platforms": "Select platforms (multiple)",
+        "enter_value": "Enter value",
+        "platform_helper": "You can select multiple platforms",
+        "no_configurations": "No configurations found",
+        "no_configurations_desc": "There are no configurations available for this program."
+    },
+    "note-zone-pick": "Click on the map to draw a zone, or use the polygon tool.",
+    "zone-search": "Search location...",
+    "reset": {
+        "title": "Reset"
+    },
+    "inspector_assignments": {
+        "create": "Add Inspector Assignment",
+        "update": "Edit Inspector Assignment",
+        "view": "View Inspector Assignment",
+        "regular": "Regular Educational Supervision",
+        "committee": "Supervision Committee Formation"
+    },
+    "info": {
+        "neighborhood_id": "Please select a city first, as the neighborhood depends on the city",
+        "branch_id": "Please select a city first, as the branch depends on the city",
+        "entity_type": "Please select a main program first, as the entity type depends on the main program",
+        "entity_category": "Please select an entity type first, as the entity category depends on the entity type",
+        "entity": "Please select an branch first, as the entity depends on the branch"
+    },
+    "logout": "Logout"
+}
