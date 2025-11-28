@@ -9,8 +9,12 @@
             "placeholder": "اختر نوع برنامج الجهة"
         },
         "license_number": {
-            "label": "رقم الرخصة",
-            "placeholder": "أدخل رقم الرخصة"
+            "label": "رقم التصريح",
+            "placeholder": "أدخل رقم التصريح"
+        },
+        "file": {
+            "label": "الملف",
+            "placeholder": "ارفع الملف"
         },
         "entity_manager_address": {
             "label": "عنوان السكن",
@@ -166,7 +170,8 @@
         },
         "is_active": {
             "label": "نشط",
-            "required": "الحالة مطلوبة"
+            "required": "الحالة مطلوبة",
+            "placeholder": "اختر الحالة"
         },
         "entity_name": {
             "label": {
@@ -552,6 +557,17 @@
             "placeholder": "اختر فئة الجهة",
             "integer": "يجب اختيار فئة الجهة",
             "min": "يرجى اختيار فئة جهة صحيحة"
+        },
+        "entity_sub_category_id": {
+            "label": "الفئة الفرعية للجهة",
+            "placeholder": "اختر الفئة الفرعية للجهة",
+            "integer": "يجب اختيار الفئة الفرعية للجهة",
+            "min": "يرجى اختيار فئة فرعية جهة صحيحة"
+        },
+        "session_mode_id": {
+            "label": "وضع الجلسة",
+            "placeholder": "اختر وضع الجلسة",
+            "invalid": "يجب أن يكون وضع الجلسة إما عبر الإنترنت أو حضوري"
         },
         "memorization_amount": {
             "label": "مقدار الحفظ",

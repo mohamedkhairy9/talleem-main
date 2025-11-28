@@ -239,6 +239,12 @@ export const sideMenuTabs = [
                 path: '/entities',
                 icon: HiOfficeBuilding
             },
+            // مديري الجهات
+            {
+                titleKey: 'sidebar.entity_managers',
+                path: '/entity-managers',
+                icon: HiUserGroup
+            },
             {
                 titleKey: 'sidebar.teachers',
                 path: '/teachers',
@@ -248,7 +254,7 @@ export const sideMenuTabs = [
                 titleKey: 'sidebar.students',
                 path: '/students',
                 icon: HiUserGroup
-            }
+            },
         ]
     },
 
@@ -329,7 +335,6 @@ export const sideMenuTabs = [
         icon: HiDocumentText
     },
 
-
     // صلة القربى
 
     // الأنشطة
@@ -344,13 +349,6 @@ export const sideMenuTabs = [
     // ملف تعريف الموظفين
 
     // المعلمين
-
-    // مديري الجهات
-    {
-        titleKey: 'sidebar.entity_managers',
-        path: '/entity-managers',
-        icon: HiUserGroup
-    },
 
     // إدارات الفروع
 

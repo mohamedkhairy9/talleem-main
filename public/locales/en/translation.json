@@ -94,6 +94,15 @@
             "placeholder": "Select evaluation system",
             "required": "Evaluation system is required"
         },
+        "session_mode_id": {
+            "label": "Session Mode",
+            "placeholder": "Select session mode",
+            "required": "Session mode is required"
+        },
+        "file":{
+            "label": "File",
+            "placeholder": "Upload file"
+        },
         "total_grade": {
             "label": "Total Grade",
             "placeholder": "Enter total grade (e.g., 100)",
