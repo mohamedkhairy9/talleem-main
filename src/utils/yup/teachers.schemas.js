@@ -68,7 +68,7 @@ export const teachersSchema = yup.object({
             is: value => Number(value) === 1,
             then: schema =>
                 schema
-                    .required(t('validation.required'))
+                    // .required(t('validation.required'))
                     .min(2, t('validation.education_program_entity_type_classification.min')),
             otherwise: schema => schema.optional()
         }),
@@ -81,7 +81,7 @@ export const teachersSchema = yup.object({
             is: value => [1, 2].includes(Number(value)),
             then: schema =>
                 schema
-                    .required(t('validation.required'))
+                    // .required(t('validation.required'))
                     .integer(t('validation.entity_category_id.integer'))
                     .min(1, t('validation.entity_category_id.min')),
             otherwise: schema => schema.optional()
