@@ -177,7 +177,8 @@
         },
         "is_active": {
             "label": "Active",
-            "required": "Status is required"
+            "required": "Status is required",
+            "placeholder": "Select active"
         },
         "description": {
             "en_min": "English description must be at least 10 characters",

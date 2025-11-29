@@ -5,7 +5,7 @@ export const certificatesSchema = yup.object({
     issued_from: yup
         .string()
         .required(t('validation.required'))
-        .oneOf(['main administration', 'branch management', 'entity management'], t('validation.invalid_issued_from')),
+        .oneOf(['high management', 'branch management', 'entity management'], t('validation.invalid_issued_from')),
     
     // Filter fields - not required in submission but needed for form
     main_program_id: yup
