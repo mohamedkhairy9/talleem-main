@@ -7,6 +7,7 @@ import { enabledDisabledOptions } from '@/utils/constants/options';
 import Loader from '@/components/common/Loader';
 import useApiCalls from './useApiCalls';
 import { apiCalls } from './configs';
+import ErrorBoundary from '@/components/common/ErrorBoundary';
 
 export default function EditWarning({ onClose, oldData }) {
     console.log('oldData', oldData);
@@ -17,8 +18,6 @@ export default function EditWarning({ onClose, oldData }) {
         branchesData,
         entitiesData,
         mainProgramsData,
-        studentsData,
-        teachersData,
         warningReasonsData,
         isLoading
     } = useApiCalls({ apiCalls });
@@ -34,23 +33,23 @@ export default function EditWarning({ onClose, oldData }) {
     return (
         <Modal onClose={onClose}>
             <ModalHeader onClose={onClose} header="warnings.update" />
-            <FormWarning
-                oldData={oldData}
-                mutate={mutate}
-                isPending={isPending}
-                onClose={onClose}
-                editMode={true}
-                options={{
-                    warning_type: warningTypeOptions,
-                    program_id: mainProgramsData?.data,
-                    branch_id: branchesData?.data,
-                    entity_id: entitiesData?.data,
-                    student_id: studentsData?.data,
-                    teacher_id: teachersData?.data,
-                    warning_reason_id: warningReasonsData?.data,
-                    status: enabledDisabledOptions
-                }}
-            />
+            <ErrorBoundary>
+                <FormWarning
+                    oldData={oldData}
+                    mutate={mutate}
+                    isPending={isPending}
+                    onClose={onClose}
+                    editMode={true}
+                    options={{
+                        warning_type: warningTypeOptions,
+                        program_id: mainProgramsData?.data,
+                        branch_id: branchesData?.data,
+                        entity_id: entitiesData?.data,
+                        warning_reason_id: warningReasonsData?.data,
+                        status: enabledDisabledOptions
+                    }}
+                />
+            </ErrorBoundary>
         </Modal>
     );
 }
