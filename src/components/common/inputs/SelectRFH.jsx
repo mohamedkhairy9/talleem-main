@@ -28,37 +28,50 @@ export default function SelectRFH({
         
         if (valueToTransform !== undefined && valueToTransform !== null) {
             if (isMulti) {
+                // تأكد من أن valueToTransform هو array
+                const valueArray = Array.isArray(valueToTransform) 
+                    ? valueToTransform 
+                    : [valueToTransform];
+                
+                // تحويل جميع القيم إلى numbers للمقارنة
+                const normalizedValues = valueArray.map(el => {
+                    const val = el?.id !== undefined ? el.id : el?.value !== undefined ? el.value : el;
+                    return Number(val);
+                });
+                
                 return availableOptions
-                    ?.filter(item =>
-                        valueToTransform
-                            ?.map(el =>
-                                el.id !== undefined
-                                    ? el.id
-                                    : el.value !== undefined
-                                    ? el.value
-                                    : el
-                            )
-                            .includes(
-                                item.id !== undefined ? item.id : item.value
-                            )
-                    )
+                    ?.filter(item => {
+                        // Check both id and value fields
+                        const itemId = item.id !== undefined ? Number(item.id) : null;
+                        const itemValue = item.value !== undefined ? Number(item.value) : null;
+                        
+                        return normalizedValues.includes(itemId) || normalizedValues.includes(itemValue);
+                    })
                     .map(option => ({
-                        value:
-                            option.id !== undefined ? option.id : option.value,
-                        label: option.name || option.label
+                        value: option.value !== undefined ? option.value : option.id,
+                        label: option.label || option.name
                     }));
             } else {
-                const x = availableOptions?.find(
-                    el =>
-                        (el.id !== undefined &&
-                            Number(el.id) === Number(valueToTransform)) ||
-                        (el.value !== undefined && 
-                            el.value === valueToTransform)
-                );
+                // إذا كانت القيمة array في single select، خذ أول عنصر
+                const singleValue = Array.isArray(valueToTransform) 
+                    ? valueToTransform[0] 
+                    : valueToTransform;
+                
+                const x = availableOptions?.find(el => {
+                    // Try both string and number comparison for both id and value
+                    const elId = el.id !== undefined ? el.id : null;
+                    const elValue = el.value !== undefined ? el.value : null;
+                    
+                    return (
+                        (elId !== null && (elId === singleValue || Number(elId) === Number(singleValue))) ||
+                        (elValue !== null && (elValue === singleValue || Number(elValue) === Number(singleValue)))
+                    );
+                });
+                
                 return x
                     ? {
-                          label: x.name || x.label,
-                          value: x.id !== undefined ? x.id : x.value
+                          label: x.label || x.name,
+                          value: x.value !== undefined ? x.value : x.id
                       }
                     : null;
             }

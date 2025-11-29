@@ -7,6 +7,7 @@ import Loader from '@/components/common/Loader';
 import useApiCalls from './useApiCalls';
 import { enabledDisabledOptions } from '@/utils/constants/options';
 import FormInspectorAssignment from './Forminspectorassignment';
+import ErrorBoundary from '@/components/common/ErrorBoundary';
 
 export default function CreateInspectorAssignment({ onClose }) {
     const { mutate, isPending } = useCreateInspectorAssignmentMutation();
@@ -25,20 +26,22 @@ export default function CreateInspectorAssignment({ onClose }) {
     return (
         <Modal onClose={onClose}>
             <ModalHeader onClose={onClose} header="inspector_assignments.create" />
-            <FormInspectorAssignment
-                mutate={mutate}
-                isPending={isPending}
-                onClose={onClose}
-                options={{
-                    assignment_type: assignmentTypeOptions,
-                    main_program_id: mainProgramsData?.data,
-                    branch_id: branchesData?.data,
-                    entity_ids: entitiesData?.data,
-                    supervisor_ids: usersData?.data,
-                    status: enabledDisabledOptions
-                }}
-                oldData={inspectorAssignmentsDefaultValues}
-            />
+            <ErrorBoundary>
+                <FormInspectorAssignment
+                    mutate={mutate}
+                    isPending={isPending}
+                    onClose={onClose}
+                    options={{
+                        assignment_type: assignmentTypeOptions,
+                        main_program_id: mainProgramsData?.data,
+                        branch_id: branchesData?.data,
+                        entity_ids: entitiesData?.data,
+                        supervisor_ids: usersData?.data,
+                        status: enabledDisabledOptions
+                    }}
+                    oldData={inspectorAssignmentsDefaultValues}
+                />
+            </ErrorBoundary>
         </Modal>
     );
 }

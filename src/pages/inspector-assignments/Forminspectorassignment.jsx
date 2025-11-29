@@ -24,7 +24,7 @@ export default function FormInspectorAssignment({
             main_program_id: '',
             branch_id: '',
             entity_ids: [],
-            supervisor_ids: [],
+            supervisor_ids: '',
             from_date: '',
             to_date: '',
             notes: ''
@@ -44,11 +44,20 @@ export default function FormInspectorAssignment({
         });
     }, [selectedBranchId, options?.entity_ids]);
 
+    // عند تغيير الـ branch، نمسح الـ entities المختارة
     React.useEffect(() => {
         if (selectedBranchId && !editMode) {
             setValue('entity_ids', []);
         }
     }, [selectedBranchId, setValue, editMode]);
+
+    // عند تغيير assignment_type، نمسح المشرفين لتجنب تعارض single/multi select
+    React.useEffect(() => {
+        if (!editMode) {
+            // مسح المشرفين عند تغيير نوع التكليف لتجنب مشاكل التوافق بين single و multi select
+            setValue('supervisor_ids', assignmentType === 'committee' ? [] : '');
+        }
+    }, [assignmentType, setValue, editMode]);
 
     function onSubmit(data) {
         console.log('data', data);

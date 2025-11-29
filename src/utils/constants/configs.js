@@ -175,11 +175,6 @@ export const sideMenuTabs = [
                         icon: VscDebugBreakpointLog
                     },
                     {
-                        titleKey: 'sidebar.inspector-assignments',
-                        path: '/inspector-assignments',
-                        icon: VscDebugBreakpointLog
-                    },
-                    {
                         titleKey: 'sidebar.academic_qualifications',
                         path: '/academic-qualifications',
                         icon: VscDebugBreakpointLog
@@ -301,6 +296,13 @@ export const sideMenuTabs = [
             }
         ]
     },
+
+    // {
+    //     titleKey: 'sidebar.inspector-assignments',
+    //     path: '/inspector-assignments',
+    //     icon: VscDebugBreakpointLog
+    // },
+
     {
         titleKey: 'sidebar.education_program_settings',
         icon: HiAcademicCap,
@@ -322,6 +324,18 @@ export const sideMenuTabs = [
             }
         ]
     },
+    {
+        titleKey: 'sidebar.instructional_supervision',
+        icon: HiAcademicCap,
+        subMenu: [
+            {
+                titleKey: 'sidebar.inspector-assignments',
+                path: '/inspector-assignments',
+                icon: VscDebugBreakpointLog
+            },
+]
+    },
+
     // config file
     {
         titleKey: 'sidebar.configurations',
@@ -336,13 +350,6 @@ export const sideMenuTabs = [
     },
 
     // صلة القربى
-
-    // الأنشطة
-    {
-        titleKey: 'sidebar.activities',
-        path: '/activities',
-        icon: HiLightningBolt
-    },
 
     // أنواع الغياب
 
