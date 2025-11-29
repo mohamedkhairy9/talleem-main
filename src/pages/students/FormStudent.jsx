@@ -404,11 +404,6 @@ export default function FormStudent({
                                         options={generateOptions(enhancedOptions[field.name] || [])}
                                         defaultValue={defaultValues[field.name] || field.defaultValue}
                                     />
-                                    {!branchId && !viewMode && (
-                                        <p className="mt-1 text-xs text-gray-500">
-                                            {t('validation.select_branch_first')}
-                                        </p>
-                                    )}
                                 </div>
                             );
                         }
