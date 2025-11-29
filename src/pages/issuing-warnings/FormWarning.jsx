@@ -6,6 +6,10 @@ import InputRFH from '@/components/common/inputs/InputRFH';
 import Btn from '@/components/common/buttons/Btn';
 import { getNestedError } from '@/utils/helpers/getNestedError';
 import { generateOptions } from '@/utils/helpers/global.fns';
+import { useQuery } from '@tanstack/react-query';
+import { studentsService } from '@/api/services/students.service';
+import { teachersService } from '@/api/services/teachers.service';
+import { API_KEYS } from '@/api/endpoints';
 
 export default function FormWarning({
     onClose,
@@ -34,6 +38,7 @@ export default function FormWarning({
 
     const warningType = watch('warning_type');
     const selectedBranchId = watch('branch_id');
+    const selectedEntityId = watch('entity_id');
 
     // فلترة الـ entities حسب الـ branch المختار
     const filteredEntities = useMemo(() => {
@@ -46,6 +51,24 @@ export default function FormWarning({
         });
     }, [selectedBranchId, options?.entity_id]);
 
+    // جلب الطلاب بناءً على الـ entity المختارة
+    const { data: studentsData } = useQuery({
+        queryKey: [API_KEYS.STUDENTS, { entity_id: selectedEntityId }],
+        queryFn: () => studentsService.getStudents({ 
+            entity_id: selectedEntityId
+        }),
+        enabled: !!selectedEntityId && warningType === 'student'
+    });
+
+    // جلب المعلمين بناءً على الـ entity المختارة
+    const { data: teachersData } = useQuery({
+        queryKey: [API_KEYS.TEACHERS, { entity_id: selectedEntityId }],
+        queryFn: () => teachersService.getTeachers({ 
+            entity_id: selectedEntityId
+        }),
+        enabled: !!selectedEntityId && warningType === 'teacher'
+    });
+
     // عند تغيير الـ branch، نمسح الـ entity المختارة
     React.useEffect(() => {
         if (selectedBranchId && !editMode) {
@@ -53,14 +76,23 @@ export default function FormWarning({
         }
     }, [selectedBranchId, setValue, editMode]);
 
+    // عند تغيير الـ entity، نمسح الطالب أو المعلم المختار
+    React.useEffect(() => {
+        if (selectedEntityId && !editMode) {
+            if (warningType === 'student') {
+                setValue('student_id', null);
+            } else if (warningType === 'teacher') {
+                setValue('teacher_id', null);
+            }
+        }
+    }, [selectedEntityId, warningType, setValue, editMode]);
+
     // عند تغيير warning_type، نمسح الحقول المشروطة
     React.useEffect(() => {
         if (warningType === 'student') {
             setValue('teacher_id', null);
-            setValue('entity_id', null);
         } else if (warningType === 'teacher') {
             setValue('student_id', null);
-            setValue('entity_id', null);
         } else if (warningType === 'entity') {
             setValue('student_id', null);
             setValue('teacher_id', null);
@@ -75,11 +107,9 @@ export default function FormWarning({
 
         if (warningType === 'student') {
             delete submissionData.teacher_id;
-            delete submissionData.entity_id;
 
         } else if (warningType === 'teacher') {
             delete submissionData.student_id;
-            delete submissionData.entity_id;
 
         } else if (warningType === 'entity') {
             delete submissionData.student_id;
@@ -102,12 +132,14 @@ export default function FormWarning({
         if (field.name === 'student_id') {
             return warningType === 'student';
         }
-        if (field.name === 'entity_id') {
-            return warningType === 'entity';
-        }
 
         if (field.name === 'teacher_id') {
             return warningType === 'teacher';
+        }
+
+        // entity_id يظهر دائماً
+        if (field.name === 'entity_id') {
+            return true;
         }
 
         return true;
@@ -131,6 +163,16 @@ export default function FormWarning({
                             fieldOptions = filteredEntities;
                         }
 
+                        // إذا كان الحقل student_id، استخدم الطلاب المفلترين حسب الـ entity
+                        if (field.name === 'student_id') {
+                            fieldOptions = studentsData?.data || [];
+                        }
+
+                        // إذا كان الحقل teacher_id، استخدم المعلمين المفلترين حسب الـ entity
+                        if (field.name === 'teacher_id') {
+                            fieldOptions = teachersData?.data || [];
+                        }
+
                         return (
                             <InputRFH
                                 key={field.name}
@@ -142,7 +184,9 @@ export default function FormWarning({
                                 placeholder={field.placeholder}
                                 disabled={
                                     viewMode ||
-                                    (field.name === 'entity_id' && !selectedBranchId)
+                                    (field.name === 'entity_id' && !selectedBranchId) ||
+                                    (field.name === 'student_id' && !selectedEntityId) ||
+                                    (field.name === 'teacher_id' && !selectedEntityId)
                                 }
                                 label={field.label}
                                 name={field.name}

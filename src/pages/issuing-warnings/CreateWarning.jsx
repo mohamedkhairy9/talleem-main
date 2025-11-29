@@ -7,6 +7,7 @@ import { apiCalls, warningsDefaultValues } from './configs';
 import Loader from '@/components/common/Loader';
 import useApiCalls from './useApiCalls';
 import { enabledDisabledOptions } from '@/utils/constants/options';
+import ErrorBoundary from '@/components/common/ErrorBoundary';
 
 export default function CreateWarning({ onClose }) {
     const { mutate, isPending } = useCreateWarningMutation();
@@ -15,8 +16,6 @@ export default function CreateWarning({ onClose }) {
         branchesData,
         entitiesData,
         mainProgramsData,
-        studentsData,
-        teachersData,
         warningReasonsData,
         isLoading
     } = useApiCalls({ apiCalls });
@@ -32,22 +31,22 @@ export default function CreateWarning({ onClose }) {
     return (
         <Modal onClose={onClose}>
             <ModalHeader onClose={onClose} header="warnings.create" />
-            <FormWarning
-                mutate={mutate}
-                isPending={isPending}
-                onClose={onClose}
-                options={{
-                    warning_type: warningTypeOptions,
-                    program_id: mainProgramsData?.data,
-                    branch_id: branchesData?.data,
-                    entity_id: entitiesData?.data,
-                    student_id: studentsData?.data,
-                    teacher_id: teachersData?.data,
-                    warning_reason_id: warningReasonsData?.data,
-                    status: enabledDisabledOptions
-                }}
-                oldData={warningsDefaultValues}
-            />
+            <ErrorBoundary>
+                <FormWarning
+                    mutate={mutate}
+                    isPending={isPending}
+                    onClose={onClose}
+                    options={{
+                        warning_type: warningTypeOptions,
+                        program_id: mainProgramsData?.data,
+                        branch_id: branchesData?.data,
+                        entity_id: entitiesData?.data,
+                        warning_reason_id: warningReasonsData?.data,
+                        status: enabledDisabledOptions
+                    }}
+                    oldData={warningsDefaultValues}
+                />
+            </ErrorBoundary>
         </Modal>
     );
 }

@@ -25,16 +25,11 @@ export const warningsSchema = yup.object({
     
     entity_id: yup
         .mixed()
-        .nullable()
-        .test('required-for-entity', t('validation.required'), function(value) {
-            const { warning_type } = this.parent;
-            // إلزامي فقط إذا كان warning_type = entity
-            if (warning_type === 'entity') {
-                if (!value) return false;
-                return typeof value === 'number' ? value > 0 : !isNaN(parseInt(value));
-            }
-            return true;
-        }),
+        .test('is-valid-entity', t('validation.required'), function(value) {
+            if (!value) return false;
+            return typeof value === 'number' ? value > 0 : !isNaN(parseInt(value));
+        })
+        .required(t('validation.required')),
     
     student_id: yup
         .mixed()
