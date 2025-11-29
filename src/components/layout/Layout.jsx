@@ -8,10 +8,10 @@ export default function Layout() {
         <div className="bg-gray-100">
             <div className="flex-1 flex">
                 <SideBar />
-                <div className="w-full overflow-auto flex flex-col min-h-screen">
+                <div className="w-full flex flex-col min-h-screen overflow-hidden">
                     <Navbar />
 
-                    <main className="p-4 ">
+                    <main className="p-4 overflow-auto">
                         <Outlet />
                     </main>
                 </div>
