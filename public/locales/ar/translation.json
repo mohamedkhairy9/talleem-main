@@ -1007,6 +1007,7 @@
         "mushaf_management": "تقسيم المصحف",
         "session_modes": "أنماط الجلسات",
         "warning_reasons": "أسباب الإنذارات",
+        "instructional_supervision": "الإشراف التعليمي",
         "warning": "إصدار الإنذارات",
         "certificates": "إدراج الشهادات",
         "exam_segments_count": "عدد أجزاء الامتحان",
@@ -1147,6 +1148,9 @@
         "export_all": "تصدير الكل",
         "clear_selection": "الغاء التحديد",
         "active_filters": "التصفيات النشطة",
+        "filters": "التصفيات",
+        "apply": "تطبيق",
+        "clear_all": "مسح الكل",
         "search": "البحث",
         "rows_per_page": "عدد الصفوف في الصفحة",
         "entries": "المدخلات",
@@ -1159,7 +1163,9 @@
         "page_size": "حجم الصفحة",
         "total": "الكل",
         "import": "استيراد",
-        "download_example": "تحميل مثال"
+        "download_example": "تحميل مثال",
+        "no_data_found": "لا توجد بيانات",
+        "no_data_description": "حاول تعديل معايير البحث أو التصفية"
     },
     "table_headers": {
         "id": "المعرف",
@@ -1312,6 +1318,9 @@
         "saveFailed": "فشل حفظ المقطع",
         "deleteFailed": "فشل حذف المقطع",
         "deleteConfirm": "هل تريد حذف هذا المقطع؟"
+    },
+    "quran_viewer": {
+        "no_content_page": "لا يوجد محتوى لهذه الصفحة"
     },
     "nationalities": {
         "create": "إضافة جنسية",

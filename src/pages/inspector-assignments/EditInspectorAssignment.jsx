@@ -7,10 +7,9 @@ import Loader from '@/components/common/Loader';
 import useApiCalls from './useApiCalls';
 import { apiCalls } from './configs';
 import FormInspectorAssignment from './Forminspectorassignment';
+import ErrorBoundary from '@/components/common/ErrorBoundary';
 
 export default function EditInspectorAssignment({ onClose, oldData }) {
-    console.log('oldData', oldData);
-
     const { mutate, isPending } = useUpdateInspectorAssignmentMutation();
 
     const { branchesData, entitiesData, usersData, mainProgramsData, isLoading } = useApiCalls({
@@ -18,6 +17,30 @@ export default function EditInspectorAssignment({ onClose, oldData }) {
     });
 
     if (isLoading) return <Loader />;
+
+    // تحويل البيانات من API إلى الشكل المطلوب للنموذج
+    const transformedData = React.useMemo(() => {
+        if (!oldData) return null;
+        
+        // استخراج IDs من المشرفين
+        let supervisorIds;
+        if (oldData.assignment_type === 'committee') {
+            // للجنة: نريد array من الـ IDs
+            supervisorIds = oldData.supervisors?.map(s => s.id) || [];
+        } else {
+            // للإشراف العادي: نريد ID واحد فقط
+            supervisorIds = oldData.supervisors?.[0]?.id || '';
+        }
+        
+        return {
+            ...oldData,
+            main_program_id: oldData.main_program?.id || '',
+            branch_id: oldData.branch?.id || '',
+            supervisor_ids: supervisorIds,
+            entity_ids: oldData.entity_ids || [], // مؤقتاً حتى يرجع الـ backend
+            status: oldData.is_active !== undefined ? oldData.is_active : oldData.status
+        };
+    }, [oldData]);
 
     const assignmentTypeOptions = [
         { id: 'regular', name: 'إشراف تربوي اعتيادي' },
@@ -27,21 +50,23 @@ export default function EditInspectorAssignment({ onClose, oldData }) {
     return (
         <Modal onClose={onClose}>
             <ModalHeader onClose={onClose} header="inspector_assignments.update" />
-            <FormInspectorAssignment
-                oldData={oldData}
-                mutate={mutate}
-                isPending={isPending}
-                onClose={onClose}
-                editMode={true}
-                options={{
-                    assignment_type: assignmentTypeOptions,
-                    main_program_id: mainProgramsData?.data,
-                    branch_id: branchesData?.data,
-                    entity_ids: entitiesData?.data,
-                    supervisor_ids: usersData?.data,
-                    status: enabledDisabledOptions
-                }}
-            />
+            <ErrorBoundary>
+                <FormInspectorAssignment
+                    oldData={transformedData}
+                    mutate={mutate}
+                    isPending={isPending}
+                    onClose={onClose}
+                    editMode={true}
+                    options={{
+                        assignment_type: assignmentTypeOptions,
+                        main_program_id: mainProgramsData?.data,
+                        branch_id: branchesData?.data,
+                        entity_ids: entitiesData?.data,
+                        supervisor_ids: usersData?.data,
+                        status: enabledDisabledOptions
+                    }}
+                />
+            </ErrorBoundary>
         </Modal>
     );
 }

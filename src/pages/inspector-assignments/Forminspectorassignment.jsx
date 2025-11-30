@@ -6,6 +6,8 @@ import InputRFH from '@/components/common/inputs/InputRFH';
 import Btn from '@/components/common/buttons/Btn';
 import { getNestedError } from '@/utils/helpers/getNestedError';
 import { generateOptions } from '@/utils/helpers/global.fns';
+import ModalContent from '@/components/common/form/ModalContent';
+import ModalFooter from '@/components/common/form/ModalFooter';
 
 export default function FormInspectorAssignment({
     onClose,
@@ -24,7 +26,7 @@ export default function FormInspectorAssignment({
             main_program_id: '',
             branch_id: '',
             entity_ids: [],
-            supervisor_ids: [],
+            supervisor_ids: '',
             from_date: '',
             to_date: '',
             notes: ''
@@ -44,11 +46,20 @@ export default function FormInspectorAssignment({
         });
     }, [selectedBranchId, options?.entity_ids]);
 
+    // عند تغيير الـ branch، نمسح الـ entities المختارة
     React.useEffect(() => {
         if (selectedBranchId && !editMode) {
             setValue('entity_ids', []);
         }
     }, [selectedBranchId, setValue, editMode]);
+
+    // عند تغيير assignment_type، نمسح المشرفين لتجنب تعارض single/multi select
+    React.useEffect(() => {
+        if (!editMode) {
+            // مسح المشرفين عند تغيير نوع التكليف لتجنب مشاكل التوافق بين single و multi select
+            setValue('supervisor_ids', assignmentType === 'committee' ? [] : '');
+        }
+    }, [assignmentType, setValue, editMode]);
 
     function onSubmit(data) {
         console.log('data', data);
@@ -69,7 +80,8 @@ export default function FormInspectorAssignment({
     }
 
     return (
-        <form onSubmit={handleSubmit(onSubmit)} className="p-4 space-y-4">
+        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col h-full">
+            <ModalContent>
             <div className="grid grid-cols-1 gap-4">
                 {inspectorAssignmentsFields
                     .filter(
@@ -113,13 +125,16 @@ export default function FormInspectorAssignment({
                         );
                     })}
             </div>
+            </ModalContent>
             {!viewMode && (
-                <Btn
-                    loading={isPending}
-                    className="py-[10px] w-full"
-                    type="submit"
-                    label="common.submit"
-                />
+                <ModalFooter>
+                    <Btn
+                        loading={isPending}
+                        className="py-[10px] w-full"
+                        type="submit"
+                        label="common.submit"
+                    />
+                </ModalFooter>
             )}
         </form>
     );

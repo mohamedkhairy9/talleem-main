@@ -8,6 +8,8 @@ import InputRFH from '@/components/common/inputs/InputRFH';
 import Btn from '@/components/common/buttons/Btn';
 import { getNestedError } from '@/utils/helpers/getNestedError';
 import { generateOptions } from '@/utils/helpers/global.fns';
+import ModalContent from '@/components/common/form/ModalContent';
+import ModalFooter from '@/components/common/form/ModalFooter';
 
 export default function FormRole({
     onClose,
@@ -36,7 +38,8 @@ export default function FormRole({
     console.log('errors', errors);
 
     return (
-        <form onSubmit={handleSubmit(onSubmit)} className="p-4 space-y-2">
+        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col h-full">
+            <ModalContent>
             {rolesFields
                 .filter(
                     field =>
@@ -62,13 +65,16 @@ export default function FormRole({
                         options={generateOptions(options?.[field.name])}
                     />
                 ))}
+            </ModalContent>
             {!viewMode && (
-                <Btn
-                    loading={isPending}
-                    className="py-[10px] w-full"
-                    type="submit"
-                    label="common.submit"
-                />
+                <ModalFooter>
+                    <Btn
+                        loading={isPending}
+                        className="py-[10px] w-full"
+                        type="submit"
+                        label="common.submit"
+                    />
+                </ModalFooter>
             )}
         </form>
     );

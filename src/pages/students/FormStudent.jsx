@@ -11,6 +11,8 @@ import { onlyDate } from '@/utils/helpers/global.fns';
 import useLocale from '@/utils/hooks/global/useLocale';
 import i18next from 'i18next';
 import calculateAge from '@/utils/helpers/ageCalculation';
+import ModalContent from '@/components/common/form/ModalContent';
+import ModalFooter from '@/components/common/form/ModalFooter';
 
 // Helper to extract education entity type data from oldData
 const extractEducationEntityTypeData = (oldData) => {
@@ -274,7 +276,8 @@ export default function FormStudent({
     }
 
     return (
-        <form onSubmit={handleSubmit(onSubmit)} className="p-4 space-y-4">
+        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col h-full">
+            <ModalContent>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {studentsFields
                     .filter(field => {
@@ -547,13 +550,16 @@ export default function FormStudent({
                 </div>
             )}
 
+            </ModalContent>
             {!viewMode && (
-                <Btn
-                    loading={isPending}
-                    className="py-[10px] w-full"
-                    type="submit"
-                    label="common.submit"
-                />
+                <ModalFooter>
+                    <Btn
+                        loading={isPending}
+                        className="py-[10px] w-full"
+                        type="submit"
+                        label="common.submit"
+                    />
+                </ModalFooter>
             )}
         </form>
     );

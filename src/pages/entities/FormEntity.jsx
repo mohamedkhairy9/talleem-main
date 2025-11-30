@@ -16,6 +16,8 @@ import MapPicker from '@/components/common/maps/MapPicker';
 import Accordion from '@/components/common/UIs/Accordion';
 import i18next from 'i18next';
 import * as yup from 'yup';
+import ModalContent from '@/components/common/form/ModalContent';
+import ModalFooter from '@/components/common/form/ModalFooter';
 
 export default function FormEntity({
     onClose,
@@ -400,8 +402,9 @@ export default function FormEntity({
     return (
         <form
             onSubmit={handleSubmit(onSubmit)}
-            className="p-4 space-y-4  overflow-y-auto"
+            className="flex flex-col h-full"
         >
+            <ModalContent className="space-y-4">
             <Accordion
                 title={t('entities.entity_information')}
                 open={openSections.entityInfo}
@@ -483,13 +486,16 @@ export default function FormEntity({
                 </div>
             </Accordion>
 
+            </ModalContent>
             {!viewMode && (
-                <Btn
-                    loading={isPending}
-                    className="py-[10px] w-full"
-                    type="submit"
-                    label="common.submit"
-                />
+                <ModalFooter>
+                    <Btn
+                        loading={isPending}
+                        className="py-[10px] w-full"
+                        type="submit"
+                        label="common.submit"
+                    />
+                </ModalFooter>
             )}
         </form>
     );

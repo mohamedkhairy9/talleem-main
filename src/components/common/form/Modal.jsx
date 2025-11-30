@@ -1,4 +1,5 @@
 import React, { useEffect, useRef } from 'react';
+import ModalBody from './ModalBody';
 
 const Modal = ({
     isOpen = true,
@@ -78,16 +79,16 @@ const Modal = ({
             <div
                 ref={modalRef}
                 className={`
-          relative overflow-y-auto w-full ${sizeClasses[size]} 
+          relative w-full ${sizeClasses[size]} 
           bg-white rounded-lg shadow-2xl 
           transform transition-all duration-100 ease-out
-          animate-in  zoom-in-95
-          max-h-[90vh] overflow-hidden
+          animate-in zoom-in-95
+          max-h-[90vh] flex flex-col overflow-hidden
           ${size === 'full' ? 'h-full' : ''}
         `}
                 onClick={e => e.stopPropagation()}
             >
-                {children}
+                <ModalBody>{children}</ModalBody>
             </div>
         </div>
     );

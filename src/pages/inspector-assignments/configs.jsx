@@ -200,7 +200,7 @@ export const inspectorAssignmentsDefaultValues = {
     main_program_id: '',
     branch_id: '',
     entity_ids: [],
-    supervisor_ids: [],
+    supervisor_ids: '', // empty string for regular mode (single select)
     from_date: '',
     to_date: '',
     notes: ''

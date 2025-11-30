@@ -6,6 +6,8 @@ import InputRFH from '@/components/common/inputs/InputRFH';
 import Btn from '@/components/common/buttons/Btn';
 import { getNestedError } from '@/utils/helpers/getNestedError';
 import { generateOptions } from '@/utils/helpers/global.fns';
+import ModalContent from '@/components/common/form/ModalContent';
+import ModalFooter from '@/components/common/form/ModalFooter';
 
 export default function FormBranch({
     onClose,
@@ -33,7 +35,8 @@ export default function FormBranch({
     console.log('options', options);
 
     return (
-        <form onSubmit={handleSubmit(onSubmit)} className="p-4 space-y-2">
+        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col h-full">
+            <ModalContent>
             {branchesFields
                 .filter(
                     field =>
@@ -59,12 +62,17 @@ export default function FormBranch({
                         options={generateOptions(options?.[field.name])}
                     />
                 ))}
-            {!viewMode && (<Btn
+            </ModalContent>
+            {!viewMode && (
+            <ModalFooter>
+                <Btn
                 loading={isPending}
                 className="py-[10px] w-full"
                 type="submit"
                 label="common.submit"
-            />)}
+            />
+            </ModalFooter>
+            )}
         </form>
     );
 }

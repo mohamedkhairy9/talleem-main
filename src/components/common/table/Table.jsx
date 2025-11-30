@@ -93,6 +93,7 @@ const Table = ({
     const [showSelectedExportMenu, setShowSelectedExportMenu] = useState(false);
     const [isFullscreen, setIsFullscreen] = useState(false);
     const [density, setDensity] = useState('normal');
+    const [showFiltersModal, setShowFiltersModal] = useState(false);
 
     const tableRef = useRef(null);
 
@@ -531,6 +532,8 @@ const Table = ({
     const FilterDropdown = ({ column }) => {
         const [isOpen, setIsOpen] = useState(false);
         const [filterValue, setFilterValue] = useState('');
+        const buttonRef = React.useRef(null);
+        const [position, setPosition] = useState({ top: 0, left: 0 });
 
         const uniqueValues = useMemo(() => {
             if (!data) return [];
@@ -557,9 +560,53 @@ const Table = ({
             }
         };
 
+        // Calculate dropdown position when opened
+        React.useEffect(() => {
+            if (isOpen && buttonRef.current) {
+                const rect = buttonRef.current.getBoundingClientRect();
+                const dropdownWidth = 256; // w-64 = 256px
+                const viewportWidth = window.innerWidth;
+                
+                // Check if dropdown would overflow on the right
+                let leftPosition = rect.left;
+                if (rect.left + dropdownWidth > viewportWidth) {
+                    // Align to right edge of button
+                    leftPosition = rect.right - dropdownWidth;
+                }
+                
+                // Make sure it doesn't overflow on the left
+                if (leftPosition < 0) {
+                    leftPosition = 10; // Small margin from left edge
+                }
+                
+                setPosition({
+                    top: rect.bottom + window.scrollY,
+                    left: leftPosition
+                });
+            }
+        }, [isOpen]);
+
+        // Close dropdown when clicking outside
+        React.useEffect(() => {
+            if (!isOpen) return;
+            
+            const handleClickOutside = (e) => {
+                if (buttonRef.current && !buttonRef.current.contains(e.target)) {
+                    const dropdown = document.getElementById(`filter-dropdown-${column.id}`);
+                    if (dropdown && !dropdown.contains(e.target)) {
+                        setIsOpen(false);
+                    }
+                }
+            };
+            
+            document.addEventListener('mousedown', handleClickOutside);
+            return () => document.removeEventListener('mousedown', handleClickOutside);
+        }, [isOpen, column.id]);
+
         return (
             <div className="relative">
                 <button
+                    ref={buttonRef}
                     onClick={() => setIsOpen(!isOpen)}
                     className={`p-1 rounded transition-colors ${
                         column.getFilterValue()
@@ -571,7 +618,14 @@ const Table = ({
                 </button>
 
                 {isOpen && (
-                    <div className="absolute top-8 left-0 bg-white border border-gray-200 rounded-lg shadow-lg z-[999] w-64">
+                    <div 
+                        id={`filter-dropdown-${column.id}`}
+                        className="fixed bg-white border border-gray-200 rounded-lg shadow-lg z-[999] w-64"
+                        style={{
+                            top: `${position.top}px`,
+                            left: `${position.left}px`
+                        }}
+                    >
                         <div className="p-3 border-b border-gray-200">
                             <input
                                 type="text"
@@ -676,12 +730,12 @@ const Table = ({
             } ${className}`}
         >
             <div
-                className={`bg-white rounded-xl shadow-sm border border-gray-200 min-w-fit ${
+                className={`bg-white rounded-xl shadow-sm border border-gray-200 ${
                     isFullscreen ? 'h-full flex flex-col' : ''
                 }`}
             >
                 {/* Header Controls */}
-                <div className="p-6 border-b rounded-xl border-gray-200 bg-gradient-to-r from-gray-50 to-white">
+                <div className="p-6 border-b rounded-t-xl border-gray-200 bg-gradient-to-r from-gray-50 to-white">
                     <div className="flex flex-col space-y-4">
                         {/* Title Row */}
                         <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between space-y-4 lg:space-y-0">
@@ -746,33 +800,19 @@ const Table = ({
 
                         {/* Controls Row */}
                         <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between space-y-4 lg:space-y-0">
-                            {/* Search */}
+                            {/* Filters Button */}
                             <div className="flex flex-col lg:flex-row lg:items-center gap-2">
-                                {/* <div className="relative">
-                                    <MdSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
-                                    <input
-                                        type="text"
-                                        placeholder={t(
-                                            'table.search_across_columns'
-                                        )}
-                                        className="pl-10 pr-4 py-2 border border-gray-300 rounded-lg text-sm outline-none duration-200 focus:border-primary-500 w-full lg:w-[300px]"
-                                        value={globalFilter ?? ''}
-                                        onChange={e =>
-                                            setGlobalFilter(e.target.value)
-                                        }
-                                    />
-                                    {globalFilter && (
-                                        <button
-                                            onClick={() => setGlobalFilter('')}
-                                            className={`absolute ${
-                                                isRTL ? 'left-8' : 'right-3'
-                                            } top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600`}
-                                        >
-                                            <MdClose className="w-4 h-4" />
-                                        </button>
-                                    )}
-                                </div> */}
-                                {Filters && Filters}
+                                {Filters && (
+                                    <button
+                                        onClick={() => setShowFiltersModal(true)}
+                                        className="flex items-center space-x-2 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+                                    >
+                                        <MdFilterList className="w-4 h-4" />
+                                        <span className="text-sm font-medium">
+                                            {t('table.filters')}
+                                        </span>
+                                    </button>
+                                )}
                             </div>
 
                             {/* Action Buttons */}
@@ -1108,19 +1148,25 @@ const Table = ({
 
                 {/* Table */}
                 <div
-                    className={`overflow-x-auto  ${
-                        isFullscreen ? 'flex-1' : ''
+                    className={`relative ${
+                        isFullscreen ? 'flex-1 overflow-hidden' : ''
                     }`}
-                    ref={tableRef}
                 >
-                    <table className="w-full">
-                        <thead className="bg-gradient-to-r from-gray-50 to-gray-100 sticky top-0 z-10">
+                    <div 
+                        className="overflow-x-auto overflow-y-auto"
+                        ref={tableRef}
+                        style={{ 
+                            maxHeight: isFullscreen ? 'calc(100vh - 300px)' : '70vh'
+                        }}
+                    >
+                        <table className="w-full">
+                            <thead className="bg-gradient-to-r from-gray-50 to-gray-100 sticky top-0 z-20 shadow-sm">
                             {table.getHeaderGroups().map(headerGroup => (
                                 <tr key={headerGroup.id}>
                                     {headerGroup.headers.map((header, idx) => (
                                         <th
                                             key={header.id}
-                                            className={`${densityClasses[density]} text-left text-sm font-semibold text-gray-900 uppercase tracking-wider border-b-2 border-gray-200`}
+                                            className={`${densityClasses[density]} min-w-fit text-left text-sm font-semibold text-gray-900 uppercase tracking-wider border-b-2 border-gray-200`}
                                             style={{ width: header.getSize() }}
                                         >
                                             <div
@@ -1145,7 +1191,7 @@ const Table = ({
                                                             }`}
                                                             onClick={header.column.getToggleSortingHandler()}
                                                         >
-                                                            <span>
+                                                            <span className='min-w-fit'>
                                                                 {idx === 0 &&
                                                                 enableRowSelection
                                                                     ? flexRender(
@@ -1236,11 +1282,10 @@ const Table = ({
                                             <MdSearch className="w-12 h-12 text-gray-300" />
                                             <div>
                                                 <h3 className="text-lg font-medium text-gray-900">
-                                                    No data found
+                                                    {t('table.no_data_found')}
                                                 </h3>
                                                 <p className="text-gray-500">
-                                                    Try adjusting your search or
-                                                    filter criteria
+                                                    {t('table.no_data_description')}
                                                 </p>
                                             </div>
                                             <button
@@ -1251,7 +1296,7 @@ const Table = ({
                                                 }}
                                                 className="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors"
                                             >
-                                                Clear All Filters
+                                                {t('table.clear_all')}
                                             </button>
                                         </div>
                                     </td>
@@ -1289,6 +1334,7 @@ const Table = ({
                             )}
                         </tbody>
                     </table>
+                </div>
                 </div>
 
                 {/* Pagination */}
@@ -1484,6 +1530,57 @@ const Table = ({
                     </div>
                 </div>
             </div>
+
+            {/* Filters Modal */}
+            {showFiltersModal && Filters && (
+                <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/50">
+                    <div className="bg-white rounded-xl shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-hidden flex flex-col m-4">
+                        {/* Modal Header */}
+                        <div className="flex items-center justify-between p-6 border-b border-gray-200 bg-gradient-to-r from-gray-50 to-white">
+                            <div className="flex items-center space-x-3">
+                                <MdFilterList className="w-6 h-6 text-primary-600" />
+                                <h3 className="text-xl font-bold text-gray-900">
+                                    {t('table.filters')}
+                                </h3>
+                            </div>
+                            <button
+                                onClick={() => setShowFiltersModal(false)}
+                                className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                            >
+                                <MdClose className="w-6 h-6 text-gray-600" />
+                            </button>
+                        </div>
+
+                        {/* Modal Body */}
+                        <div className="flex-1 overflow-y-auto p-6">
+                            <div className="space-y-4">
+                                {Filters}
+                            </div>
+                        </div>
+
+                        {/* Modal Footer */}
+                        <div className="flex items-center justify-end space-x-3 p-6 border-t border-gray-200 bg-gray-50">
+                            <button
+                                onClick={() => {
+                                    // Clear all filters
+                                    setColumnFilters([]);
+                                    setGlobalFilter('');
+                                    setFilters({});
+                                }}
+                                className="px-4 py-2 text-sm font-medium text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                            >
+                                {t('table.clear_all')}
+                            </button>
+                            <button
+                                onClick={() => setShowFiltersModal(false)}
+                                className="px-6 py-2 text-sm font-medium bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors"
+                            >
+                                {t('table.apply')}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };
