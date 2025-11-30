@@ -10,6 +10,8 @@ import { useQuery } from '@tanstack/react-query';
 import { studentsService } from '@/api/services/students.service';
 import { teachersService } from '@/api/services/teachers.service';
 import { API_KEYS } from '@/api/endpoints';
+import ModalContent from '@/components/common/form/ModalContent';
+import ModalFooter from '@/components/common/form/ModalFooter';
 
 export default function FormWarning({
     onClose,
@@ -146,66 +148,70 @@ export default function FormWarning({
     };
 
     return (
-        <form onSubmit={handleSubmit(onSubmit)} className="p-4 space-y-4">
-            <div className="grid grid-cols-1 gap-4">
-                {warningsFields
-                    .filter(field =>
-                        (editMode && field.editMode) ||
-                        (viewMode && field.viewMode) ||
-                        (!editMode && !viewMode)
-                    )
-                    .filter(shouldShowField)
-                    .map(field => {
-                        let fieldOptions = options?.[field.name];
+        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col h-full">
+            <ModalContent>
+                <div className="grid grid-cols-1 gap-4">
+                    {warningsFields
+                        .filter(field =>
+                            (editMode && field.editMode) ||
+                            (viewMode && field.viewMode) ||
+                            (!editMode && !viewMode)
+                        )
+                        .filter(shouldShowField)
+                        .map(field => {
+                            let fieldOptions = options?.[field.name];
 
-                        // إذا كان الحقل entity_id، استخدم الـ entities المفلترة
-                        if (field.name === 'entity_id') {
-                            fieldOptions = filteredEntities;
-                        }
+                            // إذا كان الحقل entity_id، استخدم الـ entities المفلترة
+                            if (field.name === 'entity_id') {
+                                fieldOptions = filteredEntities;
+                            }
 
-                        // إذا كان الحقل student_id، استخدم الطلاب المفلترين حسب الـ entity
-                        if (field.name === 'student_id') {
-                            fieldOptions = studentsData?.data || [];
-                        }
+                            // إذا كان الحقل student_id، استخدم الطلاب المفلترين حسب الـ entity
+                            if (field.name === 'student_id') {
+                                fieldOptions = studentsData?.data || [];
+                            }
 
-                        // إذا كان الحقل teacher_id، استخدم المعلمين المفلترين حسب الـ entity
-                        if (field.name === 'teacher_id') {
-                            fieldOptions = teachersData?.data || [];
-                        }
+                            // إذا كان الحقل teacher_id، استخدم المعلمين المفلترين حسب الـ entity
+                            if (field.name === 'teacher_id') {
+                                fieldOptions = teachersData?.data || [];
+                            }
 
-                        return (
-                            <InputRFH
-                                key={field.name}
-                                p="px-3 py-3"
-                                control={control}
-                                register={register}
-                                error={getNestedError(errors, field.name)}
-                                type={field.type}
-                                placeholder={field.placeholder}
-                                disabled={
-                                    viewMode ||
-                                    (field.name === 'entity_id' && !selectedBranchId) ||
-                                    (field.name === 'student_id' && !selectedEntityId) ||
-                                    (field.name === 'teacher_id' && !selectedEntityId)
-                                }
-                                label={field.label}
-                                name={field.name}
-                                options={generateOptions(fieldOptions)}
-                                defaultValue={
-                                    oldData?.[field.name] || field.defaultValue
-                                }
-                                min={field.minDate}
-                            />
-                        );
-                    })}
-            </div>
+                            return (
+                                <InputRFH
+                                    key={field.name}
+                                    p="px-3 py-3"
+                                    control={control}
+                                    register={register}
+                                    error={getNestedError(errors, field.name)}
+                                    type={field.type}
+                                    placeholder={field.placeholder}
+                                    disabled={
+                                        viewMode ||
+                                        (field.name === 'entity_id' && !selectedBranchId) ||
+                                        (field.name === 'student_id' && !selectedEntityId) ||
+                                        (field.name === 'teacher_id' && !selectedEntityId)
+                                    }
+                                    label={field.label}
+                                    name={field.name}
+                                    options={generateOptions(fieldOptions)}
+                                    defaultValue={
+                                        oldData?.[field.name] || field.defaultValue
+                                    }
+                                    min={field.minDate}
+                                />
+                            );
+                        })}
+                </div>
+            </ModalContent>
             {!viewMode && (
-                <Btn
-                    loading={isPending}
-                    className="py-[10px] w-full"
-                    type="submit"
-                    label="common.submit"
-                />
+                <ModalFooter>
+                    <Btn
+                        loading={isPending}
+                        className="py-[10px] w-full"
+                        type="submit"
+                        label="common.submit"
+                    />
+                </ModalFooter>
             )}
         </form>
     );

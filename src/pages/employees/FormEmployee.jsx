@@ -9,6 +9,8 @@ import { getNestedError } from '@/utils/helpers/getNestedError';
 import { generateOptions } from '@/utils/helpers/global.fns';
 import { onlyDate } from '@/utils/helpers/global.fns';
 import useFilterBranch from '@/utils/hooks/global/useFilterBranches';
+import ModalContent from '@/components/common/form/ModalContent';
+import ModalFooter from '@/components/common/form/ModalFooter';
 
 export default function FormEmployee({
     onClose,
@@ -165,8 +167,9 @@ export default function FormEmployee({
     return (
         <form
             onSubmit={handleSubmit(onSubmit)}
-            className="p-4 space-y-4  overflow-y-auto"
+            className="flex flex-col h-full"
         >
+            <ModalContent>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {filteredFields.map(field => (
                     <div
@@ -183,13 +186,16 @@ export default function FormEmployee({
                     </div>
                 ))}
             </div>
+            </ModalContent>
             {!viewMode && (
-                <Btn
-                    loading={isPending}
-                    className="py-[10px] w-full"
-                    type="submit"
-                    label="common.submit"
-                />
+                <ModalFooter>
+                    <Btn
+                        loading={isPending}
+                        className="py-[10px] w-full"
+                        type="submit"
+                        label="common.submit"
+                    />
+                </ModalFooter>
             )}
         </form>
     );
