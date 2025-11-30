@@ -1163,7 +1163,9 @@
         "page_size": "حجم الصفحة",
         "total": "الكل",
         "import": "استيراد",
-        "download_example": "تحميل مثال"
+        "download_example": "تحميل مثال",
+        "no_data_found": "لا توجد بيانات",
+        "no_data_description": "حاول تعديل معايير البحث أو التصفية"
     },
     "table_headers": {
         "id": "المعرف",
@@ -1316,6 +1318,9 @@
         "saveFailed": "فشل حفظ المقطع",
         "deleteFailed": "فشل حذف المقطع",
         "deleteConfirm": "هل تريد حذف هذا المقطع؟"
+    },
+    "quran_viewer": {
+        "no_content_page": "لا يوجد محتوى لهذه الصفحة"
     },
     "nationalities": {
         "create": "إضافة جنسية",

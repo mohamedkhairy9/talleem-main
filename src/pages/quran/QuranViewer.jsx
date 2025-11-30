@@ -4,8 +4,11 @@ import { dbLoader } from '@/utils/helpers/databaseLoader';
 import { fontLoader } from '@/utils/helpers/fontLoader';
 import QuranSegmentsService from '@/api/services/quranSegments.service';
 import toastService from '@/utils/helpers/Toastservice';
+import { useTranslation } from 'react-i18next';
 
 const QuranViewer = () => {
+    const { t } = useTranslation();
+    
     // Database state
     const [linesDb, setLinesDb] = useState(null);
     const [wordsDb, setWordsDb] = useState(null);
@@ -630,7 +633,7 @@ const QuranViewer = () => {
                             pageLines.map(line => renderLine(line))
                         ) : (
                             <div style={{textAlign: 'center', padding: '40px', color: '#666'}}>
-                                لا يوجد محتوى لهذه الصفحة
+                                {t('quran_viewer.no_content_page')}
                             </div>
                         )}
                     </div>
