@@ -25,6 +25,7 @@ export default function FormEvaluationParameter({
     const initialFormData = useMemo(() => {
         if (!oldData) return {
             is_active: true,
+            pass_grade: '',
             criteria: [{ criteria_name: { en: '', ar: '' }, degree: '' }]
         };
 
@@ -165,7 +166,21 @@ export default function FormEvaluationParameter({
             <div className="space-y-3">
                 <h3 className="text-lg font-semibold border-b pb-2">{t('evaluation_parameters.basic_info')}</h3>
 
-                {/* Simple Fields - Dynamic from config (name.en, name.ar) */}
+                {/* 1. Program */}
+                <InputRFH
+                    p="px-3 py-3"
+                    control={control}
+                    register={register}
+                    error={getNestedError(errors, 'main_program_id')}
+                    type="select"
+                    placeholder={t('validation.program.placeholder')}
+                    label={t('validation.program.label')}
+                    name="main_program_id"
+                    disabled={viewMode}
+                    options={generateOptions(mainProgramsData)}
+                />
+
+                {/* 2. Model Name Fields - Dynamic from config (name.en, name.ar) */}
                 {simpleFields.map(field => (
                     <InputRFH
                         key={field.name}
@@ -181,62 +196,7 @@ export default function FormEvaluationParameter({
                     />
                 ))}
 
-                {/* Program */}
-                <InputRFH
-                    p="px-3 py-3"
-                    control={control}
-                    register={register}
-                    error={getNestedError(errors, 'main_program_id')}
-                    type="select"
-                    placeholder={t('validation.program.placeholder')}
-                    label={t('validation.program.label')}
-                    name="main_program_id"
-                    disabled={viewMode}
-                    options={generateOptions(mainProgramsData)}
-                />
-
-                {/* Evaluation For (Single Select) */}
-                <InputRFH
-                    p="px-3 py-3"
-                    control={control}
-                    register={register}
-                    error={getNestedError(errors, 'evaluation_for')}
-                    type="select"
-                    placeholder={t('validation.evaluation_for.placeholder')}
-                    label={t('validation.evaluation_for.label')}
-                    name="evaluation_for"
-                    disabled={viewMode}
-                    options={roleSelectOptions}
-                />
-
-                {/* Evaluation System */}
-                <InputRFH
-                    p="px-3 py-3"
-                    control={control}
-                    register={register}
-                    error={getNestedError(errors, 'evaluation_system')}
-                    type="select"
-                    placeholder={t('validation.evaluation_system.placeholder')}
-                    label={t('validation.evaluation_system.label')}
-                    name="evaluation_system"
-                    disabled={viewMode}
-                    options={evaluationSystemSelectOptions}
-                />
-
-                {/* Total Grade */}
-                <InputRFH
-                    p="px-3 py-3"
-                    control={control}
-                    register={register}
-                    error={getNestedError(errors, 'total_grade')}
-                    type="number"
-                    placeholder={t('validation.total_grade.placeholder')}
-                    label={t('validation.total_grade.label')}
-                    name="total_grade"
-                    disabled={viewMode}
-                />
-
-                {/* Dashboards (Multi-Select) - Filtered to exclude evaluation_for */}
+                {/* 3. Dashboards (Multi-Select) - Filtered to exclude evaluation_for */}
                 <InputRFH
                     p="px-3 py-3"
                     control={control}
@@ -251,37 +211,49 @@ export default function FormEvaluationParameter({
                     options={dashboardsFilteredOptions}
                 />
 
-                {/* Receivers (Multi-Select) - Filtered to exclude evaluation_for */}
+                {/* 4. Evaluation For (Single Select) */}
                 <InputRFH
                     p="px-3 py-3"
                     control={control}
                     register={register}
-                    error={getNestedError(errors, 'receivers')}
+                    error={getNestedError(errors, 'evaluation_for')}
                     type="select"
-                    isMulti={true}
-                    placeholder={t('validation.receivers.placeholder')}
-                    label={t('validation.receivers.label')}
-                    name="receivers"
+                    placeholder={t('validation.evaluation_for.placeholder')}
+                    label={t('validation.evaluation_for.label')}
+                    name="evaluation_for"
                     disabled={viewMode}
-                    options={receiversFilteredOptions}
+                    options={roleSelectOptions}
                 />
 
-                {/* Active - Using transformed statusOptions */}
+                {/* 5. Evaluation System */}
                 <InputRFH
                     p="px-3 py-3"
                     control={control}
                     register={register}
-                    error={getNestedError(errors, 'is_active')}
+                    error={getNestedError(errors, 'evaluation_system')}
                     type="select"
-                    placeholder={t('validation.status.placeholder')}
-                    label={t('validation.is_active.label')}
-                    name="is_active"
+                    placeholder={t('validation.evaluation_system.placeholder')}
+                    label={t('validation.evaluation_system.label')}
+                    name="evaluation_system"
                     disabled={viewMode}
-                    options={statusOptions}
+                    options={evaluationSystemSelectOptions}
+                />
+
+                {/* 6. Total Grade */}
+                <InputRFH
+                    p="px-3 py-3"
+                    control={control}
+                    register={register}
+                    error={getNestedError(errors, 'total_grade')}
+                    type="number"
+                    placeholder={t('validation.total_grade.placeholder')}
+                    label={t('validation.total_grade.label')}
+                    name="total_grade"
+                    disabled={viewMode}
                 />
             </div>
 
-            {/* Dynamic Criteria Section */}
+            {/* 7. Dynamic Criteria Section */}
             <div className="space-y-3">
                 <div className="flex justify-between items-center border-b pb-2">
                     <h3 className="text-lg font-semibold">{t('evaluation_parameters.criteria')}</h3>
@@ -334,6 +306,51 @@ export default function FormEvaluationParameter({
                         </div>
                     ))}
                 </div>
+            </div>
+
+            {/* 8. Pass Grade & 9. Assessment Recipients */}
+            <div className="space-y-3">
+                {/* Pass Grade */}
+                <InputRFH
+                    p="px-3 py-3"
+                    control={control}
+                    register={register}
+                    error={getNestedError(errors, 'pass_grade')}
+                    type="number"
+                    placeholder={t('validation.pass_grade.placeholder')}
+                    label={t('validation.pass_grade.label')}
+                    name="pass_grade"
+                    disabled={viewMode}
+                />
+
+                {/* Receivers (Multi-Select) - Filtered to exclude evaluation_for */}
+                <InputRFH
+                    p="px-3 py-3"
+                    control={control}
+                    register={register}
+                    error={getNestedError(errors, 'receivers')}
+                    type="select"
+                    isMulti={true}
+                    placeholder={t('validation.receivers.placeholder')}
+                    label={t('validation.receivers.label')}
+                    name="receivers"
+                    disabled={viewMode}
+                    options={receiversFilteredOptions}
+                />
+
+                {/* 10. Active - Using transformed statusOptions */}
+                <InputRFH
+                    p="px-3 py-3"
+                    control={control}
+                    register={register}
+                    error={getNestedError(errors, 'is_active')}
+                    type="select"
+                    placeholder={t('validation.status.placeholder')}
+                    label={t('validation.is_active.label')}
+                    name="is_active"
+                    disabled={viewMode}
+                    options={statusOptions}
+                />
             </div>
 
             {/* Submit Button */}
