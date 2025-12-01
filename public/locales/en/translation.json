@@ -496,6 +496,9 @@
             "placeholder": "Enter address",
             "min": "Address must be at least 5 characters"
         },
+        "map_location": {
+            "label": "Map Location"
+        },
         "latitude": {
             "label": "Latitude",
             "placeholder": "Enter/select latitude",

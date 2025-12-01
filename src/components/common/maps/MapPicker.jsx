@@ -28,6 +28,7 @@ export default function MapPicker({
     const { t } = useLocale();
     const [marker, setMarker] = useState(oldLocation || null);
     const [autocomplete, setAutocomplete] = useState(null);
+    const [searchValue, setSearchValue] = useState('');
     const searchInputRef = useRef(null);
 
     const { isLoaded } = useGoogleMapsLoader();
@@ -38,7 +39,19 @@ export default function MapPicker({
             const lat = e.latLng.lat();
             const lng = e.latLng.lng();
             setMarker({ lat, lng });
-            onLocationSelect({ lat, lng });
+            
+            // Reverse geocode to get address
+            const geocoder = new window.google.maps.Geocoder();
+            geocoder.geocode({ location: { lat, lng } }, (results, status) => {
+                if (status === 'OK' && results[0]) {
+                    const address = results[0].formatted_address;
+                    setSearchValue(address);
+                    onLocationSelect({ lat, lng, address });
+                } else {
+                    setSearchValue('');
+                    onLocationSelect({ lat, lng, address: '' });
+                }
+            });
         },
         [onLocationSelect, disabled]
     );
@@ -57,8 +70,10 @@ export default function MapPicker({
         }
         const lat = place.geometry.location.lat();
         const lng = place.geometry.location.lng();
+        const address = place.formatted_address || '';
         setMarker({ lat, lng });
-        onLocationSelect({ lat, lng });
+        setSearchValue(address);
+        onLocationSelect({ lat, lng, address });
     }, [autocomplete, onLocationSelect, disabled]);
 
     if (!isLoaded) return <div>Loading Map...</div>;
@@ -82,6 +97,8 @@ export default function MapPicker({
                             type="text"
                             placeholder={t('zone-search')}
                             disabled={disabled}
+                            value={searchValue}
+                            onChange={(e) => setSearchValue(e.target.value)}
                         />
                     </Autocomplete>
                 </div>

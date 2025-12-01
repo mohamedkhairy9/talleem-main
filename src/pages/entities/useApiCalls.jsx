@@ -15,7 +15,7 @@ import { specificationsService } from '@/api/services/specifications.service';
 import { academicQualificationsService } from '@/api/services/academicQualifications.service';
 import { sessionModesService } from '@/api/services/essionModes.service';
 
-export default function useApiCalls({ apiCalls = [] } = {}) {
+export default function useApiCalls({ apiCalls = [], mainProgramId } = {}) {
     const isEnabled = key => apiCalls.includes(key);
 
     const { queries, isAnyLoading } = useCustomQueries([
@@ -74,9 +74,9 @@ export default function useApiCalls({ apiCalls = [] } = {}) {
             enabled: isEnabled(API_KEYS.USERS)
         },
         {
-            queryKey: [API_KEYS.ACTIVITIES, allData],
-            queryFn: () => activitiesService.getActivities(allData),
-            enabled: isEnabled(API_KEYS.ACTIVITIES)
+            queryKey: [API_KEYS.ACTIVITIES, { ...allData, main_program_id: mainProgramId }],
+            queryFn: () => activitiesService.getActivities({ ...allData, main_program_id: mainProgramId }),
+            enabled: isEnabled(API_KEYS.ACTIVITIES) && !!mainProgramId
         },
         {
             queryKey: [API_KEYS.NATIONALITIES, allData],

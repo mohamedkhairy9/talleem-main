@@ -172,6 +172,24 @@ export const entitiesFields = [
         viewMode: true
     },
     {
+        name: 'latitude',
+        label: 'validation.latitude.label',
+        type: 'text',
+        placeholder: 'validation.latitude.placeholder',
+        editMode: true,
+        viewMode: true,
+        disabled: true
+    },
+    {
+        name: 'longitude',
+        label: 'validation.longitude.label',
+        type: 'text',
+        placeholder: 'validation.longitude.placeholder',
+        editMode: true,
+        viewMode: true,
+        disabled: true
+    },
+    {
         name: 'area',
         label: 'validation.area.label',
         type: 'text',

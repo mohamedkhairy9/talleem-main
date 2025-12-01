@@ -34,7 +34,7 @@ export default function ViewEntity({ onClose, oldData }) {
         academicQualificationsData,
         sessionModesData, 
         isLoading
-    } = useApiCalls({ apiCalls });
+    } = useApiCalls({ apiCalls, mainProgramId: oldData?.main_program_id });
 
     if (isLoading) return <Loader />;
 
