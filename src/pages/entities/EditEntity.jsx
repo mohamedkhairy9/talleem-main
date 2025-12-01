@@ -38,7 +38,7 @@ export default function EditEntity({ onClose, oldData }) {
         specificationsData,
         sessionModesData,
         isLoading
-    } = useApiCalls({ apiCalls });
+    } = useApiCalls({ apiCalls, mainProgramId: oldData?.main_program_id });
 
     if (isLoading) return <Loader />;
 

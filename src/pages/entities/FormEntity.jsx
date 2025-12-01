@@ -18,6 +18,10 @@ import i18next from 'i18next';
 import * as yup from 'yup';
 import ModalContent from '@/components/common/form/ModalContent';
 import ModalFooter from '@/components/common/form/ModalFooter';
+import { activitiesService } from '@/api/services/activities.service';
+import { allData } from '@/utils/constants/global.constants';
+import { useQuery } from '@tanstack/react-query';
+import { API_KEYS } from '@/api/endpoints';
 
 export default function FormEntity({
     onClose,
@@ -112,6 +116,13 @@ export default function FormEntity({
 
     console.log('mainProgramId', mainProgramId);
 
+    // Fetch activities dynamically based on selected mainProgramId
+    const { data: dynamicActivitiesData } = useQuery({
+        queryKey: [API_KEYS.ACTIVITIES, { ...allData, main_program_id: mainProgramId }],
+        queryFn: () => activitiesService.getActivities({ ...allData, main_program_id: mainProgramId }),
+        enabled: !!mainProgramId
+    });
+
     // Get unique options by name for education program entity types (for mainProgramId === 1)
     const uniqueEducationClassifications = useMemo(() => getUniqueOptionsByName(
         options.education_program_entity_type_id || []
@@ -169,7 +180,8 @@ export default function FormEntity({
                   )
                 : mainProgramId === 2
                 ? options.memorization_program_entity_type_id || []
-                : []
+                : [],
+        activity_ids: dynamicActivitiesData?.data || options.activity_ids || []
     };
 
     useEffect(() => {
@@ -179,6 +191,7 @@ export default function FormEntity({
         ) {
             setValue('education_program_entity_type_classification', '');
             setValue('entity_category_id', '');
+            setValue('activity_ids', []); // Reset activities when program changes
         }
     }, [mainProgramId, oldData?.main_program_id, setValue]);
 
@@ -351,13 +364,18 @@ export default function FormEntity({
             enhancedOptions?.[fieldName] ||
             managerOptions[fieldName];
 
+        // Disable activity_ids field if main_program_id is not selected
+        const isActivityFieldDisabled = fieldName === 'activity_ids' && !mainProgramId;
+        // Check if field has disabled property
+        const isFieldDisabled = field.disabled || viewMode || isActivityFieldDisabled;
+
         return (
             <InputRFH
                 p="px-3 py-3"
                 control={control}
                 register={register}
                 error={error}
-                disabled={viewMode}
+                disabled={isFieldDisabled}
                 {...field}
                 name={fieldName}
                 options={
@@ -413,7 +431,7 @@ export default function FormEntity({
                 {/* Map Picker */}
                 <div className="space-y-3">
                     <h4 className="text-md font-medium text-gray-700">
-                        {t('validation.address.label')}
+                        {t('validation.map_location.label')}
                     </h4>
                     <MapPicker
                         onLocationSelect={({ lat, lng }) => {
@@ -434,11 +452,9 @@ export default function FormEntity({
                         }
                         disabled={viewMode}
                     />
-                    <input type="hidden" {...register('latitude')} />
-                    <input type="hidden" {...register('longitude')} />
                     {errors.latitude && (
                         <p className="mt-1 h-4 text-xs text-red-600 font-montserrat">
-                            {t(errors.longitude.message)}
+                            {t(errors.latitude.message)}
                         </p>
                     )}
                 </div>
