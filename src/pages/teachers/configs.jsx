@@ -22,9 +22,9 @@ export const teachersColumns = [
         cell: info => <Cell value={info.getValue()} />
     }),
     columnHelper.accessor('gender', {
-    header: 'table_headers.gender',
-    cell: info => <Cell value={info.getValue()} />
-}),
+        header: 'table_headers.gender',
+        cell: info => <Cell value={info.getValue()} />
+    }),
     columnHelper.accessor('licence_number', {
         header: 'table_headers.licence_number',
         cell: info => <Cell value={info.getValue()} />
@@ -46,14 +46,7 @@ export const teachersColumns = [
 ];
 
 export const teachersFields = [
-    {
-        name: 'name.en',
-        label: 'validation.name.label.en',
-        type: 'text',
-        placeholder: 'validation.name.placeholder.en',
-        editMode: true,
-        viewMode: true
-    },
+    // Right Column - Primary Information
     {
         name: 'name.ar',
         label: 'validation.name.label.ar',
@@ -63,13 +56,13 @@ export const teachersFields = [
         viewMode: true
     },
     {
-    name: 'gender',
-    label: 'validation.gender.label',
-    type: 'select',
-    placeholder: 'validation.gender.placeholder',
-    editMode: true,
-    viewMode: true
-},
+        name: 'name.en',
+        label: 'validation.name.label.en',
+        type: 'text',
+        placeholder: 'validation.name.placeholder.en',
+        editMode: true,
+        viewMode: true
+    },
     {
         name: 'status',
         label: 'validation.status.label',
@@ -84,36 +77,6 @@ export const teachersFields = [
         label: 'validation.main_program_id.label',
         type: 'select',
         placeholder: 'validation.main_program_id.placeholder',
-        editMode: true,
-        viewMode: true
-    },
-    // {
-    //     name: 'education_program_entity_type_classification',
-    //     label: 'validation.education_program_entity_type_classification.label',
-    //     type: 'select',
-    //     placeholder:
-    //         'validation.education_program_entity_type_classification.placeholder',
-    //     editMode: true,
-    //     viewMode: true,
-    //     conditional: true,
-    //     showWhen: { main_program_id: 1 }
-    // },
-    // {
-    //     name: 'entity_category_id',
-    //     label: 'validation.entity_category_id.label',
-    //     type: 'select',
-    //     placeholder: 'validation.entity_category_id.placeholder',
-    //     info: 'info.entity_type',
-    //     editMode: true,
-    //     viewMode: true,
-    //     conditional: true,
-    //     showWhen: { main_program_id: [1, 2] }
-    // },
-    {
-        name: 'nationality_id',
-        label: 'validation.nationality_id.label',
-        type: 'select',
-        placeholder: 'validation.nationality_id.placeholder',
         editMode: true,
         viewMode: true
     },
@@ -135,6 +98,29 @@ export const teachersFields = [
         viewMode: true
     },
     {
+        name: 'education_program_entity_type_classification',
+        label: 'validation.education_program_entity_type_classification.label',
+        type: 'text',
+        placeholder: 'validation.education_program_entity_type_classification.placeholder',
+        editMode: true,
+        viewMode: true,
+        conditional: true,
+        showWhen: { main_program_id: 1 },
+        readOnly: true
+    },
+    {
+        name: 'entity_category_id',
+        label: 'validation.entity_category_id.label',
+        type: 'text',
+        placeholder: 'validation.entity_category_id.placeholder',
+        info: 'info.entity_type',
+        editMode: true,
+        viewMode: true,
+        conditional: true,
+        showWhen: { main_program_id: [1, 2] },
+        readOnly: true
+    },
+    {
         name: 'entity_id',
         label: 'validation.entity_id.label',
         type: 'select',
@@ -143,51 +129,26 @@ export const teachersFields = [
         viewMode: true
     },
     {
-        name: 'education_program_entity_type_classification',
-        label: 'validation.education_program_entity_type_classification.label',
-        type: 'text', // CHANGED TO TEXT
-        placeholder: 'validation.education_program_entity_type_classification.placeholder',
-        editMode: true,
-        viewMode: true,
-        conditional: true,
-        showWhen: { main_program_id: 1 },
-        readOnly: true // ADD THIS
-    },
-    {
-        name: 'entity_category_id',
-        label: 'validation.entity_category_id.label',
-        type: 'text', // CHANGED TO TEXT
-        placeholder: 'validation.entity_category_id.placeholder',
-        info: 'info.entity_type',
-        editMode: true,
-        viewMode: true,
-        conditional: true,
-        showWhen: { main_program_id: [1, 2] },
-        readOnly: true // ADD THIS
-    },
-    {
-        name: 'licence_number',
-        label: 'validation.licence_number.label',
-        type: 'text',
-        placeholder: 'validation.licence_number.placeholder',
-        editMode: true,
-        viewMode: true
-    },
-
-    {
-        name: 'major_id',
-        label: 'validation.major_id.label',
+        name: 'nationality_id',
+        label: 'validation.nationality_id.label',
         type: 'select',
-        placeholder: 'validation.major_id.placeholder',
+        placeholder: 'validation.nationality_id.placeholder',
         editMode: true,
         viewMode: true
     },
-
     {
         name: 'academic_qualification_id',
         label: 'validation.academic_qualification_id.label',
         type: 'select',
         placeholder: 'validation.academic_qualification_id.placeholder',
+        editMode: true,
+        viewMode: true
+    },
+    {
+        name: 'major_id',
+        label: 'validation.major_id.label',
+        type: 'select',
+        placeholder: 'validation.major_id.placeholder',
         editMode: true,
         viewMode: true
     },
@@ -201,15 +162,6 @@ export const teachersFields = [
         max: getMaxDateForMinAge(18),
         min: getMaxDateForMinAge(80)
     },
-    {
-    name: 'registration_date',
-    label: 'validation.registration_date.label',
-    type: 'date',
-    placeholder: 'validation.registration_date.placeholder',
-    editMode: true,
-    viewMode: true,
-    max: new Date().toISOString().split('T')[0] // Can't register in future
-},
     {
         name: 'years_of_experience',
         label: 'validation.years_of_experience.label',
@@ -226,11 +178,46 @@ export const teachersFields = [
         editMode: true,
         viewMode: true
     },
+    // Left Column - Additional Information
+    {
+        name: 'profile_image',
+        label: 'validation.profile_picture.label',
+        type: 'file',
+        placeholder: 'validation.profile_picture.placeholder',
+        editMode: true,
+        viewMode: true,
+        accept: 'image/*'
+    },
+    {
+        name: 'registration_date',
+        label: 'validation.registration_date.label',
+        type: 'date',
+        placeholder: 'validation.registration_date.placeholder',
+        editMode: true,
+        viewMode: true,
+        max: new Date().toISOString().split('T')[0]
+    },
+    {
+        name: 'licence_number',
+        label: 'validation.licence_number.label',
+        type: 'text',
+        placeholder: 'validation.licence_number.placeholder',
+        editMode: true,
+        viewMode: true
+    },
     {
         name: 'national_id',
         label: 'validation.national_id.label',
         type: 'text',
         placeholder: 'validation.national_id.placeholder',
+        editMode: true,
+        viewMode: true
+    },
+    {
+        name: 'gender',
+        label: 'validation.gender.label',
+        type: 'select',
+        placeholder: 'validation.gender.placeholder',
         editMode: true,
         viewMode: true
     },
@@ -259,15 +246,6 @@ export const teachersFields = [
         viewMode: true
     },
     {
-        name: 'profile_image',
-        label: 'validation.profile_picture.label',
-        type: 'file',
-        placeholder: 'validation.profile_picture.placeholder',
-        editMode: true,
-        viewMode: true,
-        accept: 'image/*'
-    },
-    {
         name: 'files',
         label: 'validation.fles.label',
         type: 'file',
@@ -284,7 +262,7 @@ export const teachersDefaultValues = {
         en: '',
         ar: ''
     },
-     gender: '',
+    gender: '',
     registration_date: ''
 };
 
