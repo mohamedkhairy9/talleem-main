@@ -12,6 +12,7 @@ import { teachersService } from '@/api/services/teachers.service';
 import { API_KEYS } from '@/api/endpoints';
 import ModalContent from '@/components/common/form/ModalContent';
 import ModalFooter from '@/components/common/form/ModalFooter';
+import { isFieldRequired } from '@/utils/helpers/schemaHelpers';
 
 export default function FormWarning({
     onClose,
@@ -198,6 +199,7 @@ export default function FormWarning({
                                         oldData?.[field.name] || field.defaultValue
                                     }
                                     min={field.minDate}
+                                    required={isFieldRequired(schema, field.name)}
                                 />
                             );
                         })}

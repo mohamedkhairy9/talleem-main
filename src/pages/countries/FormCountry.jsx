@@ -6,6 +6,7 @@ import InputRFH from '@/components/common/inputs/InputRFH';
 import Btn from '@/components/common/buttons/Btn';
 import { getNestedError } from '@/utils/helpers/getNestedError';
 import { generateOptions } from '@/utils/helpers/global.fns';
+import { isFieldRequired } from '@/utils/helpers/schemaHelpers';
 
 export default function FormCountry({
     onClose,
@@ -55,6 +56,7 @@ export default function FormCountry({
                             oldData?.[field.name] || field.defaultValue
                         }
                         options={generateOptions(options?.[field.name])}
+                        required={isFieldRequired(schema, field.name)}
                     />
                 ))}
             {!viewMode && (

@@ -9,6 +9,7 @@ import useLocale from '@/utils/hooks/global/useLocale';
 import i18next from 'i18next';
 import { roleOptions, evaluationSystemOptions, simpleFields, criteriaFields } from './configs';
 import { enabledDisabledOptions } from '@/utils/constants/options';
+import { isFieldRequired } from '@/utils/helpers/schemaHelpers';
 
 export default function FormEvaluationParameter({
     onClose,
@@ -178,6 +179,7 @@ export default function FormEvaluationParameter({
                     name="main_program_id"
                     disabled={viewMode}
                     options={generateOptions(mainProgramsData)}
+                    required={isFieldRequired(schema, 'main_program_id')}
                 />
 
                 {/* 2. Model Name Fields - Dynamic from config (name.en, name.ar) */}
@@ -193,7 +195,7 @@ export default function FormEvaluationParameter({
                         label={t(field.label)}
                         name={field.name}
                         disabled={viewMode}
-                    />
+                        required={isFieldRequired(schema, field.name)}/>
                 ))}
 
                 {/* 3. Dashboards (Multi-Select) - Filtered to exclude evaluation_for */}
@@ -209,7 +211,7 @@ export default function FormEvaluationParameter({
                     name="dashboards"
                     disabled={viewMode}
                     options={dashboardsFilteredOptions}
-                />
+                    required={isFieldRequired(schema, "dashboards")}/>
 
                 {/* 4. Evaluation For (Single Select) */}
                 <InputRFH
@@ -223,7 +225,7 @@ export default function FormEvaluationParameter({
                     name="evaluation_for"
                     disabled={viewMode}
                     options={roleSelectOptions}
-                />
+                    required={isFieldRequired(schema, "evaluation_for")}/>
 
                 {/* 5. Evaluation System */}
                 <InputRFH
@@ -237,7 +239,7 @@ export default function FormEvaluationParameter({
                     name="evaluation_system"
                     disabled={viewMode}
                     options={evaluationSystemSelectOptions}
-                />
+                    required={isFieldRequired(schema, "evaluation_system")}/>
 
                 {/* 6. Total Grade */}
                 <InputRFH
@@ -250,7 +252,7 @@ export default function FormEvaluationParameter({
                     label={t('validation.total_grade.label')}
                     name="total_grade"
                     disabled={viewMode}
-                />
+                    required={isFieldRequired(schema, "total_grade")}/>
             </div>
 
             {/* 7. Dynamic Criteria Section */}
@@ -300,7 +302,7 @@ export default function FormEvaluationParameter({
                                         label={t(field.label)}
                                         name={`criteria.${index}.${field.name}`}
                                         disabled={viewMode}
-                                    />
+                                        required={isFieldRequired(schema, `criteria.${index}.${field.name}`)}/>
                                 ))}
                             </div>
                         </div>
@@ -321,7 +323,7 @@ export default function FormEvaluationParameter({
                     label={t('validation.pass_grade.label')}
                     name="pass_grade"
                     disabled={viewMode}
-                />
+                    required={isFieldRequired(schema, "pass_grade")}/>
 
                 {/* Receivers (Multi-Select) - Filtered to exclude evaluation_for */}
                 <InputRFH
@@ -336,7 +338,7 @@ export default function FormEvaluationParameter({
                     name="receivers"
                     disabled={viewMode}
                     options={receiversFilteredOptions}
-                />
+                    required={isFieldRequired(schema, "receivers")}/>
 
                 {/* 10. Active - Using transformed statusOptions */}
                 <InputRFH

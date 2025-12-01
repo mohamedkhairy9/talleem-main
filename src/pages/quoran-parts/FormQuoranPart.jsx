@@ -7,6 +7,7 @@ import { quoranPartsFields } from './configs';
 import InputRFH from '@/components/common/inputs/InputRFH';
 import Btn from '@/components/common/buttons/Btn';
 import { getNestedError } from '@/utils/helpers/getNestedError';
+import { isFieldRequired } from '@/utils/helpers/schemaHelpers';
 
 export default function FormQuoranPart({
     onClose,
@@ -54,6 +55,7 @@ export default function FormQuoranPart({
                         defaultValue={
                             oldData?.[field.name] || field.defaultValue
                         }
+                        required={isFieldRequired(schema, field.name)}
                     />
                 ))}
             {!viewMode && (<Btn

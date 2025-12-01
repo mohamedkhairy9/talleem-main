@@ -7,6 +7,7 @@ import Btn from '@/components/common/buttons/Btn';
 import { getNestedError } from '@/utils/helpers/getNestedError';
 import ModalContent from '@/components/common/form/ModalContent';
 import ModalFooter from '@/components/common/form/ModalFooter';
+import { isFieldRequired } from '@/utils/helpers/schemaHelpers';
 
 export default function FormParent({
     onClose,
@@ -68,6 +69,7 @@ export default function FormParent({
                                         : oldData?.[field.name] ||
                                           field.defaultValue
                                 }
+                                required={isFieldRequired(schema, field.name)}
                             />
                         </div>
                     ))}

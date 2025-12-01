@@ -9,6 +9,7 @@ import { generateOptions } from '@/utils/helpers/global.fns';
 import { onlyDate } from '@/utils/helpers/global.fns';
 import ModalContent from '@/components/common/form/ModalContent';
 import ModalFooter from '@/components/common/form/ModalFooter';
+import { isFieldRequired } from '@/utils/helpers/schemaHelpers';
 
 export default function FormGeneralBanner({
     onClose,
@@ -121,6 +122,7 @@ export default function FormGeneralBanner({
                                 oldData?.[field.name] || field.defaultValue
                             }
                             options={generateOptions(options?.[field.name])}
+                        required={isFieldRequired(schema, field.name)}
                         />
                     );
                 })}

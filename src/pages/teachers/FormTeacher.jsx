@@ -12,6 +12,7 @@ import useLocale from '@/utils/hooks/global/useLocale';
 import i18next from 'i18next';
 import ModalContent from '@/components/common/form/ModalContent';
 import ModalFooter from '@/components/common/form/ModalFooter';
+import { isFieldRequired } from '@/utils/helpers/schemaHelpers';
 
 // Helper to extract education entity type data from oldData
 const extractEducationEntityTypeData = (oldData) => {
@@ -440,6 +441,7 @@ export default function FormTeacher({
                                     info={field.info}
                                     options={generateOptions(enhancedOptions[field.name] || [])}
                                     defaultValue={defaultValues[field.name] || field.defaultValue}
+                                    required={isFieldRequired(schema, field.name)}
                                 />
                             </div>
                         );
@@ -464,6 +466,7 @@ export default function FormTeacher({
                                     info={field.info}
                                     options={generateOptions(enhancedOptions[field.name] || [])}
                                     defaultValue={defaultValues[field.name] || field.defaultValue}
+                                    required={isFieldRequired(schema, field.name)}
                                 />
                             </div>
                         );
@@ -492,6 +495,7 @@ export default function FormTeacher({
                                         label={field.label}
                                         name={field.name}
                                         accept={field.accept}
+                                        required={isFieldRequired(schema, field.name)}
                                         onChange={e => {
                                             const file = e.target.files?.[0];
                                             if (file) {
@@ -527,6 +531,7 @@ export default function FormTeacher({
                                     multiple={field.multiple}
                                     defaultValue={oldData?.[field.name] || []}
                                     setValue={setValue}
+                                    required={isFieldRequired(schema, field.name)}
                                 />
                             ) : (
                                 <InputRFH
@@ -545,6 +550,7 @@ export default function FormTeacher({
                                     defaultValue={defaultValues[field.name] || field.defaultValue}
                                     min={field.min}
                                     max={field.max}
+                                    required={isFieldRequired(schema, field.name)}
                                 />
                             )}
                         </div>

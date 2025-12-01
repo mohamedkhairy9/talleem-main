@@ -13,6 +13,7 @@ import i18next from 'i18next';
 import calculateAge from '@/utils/helpers/ageCalculation';
 import ModalContent from '@/components/common/form/ModalContent';
 import ModalFooter from '@/components/common/form/ModalFooter';
+import { isFieldRequired } from '@/utils/helpers/schemaHelpers';
 
 // Helper to extract education entity type data from oldData
 const extractEducationEntityTypeData = (oldData) => {
@@ -432,6 +433,7 @@ export default function FormStudent({
                                         multiple={field.multiple}
                                         defaultValue={oldData?.files || []}
                                         setValue={setValue}
+                                        required={isFieldRequired(schema, field.name)}
                                     />
                                 ) : (
                                     <InputRFH
@@ -450,6 +452,7 @@ export default function FormStudent({
                                         defaultValue={defaultValues[field.name] || field.defaultValue}
                                         min={field.min}
                                         max={field.max}
+                                        required={isFieldRequired(schema, field.name)}
                                     />
                                 )}
                             </div>

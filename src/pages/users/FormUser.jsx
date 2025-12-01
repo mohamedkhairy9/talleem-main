@@ -8,6 +8,7 @@ import { getNestedError } from '@/utils/helpers/getNestedError';
 import { generateOptions } from '@/utils/helpers/global.fns';
 import ModalContent from '@/components/common/form/ModalContent';
 import ModalFooter from '@/components/common/form/ModalFooter';
+import { isFieldRequired } from '@/utils/helpers/schemaHelpers';
 
 export default function FormUser({
     onClose,
@@ -64,6 +65,7 @@ export default function FormUser({
                                     oldData?.[field.name] || field.defaultValue
                                 }
                                 options={generateOptions(options?.[field.name])}
+                                required={isFieldRequired(schema, field.name)}
                             />
                         </div>
                     ))}

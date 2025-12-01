@@ -9,6 +9,7 @@ import { generateOptions } from '@/utils/helpers/global.fns';
 import { enabledDisabledOptions } from '@/utils/constants/options';
 import ModalContent from '@/components/common/form/ModalContent';
 import ModalFooter from '@/components/common/form/ModalFooter';
+import { isFieldRequired } from '@/utils/helpers/schemaHelpers';
 
 export default function FormBranchAdministration({
     onClose,
@@ -79,6 +80,7 @@ export default function FormBranchAdministration({
                                           )
                                         : generateOptions(options?.[field.name])
                                 }
+                                required={isFieldRequired(schema, field.name)}
                             />
                         </div>
                     ))}

@@ -8,6 +8,7 @@ import { getNestedError } from '@/utils/helpers/getNestedError';
 import { generateOptions } from '@/utils/helpers/global.fns';
 import ModalContent from '@/components/common/form/ModalContent';
 import ModalFooter from '@/components/common/form/ModalFooter';
+import { isFieldRequired } from '@/utils/helpers/schemaHelpers';
 
 export default function FormInspectorAssignment({
     onClose,
@@ -121,6 +122,7 @@ export default function FormInspectorAssignment({
                                     oldData?.[field.name] || field.defaultValue
                                 }
                                 isMulti={isMultiple}
+                                required={isFieldRequired(schema, field.name)}
                             />
                         );
                     })}

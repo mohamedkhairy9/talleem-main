@@ -10,6 +10,7 @@ import { getNestedError } from '@/utils/helpers/getNestedError';
 import { generateOptions } from '@/utils/helpers/global.fns';
 import ModalContent from '@/components/common/form/ModalContent';
 import ModalFooter from '@/components/common/form/ModalFooter';
+import { isFieldRequired } from '@/utils/helpers/schemaHelpers';
 
 export default function FormRole({
     onClose,
@@ -63,6 +64,7 @@ export default function FormRole({
                             oldData?.[field.name] || field.defaultValue
                         }
                         options={generateOptions(options?.[field.name])}
+                        required={isFieldRequired(schema, field.name)}
                     />
                 ))}
             </ModalContent>
