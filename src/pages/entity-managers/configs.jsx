@@ -47,14 +47,7 @@ export const entityManagersColumns = [
 ];
 
 export const entityManagersFields = [
-    {
-        name: 'name.en',
-        label: 'validation.name.label.en',
-        type: 'text',
-        placeholder: 'validation.name.placeholder.en',
-        editMode: true,
-        viewMode: true
-    },
+    // Right Column - Primary Information
     {
         name: 'name.ar',
         label: 'validation.name.label.ar',
@@ -64,11 +57,10 @@ export const entityManagersFields = [
         viewMode: true
     },
     {
-        name: 'status',
-        label: 'validation.status.label',
-        type: 'select',
-        placeholder: 'validation.status.placeholder',
-        defaultValue: 'active',
+        name: 'name.en',
+        label: 'validation.name.label.en',
+        type: 'text',
+        placeholder: 'validation.name.placeholder.en',
         editMode: true,
         viewMode: true
     },
@@ -81,14 +73,6 @@ export const entityManagersFields = [
         viewMode: true
     },
     {
-        name: 'nationality_id',
-        label: 'validation.nationality_id.label',
-        type: 'select',
-        placeholder: 'validation.nationality_id.placeholder',
-        editMode: true,
-        viewMode: true
-    },
-    {
         name: 'city_id',
         label: 'validation.city_id.label',
         type: 'select',
@@ -96,6 +80,7 @@ export const entityManagersFields = [
         editMode: true,
         viewMode: true
     },
+
     {
         name: 'branch_id',
         label: 'validation.branch_id.label',
@@ -105,7 +90,7 @@ export const entityManagersFields = [
         viewMode: true,
         info: 'info.branch_id'
     },
-        {
+    {
         name: 'entity_id',
         label: 'validation.entity_id.label',
         type: 'select',
@@ -115,6 +100,14 @@ export const entityManagersFields = [
         info: 'info.entity'
     },
     {
+        name: 'nationality_id',
+        label: 'validation.nationality_id.label',
+        type: 'select',
+        placeholder: 'validation.nationality_id.placeholder',
+        editMode: true,
+        viewMode: true
+    },
+    {
         name: 'academic_qualification_id',
         label: 'validation.academic_qualification_id.label',
         type: 'select',
@@ -122,27 +115,11 @@ export const entityManagersFields = [
         editMode: true,
         viewMode: true
     },
-    // {
-    //     name: 'specification_id',
-    //     label: 'validation.specification_id.label',
-    //     type: 'select',
-    //     placeholder: 'validation.specification_id.placeholder',
-    //     editMode: true,
-    //     viewMode: true
-    // },
     {
-        name: 'national_id',
-        label: 'validation.national_id.label',
-        type: 'text',
-        placeholder: 'validation.national_id.placeholder',
-        editMode: true,
-        viewMode: true
-    },
-    {
-        name: 'gender',
-        label: 'validation.gender.label',
+        name: 'major_id',
+        label: 'validation.major_id.label',
         type: 'select',
-        placeholder: 'validation.gender.placeholder',
+        placeholder: 'validation.major_id.placeholder',
         editMode: true,
         viewMode: true
     },
@@ -165,6 +142,49 @@ export const entityManagersFields = [
         viewMode: true
     },
     {
+        name: 'memorization_amount',
+        label: 'validation.memorization_amount.label',
+        type: 'text',
+        placeholder: 'validation.memorization_amount.placeholder',
+        editMode: true,
+        viewMode: true
+    },
+    {
+        name: 'status',
+        label: 'validation.status.label',
+        type: 'select',
+        placeholder: 'validation.status.placeholder',
+        defaultValue: 'active',
+        editMode: true,
+        viewMode: true
+    },
+    // Left Column - Additional Information
+    {
+        name: 'profile_image',
+        label: 'validation.profile_picture.label',
+        type: 'file',
+        placeholder: 'validation.profile_image.placeholder',
+        editMode: true,
+        viewMode: true,
+        accept: 'image/*'
+    },
+    {
+        name: 'national_id',
+        label: 'validation.national_id.label',
+        type: 'text',
+        placeholder: 'validation.national_id.placeholder',
+        editMode: true,
+        viewMode: true
+    },
+    {
+        name: 'gender',
+        label: 'validation.gender.label',
+        type: 'select',
+        placeholder: 'validation.gender.placeholder',
+        editMode: true,
+        viewMode: true
+    },
+    {
         name: 'manager_phone',
         label: 'validation.manager_phone.label',
         type: 'text',
@@ -181,37 +201,12 @@ export const entityManagersFields = [
         viewMode: true
     },
     {
-        name: 'memorization_amount',
-        label: 'validation.memorization_amount.label',
-        type: 'text',
-        placeholder: 'validation.memorization_amount.placeholder',
-        editMode: true,
-        viewMode: true
-    },
-    {
-        name: 'major_id',
-        label: 'validation.major_id.label',
-        type: 'select',
-        placeholder: 'validation.major_id.placeholder',
-        editMode: true,
-        viewMode: true
-    },
-    {
         name: 'address',
         label: 'validation.entity_manager_address.label',
         type: 'textarea',
         placeholder: 'validation.entity_manager_address.placeholder',
         editMode: true,
         viewMode: true
-    },
-    {
-        name: 'profile_image',
-        label: 'validation.profile_picture.label',
-        type: 'file',
-        placeholder: 'validation.profile_image.placeholder',
-        editMode: true,
-        viewMode: true,
-        accept: 'image/*'
     },
     {
         name: 'files',
