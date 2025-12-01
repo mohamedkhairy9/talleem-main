@@ -31,6 +31,8 @@ export default function Parents() {
         <div>
             <Table
                 title={t('table_titles.parents')}
+                enableAdd={false}
+
                 refresh={refresh}
                 loading={isLoading}
                 data={tableData}
@@ -46,7 +48,7 @@ export default function Parents() {
                 setFilters={setFilters}
                 filters={filters}
             />
-            {isOpen.add && <CreateParent onClose={toggle.add} />}
+            {/* {isOpen.add && <CreateParent onClose={toggle.add} />} */}
             {isOpen.edit && (
                 <EditParent
                     onClose={toggle.edit}
