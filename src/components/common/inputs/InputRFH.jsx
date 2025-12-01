@@ -18,7 +18,9 @@ export default function InputRFH({
     isMulti = false,
     info = '',
     min,
-    max
+    max,
+    required = false,
+    loading = false
 }) {
     const { t } = useLocale();
 
@@ -37,6 +39,8 @@ export default function InputRFH({
                 disabled={disabled}
                 placeholder={placeholder}
                 isMulti={isMulti}
+                required={required}
+                loading={loading}
             />
         );
     }
@@ -69,6 +73,7 @@ export default function InputRFH({
                     className="block font-medium text-gray-700 mb-1"
                 >
                     {t(label)}
+                    {required && <span className="text-red-500 ml-1">*</span>}
                 </label>
             )}
 
@@ -87,7 +92,10 @@ export default function InputRFH({
                             ${error ? 'border-red-300 focus:border-red-500' : 'border-gray-300'}
                         `}
                     />
-                    <span className="text-gray-700">{t(label)}</span>
+                    <span className="text-gray-700">
+                        {t(label)}
+                        {required && <span className="text-red-500 ml-1">*</span>}
+                    </span>
                 </label>
             ) : (
                 <>

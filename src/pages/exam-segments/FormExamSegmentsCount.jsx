@@ -6,6 +6,7 @@ import InputRFH from '@/components/common/inputs/InputRFH';
 import Btn from '@/components/common/buttons/Btn';
 import { getNestedError } from '@/utils/helpers/getNestedError';
 import { generateOptions } from '@/utils/helpers/global.fns';
+import { isFieldRequired } from '@/utils/helpers/schemaHelpers';
 
 export default function FormExamSegmentsCount({
     onClose,
@@ -65,6 +66,7 @@ export default function FormExamSegmentsCount({
                             defaultValue={oldData?.[field.name] || field.defaultValue}
                             min={field.min}
                             max={field.max}
+                            required={isFieldRequired(schema, field.name)}
                         />
                     ))}
             </div>

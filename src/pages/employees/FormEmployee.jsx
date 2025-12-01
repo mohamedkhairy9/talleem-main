@@ -11,6 +11,7 @@ import { onlyDate } from '@/utils/helpers/global.fns';
 import useFilterBranch from '@/utils/hooks/global/useFilterBranches';
 import ModalContent from '@/components/common/form/ModalContent';
 import ModalFooter from '@/components/common/form/ModalFooter';
+import { isFieldRequired } from '@/utils/helpers/schemaHelpers';
 
 export default function FormEmployee({
     onClose,
@@ -92,6 +93,7 @@ export default function FormEmployee({
                             label={field.label}
                             name={fieldName}
                             accept={field.accept}
+                            required={isFieldRequired(schema, fieldName)}
                             onChange={e => {
                                 const file = e.target.files?.[0];
                                 if (file) {
@@ -128,6 +130,7 @@ export default function FormEmployee({
                     multiple={field.multiple}
                     defaultValue={defaultValue || []}
                     setValue={setValue}
+                    required={isFieldRequired(schema, fieldName)}
                 />
             );
         }
@@ -153,6 +156,7 @@ export default function FormEmployee({
                         : options?.[fieldName]
                 )}
                 defaultValue={defaultValue}
+                required={isFieldRequired(schema, fieldName)}
             />
         );
     };

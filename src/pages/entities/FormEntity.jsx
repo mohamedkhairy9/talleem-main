@@ -22,6 +22,7 @@ import { activitiesService } from '@/api/services/activities.service';
 import { allData } from '@/utils/constants/global.constants';
 import { useQuery } from '@tanstack/react-query';
 import { API_KEYS } from '@/api/endpoints';
+import { isFieldRequired } from '@/utils/helpers/schemaHelpers';
 
 export default function FormEntity({
     onClose,
@@ -314,6 +315,7 @@ export default function FormEntity({
                             label={field.label}
                             name={fieldName}
                             accept={field.accept}
+                            required={isFieldRequired(adjustedSchema, fieldName)}
                             onChange={e => {
                                 const file = e.target.files?.[0];
                                 if (file) {
@@ -350,6 +352,7 @@ export default function FormEntity({
                     multiple={field.multiple}
                     defaultValue={defaultValue || []}
                     setValue={setValue}
+                    required={isFieldRequired(adjustedSchema, fieldName)}
                 />
             );
         }
@@ -384,6 +387,7 @@ export default function FormEntity({
                         : generateOptions(fieldOptionsValue)
                 }
                 defaultValue={defaultValue}
+                required={isFieldRequired(adjustedSchema, fieldName)}
             />
         );
     };

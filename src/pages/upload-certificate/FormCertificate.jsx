@@ -10,6 +10,7 @@ import { useStudentsQuery } from '@/api/hooks/useStudents';
 import { enabledDisabledOptions } from '@/utils/constants/options';
 import ModalContent from '@/components/common/form/ModalContent';
 import ModalFooter from '@/components/common/form/ModalFooter';
+import { isFieldRequired } from '@/utils/helpers/schemaHelpers';
 
 export default function FormCertificate({
     onClose,
@@ -172,6 +173,7 @@ export default function FormCertificate({
                                     label={field.label}
                                     name={field.name}
                                     accept={field.accept}
+                                    required={isFieldRequired(schema, field.name)}
                                     onChange={e => {
                                         const file = e.target.files?.[0];
                                         if (file) {
@@ -212,6 +214,7 @@ export default function FormCertificate({
                                 options={generateOptions(enhancedOptions[field.name])}
                                 defaultValue={defaultValues[field.name] || field.defaultValue}
                                 max={field.max}
+                                required={isFieldRequired(schema, field.name)}
                             />
                         </div>
                     );

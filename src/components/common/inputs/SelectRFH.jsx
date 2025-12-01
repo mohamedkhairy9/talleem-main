@@ -17,7 +17,9 @@ export default function SelectRFH({
     defaultValue,
     classes,
     placeholder = 'Please select ..',
-    info = ''
+    info = '',
+    required = false,
+    loading = false
 }) {
     const { t, isRTL } = useLocale();
     const [showInfo, setShowInfo] = useState(false);
@@ -86,7 +88,10 @@ export default function SelectRFH({
                     htmlFor={name}
                     className="flex items-center gap-2 font-medium text-gray-700 mb-1 font-montserrat"
                 >
-                    <span>{t(label)}</span>
+                    <span>
+                        {t(label)}
+                        {required && <span className="text-red-500 ml-1">*</span>}
+                    </span>
 
                     {info && (
                         <FaInfoCircle
@@ -114,7 +119,8 @@ export default function SelectRFH({
                             classNamePrefix="react-select"
                             options={options}
                             isDisabled={disabled}
-                            placeholder={t(placeholder)}
+                            isLoading={loading}
+                            placeholder={loading ? t('common.loading') : t(placeholder)}
                             menuPortalTarget={document.body}
                             menuPosition="fixed"
                             styles={{

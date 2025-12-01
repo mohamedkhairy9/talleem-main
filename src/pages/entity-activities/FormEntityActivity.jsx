@@ -6,6 +6,7 @@ import InputRFH from '@/components/common/inputs/InputRFH';
 import Btn from '@/components/common/buttons/Btn';
 import { getNestedError } from '@/utils/helpers/getNestedError';
 import { generateOptions } from '@/utils/helpers/global.fns';
+import { isFieldRequired } from '@/utils/helpers/schemaHelpers';
 
 export default function FormEntityActivity({
     onClose,
@@ -61,6 +62,7 @@ export default function FormEntityActivity({
                             defaultValue={
                                 oldData?.[field.name] || field.defaultValue
                             }
+                            required={isFieldRequired(schema, field.name)}
                         />
                     ))}
             </div>

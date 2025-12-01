@@ -42,6 +42,15 @@ export const entitiesColumns = [
 ];
 
 export const entitiesFields = [
+    // Basic Entity Information
+    {
+        name: 'name.ar',
+        label: 'validation.entity_name.label.ar',
+        type: 'text',
+        placeholder: 'validation.name.placeholder.ar',
+        editMode: true,
+        viewMode: true
+    },
     {
         name: 'name.en',
         label: 'validation.entity_name.label.en',
@@ -51,10 +60,10 @@ export const entitiesFields = [
         viewMode: true
     },
     {
-        name: 'name.ar',
-        label: 'validation.entity_name.label.ar',
+        name: 'license_number',
+        label: 'validation.license_number.label',
         type: 'text',
-        placeholder: 'validation.name.placeholder.ar',
+        placeholder: 'validation.license_number.placeholder',
         editMode: true,
         viewMode: true
     },
@@ -67,6 +76,70 @@ export const entitiesFields = [
         editMode: true,
         viewMode: true
     },
+    {
+        name: 'registration_date',
+        label: 'validation.registration_date.label',
+        type: 'date',
+        placeholder: 'validation.registration_date.placeholder',
+        editMode: true,
+        viewMode: true,
+        max: new Date().toISOString().split('T')[0]
+    },
+    {
+        name: 'main_program_id',
+        label: 'validation.main_program_id.label',
+        type: 'select',
+        placeholder: 'validation.main_program_id.placeholder',
+        editMode: true,
+        viewMode: true
+    },
+    {
+        name: 'entity_category_id',
+        label: 'validation.entity_category_id.label',
+        type: 'select',
+        placeholder: 'validation.entity_category_id.placeholder',
+        editMode: true,
+        viewMode: true,
+        conditional: true,
+        showWhen: { main_program_id: [1, 2] }
+    },
+    {
+        name: 'education_program_entity_type_classification',
+        label: 'validation.education_program_entity_type_classification.label',
+        type: 'select',
+        placeholder:
+            'validation.education_program_entity_type_classification.placeholder',
+        editMode: true,
+        viewMode: true,
+        conditional: true,
+        showWhen: { main_program_id: 1 }
+    },
+    {
+        name: 'activity_ids',
+        label: 'validation.activity_ids.label',
+        type: 'select',
+        placeholder: 'validation.activity_ids.placeholder',
+        editMode: true,
+        viewMode: true,
+        isMulti: true
+    },
+    {
+        name: 'min_acceptance_age',
+        label: 'validation.min_acceptance_age.label',
+        type: 'number',
+        placeholder: 'validation.min_acceptance_age.placeholder',
+        editMode: true,
+        viewMode: true
+    },
+    {
+        name: 'session_mode_id',
+        label: 'validation.session_mode_id.label',
+        type: 'select',
+        placeholder: 'validation.session_mode_id.placeholder',
+        editMode: true,
+        viewMode: true
+    },
+    // Address and Location Section
     {
         name: 'city_id',
         label: 'validation.city_id.label',
@@ -93,34 +166,24 @@ export const entitiesFields = [
         viewMode: true,
         info: 'info.branch_id'
     },
+
     {
-        name: 'main_program_id',
-        label: 'validation.main_program_id.label',
-        type: 'select',
-        placeholder: 'validation.main_program_id.placeholder',
-        editMode: true,
-        viewMode: true
-    },
-    {
-        name: 'education_program_entity_type_classification',
-        label: 'validation.education_program_entity_type_classification.label',
-        type: 'select',
-        placeholder:
-            'validation.education_program_entity_type_classification.placeholder',
+        name: 'latitude',
+        label: 'validation.latitude.label',
+        type: 'text',
+        placeholder: 'validation.latitude.placeholder',
         editMode: true,
         viewMode: true,
-        conditional: true,
-        showWhen: { main_program_id: 1 }
+        disabled: true
     },
     {
-        name: 'entity_category_id',
-        label: 'validation.entity_category_id.label',
-        type: 'select',
-        placeholder: 'validation.entity_category_id.placeholder',
+        name: 'longitude',
+        label: 'validation.longitude.label',
+        type: 'text',
+        placeholder: 'validation.longitude.placeholder',
         editMode: true,
         viewMode: true,
-        conditional: true,
-        showWhen: { main_program_id: [1, 2] }
+        disabled: true
     },
     {
         name: 'location_type_id',
@@ -130,20 +193,11 @@ export const entitiesFields = [
         editMode: true,
         viewMode: true
     },
-
     {
-        name: 'min_acceptance_age',
-        label: 'validation.min_acceptance_age.label',
-        type: 'number',
-        placeholder: 'validation.min_acceptance_age.placeholder',
-        editMode: true,
-        viewMode: true
-    },
-    {
-        name: 'session_mode_id',
-        label: 'validation.session_mode_id.label',
-        type: 'select',
-        placeholder: 'validation.session_mode_id.placeholder',
+        name: 'address',
+        label: 'validation.address.label',
+        type: 'textarea',
+        placeholder: 'validation.address.placeholder',
         editMode: true,
         viewMode: true
     },
@@ -163,32 +217,7 @@ export const entitiesFields = [
         editMode: true,
         viewMode: true
     },
-    {
-        name: 'address',
-        label: 'validation.address.label',
-        type: 'textarea',
-        placeholder: 'validation.address.placeholder',
-        editMode: true,
-        viewMode: true
-    },
-    {
-        name: 'latitude',
-        label: 'validation.latitude.label',
-        type: 'text',
-        placeholder: 'validation.latitude.placeholder',
-        editMode: true,
-        viewMode: true,
-        disabled: true
-    },
-    {
-        name: 'longitude',
-        label: 'validation.longitude.label',
-        type: 'text',
-        placeholder: 'validation.longitude.placeholder',
-        editMode: true,
-        viewMode: true,
-        disabled: true
-    },
+    // Facility Details
     {
         name: 'area',
         label: 'validation.area.label',
@@ -222,32 +251,6 @@ export const entitiesFields = [
         viewMode: true
     },
     {
-        name: 'activity_ids',
-        label: 'validation.activity_ids.label',
-        type: 'select',
-        placeholder: 'validation.activity_ids.placeholder',
-        editMode: true,
-        viewMode: true,
-        isMulti: true
-    },
-    {
-        name: 'registration_date',
-        label: 'validation.registration_date.label',
-        type: 'date',
-        placeholder: 'validation.registration_date.placeholder',
-        editMode: true,
-        viewMode: true,
-        max: new Date().toISOString().split('T')[0]
-    },
-    {
-        name: 'license_number',
-        label: 'validation.license_number.label',
-        type: 'text',
-        placeholder: 'validation.license_number.placeholder',
-        editMode: true,
-        viewMode: true
-    },
-    {
         name: 'files',
         label: 'validation.files.label',
         type: 'file',
@@ -260,15 +263,6 @@ export const entitiesFields = [
 
 export const managerFields = [
     {
-        name: 'manager.name.en',
-        label: 'validation.name.label.en',
-        type: 'text',
-        placeholder: 'validation.name.placeholder.en',
-        editMode: true,
-        viewMode: true,
-        section: 'manager'
-    },
-    {
         name: 'manager.name.ar',
         label: 'validation.name.label.ar',
         type: 'text',
@@ -278,67 +272,22 @@ export const managerFields = [
         section: 'manager'
     },
     {
-        name: 'manager.status',
-        label: 'validation.status.label',
-        type: 'select',
-        placeholder: 'validation.status.placeholder',
-        defaultValue: true,
-        editMode: true,
-        viewMode: true,
-        section: 'manager'
-    },
-    {
-        name: 'manager.manager_email',
-        label: 'validation.manager_email.label',
-        type: 'email',
-        placeholder: 'validation.manager_email.placeholder',
-        editMode: true,
-        viewMode: true,
-        section: 'manager'
-    },
-    {
-        name: 'manager.manager_phone',
-        label: 'validation.manager_phone.label',
+        name: 'manager.name.en',
+        label: 'validation.name.label.en',
         type: 'text',
-        placeholder: 'validation.manager_phone.placeholder',
+        placeholder: 'validation.name.placeholder.en',
         editMode: true,
         viewMode: true,
         section: 'manager'
     },
     {
-        name: 'manager.national_id',
-        label: 'validation.national_id.label',
-        type: 'text',
-        placeholder: 'validation.national_id.placeholder',
+        name: 'manager.profile_image',
+        label: 'validation.profile_picture.label',
+        type: 'file',
+        placeholder: 'validation.profile_image.placeholder',
         editMode: true,
         viewMode: true,
-        section: 'manager'
-    },
-    {
-        name: 'manager.gender',
-        label: 'validation.gender.label',
-        type: 'select',
-        placeholder: 'validation.gender.placeholder',
-        editMode: true,
-        viewMode: true,
-        section: 'manager'
-    },
-    {
-        name: 'manager.nationality_id',
-        label: 'validation.nationality_id.label',
-        type: 'select',
-        placeholder: 'validation.nationality_id.placeholder',
-        editMode: true,
-        viewMode: true,
-        section: 'manager'
-    },
-    {
-        name: 'manager.city_id',
-        label: 'validation.city_id.label',
-        type: 'select',
-        placeholder: 'validation.city_id.placeholder',
-        editMode: true,
-        viewMode: true,
+        accept: 'image/*',
         section: 'manager'
     },
     {
@@ -360,6 +309,24 @@ export const managerFields = [
         section: 'manager'
     },
     {
+        name: 'manager.city_id',
+        label: 'validation.city_id.label',
+        type: 'select',
+        placeholder: 'validation.city_id.placeholder',
+        editMode: true,
+        viewMode: true,
+        section: 'manager'
+    },
+    {
+        name: 'manager.nationality_id',
+        label: 'validation.nationality_id.label',
+        type: 'select',
+        placeholder: 'validation.nationality_id.placeholder',
+        editMode: true,
+        viewMode: true,
+        section: 'manager'
+    },
+    {
         name: 'manager.date_of_birth',
         label: 'validation.date_of_birth.label',
         type: 'date',
@@ -372,19 +339,10 @@ export const managerFields = [
 
     },
     {
-        name: 'manager.address',
-        label: 'validation.address.label',
-        type: 'textarea',
-        placeholder: 'validation.address.placeholder',
-        editMode: true,
-        viewMode: true,
-        section: 'manager'
-    },
-    {
-        name: 'manager.memorization_amount',
-        label: 'validation.memorization_amount.label',
-        type: 'text',
-        placeholder: 'validation.memorization_amount.placeholder',
+        name: 'manager.gender',
+        label: 'validation.gender.label',
+        type: 'select',
+        placeholder: 'validation.gender.placeholder',
         editMode: true,
         viewMode: true,
         section: 'manager'
@@ -399,13 +357,48 @@ export const managerFields = [
         section: 'manager'
     },
     {
-        name: 'manager.profile_image',
-        label: 'validation.profile_picture.label',
-        type: 'file',
-        placeholder: 'validation.profile_image.placeholder',
+        name: 'manager.national_id',
+        label: 'validation.national_id.label',
+        type: 'text',
+        placeholder: 'validation.national_id.placeholder',
         editMode: true,
         viewMode: true,
-        accept: 'image/*',
+        section: 'manager'
+    },
+    {
+        name: 'manager.memorization_amount',
+        label: 'validation.memorization_amount.label',
+        type: 'text',
+        placeholder: 'validation.memorization_amount.placeholder',
+        editMode: true,
+        viewMode: true,
+        section: 'manager'
+    },
+    {
+        name: 'manager.manager_phone',
+        label: 'validation.manager_phone.label',
+        type: 'text',
+        placeholder: 'validation.manager_phone.placeholder',
+        editMode: true,
+        viewMode: true,
+        section: 'manager'
+    },
+    {
+        name: 'manager.manager_email',
+        label: 'validation.manager_email.label',
+        type: 'email',
+        placeholder: 'validation.manager_email.placeholder',
+        editMode: true,
+        viewMode: true,
+        section: 'manager'
+    },
+    {
+        name: 'manager.address',
+        label: 'validation.address.label',
+        type: 'textarea',
+        placeholder: 'validation.address.placeholder',
+        editMode: true,
+        viewMode: true,
         section: 'manager'
     },
     {
@@ -416,6 +409,16 @@ export const managerFields = [
         editMode: true,
         viewMode: true,
         multiple: true,
+        section: 'manager'
+    },
+    {
+        name: 'manager.status',
+        label: 'validation.status.label',
+        type: 'select',
+        placeholder: 'validation.status.placeholder',
+        defaultValue: true,
+        editMode: true,
+        viewMode: true,
         section: 'manager'
     }
 ];

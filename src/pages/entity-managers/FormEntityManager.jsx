@@ -12,6 +12,7 @@ import useLocale from '@/utils/hooks/global/useLocale';
 import i18next from 'i18next';
 import ModalContent from '@/components/common/form/ModalContent';
 import ModalFooter from '@/components/common/form/ModalFooter';
+import { isFieldRequired } from '@/utils/helpers/schemaHelpers';
 
 export default function FormEntityManager({
     onClose,
@@ -200,6 +201,7 @@ export default function FormEntityManager({
                                         info={field.info}
                                         options={getFieldOptions(field.name)}
                                         defaultValue={oldData?.[field.name] || field.defaultValue}
+                                        required={isFieldRequired(schema, field.name)}
                                     />
                                 </div>
                             );
@@ -224,6 +226,7 @@ export default function FormEntityManager({
                                         info={field.info}
                                         options={getFieldOptions(field.name)}
                                         defaultValue={oldData?.[field.name] || field.defaultValue}
+                                        required={isFieldRequired(schema, field.name)}
                                     />
                                 </div>
                             );
@@ -252,6 +255,7 @@ export default function FormEntityManager({
                                                 label={field.label}
                                                 name={field.name}
                                                 accept={field.accept}
+                                                required={isFieldRequired(schema, field.name)}
                                                 onChange={handleProfileImageChange}
                                             />
                                             {profileImagePreview && (
@@ -276,6 +280,7 @@ export default function FormEntityManager({
                                             name={field.name}
                                             multiple={field.multiple}
                                             defaultValue={oldData?.files || []}
+                                            required={isFieldRequired(schema, field.name)}
                                         />
                                     )
                                 ) : (
@@ -295,6 +300,7 @@ export default function FormEntityManager({
                                         info={field.info}
                                         min={field.min}
                                         max={field.max}
+                                        required={isFieldRequired(schema, field.name)}
                                     />
                                 )}
                             </div>
