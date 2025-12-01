@@ -16,12 +16,24 @@ export default function FormBranch({
     viewMode,
     isPending,
     mutate,
-    options
+    options,
+    onCityChange,
+    neighborhoodsLoading
 }) {
-    const { register, errors, handleSubmit, control, reset } = useRFH({
+    const { register, errors, handleSubmit, control, watch, setValue } = useRFH({
         schema,
         defaultValues: oldData
     });
+
+    const cityId = watch('city_id');
+
+    useEffect(() => {
+        if (cityId && onCityChange) {
+            onCityChange(cityId);
+            // Clear neighborhood selection when city changes
+            setValue('neighborhood_id', '');
+        }
+    }, [cityId, onCityChange, setValue]);
 
     function onSubmit(data) {
         console.log('data', data);
@@ -52,7 +64,14 @@ export default function FormBranch({
                         error={getNestedError(errors, field.name)}
                         key={field.name}
                         type={field.type}
-                        disabled={viewMode}
+                        disabled={
+                            viewMode ||
+                            (field.name === 'neighborhood_id' && !cityId)
+                        }
+                        loading={
+                            field.name === 'neighborhood_id' &&
+                            neighborhoodsLoading
+                        }
                         placeholder={field.placeholder}
                         label={field.label}
                         name={field.name}

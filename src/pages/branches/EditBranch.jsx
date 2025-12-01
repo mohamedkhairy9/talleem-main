@@ -1,7 +1,7 @@
 import { useUpdateBranchMutation } from '@/api/hooks/useBranches';
 import Modal from '@/components/common/form/Modal';
 import ModalHeader from '@/components/common/form/ModalHeader';
-import React from 'react';
+import React, { useState } from 'react';
 import FormBranch from './FormBranch';
 import { useCitiesQuery } from '@/api/hooks/useCities';
 import { useNeighborhoodsQuery } from '@/api/hooks/useNeighborhoods';
@@ -12,13 +12,16 @@ import { enabledDisabledOptions } from '@/utils/constants/options';
 export default function EditBranch({ onClose, oldData }) {
     console.log('oldData', oldData);
 
+    const [selectedCityId, setSelectedCityId] = useState(oldData?.city_id || null);
     const { mutate, isPending } = useUpdateBranchMutation();
     const { data: citiesData, isLoading: citiesLoading } =
         useCitiesQuery(allData);
     const { data: neighborhoodsData, isLoading: neighborhoodsLoading } =
-        useNeighborhoodsQuery(allData);
+        useNeighborhoodsQuery(
+            selectedCityId ? { city_id: selectedCityId } : allData
+        );
 
-    if (citiesLoading || neighborhoodsLoading) return <Loader />;
+    if (citiesLoading) return <Loader />;
 
     return (
         <Modal onClose={onClose}>
@@ -29,6 +32,8 @@ export default function EditBranch({ onClose, oldData }) {
                 isPending={isPending}
                 onClose={onClose}
                 editMode={true}
+                onCityChange={setSelectedCityId}
+                neighborhoodsLoading={neighborhoodsLoading}
                 options={{
                     city_id: citiesData?.data,
                     neighborhood_id: neighborhoodsData?.data,

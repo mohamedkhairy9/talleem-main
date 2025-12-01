@@ -14,9 +14,11 @@ export default function ViewBranch({ onClose, oldData }) {
     const { data: citiesData, isLoading: citiesLoading } =
         useCitiesQuery(allData);
     const { data: neighborhoodsData, isLoading: neighborhoodsLoading } =
-        useNeighborhoodsQuery(allData);
+        useNeighborhoodsQuery(
+            oldData?.city_id ? { city_id: oldData.city_id } : allData
+        );
 
-    if (citiesLoading || neighborhoodsLoading) return <Loader />;
+    if (citiesLoading) return <Loader />;
 
     return (
         <Modal onClose={onClose}>
@@ -26,6 +28,7 @@ export default function ViewBranch({ onClose, oldData }) {
                 onClose={onClose}
                 editMode={false}
                 viewMode={true}
+                neighborhoodsLoading={neighborhoodsLoading}
                 options={{
                     city_id: citiesData?.data,
                     neighborhood_id: neighborhoodsData?.data,
