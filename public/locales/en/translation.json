@@ -110,6 +110,13 @@
             "positive": "Total grade must be positive",
             "integer": "Total grade must be an integer"
         },
+        "pass_grade": {
+            "label": "Pass Grade",
+            "placeholder": "Enter pass grade (e.g., 90)",
+            "required": "Pass grade is required",
+            "positive": "Pass grade must be positive",
+            "integer": "Pass grade must be an integer"
+        },
         "warning_type": {
             "label": "Warning Type",
             "placeholder": "Select warning type"

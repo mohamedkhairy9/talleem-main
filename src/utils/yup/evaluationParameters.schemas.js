@@ -28,6 +28,11 @@ export const evaluationParametersSchema = yup.object().shape({
         .required('validation.total_grade.required')
         .positive('validation.total_grade.positive')
         .integer('validation.total_grade.integer'),
+    pass_grade: yup
+        .number()
+        .required('validation.pass_grade.required')
+        .positive('validation.pass_grade.positive')
+        .integer('validation.pass_grade.integer'),
     dashboards: yup
         .array()
         .of(yup.string().oneOf(['student', 'teacher', 'entity', 'guest', 'employee', 'super-admin', 'parent']))
