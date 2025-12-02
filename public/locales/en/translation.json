@@ -1426,7 +1426,9 @@
         "deletePageSegments": "Delete Page Segments",
         "deletePageConfirm": "Are you sure you want to delete all segments for this page?",
         "pageSegmentsDeleted": "All page segments deleted successfully",
-        "deletePageFailed": "Failed to delete page segments"
+        "deletePageFailed": "Failed to delete page segments",
+        "juz": "Juz",
+        "surah": "Surah"
     },
     "quran_viewer": {
         "no_content_page": "No content for this page"

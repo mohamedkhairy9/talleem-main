@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { fontLoader } from '@/utils/helpers/fontLoader';
 import './QuranSegmentationView.css';
 import { dbLoader } from '@/utils/helpers/databaseLoader';
@@ -7,6 +7,14 @@ import toastService from '@/utils/helpers/Toastservice';
 import { FaEye } from 'react-icons/fa';
 import useLocale from '@/utils/hooks/global/useLocale';
 import DeleteModal from '@/components/common/form/DeleteModal';
+import i18next from 'i18next';
+
+// Juz starting pages in standard Madani Mushaf
+const JUZ_START_PAGES = [
+    1, 22, 42, 62, 82, 102, 121, 142, 162, 182,
+    201, 222, 242, 262, 282, 302, 322, 342, 362, 382,
+    402, 422, 442, 462, 482, 502, 522, 542, 562, 582
+];
 
 /**
  * Quran Segmentation View Component
@@ -229,6 +237,61 @@ const QuranSegmentationView = () => {
         const surah = surahData[surahNumber];
         return surah.glyph || (surah.name_arabic ? `سُورَةُ ${surah.name_arabic}` : surah.name || '');
     };
+
+    /**
+     * Current page info (Juz and Surah)
+     */
+    const currentPageInfo = useMemo(() => {
+        const lang = i18next.language;
+        
+        // Get Juz number from page number
+        let juzNumber = 1;
+        for (let i = JUZ_START_PAGES.length - 1; i >= 0; i--) {
+            if (currentPage >= JUZ_START_PAGES[i]) {
+                juzNumber = i + 1;
+                break;
+            }
+        }
+
+        // Get surah info from first word of the page
+        let surahNumber = null;
+        if (wordsDb && pageLines.length) {
+            const firstAyahLine = pageLines.find(line => line.line_type === 'ayah');
+            if (firstAyahLine) {
+                try {
+                    const query = `SELECT location FROM words WHERE id = ${firstAyahLine.first_word_id} LIMIT 1`;
+                    const result = wordsDb.exec(query);
+
+                    if (result.length > 0 && result[0].values.length > 0) {
+                        const location = result[0].values[0][0]; // e.g., "2:17:1"
+                        if (location) {
+                            const [surahNum] = location.split(':').map(Number);
+                            surahNumber = surahNum;
+                        }
+                    }
+                } catch (error) {
+                    console.error('Error getting page surah info:', error);
+                }
+            }
+        }
+        
+        let surahNameArabic = '';
+        let surahNameEnglish = '';
+        
+        if (surahNumber && surahData && surahData[surahNumber]) {
+            const surah = surahData[surahNumber];
+            surahNameArabic = surah.name_arabic || '';
+            surahNameEnglish = surah.name_simple || surah.name || '';
+        }
+
+        return {
+            juz: juzNumber,
+            surahNumber,
+            surahNameArabic,
+            surahNameEnglish,
+            surahDisplayName: lang === 'ar' ? surahNameArabic : surahNameEnglish
+        };
+    }, [currentPage, pageLines, wordsDb, surahData]);
 
     /**
      * Extract verse number from verse_key (e.g., "1:5" → "5")
@@ -602,6 +665,21 @@ const QuranSegmentationView = () => {
             {/* Header */}
             <div className="header">
                 <h1>{t('mushaf_management.title')}</h1>
+                
+                {/* Page Info - Juz and Surah */}
+                <div className="page-info">
+                    {currentPageInfo.juz && (
+                        <span className="juz-info">
+                            {t('mushaf_management.juz')}: {currentPageInfo.juz}
+                        </span>
+                    )}
+                    {currentPageInfo.surahDisplayName && (
+                        <span className="surah-info">
+                            {t('mushaf_management.surah')}: {currentPageInfo.surahDisplayName}
+                        </span>
+                    )}
+                </div>
+
                 <div className="page-navigation">
                     <button 
                         onClick={() => setCurrentPage(p => Math.max(1, p - 1))}

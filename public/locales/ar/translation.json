@@ -1340,7 +1340,9 @@
         "deletePageSegments": "حذف مقاطع الصفحة",
         "deletePageConfirm": "هل أنت متأكد من حذف جميع مقاطع هذه الصفحة؟",
         "pageSegmentsDeleted": "تم حذف جميع مقاطع الصفحة بنجاح",
-        "deletePageFailed": "فشل حذف مقاطع الصفحة"
+        "deletePageFailed": "فشل حذف مقاطع الصفحة",
+        "juz": "الجزء",
+        "surah": "السورة"
     },
     "quran_viewer": {
         "no_content_page": "لا يوجد محتوى لهذه الصفحة"
