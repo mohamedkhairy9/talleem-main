@@ -8,13 +8,13 @@ import React from 'react';
 const columnHelper = createColumnHelper();
 
 export const branchAdministrationsColumns = [
+    columnHelper.accessor('name', {
+        header: 'table_headers.name',
+        cell: info => <NameCell directValue={info.row.original.name} />
+    }),
     columnHelper.accessor('branch', {
         header: 'table_headers.branch',
         cell: info => <NameCell directValue={info.row.original.branch} />
-    }),
-    columnHelper.accessor('user', {
-        header: 'table_headers.user',
-        cell: info => <NameCell directValue={info.row.original.user} />
     }),
     columnHelper.accessor('status', {
         header: 'table_headers.status',
@@ -33,34 +33,26 @@ export const branchAdministrationsColumns = [
 
 export const branchAdministrationsFields = [
     {
+        name: 'name.en',
+        label: 'validation.name.label.en',
+        type: 'text',
+        placeholder: 'validation.name.placeholder.en',
+        editMode: true,
+        viewMode: true
+    },
+    {
+        name: 'name.ar',
+        label: 'validation.name.label.ar',
+        type: 'text',
+        placeholder: 'validation.name.placeholder.ar',
+        editMode: true,
+        viewMode: true
+    },
+    {
         name: 'branch_id',
         label: 'validation.branch_id.label',
         type: 'select',
         placeholder: 'validation.branch_id.placeholder',
-        editMode: true,
-        viewMode: true
-    },
-    {
-        name: 'user_id',
-        label: 'validation.user_id.label',
-        type: 'select',
-        placeholder: 'validation.user_id.placeholder',
-        editMode: true,
-        viewMode: true
-    },
-    {
-        name: 'description.en',
-        label: 'validation.description.label.en',
-        type: 'textarea',
-        placeholder: 'validation.description.placeholder.en',
-        editMode: true,
-        viewMode: true
-    },
-    {
-        name: 'description.ar',
-        label: 'validation.description.label.ar',
-        type: 'textarea',
-        placeholder: 'validation.description.placeholder.ar',
         editMode: true,
         viewMode: true
     },
@@ -75,7 +67,7 @@ export const branchAdministrationsFields = [
 ];
 
 export const branchAdministrationsDefaultValues = {
-    description: {
+    name: {
         en: '',
         ar: ''
     },
