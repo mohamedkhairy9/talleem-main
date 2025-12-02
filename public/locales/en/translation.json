@@ -406,7 +406,8 @@
             "placeholder": "Enter national ID",
             "numeric": "National ID must contain only numbers",
             "min": "National ID must be at least 10 characters",
-            "max": "National ID must not exceed 20 characters"
+            "max": "National ID must not exceed 20 characters",
+            "exact_11_digits": "National ID must be exactly 11 digits"
         },
         "phone": {
             "label": "Phone",
@@ -631,7 +632,8 @@
         },
         "registration_date": {
             "label": "Registration Date",
-            "placeholder": "Select registration date"
+            "placeholder": "Select registration date",
+            "past_only": "Registration date must be in the past"
         },
         "department": {
             "label": {

@@ -14,6 +14,8 @@ import calculateAge from '@/utils/helpers/ageCalculation';
 import ModalContent from '@/components/common/form/ModalContent';
 import ModalFooter from '@/components/common/form/ModalFooter';
 import { isFieldRequired } from '@/utils/helpers/schemaHelpers';
+import { useEntitiesQuery } from '@/api/hooks/useEntities';
+import { allData } from '@/utils/constants/global.constants';
 
 // Helper to extract education entity type data from oldData
 const extractEducationEntityTypeData = (oldData) => {
@@ -124,58 +126,34 @@ export default function FormStudent({
         }
         return false;
     }, [mainProgramId, isMinor]);
+
+    // Fetch entities dynamically based on selected branch and main program
+    const { data: entitiesData, isLoading: entitiesLoading } = useEntitiesQuery(
+        {
+            ...allData,
+            branch_id: branchId,
+            main_program_id: mainProgramId
+        },
+        {
+            enabled: !!branchId && !!mainProgramId
+        }
+    );
+
+    // Get entities from the dynamic query (memoized to prevent unnecessary re-renders)
+    const entities = useMemo(() => entitiesData?.data || [], [entitiesData?.data]);
+
     // Get the selected entity's education_program_entity_type
     const selectedEntityEducationType = useMemo(() => {
-        if (!entityId || !options.entity_id) return null;
+        if (!entityId || !entities.length) return null;
 
-        const selectedEntity = options.entity_id.find(entity => entity.id === Number(entityId));
+        const selectedEntity = entities.find(entity => entity.id === Number(entityId));
 
         if (selectedEntity?.education_program_entity_type) {
             return selectedEntity.education_program_entity_type;
         }
 
         return null;
-    }, [entityId, options.entity_id]);
-
-    // Filter entities based on main program AND branch
-    const filteredEntities = useMemo(() => {
-        if (!mainProgramId || !options.entity_id) {
-            return [];
-        }
-
-        // If no branch selected, return empty array
-        if (!branchId) {
-            return [];
-        }
-
-        const entities = options.entity_id;
-
-        // Filter by main program AND branch
-        const filtered = entities.filter(entity => {
-            const matchesProgram = entity.main_program?.id === Number(mainProgramId);
-
-            // Check if entity belongs to the selected branch
-            // Adjust the property name based on your actual data structure:
-            let matchesBranch = false;
-
-            if (entity.branch_id) {
-                // If entity has direct branch_id
-                matchesBranch = entity.branch_id === Number(branchId);
-            } else if (entity.branch?.id) {
-                // If entity has branch object
-                matchesBranch = entity.branch.id === Number(branchId);
-            } else if (Array.isArray(entity.branches)) {
-                // If entity has multiple branches (many-to-many relationship)
-                matchesBranch = entity.branches.some(branch =>
-                    branch.id === Number(branchId) || branch === Number(branchId)
-                );
-            }
-
-            return matchesProgram && matchesBranch;
-        });
-
-        return filtered;
-    }, [mainProgramId, branchId, options.entity_id, lang]);
+    }, [entityId, entities]);
 
     // Filter branches based on selected city
     const filteredBranches = useMemo(() => {
@@ -234,12 +212,12 @@ export default function FormStudent({
         }
     }, [branchId, city, oldData?.branch_id, oldData?.city_id]);
 
-    // Enhanced options with filtered data
+    // Enhanced options with filtered/dynamic data
     const enhancedOptions = useMemo(() => ({
         ...options,
-        entity_id: filteredEntities,
+        entity_id: entities,
         branch_id: filteredBranches
-    }), [options, filteredEntities, filteredBranches]);
+    }), [options, entities, filteredBranches]);
 
     // Get display value for category (educational_entity_classification)
     const categoryDisplayValue = useMemo(() => {
@@ -322,6 +300,8 @@ export default function FormStudent({
 
                         // Special handling for classification field (read-only, auto-filled)
                         if (field.name === 'education_program_entity_type_classification') {
+                            // This field is required when main_program_id === 1
+                            const isRequired = Number(mainProgramId) === 1;
                             return (
                                 <div key={field.name}>
                                     <InputRFH
@@ -336,6 +316,7 @@ export default function FormStudent({
                                         name={field.name}
                                         info={field.info}
                                         defaultValue={defaultValues[field.name] || ''}
+                                        required={isRequired}
                                     />
                                 </div>
                             );
@@ -343,10 +324,13 @@ export default function FormStudent({
 
                         // Special handling for category field (display educational_entity_classification)
                         if (field.name === 'entity_category_id') {
+                            // This field is required when main_program_id === 1
+                            const isRequired = Number(mainProgramId) === 1;
                             return (
                                 <div key={field.name}>
                                     <label className="block font-medium text-gray-700 mb-1">
                                         {t(field.label)}
+                                        {isRequired && <span className="text-red-500 ml-1">*</span>}
                                     </label>
                                     <input
                                         type="text"
@@ -383,6 +367,7 @@ export default function FormStudent({
                                         info={field.info}
                                         options={generateOptions(enhancedOptions[field.name] || [])}
                                         defaultValue={defaultValues[field.name] || field.defaultValue}
+                                        required={true}
                                     />
                                 </div>
                             );
@@ -390,7 +375,7 @@ export default function FormStudent({
 
                         // Special handling for entity field - disabled until branch is selected
                         if (field.name === 'entity_id') {
-                            const isEntityDisabled = !branchId || viewMode;
+                            const isEntityDisabled = !branchId || !mainProgramId || viewMode;
 
                             return (
                                 <div key={field.name}>
@@ -407,6 +392,8 @@ export default function FormStudent({
                                         info={field.info}
                                         options={generateOptions(enhancedOptions[field.name] || [])}
                                         defaultValue={defaultValues[field.name] || field.defaultValue}
+                                        required={true}
+                                        loading={entitiesLoading}
                                     />
                                 </div>
                             );

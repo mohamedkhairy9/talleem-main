@@ -10,7 +10,6 @@ import { useEducationProgramEntityTypesQuery } from '@/api/hooks/useEducationPro
 import { useCitiesQuery } from '@/api/hooks/useCities';
 import { useKinshipsQuery } from '@/api/hooks/useKinships';
 import { useAcademicLevelsQuery } from '@/api/hooks/useAcademicLevels';
-import { useEntitiesQuery } from '@/api/hooks/useEntities';
 import { useNationalitiesQuery } from '@/api/hooks/useNationalities';
 import { useMajorsQuery } from '@/api/hooks/useMajors';
 import { useSpecificationsQuery } from '@/api/hooks/useSpecifications';
@@ -49,8 +48,6 @@ export default function EditStudent({ onClose, oldData }) {
         useKinshipsQuery(allData);
     const { data: academicLevelsData, isLoading: academicLevelsLoading } =
         useAcademicLevelsQuery(allData);
-    const { data: entitiesData, isLoading: entitiesLoading } =
-        useEntitiesQuery(allData);
     const { data: nationalitiesData, isLoading: nationalitiesLoading } =
         useNationalitiesQuery(allData);
     const { data: majorsData, isLoading: majorsLoading } =
@@ -61,12 +58,10 @@ export default function EditStudent({ onClose, oldData }) {
     const isLoading =
         branchesLoading ||
         mainProgramsLoading ||
-        // entityCategoriesLoading ||
         educationProgramEntityTypesLoading ||
         citiesLoading ||
         kinshipsLoading ||
         academicLevelsLoading ||
-        entitiesLoading ||
         nationalitiesLoading ||
         majorsLoading ||
         specificationsLoading;
@@ -85,13 +80,11 @@ export default function EditStudent({ onClose, oldData }) {
                 options={{
                     branch_id: branchesData?.data,
                     main_program_id: mainProgramsData?.data,
-                    // entity_category_id: entityCategoriesData?.data,
                     education_program_entity_type_id:
                         educationProgramEntityTypesData?.data,
                     city_id: citiesData?.data,
                     kinship_id: kinshipsData?.data,
                     academic_level_id: academicLevelsData?.data,
-                    entity_id: entitiesData?.data,
                     nationality_id: nationalitiesData?.data,
                     specification_id: specificationsData?.data,
                     major_id: majorsData?.data,

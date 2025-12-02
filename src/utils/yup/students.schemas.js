@@ -79,9 +79,7 @@ export const studentsSchema = yup.object({
     national_id: yup
         .string()
         .required(t('validation.required'))
-        .matches(/^[0-9]+$/, t('validation.national_id.numeric'))
-        .min(10, t('validation.national_id.min'))
-        .max(20, t('validation.national_id.max')),
+        .matches(/^[0-9]{11}$/, t('validation.national_id.exact_11_digits')),
     
     nationality_id: yup
         .number()
@@ -215,7 +213,16 @@ export const studentsSchema = yup.object({
             otherwise: schema => schema.nullable()
         }),
     
-    registration_date: yup.string().required(t('validation.required')),
+    registration_date: yup
+        .string()
+        .required(t('validation.required'))
+        .test('is-past-date', t('validation.registration_date.past_only'), value => {
+            if (!value) return true;
+            const selectedDate = new Date(value);
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            return selectedDate < today;
+        }),
     
     academic_level_id: yup
         .number()

@@ -1,4 +1,22 @@
 /**
+ * Get today's date in YYYY-MM-DD format
+ * @returns {string} - Date string in YYYY-MM-DD format
+ */
+export const getTodayDate = () => {
+    return new Date().toISOString().split('T')[0];
+};
+
+/**
+ * Get yesterday's date in YYYY-MM-DD format
+ * @returns {string} - Date string in YYYY-MM-DD format
+ */
+export const getYesterdayDate = () => {
+    const yesterday = new Date();
+    yesterday.setDate(yesterday.getDate() - 1);
+    return yesterday.toISOString().split('T')[0];
+};
+
+/**
  * Get the maximum date for a minimum age requirement
  * @param {number} minAge - Minimum age in years
  * @returns {string} - Date string in YYYY-MM-DD format
