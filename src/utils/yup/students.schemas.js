@@ -239,16 +239,9 @@ export const studentsSchema = yup.object({
     
     specification_id: yup
         .number()
-        .nullable()
-        .when('main_program_id', {
-            is: value => Number(value) === 2,
-            then: schema =>
-                schema
-                    .required(t('validation.required'))
-                    .integer(t('validation.specification_id.integer'))
-                    .min(1, t('validation.specification_id.min')),
-            otherwise: schema => schema.nullable().optional()
-        }),
+        .required(t('validation.required'))
+        .integer(t('validation.specification_id.integer'))
+        .min(1, t('validation.specification_id.min')),
     
     gender: yup
         .string()
