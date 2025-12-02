@@ -793,6 +793,7 @@
         "update": "تحديث",
         "create": "إنشاء",
         "save": "حفظ",
+        "saving": "جاري الحفظ...",
         "cancel": "إلغاء",
         "delete": "حذف",
         "back": "رجوع",
@@ -1331,7 +1332,10 @@
         "segmentDeleted": "تم حذف المقطع",
         "saveFailed": "فشل حفظ المقطع",
         "deleteFailed": "فشل حذف المقطع",
-        "deleteConfirm": "هل تريد حذف هذا المقطع؟"
+        "deleteConfirm": "هل تريد حذف هذا المقطع؟",
+        "saveCurrentFirst": "احفظ المقطع الحالي أولاً",
+        "noUnsavedSegment": "لا يوجد مقطع غير محفوظ",
+        "unsaved": "غير محفوظ"
     },
     "quran_viewer": {
         "no_content_page": "لا يوجد محتوى لهذه الصفحة"

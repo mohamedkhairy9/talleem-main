@@ -5,7 +5,6 @@ import { dbLoader } from '@/utils/helpers/databaseLoader';
 import QuranSegmentsService from '@/api/services/quranSegments.service';
 import toastService from '@/utils/helpers/Toastservice';
 import { FaEye } from 'react-icons/fa';
-import { HiSave } from 'react-icons/hi';
 import useLocale from '@/utils/hooks/global/useLocale';
 
 /**
@@ -30,6 +29,10 @@ const QuranSegmentationView = () => {
     // Selection state
     const [editingSegment, setEditingSegment] = useState(null);
     const [selectedAyahs, setSelectedAyahs] = useState(new Set());
+    
+    // Track unsaved segment
+    const [hasUnsavedSegment, setHasUnsavedSegment] = useState(false);
+    const [isSaving, setIsSaving] = useState(false);
     
     // Loading states
     const [isLoading, setIsLoading] = useState(true);
@@ -143,7 +146,29 @@ const QuranSegmentationView = () => {
                 segs = response.data.data;
             }
             
-            setSegments(segs);
+            // Sort segments by verse number (surah first, then ayah)
+            const sortedSegs = [...segs].sort((a, b) => {
+                // Parse first_verse_key (format: "surah:ayah" e.g., "2:17")
+                const getVerseOrder = (segment) => {
+                    // Use from_verse if available, otherwise parse first_verse_key
+                    if (segment.from_verse !== undefined) {
+                        const surah = segment.surah_number || 1;
+                        return surah * 1000 + segment.from_verse;
+                    }
+                    
+                    if (segment.first_verse_key) {
+                        const [surah, ayah] = segment.first_verse_key.split(':').map(Number);
+                        return surah * 1000 + ayah;
+                    }
+                    
+                    return Infinity; // Put segments without verse info at the end
+                };
+                
+                return getVerseOrder(a) - getVerseOrder(b);
+            });
+            
+            setSegments(sortedSegs);
+            setHasUnsavedSegment(false); // Reset unsaved state when fetching fresh data
         } catch (error) {
             console.error('Error fetching segments:', error);
             setSegments([]);
@@ -361,64 +386,83 @@ const QuranSegmentationView = () => {
         };
         
         setSegments([...segments, newSegment]);
+        setHasUnsavedSegment(true);
         toastService.info(t('mushaf_management.segmentAdded'));
     };
-
+    
     /**
-     * Save segment
+     * Check if there's an unsaved segment that can be saved
      */
-    const saveSegment = async (segment, index) => {
+    const canSaveSegment = () => {
+        // Find the unsaved segment (segment without id)
+        const unsavedSegment = segments.find(seg => !seg.id);
+        return unsavedSegment && unsavedSegment.first_verse_key && unsavedSegment.last_verse_key;
+    };
+    
+    /**
+     * Save the current unsaved segment (global save)
+     */
+    const saveCurrentSegment = async () => {
+        // Find the unsaved segment
+        const unsavedIndex = segments.findIndex(seg => !seg.id);
+        if (unsavedIndex === -1) {
+            toastService.warning(t('mushaf_management.noUnsavedSegment'));
+            return;
+        }
+        
+        const segment = segments[unsavedIndex];
+        
         if (!segment.first_verse_key || !segment.last_verse_key) {
             toastService.warning(t('mushaf_management.mustSelectBoth'));
             return;
         }
 
         try {
+            setIsSaving(true);
             const segmentData = {
                 first_verse_key: segment.first_verse_key,
                 last_verse_key: segment.last_verse_key,
                 page_number: currentPage,
-                segment_number: index + 1
+                segment_number: unsavedIndex + 1
             };
 
-            if (segment.id) {
-                await QuranSegmentsService.updateSegment(segment.id, segmentData);
-                toastService.success(t('mushaf_management.segmentUpdated'));
-            } else {
-                const result = await QuranSegmentsService.createSegment(segmentData);
-                
-                let newId = null;
-                if (result && result.data && result.data.id) {
-                    newId = result.data.id;
-                } else if (result && result.id) {
-                    newId = result.id;
-                }
-                
-                if (newId) {
-                    const newSegments = [...segments];
-                    newSegments[index] = { ...segment, id: newId };
-                    setSegments(newSegments);
-                }
-                
-                toastService.success(t('mushaf_management.segmentSaved'));
+            const result = await QuranSegmentsService.createSegment(segmentData);
+            
+            let newId = null;
+            if (result && result.data && result.data.id) {
+                newId = result.data.id;
+            } else if (result && result.id) {
+                newId = result.id;
             }
             
+            if (newId) {
+                const newSegments = [...segments];
+                newSegments[unsavedIndex] = { ...segment, id: newId };
+                setSegments(newSegments);
+            }
+            
+            setHasUnsavedSegment(false);
+            toastService.success(t('mushaf_management.segmentSaved'));
             await fetchSegments(currentPage);
             
         } catch (error) {
             if (error.response && error.response.status >= 200 && error.response.status < 300) {
+                setHasUnsavedSegment(false);
                 toastService.success(t('mushaf_management.segmentSaved'));
                 await fetchSegments(currentPage);
             } else {
                 const errorMessage = error.response?.data?.message || error.message || '';
                 toastService.error(`${t('mushaf_management.saveFailed')}${errorMessage ? ': ' + errorMessage : ''}`);
             }
+        } finally {
+            setIsSaving(false);
         }
     };
 
     /**
      * Delete segment
      */
+    // eslint-disable-next-line no-unused-vars
     const deleteSegment = async (segment, index) => {
         if (!window.confirm(t('mushaf_management.deleteConfirm'))) {
             return;
@@ -576,11 +620,28 @@ const QuranSegmentationView = () => {
                 <div className="segments-panel">
                     <div className="panel-header">
                         <h2>{t('mushaf_management.segments')}</h2>
-                        {config?.segments_per_page === 'variable' && (
-                            <button className="btn-add" onClick={addNewSegment}>
-                                + {t('mushaf_management.addSegment')}
-                            </button>
-                        )}
+                        <div className="panel-actions">
+                            {config?.segments_per_page === 'variable' && (
+                                <button 
+                                    className="btn-add" 
+                                    onClick={addNewSegment}
+                                    disabled={hasUnsavedSegment}
+                                    title={hasUnsavedSegment ? t('mushaf_management.saveCurrentFirst') : ''}
+                                >
+                                    + {t('mushaf_management.addSegment')}
+                                </button>
+                            )}
+                            {hasUnsavedSegment && (
+                                <button 
+                                    className="btn-save-global"
+                                    onClick={saveCurrentSegment}
+                                    disabled={!canSaveSegment() || isSaving}
+                                    title={!canSaveSegment() ? t('mushaf_management.mustSelectBoth') : t('common.save')}
+                                >
+                                    {isSaving ? t('common.saving') : t('common.save')}
+                                </button>
+                            )}
+                        </div>
                     </div>
 
                     <table className="segments-table">
@@ -609,7 +670,7 @@ const QuranSegmentationView = () => {
                             ) : (
                                 segments.map((segment, index) => (
                                     <tr key={segment.id || index}>
-                                        <td style={{textAlign: "center"}}>{segment.segment_number || (index + 1)}</td>
+                                        <td style={{textAlign: "center"}}>{index + 1}</td>
                                         <td style={{textAlign: "center"}}>
                                             {segment.first_verse_key ? (
                                                 getVerseNumber(segment.first_verse_key)
@@ -645,14 +706,11 @@ const QuranSegmentationView = () => {
                                                         <FaEye color='#fffe'/>
                                                     </button>
                                                 )}
-                                                <button 
-                                                    className="btn-save text-amber-50 text-sm"
-                                                    onClick={() => saveSegment(segment, index)}
-                                                    disabled={!segment.first_verse_key || !segment.last_verse_key}
-                                                    title={t('mushaf_management.save')}
-                                                >
-                                                    {t('common.save')}
-                                                </button>
+                                                {!segment.id && (
+                                                    <span className="unsaved-badge">
+                                                        {t('mushaf_management.unsaved')}
+                                                    </span>
+                                                )}
                                             </div>
                                         </td>
                                     </tr>
