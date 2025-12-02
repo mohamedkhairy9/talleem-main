@@ -148,6 +148,28 @@
     cursor: not-allowed;
 }
 
+.segments-panel .btn-delete-page {
+    padding: 8px 16px;
+    background: #ef4444;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.85em;
+    font-weight: 600;
+    transition: all 0.2s;
+}
+
+.segments-panel .btn-delete-page:hover:not(:disabled) {
+    background: #dc2626;
+}
+
+.segments-panel .btn-delete-page:disabled {
+    background: #d1d5db;
+    color: #9ca3af;
+    cursor: not-allowed;
+}
+
 /* Segments Table */
 .segments-table {
     width: 100%;

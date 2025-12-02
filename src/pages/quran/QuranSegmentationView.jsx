@@ -6,6 +6,7 @@ import QuranSegmentsService from '@/api/services/quranSegments.service';
 import toastService from '@/utils/helpers/Toastservice';
 import { FaEye } from 'react-icons/fa';
 import useLocale from '@/utils/hooks/global/useLocale';
+import DeleteModal from '@/components/common/form/DeleteModal';
 
 /**
  * Quran Segmentation View Component
@@ -33,6 +34,8 @@ const QuranSegmentationView = () => {
     // Track unsaved segment
     const [hasUnsavedSegment, setHasUnsavedSegment] = useState(false);
     const [isSaving, setIsSaving] = useState(false);
+    const [isDeleting, setIsDeleting] = useState(false);
+    const [showDeleteModal, setShowDeleteModal] = useState(false);
     
     // Loading states
     const [isLoading, setIsLoading] = useState(true);
@@ -460,6 +463,25 @@ const QuranSegmentationView = () => {
     };
 
     /**
+     * Delete all segments for current page
+     */
+    const deleteAllPageSegments = async () => {
+        try {
+            setIsDeleting(true);
+            await QuranSegmentsService.deletePageSegments(currentPage);
+            toastService.success(t('mushaf_management.pageSegmentsDeleted'));
+            setShowDeleteModal(false);
+            await fetchSegments(currentPage);
+        } catch (error) {
+            console.error('Error deleting page segments:', error);
+            const errorMessage = error.response?.data?.message || error.message || '';
+            toastService.error(`${t('mushaf_management.deletePageFailed')}${errorMessage ? ': ' + errorMessage : ''}`);
+        } finally {
+            setIsDeleting(false);
+        }
+    };
+
+    /**
      * Delete segment
      */
     // eslint-disable-next-line no-unused-vars
@@ -641,6 +663,15 @@ const QuranSegmentationView = () => {
                                     {isSaving ? t('common.saving') : t('common.save')}
                                 </button>
                             )}
+                            {segments.length > 0 && !hasUnsavedSegment && (
+                                <button 
+                                    className="btn-delete-page"
+                                    onClick={() => setShowDeleteModal(true)}
+                                    title={t('mushaf_management.deletePageSegments')}
+                                >
+                                    {t('mushaf_management.deletePageSegments')}
+                                </button>
+                            )}
                         </div>
                     </div>
 
@@ -759,6 +790,15 @@ const QuranSegmentationView = () => {
                     )}
                 </div>
             </div>
+            
+            {/* Delete Confirmation Modal */}
+            {showDeleteModal && (
+                <DeleteModal
+                    deleteFn={deleteAllPageSegments}
+                    loading={isDeleting}
+                    onClose={() => setShowDeleteModal(false)}
+                />
+            )}
         </div>
     );
 };

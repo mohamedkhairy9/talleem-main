@@ -794,6 +794,7 @@
         "create": "إنشاء",
         "save": "حفظ",
         "saving": "جاري الحفظ...",
+        "deleting": "جاري الحذف...",
         "cancel": "إلغاء",
         "delete": "حذف",
         "back": "رجوع",
@@ -1335,7 +1336,11 @@
         "deleteConfirm": "هل تريد حذف هذا المقطع؟",
         "saveCurrentFirst": "احفظ المقطع الحالي أولاً",
         "noUnsavedSegment": "لا يوجد مقطع غير محفوظ",
-        "unsaved": "غير محفوظ"
+        "unsaved": "غير محفوظ",
+        "deletePageSegments": "حذف مقاطع الصفحة",
+        "deletePageConfirm": "هل أنت متأكد من حذف جميع مقاطع هذه الصفحة؟",
+        "pageSegmentsDeleted": "تم حذف جميع مقاطع الصفحة بنجاح",
+        "deletePageFailed": "فشل حذف مقاطع الصفحة"
     },
     "quran_viewer": {
         "no_content_page": "لا يوجد محتوى لهذه الصفحة"

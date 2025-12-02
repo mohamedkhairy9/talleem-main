@@ -103,6 +103,23 @@ const QuranSegmentsService = {
     },
 
     /**
+     * Delete all segments for a specific page
+     * @param {number} pageNumber - Page number to delete segments for
+     * @returns {Promise<Object>} Deletion confirmation
+     */
+    deletePageSegments: async (pageNumber) => {
+        try {
+            const response = await axiosInstance.delete('/quran/segments/page', {
+                data: { page_number: pageNumber }
+            });
+            return response.data;
+        } catch (error) {
+            console.error('Error deleting page segments:', error);
+            throw error;
+        }
+    },
+
+    /**
      * Get all segments (with pagination if needed)
      * @param {Object} params - Query parameters
      * @returns {Promise<Object>} Segments list with pagination
