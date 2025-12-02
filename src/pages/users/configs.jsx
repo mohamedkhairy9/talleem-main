@@ -86,7 +86,7 @@ export const usersFields = [
         label: 'validation.users.password.label',
         type: 'password',
         placeholder: 'validation.users.password.placeholder',
-        editMode: false,
+        editMode: true,
         viewMode: false
     },
     {
@@ -110,22 +110,6 @@ export const usersFields = [
         label: 'validation.users.user_type.label',
         type: 'select',
         placeholder: 'validation.users.user_type.placeholder',
-        editMode: true,
-        viewMode: true
-    },
-    {
-        name: 'locale',
-        label: 'validation.users.locale.label',
-        type: 'select',
-        placeholder: 'validation.users.locale.placeholder',
-        editMode: true,
-        viewMode: true
-    },
-    {
-        name: 'current_app_locale',
-        label: 'validation.users.current_app_locale.label',
-        type: 'select',
-        placeholder: 'validation.users.current_app_locale.placeholder',
         editMode: true,
         viewMode: true
     },

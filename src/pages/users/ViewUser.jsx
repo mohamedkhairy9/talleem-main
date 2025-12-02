@@ -7,12 +7,6 @@ import Loader from '@/components/common/Loader';
 import { allData } from '@/utils/constants/global.constants';
 import { enabledDisabledOptions, userTypeOptions } from '@/utils/constants/options';
 
-// Locale options
-const localeOptions = [
-    { value: 'en', label: 'English' },
-    { value: 'ar', label: 'العربية' }
-];
-
 export default function ViewUser({ onClose, oldData }) {
     const { data: branchesData, isLoading: branchesLoading } =
         useBranchesQuery(allData);
@@ -30,8 +24,6 @@ export default function ViewUser({ onClose, oldData }) {
                 isPending={false}
                 options={{
                     branch_id: branchesData?.data,
-                    locale: localeOptions,
-                    current_app_locale: localeOptions,
                     status: enabledDisabledOptions,
                     user_type: userTypeOptions
                 }}

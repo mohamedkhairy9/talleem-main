@@ -20,12 +20,7 @@ export const usersSchema = yup.object().shape({
         .email(t('validation.email.invalid')),
     password: yup
         .string()
-        .when('$isEditMode', (isEditMode, schema) => {
-            // Password is required for create, optional for edit
-            return isEditMode
-                ? schema
-                : schema.required(t('validation.required'));
-        })
+        .required(t('validation.required'))
         .min(6, t('validation.password.min')),
     phone: yup.string().required(t('validation.required')),
     branch_id: yup
@@ -33,16 +28,8 @@ export const usersSchema = yup.object().shape({
         .required(t('validation.required'))
         .integer(t('validation.branch_id.integer'))
         .min(1, t('validation.branch_id.min')),
-    locale: yup
-        .string()
-        .required(t('validation.required'))
-        .oneOf(['en', 'ar'], t('validation.locale.invalid')),
-    current_app_locale: yup
-        .string()
-        .required(t('validation.required'))
-        .oneOf(['en', 'ar'], t('validation.current_app_locale.invalid')),
     user_type: yup
         .string()
         .required(t('validation.required'))
-        .oneOf(['entity', 'employee', 'manager', 'teacher'], t('validation.user_type.invalid')),
+        .oneOf(['student', 'teacher', 'entity', 'guest', 'employee', 'super-admin', 'parent'], t('validation.user_type.invalid')),
 });

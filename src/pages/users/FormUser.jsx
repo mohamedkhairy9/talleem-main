@@ -10,6 +10,14 @@ import ModalContent from '@/components/common/form/ModalContent';
 import ModalFooter from '@/components/common/form/ModalFooter';
 import { isFieldRequired } from '@/utils/helpers/schemaHelpers';
 
+// Helper to generate bilingual options (showing both en and ar)
+const generateBilingualUserTypeOptions = (options = []) => {
+    return options.map(opt => ({
+        label: `${opt.label?.en || opt.label} / ${opt.label?.ar || opt.label}`,
+        value: opt.value
+    }));
+};
+
 export default function FormUser({
     onClose,
     oldData,
@@ -25,8 +33,15 @@ export default function FormUser({
     });
 
     function onSubmit(data) {
+        // Set locale fields to fixed 'en' value
+        const submitData = {
+            ...data,
+            locale: 'en',
+            current_app_locale: 'en',
+            status: data.status ? 1 : 0
+        };
 
-        mutate(data, {
+        mutate(submitData, {
             onSuccess: () => {
                 onClose();
             }
@@ -64,7 +79,11 @@ export default function FormUser({
                                 defaultValue={
                                     oldData?.[field.name] || field.defaultValue
                                 }
-                                options={generateOptions(options?.[field.name])}
+                                options={
+                                    field.name === 'user_type'
+                                        ? generateBilingualUserTypeOptions(options?.[field.name])
+                                        : generateOptions(options?.[field.name])
+                                }
                                 required={isFieldRequired(schema, field.name)}
                             />
                         </div>

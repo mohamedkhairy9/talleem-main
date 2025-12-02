@@ -8,14 +8,7 @@ import Loader from '@/components/common/Loader';
 import { allData } from '@/utils/constants/global.constants';
 import { enabledDisabledOptions, userTypeOptions } from '@/utils/constants/options';
 
-// Locale options
-const localeOptions = [
-    { value: 'en', label: 'English' },
-    { value: 'ar', label: 'العربية' }
-];
-
 export default function EditUser({ onClose, oldData }) {
-    console.log("old data: ", oldData);
     const { mutate, isPending } = useUpdateUserMutation();
     const { data: branchesData, isLoading: branchesLoading } =
         useBranchesQuery(allData);
@@ -33,8 +26,6 @@ export default function EditUser({ onClose, oldData }) {
                 isPending={isPending}
                 options={{
                     branch_id: branchesData?.data,
-                    locale: localeOptions,
-                    current_app_locale: localeOptions,
                     status: enabledDisabledOptions,
                     user_type: userTypeOptions
                 }}

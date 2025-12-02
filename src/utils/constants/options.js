@@ -9,10 +9,13 @@ export const enabledDisabledOptions = [
 ];
 
 export const userTypeOptions = [
-    { label: { ar: 'جهة', en: 'entity' }, value: 'entity' },
-    { label: { ar: 'موظف', en: 'employee' }, value: 'employee' },
-    { label: { ar: 'مدير', en: 'manager' }, value: 'manager' },
-    { label: { ar: 'مدرس', en: 'teacher' }, value: 'teacher' }
+    { label: { ar: 'طالب', en: 'Student' }, value: 'student' },
+    { label: { ar: 'مدرس', en: 'Teacher' }, value: 'teacher' },
+    { label: { ar: 'جهة', en: 'Entity' }, value: 'entity' },
+    { label: { ar: 'ضيف', en: 'Guest' }, value: 'guest' },
+    { label: { ar: 'موظف', en: 'Employee' }, value: 'employee' },
+    { label: { ar: 'مدير عام', en: 'Super Admin' }, value: 'super-admin' },
+    { label: { ar: 'ولي أمر', en: 'Parent' }, value: 'parent' }
 ];
 
 export const genderOptions = [
