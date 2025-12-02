@@ -1,4 +1,5 @@
-import React, { useEffect, useState, useMemo } from 'react';
+import React, { useEffect, useState, useMemo, useCallback } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { fontLoader } from '@/utils/helpers/fontLoader';
 import './QuranSegmentationView.css';
 import { dbLoader } from '@/utils/helpers/databaseLoader';
@@ -22,6 +23,19 @@ const JUZ_START_PAGES = [
  */
 const QuranSegmentationView = () => {
     const { t, currentLocale } = useLocale();
+    const [searchParams, setSearchParams] = useSearchParams();
+    
+    // Get initial page from URL or default to 1
+    const getInitialPage = () => {
+        const pageParam = searchParams.get('page');
+        if (pageParam) {
+            const page = parseInt(pageParam);
+            if (page >= 1 && page <= 604) {
+                return page;
+            }
+        }
+        return 1;
+    };
     
     // Database state
     const [linesDb, setLinesDb] = useState(null);
@@ -29,10 +43,20 @@ const QuranSegmentationView = () => {
     const [surahData, setSurahData] = useState(null);
     
     // UI state
-    const [currentPage, setCurrentPage] = useState(1);
+    const [currentPage, setCurrentPageState] = useState(getInitialPage);
     const [pageLines, setPageLines] = useState([]);
     const [segments, setSegments] = useState([]);
     const [config, setConfig] = useState(null);
+    
+    // Update page and URL together
+    const setCurrentPage = useCallback((pageOrFn) => {
+        setCurrentPageState(prevPage => {
+            const newPage = typeof pageOrFn === 'function' ? pageOrFn(prevPage) : pageOrFn;
+            // Update URL without causing a re-render loop
+            setSearchParams({ page: newPage.toString() }, { replace: true });
+            return newPage;
+        });
+    }, [setSearchParams]);
     
     // Selection state
     const [editingSegment, setEditingSegment] = useState(null);
@@ -55,6 +79,13 @@ const QuranSegmentationView = () => {
         initializeDatabases();
         return () => dbLoader.cleanup();
     }, []);
+
+    // Sync URL on initial load if no page param
+    useEffect(() => {
+        if (!searchParams.get('page')) {
+            setSearchParams({ page: currentPage.toString() }, { replace: true });
+        }
+    }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
     // Load page and segments when page changes
     useEffect(() => {
@@ -250,15 +281,47 @@ const QuranSegmentationView = () => {
             }
         }
 
-        // First, check if page has a surah_name line from the database
         let surahNumber = null;
+        
+        // Check if page has a surah_name line from the database
         const surahNameLine = pageLines.find(line => line.line_type === 'surah_name');
         
-        if (surahNameLine && surahNameLine.surah_number) {
-            // Use surah number from the database surah_name line
-            surahNumber = surahNameLine.surah_number;
-        } else if (wordsDb && pageLines.length) {
-            // Fallback: Get surah info from first word of the page
+        if (surahNameLine && surahNameLine.surah_number && wordsDb) {
+            // Verify the new surah has at least one ayah on this page
+            const newSurahNumber = surahNameLine.surah_number;
+            
+            // Find ayah lines and check if any belong to the new surah
+            const ayahLines = pageLines.filter(line => line.line_type === 'ayah');
+            let hasAyahFromNewSurah = false;
+            
+            for (const ayahLine of ayahLines) {
+                try {
+                    const query = `SELECT location FROM words WHERE id = ${ayahLine.first_word_id} LIMIT 1`;
+                    const result = wordsDb.exec(query);
+                    
+                    if (result.length > 0 && result[0].values.length > 0) {
+                        const location = result[0].values[0][0];
+                        if (location) {
+                            const [surahNum] = location.split(':').map(Number);
+                            if (surahNum === newSurahNumber) {
+                                hasAyahFromNewSurah = true;
+                                break;
+                            }
+                        }
+                    }
+                } catch (error) {
+                    console.error('Error checking ayah surah:', error);
+                }
+            }
+            
+            if (hasAyahFromNewSurah) {
+                // New surah has at least one ayah on this page
+                surahNumber = newSurahNumber;
+            }
+        }
+        
+        // Fallback: Get surah info from first word of the page
+        if (!surahNumber && wordsDb && pageLines.length) {
             const firstAyahLine = pageLines.find(line => line.line_type === 'ayah');
             if (firstAyahLine) {
                 try {
