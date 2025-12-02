@@ -7,7 +7,6 @@ import toastService from '@/utils/helpers/Toastservice';
 import { FaEye } from 'react-icons/fa';
 import useLocale from '@/utils/hooks/global/useLocale';
 import DeleteModal from '@/components/common/form/DeleteModal';
-import i18next from 'i18next';
 
 // Juz starting pages in standard Madani Mushaf
 const JUZ_START_PAGES = [
@@ -22,7 +21,7 @@ const JUZ_START_PAGES = [
  * Allows viewing and editing segments
  */
 const QuranSegmentationView = () => {
-    const { t } = useLocale();
+    const { t, currentLocale } = useLocale();
     
     // Database state
     const [linesDb, setLinesDb] = useState(null);
@@ -242,8 +241,6 @@ const QuranSegmentationView = () => {
      * Current page info (Juz and Surah)
      */
     const currentPageInfo = useMemo(() => {
-        const lang = i18next.language;
-        
         // Get Juz number from page number
         let juzNumber = 1;
         for (let i = JUZ_START_PAGES.length - 1; i >= 0; i--) {
@@ -253,9 +250,15 @@ const QuranSegmentationView = () => {
             }
         }
 
-        // Get surah info from first word of the page
+        // First, check if page has a surah_name line from the database
         let surahNumber = null;
-        if (wordsDb && pageLines.length) {
+        const surahNameLine = pageLines.find(line => line.line_type === 'surah_name');
+        
+        if (surahNameLine && surahNameLine.surah_number) {
+            // Use surah number from the database surah_name line
+            surahNumber = surahNameLine.surah_number;
+        } else if (wordsDb && pageLines.length) {
+            // Fallback: Get surah info from first word of the page
             const firstAyahLine = pageLines.find(line => line.line_type === 'ayah');
             if (firstAyahLine) {
                 try {
@@ -289,9 +292,9 @@ const QuranSegmentationView = () => {
             surahNumber,
             surahNameArabic,
             surahNameEnglish,
-            surahDisplayName: lang === 'ar' ? surahNameArabic : surahNameEnglish
+            surahDisplayName: currentLocale === 'ar' ? surahNameArabic : surahNameEnglish
         };
-    }, [currentPage, pageLines, wordsDb, surahData]);
+    }, [currentPage, pageLines, wordsDb, surahData, currentLocale]);
 
     /**
      * Extract verse number from verse_key (e.g., "1:5" → "5")
@@ -598,7 +601,7 @@ const QuranSegmentationView = () => {
                 return (
                     <div 
                         key={`${line.page_number}-${line.line_number}`} 
-                        className={`line ayah ${line.is_centered ? 'centered' : ''}`}
+                        className={`line ayah centered ${line.is_centered ? 'centered' : ''}`}
                         ref={el => {
                             if (el) {
                                 el.style.setProperty('font-family', `'QuranicFont-${currentPage}', Arial, sans-serif`, 'important');
@@ -690,18 +693,17 @@ const QuranSegmentationView = () => {
                     
                     <div className="page-input">
                         <label>{t('mushaf_management.page')}:</label>
-                        <input
-                            type="number"
-                            min="1"
-                            max="604"
+                        <select
                             value={currentPage}
-                            onChange={(e) => {
-                                const page = parseInt(e.target.value);
-                                if (page >= 1 && page <= 604) {
-                                    setCurrentPage(page);
-                                }
-                            }}
-                        />
+                            onChange={(e) => setCurrentPage(parseInt(e.target.value))}
+                            className="page-select"
+                        >
+                            {Array.from({ length: 604 }, (_, i) => i + 1).map(page => (
+                                <option key={page} value={page}>
+                                    {page}
+                                </option>
+                            ))}
+                        </select>
                         <span>{t('mushaf_management.of')} 604</span>
                     </div>
 
