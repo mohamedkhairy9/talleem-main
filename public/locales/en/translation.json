@@ -491,7 +491,9 @@
             "label": "Date of Birth",
             "placeholder": "Select date of birth",
             "required": "Date of birth is required",
-            "invalid": "Please enter a valid date of birth"
+            "invalid": "Please enter a valid date of birth",
+            "past_only": "Date of birth must be in the past",
+            "min_age_18": "Employee must be at least 18 years old"
         },
         "years_of_experience": {
             "label": "Years of Experience",

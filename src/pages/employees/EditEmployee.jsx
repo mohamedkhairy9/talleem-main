@@ -5,11 +5,11 @@ import ModalHeader from '@/components/common/form/ModalHeader';
 import { useUpdateEmployeeMutation } from '@/api/hooks/useEmployees';
 import { useJobsQuery } from '@/api/hooks/useJobs';
 import { useBranchesQuery } from '@/api/hooks/useBranches';
-import { useEntitiesQuery } from '@/api/hooks/useEntities';
 import { useAcademicQualificationsQuery } from '@/api/hooks/useAcademicQualifications';
 import { useSpecificationsQuery } from '@/api/hooks/useSpecifications';
 import { useCitiesQuery } from '@/api/hooks/useCities';
 import { useNationalitiesQuery } from '@/api/hooks/useNationalities';
+import { useMajorsQuery } from '@/api/hooks/useMajors';
 import Loader from '@/components/common/Loader';
 import { allData } from '@/utils/constants/global.constants';
 import { enabledDisabledOptions } from '@/utils/constants/options';
@@ -21,8 +21,6 @@ export default function EditEmployee({ onClose, oldData }) {
     const { data: jobsData, isLoading: jobsLoading } = useJobsQuery(allData);
     const { data: branchesData, isLoading: branchesLoading } =
         useBranchesQuery(allData);
-    const { data: entitiesData, isLoading: entitiesLoading } =
-        useEntitiesQuery(allData);
     const {
         data: academicQualificationsData,
         isLoading: academicQualificationsLoading
@@ -33,14 +31,17 @@ export default function EditEmployee({ onClose, oldData }) {
         useCitiesQuery(allData);
     const { data: nationalitiesData, isLoading: nationalitiesLoading } =
         useNationalitiesQuery(allData);
+    const { data: majorsData, isLoading: majorsLoading } =
+        useMajorsQuery(allData);
+
     const isLoading =
         jobsLoading ||
         branchesLoading ||
-        entitiesLoading ||
         academicQualificationsLoading ||
         specificationsLoading ||
         citiesLoading ||
-        nationalitiesLoading;
+        nationalitiesLoading ||
+        majorsLoading;
 
     if (isLoading) return <Loader />;
 
@@ -57,10 +58,10 @@ export default function EditEmployee({ onClose, oldData }) {
                     nationality_id: nationalitiesData?.data,
                     job_id: jobsData?.data,
                     branch_id: branchesData?.data,
-                    entity_id: entitiesData?.data,
                     academic_qualification_id: academicQualificationsData?.data,
                     specification_id: specificationsData?.data,
                     city_id: citiesData?.data,
+                    major_id: majorsData?.data,
                     status: enabledDisabledOptions
                 }}
             />

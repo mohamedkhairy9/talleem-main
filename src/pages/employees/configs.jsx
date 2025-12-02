@@ -4,6 +4,7 @@ import NameCell from '@/components/common/table/cells/NameCell';
 import { enabledDisabledOptions } from '@/utils/constants/options';
 import { createColumnHelper } from '@tanstack/react-table';
 import React from 'react';
+import { getMaxDateForMinAge } from '@/utils/helpers/dateHelpers';
 
 const columnHelper = createColumnHelper();
 
@@ -70,7 +71,8 @@ export const employeesFields = [
         type: 'date',
         placeholder: 'validation.date_of_birth.placeholder',
         editMode: true,
-        viewMode: true
+        viewMode: true,
+        max: getMaxDateForMinAge(18)
     },
     {
         name: 'nationality_id',
@@ -142,6 +144,14 @@ export const employeesFields = [
         label: 'validation.specification_id.label',
         type: 'select',
         placeholder: 'validation.specification_id.placeholder',
+        editMode: true,
+        viewMode: true
+    },
+    {
+        name: 'major_id',
+        label: 'validation.major_id.label',
+        type: 'select',
+        placeholder: 'validation.major_id.placeholder',
         editMode: true,
         viewMode: true
     },

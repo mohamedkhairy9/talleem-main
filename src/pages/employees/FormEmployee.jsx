@@ -1,6 +1,6 @@
 import useRFH from '@/utils/hooks/global/useRFH';
 import { employeesSchema as schema } from '@/utils/yup/employees.schemas';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { employeesFields } from './configs';
 import InputRFH from '@/components/common/inputs/InputRFH';
 import FileInputRFH from '@/components/common/inputs/FileInputRFH';
@@ -8,10 +8,11 @@ import Btn from '@/components/common/buttons/Btn';
 import { getNestedError } from '@/utils/helpers/getNestedError';
 import { generateOptions } from '@/utils/helpers/global.fns';
 import { onlyDate } from '@/utils/helpers/global.fns';
-import useFilterBranch from '@/utils/hooks/global/useFilterBranches';
 import ModalContent from '@/components/common/form/ModalContent';
 import ModalFooter from '@/components/common/form/ModalFooter';
 import { isFieldRequired } from '@/utils/helpers/schemaHelpers';
+import { useEntitiesQuery } from '@/api/hooks/useEntities';
+import { allData } from '@/utils/constants/global.constants';
 
 export default function FormEmployee({
     onClose,
@@ -39,12 +40,31 @@ export default function FormEmployee({
     const cityId = watch('city_id');
     const branchId = watch('branch_id');
 
-    const filteredBranches = useFilterBranch("city", cityId, options.branch_id);
+    // Filter branches by selected city
+    const filteredBranches = useMemo(() => {
+        if (!cityId || !options.branch_id) return [];
+        return options.branch_id.filter(branch => branch.city?.id === Number(cityId));
+    }, [cityId, options.branch_id]);
 
-    const enhancedOptions = {
+    // Fetch entities dynamically based on selected branch
+    const { data: entitiesData, isLoading: entitiesLoading } = useEntitiesQuery(
+        {
+            ...allData,
+            branch_id: branchId
+        },
+        {
+            enabled: !!branchId
+        }
+    );
+
+    // Get entities from the dynamic query
+    const entities = useMemo(() => entitiesData?.data || [], [entitiesData?.data]);
+
+    const enhancedOptions = useMemo(() => ({
         ...options,
-        branch_id: filteredBranches
-    }
+        branch_id: filteredBranches,
+        entity_id: entities
+    }), [options, filteredBranches, entities]);
 
     useEffect(() => {
         if ((cityId && cityId != oldData?.city_id) || !oldData?.city_id) {
@@ -65,7 +85,14 @@ export default function FormEmployee({
             delete data.profile_picture;
         }
 
-        mutate({...data,status : data.status ? 1 : 0 }, {
+        // Extract single file from FileList for profile_picture
+        if (data.profile_picture instanceof FileList && data.profile_picture.length > 0) {
+            data.profile_picture = data.profile_picture[0];
+        } else if (Array.isArray(data.profile_picture) && data.profile_picture.length > 0) {
+            data.profile_picture = data.profile_picture[0];
+        }
+
+        mutate({...data, status: data.status ? 1 : 0}, {
             onSuccess: () => {
                 onClose();
             }
@@ -135,28 +162,24 @@ export default function FormEmployee({
             );
         }
 
+        // Determine if field should be disabled based on dependencies
+        const isFieldDisabled = viewMode || 
+            (fieldName === 'branch_id' && !cityId) ||
+            (fieldName === 'entity_id' && !branchId);
+
         return (
             <InputRFH
                 p="px-3 py-3"
                 control={control}
                 register={register}
                 error={error}
-                disabled={viewMode}
+                disabled={isFieldDisabled}
                 {...field}
                 name={fieldName}
-                options={generateOptions(
-                    fieldName === 'entity_id'
-                        ? (options?.entity_id || []).filter(
-                              e => e.branch?.id === branchId
-                          )
-                        : fieldName === 'branch_id'
-                        ? (options?.branch_id || []).filter(
-                              b => b.city?.id === cityId
-                          )
-                        : options?.[fieldName]
-                )}
+                options={generateOptions(enhancedOptions?.[fieldName] || options?.[fieldName])}
                 defaultValue={defaultValue}
                 required={isFieldRequired(schema, fieldName)}
+                loading={fieldName === 'entity_id' ? entitiesLoading : false}
             />
         );
     };
