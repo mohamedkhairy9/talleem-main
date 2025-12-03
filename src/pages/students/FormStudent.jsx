@@ -149,6 +149,19 @@ export default function FormStudent({
         return null;
     }, [entityId, entities]);
 
+    // Get the selected entity's memorization_program_entity_type
+    const selectedEntityMemorizationType = useMemo(() => {
+        if (!entityId || !entities.length) return null;
+
+        const selectedEntity = entities.find(entity => entity.id === Number(entityId));
+
+        if (selectedEntity?.memorization_program_entity_type) {
+            return selectedEntity.memorization_program_entity_type;
+        }
+
+        return null;
+    }, [entityId, entities]);
+
     // Filter branches based on selected city
     const filteredBranches = useMemo(() => {
         if (!city || !options.branch_id) return [];
@@ -178,12 +191,39 @@ export default function FormStudent({
         }
     }, [selectedEntityEducationType, editMode, viewMode, lang]);
 
+    // When entity is selected for memorization program, auto-fill memorization entity type field
+    useEffect(() => {
+        if (!editMode && !viewMode && selectedEntityMemorizationType && Number(mainProgramId) === 2) {
+            // Set memorization_program_entity_type to the entity type name (for display)
+            const entityTypeName = selectedEntityMemorizationType.name?.[lang] ||
+                selectedEntityMemorizationType.name?.en ||
+                selectedEntityMemorizationType.name?.ar;
+
+            if (entityTypeName) {
+                setValue('memorization_program_entity_type', entityTypeName, {
+                    shouldValidate: true,
+                    shouldDirty: true
+                });
+            }
+
+            // Set memorization_program_entity_type_id (for submission)
+            if (selectedEntityMemorizationType.id) {
+                setValue('memorization_program_entity_type_id', selectedEntityMemorizationType.id, {
+                    shouldValidate: true,
+                    shouldDirty: true
+                });
+            }
+        }
+    }, [selectedEntityMemorizationType, editMode, viewMode, lang, mainProgramId]);
+
     // Reset dependent fields when main program changes
     useEffect(() => {
         if (mainProgramId && mainProgramId !== oldData?.main_program_id) {
             setValue('entity_id', '');
             setValue('entity_category_id', '');
             setValue('education_program_entity_type_classification', '');
+            setValue('memorization_program_entity_type', '');
+            setValue('memorization_program_entity_type_id', '');
         }
     }, [mainProgramId, oldData?.main_program_id]);
 
@@ -194,6 +234,8 @@ export default function FormStudent({
             setValue('entity_id', '');
             setValue('entity_category_id', '');
             setValue('education_program_entity_type_classification', '');
+            setValue('memorization_program_entity_type', '');
+            setValue('memorization_program_entity_type_id', '');
         }
     }, [city, oldData?.city_id]);
 
@@ -203,6 +245,8 @@ export default function FormStudent({
             setValue('entity_id', '');
             setValue('entity_category_id', '');
             setValue('education_program_entity_type_classification', '');
+            setValue('memorization_program_entity_type', '');
+            setValue('memorization_program_entity_type_id', '');
         }
     }, [branchId, city, oldData?.branch_id, oldData?.city_id]);
 
@@ -228,6 +272,7 @@ export default function FormStudent({
     function onSubmit(data) {
         const {
             education_program_entity_type_classification: _classificationHelper,
+            memorization_program_entity_type: _memEntityTypeHelper,
             ...submitData
         } = data;
 
@@ -240,6 +285,9 @@ export default function FormStudent({
         if (Number(submitData.main_program_id) === 1) {
             finalData.education_program_entity_type_id = submitData.entity_category_id;
         }
+
+        // For memorization program, memorization_program_entity_type_id is already set from the form
+        // No additional transformation needed
 
         mutate(finalData, {
             onSuccess: () => {
@@ -359,6 +407,30 @@ export default function FormStudent({
                                     />
                                     {/* Hidden field for the actual ID value */}
                                     <input type="hidden" {...register('entity_category_id')} />
+                                    <p className="mt-1 h-4 text-xs text-red-600" role="alert">
+                                        {t(getNestedError(errors, field.name)) || ''}
+                                    </p>
+                                </div>
+                            );
+                        }
+
+                        // Special handling for memorization program entity type field (disabled, auto-filled)
+                        if (field.name === 'memorization_program_entity_type') {
+                            const memorizationEntityTypeValue = watch('memorization_program_entity_type') || '';
+                            return (
+                                <div key={field.name}>
+                                    <label className="block font-medium text-gray-700 mb-1">
+                                        {t(field.label)}
+                                    </label>
+                                    <input
+                                        type="text"
+                                        value={memorizationEntityTypeValue}
+                                        disabled={true}
+                                        className="w-full px-3 py-3 border outline-none rounded-lg bg-gray-100 text-gray-700"
+                                        placeholder={t(field.placeholder)}
+                                    />
+                                    {/* Hidden field for the actual value */}
+                                    <input type="hidden" {...register('memorization_program_entity_type')} />
                                     <p className="mt-1 h-4 text-xs text-red-600" role="alert">
                                         {t(getNestedError(errors, field.name)) || ''}
                                     </p>
@@ -487,7 +559,7 @@ export default function FormStudent({
                                     info={field.info}
                                     options={generateOptions(options[field.name])}
                                     defaultValue={defaultValues[field.name] || field.defaultValue}
-                                    required={isFieldRequired(schema, field.name)}
+                                    required={isConditionallyRequired(field)}
                                 />
                             </div>
                         ))}
@@ -585,6 +657,35 @@ export default function FormStudent({
                             />
                         )}
                     </div>
+                </div>
+            )}
+
+            {/* Validation Errors Summary */}
+            {!viewMode && Object.keys(errors).length > 0 && (
+                <div className="mx-4 mb-4 p-4 bg-red-50 border border-red-200 rounded-lg">
+                    <h4 className="text-red-700 font-semibold mb-2 flex items-center gap-2">
+                        <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                            <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                        </svg>
+                        {t('validation.please_fix_errors')}
+                    </h4>
+                    <ul className="list-disc list-inside space-y-1 text-sm text-red-600">
+                        {Object.entries(errors).map(([key, value]) => {
+                            // Handle nested errors (like qualification.memorized_quran_parts)
+                            if (typeof value === 'object' && !value.message) {
+                                return Object.entries(value).map(([nestedKey, nestedValue]) => (
+                                    <li key={`${key}.${nestedKey}`}>
+                                        {t(`validation.${key}.${nestedKey}.label`)}: {nestedValue?.message ? t(nestedValue.message) : t('validation.field_required')}
+                                    </li>
+                                ));
+                            }
+                            return (
+                                <li key={key}>
+                                    {t(`validation.${key}.label`)}: {value?.message ? t(value.message) : t('validation.field_required')}
+                                </li>
+                            );
+                        })}
+                    </ul>
                 </div>
             )}
 

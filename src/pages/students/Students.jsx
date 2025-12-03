@@ -34,15 +34,18 @@ export default function Students() {
         main_program_id: 
             item.main_program ? item.main_program.id : item.main_program_id?.id, // leaving it as it is until fixed
         // entity_category_id: item.entity_category?.id,
-        education_program_entity_type_classification: item.education_program_entity_type_id.name.en
-, // Will be set in FormStudent based on entity_category_id
+        education_program_entity_type_classification: item.education_program_entity_type?.name?.en || '',
         entity_category_id:
             item.main_program?.id == 1
                 ? item.education_program_entity_type?.id
                 : null,
+        // Memorization program entity type
+        memorization_program_entity_type: item.memorization_program_entity_type?.name?.en || item.memorization_program_entity_type?.name?.ar || '',
+        memorization_program_entity_type_id: item.memorization_program_entity_type?.id,
         city_id: item.city?.id,
         kinship_id: item.kinship?.id,
         academic_level_id: item.academic_level?.id,
+        academic_qualification_id: item.academic_qualification?.id,
         entity_id: item.entity?.id,
         nationality_id: item.nationality?.id,
         specification_id: item.specification?.id,

@@ -134,6 +134,17 @@ export const studentsFields = [
         info: 'info.entity_category',
         showWhen: { main_program_id: 1 }
     },
+    // Memorization program entity type (disabled, auto-filled from selected entity)
+    {
+        name: 'memorization_program_entity_type',
+        label: 'validation.memorization_program_entity_type.label',
+        type: 'text',
+        placeholder: 'validation.memorization_program_entity_type.placeholder',
+        editMode: true,
+        viewMode: true,
+        conditional: true,
+        showWhen: { main_program_id: 2 }
+    },
     {
         name: 'status',
         label: 'validation.status.label',
@@ -275,6 +286,16 @@ export const studentsFields = [
         label: 'validation.academic_level_id.label',
         type: 'select',
         placeholder: 'validation.academic_level_id.placeholder',
+        editMode: true,
+        viewMode: true,
+        conditional: true,
+        showWhen: { main_program_id: 2 }
+    },
+    {
+        name: 'academic_qualification_id',
+        label: 'validation.academic_qualification_id.label',
+        type: 'select',
+        placeholder: 'validation.academic_qualification_id.placeholder',
         editMode: true,
         viewMode: true,
         conditional: true,

@@ -1,6 +1,8 @@
 {
     "validation": {
         "required": "هذا الحقل مطلوب",
+        "please_fix_errors": "يرجى تصحيح الأخطاء التالية",
+        "field_required": "هذا الحقل مطلوب",
         "search": {
             "placeholder": "أدخل كلمة البحث"
         },
@@ -570,6 +572,15 @@
             "placeholder": "اختر فئة الجهة",
             "integer": "يجب اختيار فئة الجهة",
             "min": "يرجى اختيار فئة جهة صحيحة"
+        },
+        "memorization_program_entity_type": {
+            "label": "نوع جهة برنامج التحفيظ",
+            "placeholder": "نوع جهة برنامج التحفيظ"
+        },
+        "memorization_program_entity_type_id": {
+            "label": "نوع جهة برنامج التحفيظ",
+            "integer": "يجب اختيار نوع جهة برنامج التحفيظ",
+            "min": "يرجى اختيار نوع جهة برنامج تحفيظ صحيح"
         },
         "entity_sub_category_id": {
             "label": "الفئة الفرعية للجهة",

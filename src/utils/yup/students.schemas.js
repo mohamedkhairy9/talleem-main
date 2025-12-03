@@ -39,19 +39,23 @@ export const studentsSchema = yup.object({
     education_program_entity_type_classification: yup
         .string()
         .nullable()
+        .transform((value) => (value === '' ? null : value))
         .when('main_program_id', {
             is: value => Number(value) === 1,
             then: schema =>
                 schema
                     .required(t('validation.required'))
                     .min(2, t('validation.education_program_entity_type_classification.min')),
-            otherwise: schema => schema.optional()
+            otherwise: schema => schema.nullable().optional()
         }),
     
     // Entity category is now the education_program_entity_type_id
     entity_category_id: yup
         .number()
         .nullable()
+        .transform((value, originalValue) => 
+            originalValue === '' || originalValue === null || originalValue === undefined ? null : value
+        )
         .when('main_program_id', {
             is: value => Number(value) === 1,
             then: schema =>
@@ -59,7 +63,47 @@ export const studentsSchema = yup.object({
                     .required(t('validation.required'))
                     .integer(t('validation.entity_category_id.integer'))
                     .min(1, t('validation.entity_category_id.min')),
-            otherwise: schema => schema.optional()
+            otherwise: schema => schema.nullable().optional()
+        }),
+    
+    // Memorization program entity type (text field, not validated as it's readonly)
+    memorization_program_entity_type: yup
+        .string()
+        .nullable()
+        .optional(),
+    
+    // Memorization program entity type ID (required when program is 2)
+    memorization_program_entity_type_id: yup
+        .number()
+        .nullable()
+        .transform((value, originalValue) => 
+            originalValue === '' || originalValue === null || originalValue === undefined ? null : value
+        )
+        .when('main_program_id', {
+            is: value => Number(value) === 2,
+            then: schema =>
+                schema
+                    .required(t('validation.required'))
+                    .integer(t('validation.memorization_program_entity_type_id.integer'))
+                    .min(1, t('validation.memorization_program_entity_type_id.min')),
+            otherwise: schema => schema.nullable().optional()
+        }),
+    
+    // Academic qualification (required only for memorization program)
+    academic_qualification_id: yup
+        .number()
+        .nullable()
+        .transform((value, originalValue) => 
+            originalValue === '' || originalValue === null || originalValue === undefined ? null : value
+        )
+        .when('main_program_id', {
+            is: value => Number(value) === 2,
+            then: schema =>
+                schema
+                    .required(t('validation.required'))
+                    .integer(t('validation.academic_qualification_id.integer'))
+                    .min(1, t('validation.academic_qualification_id.min')),
+            otherwise: schema => schema.nullable().optional()
         }),
     
     branch_id: yup
@@ -115,16 +159,18 @@ export const studentsSchema = yup.object({
         .string()
         .required(t('validation.date_of_birth.required')),
     
-    // Parent name as bilingual object - required when age < 18
+    // Parent name as bilingual object - required when (age < 18) OR (program_id === 2 AND age < 18)
     parent_name: yup
         .object({
             en: yup
                 .string()
                 .nullable()
-                .when('$date_of_birth', {
-                    is: (dateOfBirth) => {
+                .when(['$date_of_birth', '$main_program_id'], {
+                    is: (dateOfBirth, mainProgramId) => {
                         const age = calculateAge(dateOfBirth);
-                        return age !== null && age < 18;
+                        const isMinor = age !== null && age < 18;
+                        // Required when minor for any program, or specifically for memorization program when minor
+                        return isMinor || (Number(mainProgramId) === 2 && isMinor);
                     },
                     then: schema =>
                         schema
@@ -136,10 +182,11 @@ export const studentsSchema = yup.object({
             ar: yup
                 .string()
                 .nullable()
-                .when('$date_of_birth', {
-                    is: (dateOfBirth) => {
+                .when(['$date_of_birth', '$main_program_id'], {
+                    is: (dateOfBirth, mainProgramId) => {
                         const age = calculateAge(dateOfBirth);
-                        return age !== null && age < 18;
+                        const isMinor = age !== null && age < 18;
+                        return isMinor || (Number(mainProgramId) === 2 && isMinor);
                     },
                     then: schema =>
                         schema
@@ -155,10 +202,11 @@ export const studentsSchema = yup.object({
     kinship_id: yup
         .number()
         .nullable()
-        .when('date_of_birth', {
-            is: (dateOfBirth) => {
+        .when(['date_of_birth', 'main_program_id'], {
+            is: (dateOfBirth, mainProgramId) => {
                 const age = calculateAge(dateOfBirth);
-                return age !== null && age < 18;
+                const isMinor = age !== null && age < 18;
+                return isMinor || (Number(mainProgramId) === 2 && isMinor);
             },
             then: schema =>
                 schema
@@ -171,10 +219,11 @@ export const studentsSchema = yup.object({
     parent_phone_1: yup
         .string()
         .nullable()
-        .when('date_of_birth', {
-            is: (dateOfBirth) => {
+        .when(['date_of_birth', 'main_program_id'], {
+            is: (dateOfBirth, mainProgramId) => {
                 const age = calculateAge(dateOfBirth);
-                return age !== null && age < 18;
+                const isMinor = age !== null && age < 18;
+                return isMinor || (Number(mainProgramId) === 2 && isMinor);
             },
             then: schema =>
                 schema
@@ -186,10 +235,11 @@ export const studentsSchema = yup.object({
     parent_phone_2: yup
         .string()
         .nullable()
-        .when('date_of_birth', {
-            is: (dateOfBirth) => {
+        .when(['date_of_birth', 'main_program_id'], {
+            is: (dateOfBirth, mainProgramId) => {
                 const age = calculateAge(dateOfBirth);
-                return age !== null && age < 18;
+                const isMinor = age !== null && age < 18;
+                return isMinor || (Number(mainProgramId) === 2 && isMinor);
             },
             then: schema =>
                 schema.matches(/^[+]?[0-9]*$/, t('validation.phone.invalid')),
@@ -250,10 +300,13 @@ export const studentsSchema = yup.object({
     
     phone: yup
         .string()
-        .nullable()
-        .matches(/^[+]?[0-9]*$/, t('validation.phone.invalid')),
+        .required(t('validation.required'))
+        .matches(/^[+]?[0-9]+$/, t('validation.phone.invalid')),
     
-    email: yup.string().nullable().email(t('validation.email.invalid')),
+    email: yup
+        .string()
+        .required(t('validation.required'))
+        .email(t('validation.email.invalid')),
     
     qualification: yup
         .object({
