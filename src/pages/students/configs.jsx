@@ -187,7 +187,7 @@ export const studentsFields = [
         max: getMaxDateForMinAge(2), // Students must be at least 2 years old
         min: getMaxDateForMinAge(70)
     },
-    // UPDATED: Replace single parent_name with bilingual fields
+    // Parent Information Fields (grouped in separate section)
     {
         name: 'parent_name.en',
         label: 'validation.parent_name.label_en',
@@ -196,7 +196,8 @@ export const studentsFields = [
         editMode: true,
         viewMode: true,
         conditional: true,
-        showWhen: { isMinor: true }
+        showWhen: { isMinor: true },
+        section: 'parent'
     },
     {
         name: 'parent_name.ar',
@@ -206,7 +207,8 @@ export const studentsFields = [
         editMode: true,
         viewMode: true,
         conditional: true,
-        showWhen: { isMinor: true }
+        showWhen: { isMinor: true },
+        section: 'parent'
     },
     {
         name: 'kinship_id',
@@ -216,7 +218,8 @@ export const studentsFields = [
         editMode: true,
         viewMode: true,
         conditional: true,
-        showWhen: { isMinor: true }
+        showWhen: { isMinor: true },
+        section: 'parent'
     },
     {
         name: 'has_medical_issues',
@@ -243,7 +246,8 @@ export const studentsFields = [
         editMode: true,
         viewMode: true,
         conditional: true,
-        showWhen: { isMinor: true }
+        showWhen: { isMinor: true },
+        section: 'parent'
     },
     {
         name: 'parent_phone_2',
@@ -253,7 +257,8 @@ export const studentsFields = [
         editMode: true,
         viewMode: true,
         conditional: true,
-        showWhen: { isMinor: true }
+        showWhen: { isMinor: true },
+        section: 'parent'
     },
     {
         name: 'registration_date',

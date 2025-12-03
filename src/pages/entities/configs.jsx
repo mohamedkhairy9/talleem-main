@@ -139,68 +139,6 @@ export const entitiesFields = [
         editMode: true,
         viewMode: true
     },
-    // Address and Location Section
-    {
-        name: 'city_id',
-        label: 'validation.city_id.label',
-        type: 'select',
-        placeholder: 'validation.city_id.placeholder',
-        editMode: true,
-        viewMode: true
-    },
-    {
-        name: 'neighborhood_id',
-        label: 'validation.neighborhood_id.label',
-        type: 'select',
-        placeholder: 'validation.neighborhood_id.placeholder',
-        editMode: true,
-        viewMode: true,
-        info: 'info.neighborhood_id'
-    },
-    {
-        name: 'branch_id',
-        label: 'validation.branch_id.label',
-        type: 'select',
-        placeholder: 'validation.branch_id.placeholder',
-        editMode: true,
-        viewMode: true,
-        info: 'info.branch_id'
-    },
-
-    {
-        name: 'latitude',
-        label: 'validation.latitude.label',
-        type: 'text',
-        placeholder: 'validation.latitude.placeholder',
-        editMode: true,
-        viewMode: true,
-        disabled: true
-    },
-    {
-        name: 'longitude',
-        label: 'validation.longitude.label',
-        type: 'text',
-        placeholder: 'validation.longitude.placeholder',
-        editMode: true,
-        viewMode: true,
-        disabled: true
-    },
-    {
-        name: 'location_type_id',
-        label: 'validation.location_type_id.label',
-        type: 'select',
-        placeholder: 'validation.location_type_id.placeholder',
-        editMode: true,
-        viewMode: true
-    },
-    {
-        name: 'address',
-        label: 'validation.address.label',
-        type: 'textarea',
-        placeholder: 'validation.address.placeholder',
-        editMode: true,
-        viewMode: true
-    },
     {
         name: 'phone',
         label: 'validation.phone.label',
@@ -243,10 +181,10 @@ export const entitiesFields = [
         viewMode: true
     },
     {
-        name: 'lecture_holes_count',
-        label: 'validation.lecture_holes_count.label',
+        name: 'lecture_halls_count',
+        label: 'validation.lecture_halls_count.label',
         type: 'number',
-        placeholder: 'validation.lecture_holes_count.placeholder',
+        placeholder: 'validation.lecture_halls_count.placeholder',
         editMode: true,
         viewMode: true
     },
@@ -258,6 +196,67 @@ export const entitiesFields = [
         editMode: true,
         viewMode: true,
         multiple: true
+    },
+    // Address and Location Section (at the end)
+    {
+        name: 'city_id',
+        label: 'validation.city_id.label',
+        type: 'select',
+        placeholder: 'validation.city_id.placeholder',
+        editMode: true,
+        viewMode: true
+    },
+    {
+        name: 'neighborhood_id',
+        label: 'validation.neighborhood_id.label',
+        type: 'select',
+        placeholder: 'validation.neighborhood_id.placeholder',
+        editMode: true,
+        viewMode: true,
+        info: 'info.neighborhood_id'
+    },
+    {
+        name: 'branch_id',
+        label: 'validation.branch_id.label',
+        type: 'select',
+        placeholder: 'validation.branch_id.placeholder',
+        editMode: true,
+        viewMode: true,
+        info: 'info.branch_id'
+    },
+    {
+        name: 'address',
+        label: 'validation.address.label',
+        type: 'textarea',
+        placeholder: 'validation.address.placeholder',
+        editMode: true,
+        viewMode: true
+    },
+    {
+        name: 'location_type_id',
+        label: 'validation.location_type_id.label',
+        type: 'select',
+        placeholder: 'validation.location_type_id.placeholder',
+        editMode: true,
+        viewMode: true
+    },
+    {
+        name: 'latitude',
+        label: 'validation.latitude.label',
+        type: 'text',
+        placeholder: 'validation.latitude.placeholder',
+        editMode: true,
+        viewMode: true,
+        disabled: true
+    },
+    {
+        name: 'longitude',
+        label: 'validation.longitude.label',
+        type: 'text',
+        placeholder: 'validation.longitude.placeholder',
+        editMode: true,
+        viewMode: true,
+        disabled: true
     }
 ];
 
@@ -432,7 +431,7 @@ export const entitiesDefaultValues = {
     activities: [],
     class_count: 0,
     management_rooms_count: 0,
-    lecture_holes_count: 0,
+    lecture_halls_count: 0,
     min_acceptance_age: 1,
     manager: {
         status: true
