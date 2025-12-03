@@ -76,7 +76,7 @@ export const entitiesSchema = yup.object({
         .max(180, t('validation.longitude.max')),
     class_count: yup.string().optional().nullable(),
     management_rooms_count: yup.string().optional().nullable(),
-    lecture_holes_count: yup.string().optional().nullable(),
+    lecture_halls_count: yup.string().optional().nullable(),
     files: yup.array().of(yup.mixed()).nullable().optional(),
     registration_date: yup.string().required(t('validation.required')),
     license_number: yup.string().required(t('validation.required')),

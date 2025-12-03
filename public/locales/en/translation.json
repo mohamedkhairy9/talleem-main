@@ -266,11 +266,11 @@
             "integer": "Management rooms count must be a number",
             "min": "Management rooms count cannot be negative"
         },
-        "lecture_holes_count": {
-            "label": "Lecture Holes Count",
-            "placeholder": "Enter number of lecture holes",
-            "integer": "Lecture holes count must be a number",
-            "min": "Lecture holes count cannot be negative"
+        "lecture_halls_count": {
+            "label": "Lecture Halls Count",
+            "placeholder": "Enter number of lecture halls",
+            "integer": "Lecture halls count must be a number",
+            "min": "Lecture halls count cannot be negative"
         },
         "activities": {
             "min": "At least one activity is required"

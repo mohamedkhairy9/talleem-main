@@ -432,8 +432,26 @@ export default function FormEntity({
                 open={openSections.entityInfo}
                 onToggle={() => toggleSection('entityInfo')}
             >
-                {/* Map Picker */}
-                <div className="space-y-3">
+                {/* Entity Fields */}
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    {filteredEntityFields.map(field => (
+                        <div
+                            key={field.name}
+                            className={
+                                field.type === 'textarea'
+                                    ? 'md:col-span-2 lg:col-span-3'
+                                    : field.type === 'file'
+                                    ? 'md:col-span-2 lg:col-span-3'
+                                    : ''
+                            }
+                        >
+                            {renderField(field)}
+                        </div>
+                    ))}
+                </div>
+
+                {/* Map Picker - at the end */}
+                <div className="space-y-3 mt-6">
                     <h4 className="text-md font-medium text-gray-700">
                         {t('validation.map_location.label')}
                     </h4>
@@ -461,24 +479,6 @@ export default function FormEntity({
                             {t(errors.latitude.message)}
                         </p>
                     )}
-                </div>
-
-                {/* Entity Fields */}
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    {filteredEntityFields.map(field => (
-                        <div
-                            key={field.name}
-                            className={
-                                field.type === 'textarea'
-                                    ? 'md:col-span-2 lg:col-span-3'
-                                    : field.type === 'file'
-                                    ? 'md:col-span-2 lg:col-span-3'
-                                    : ''
-                            }
-                        >
-                            {renderField(field)}
-                        </div>
-                    ))}
                 </div>
             </Accordion>
 
