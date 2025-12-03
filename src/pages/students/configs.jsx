@@ -167,7 +167,8 @@ export const studentsFields = [
         editMode: true,
         viewMode: true,
         conditional: true,
-        showWhen: { main_program_id: 2 }
+        showWhen: { main_program_id: 2 },
+        requiredWhen: { main_program_id: 2 }
     },
     {
         name: 'address',
@@ -277,6 +278,8 @@ export const studentsFields = [
         editMode: true,
         viewMode: true,
         conditional: true,
+        showWhen: { main_program_id: 2 },
+        requiredWhen: { main_program_id: 2 }
     },
     {
         name: 'specification_id',
