@@ -254,45 +254,54 @@ export default function FormStudent({
         });
     }
 
+    // Filter fields for main section (exclude parent fields)
+    const mainFields = studentsFields.filter(field => {
+        // Exclude parent section fields
+        if (field.section === 'parent') return false;
+        
+        // Check edit/view mode
+        const modeMatch =
+            (editMode && field.editMode) ||
+            (viewMode && field.viewMode) ||
+            (!editMode && !viewMode);
+
+        if (!modeMatch) return false;
+
+        // Check conditional fields
+        if (field.conditional && field.showWhen) {
+            const condition = field.showWhen.main_program_id;
+            if (condition !== undefined) {
+                if (Array.isArray(condition)) {
+                    if (!condition.includes(Number(mainProgramId))) {
+                        return false;
+                    }
+                } else if (Number(mainProgramId) !== condition) {
+                    return false;
+                }
+            }
+        }
+
+        return true;
+    });
+
+    // Filter parent fields
+    const parentFields = studentsFields.filter(field => {
+        if (field.section !== 'parent') return false;
+        
+        // Check edit/view mode
+        const modeMatch =
+            (editMode && field.editMode) ||
+            (viewMode && field.viewMode) ||
+            (!editMode && !viewMode);
+
+        return modeMatch;
+    });
+
     return (
         <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col h-full">
             <ModalContent>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {studentsFields
-                    .filter(field => {
-                        // Check edit/view mode
-                        const modeMatch =
-                            (editMode && field.editMode) ||
-                            (viewMode && field.viewMode) ||
-                            (!editMode && !viewMode);
-
-                        if (!modeMatch) return false;
-
-                        // Check conditional fields
-                        if (field.conditional && field.showWhen) {
-                            // Check main_program_id condition
-                            const condition = field.showWhen.main_program_id;
-                            if (condition !== undefined) {
-                                if (Array.isArray(condition)) {
-                                    if (!condition.includes(Number(mainProgramId))) {
-                                        return false;
-                                    }
-                                } else if (Number(mainProgramId) !== condition) {
-                                    return false;
-                                }
-                            }
-
-                            // Check parent fields condition
-                            if (field.showWhen.isMinor !== undefined) {
-                                // Parent fields logic:
-                                // - For Education (1): show only if minor
-                                // - For Memorization (2): always show
-                                return shouldShowParentFields;
-                            }
-                        }
-
-                        return true;
-                    }).map(field => {
+                {mainFields.map(field => {
                         // Hide issue_description if has_medical_issues is not 1
                         if (field.name === 'issue_description' && hasMedicalIssues !== 1) {
                             return null;
@@ -446,6 +455,36 @@ export default function FormStudent({
                         );
                     })}
             </div>
+
+            {/* Parent Information Section - Show when shouldShowParentFields */}
+            {shouldShowParentFields && parentFields.length > 0 && (
+                <div className="mt-6 space-y-4">
+                    <h3 className="text-lg font-semibold text-gray-800">
+                        {t('students.parent_information')}
+                    </h3>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 p-4 border border-gray-200 rounded-lg">
+                        {parentFields.map(field => (
+                            <div key={field.name}>
+                                <InputRFH
+                                    p="px-3 py-3"
+                                    control={control}
+                                    register={register}
+                                    error={getNestedError(errors, field.name)}
+                                    type={field.type}
+                                    placeholder={field.placeholder}
+                                    disabled={viewMode}
+                                    label={field.label}
+                                    name={field.name}
+                                    info={field.info}
+                                    options={generateOptions(options[field.name])}
+                                    defaultValue={defaultValues[field.name] || field.defaultValue}
+                                    required={isFieldRequired(schema, field.name)}
+                                />
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            )}
 
             {/* Qualification Section - Only show when main_program_id === 1 */}
             {Number(mainProgramId) === 1 && (
