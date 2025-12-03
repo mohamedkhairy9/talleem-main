@@ -115,17 +115,11 @@ export default function FormStudent({
     const studentAge = useMemo(() => calculateAge(dateOfBirth), [dateOfBirth]);
     const isMinor = studentAge !== null && studentAge < 18;
 
-    // Determine if parent fields should be shown
+    // Determine if parent fields should be shown (when student is under 18 years old)
     const shouldShowParentFields = useMemo(() => {
-        if (Number(mainProgramId) === 1) {
-            // Education program: show only if minor (age < 18)
-            return isMinor;
-        } else if (Number(mainProgramId) === 2) {
-            // Memorization program: always show
-            return true;
-        }
-        return false;
-    }, [mainProgramId, isMinor]);
+        // Show parent fields only if student is a minor (age < 18)
+        return isMinor;
+    }, [isMinor]);
 
     // Fetch entities dynamically based on selected branch and main program
     const { data: entitiesData, isLoading: entitiesLoading } = useEntitiesQuery(
@@ -253,6 +247,21 @@ export default function FormStudent({
             }
         });
     }
+
+    // Helper to check if field is conditionally required
+    const isConditionallyRequired = (field) => {
+        if (!field.requiredWhen) return isFieldRequired(schema, field.name);
+        
+        const { main_program_id: requiredMainProgram } = field.requiredWhen;
+        if (requiredMainProgram !== undefined) {
+            if (Array.isArray(requiredMainProgram)) {
+                return requiredMainProgram.includes(Number(mainProgramId));
+            }
+            return Number(mainProgramId) === requiredMainProgram;
+        }
+        
+        return isFieldRequired(schema, field.name);
+    };
 
     // Filter fields for main section (exclude parent fields)
     const mainFields = studentsFields.filter(field => {
@@ -429,7 +438,7 @@ export default function FormStudent({
                                         multiple={field.multiple}
                                         defaultValue={oldData?.files || []}
                                         setValue={setValue}
-                                        required={isFieldRequired(schema, field.name)}
+                                        required={isConditionallyRequired(field)}
                                     />
                                 ) : (
                                     <InputRFH
@@ -448,7 +457,7 @@ export default function FormStudent({
                                         defaultValue={defaultValues[field.name] || field.defaultValue}
                                         min={field.min}
                                         max={field.max}
-                                        required={isFieldRequired(schema, field.name)}
+                                        required={isConditionallyRequired(field)}
                                     />
                                 )}
                             </div>
