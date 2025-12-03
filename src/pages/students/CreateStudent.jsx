@@ -14,6 +14,7 @@ import { useAcademicLevelsQuery } from '@/api/hooks/useAcademicLevels';
 import { useNationalitiesQuery } from '@/api/hooks/useNationalities';
 import { useMajorsQuery } from '@/api/hooks/useMajors';
 import { useSpecificationsQuery } from '@/api/hooks/useSpecifications';
+import { useAcademicQualificationsQuery } from '@/api/hooks/useAcademicQualifications';
 import Loader from '@/components/common/Loader';
 import { allData } from '@/utils/constants/global.constants';
 import { enabledDisabledOptions } from '@/utils/constants/options';
@@ -52,6 +53,8 @@ export default function CreateStudent({ onClose }) {
         useMajorsQuery(allData);
     const { data: specificationsData, isLoading: specificationsLoading } =
         useSpecificationsQuery(allData);
+    const { data: academicQualificationsData, isLoading: academicQualificationsLoading } =
+        useAcademicQualificationsQuery(allData);
 
     const isLoading =
         branchesLoading ||
@@ -62,7 +65,8 @@ export default function CreateStudent({ onClose }) {
         academicLevelsLoading ||
         nationalitiesLoading ||
         majorsLoading ||
-        specificationsLoading;
+        specificationsLoading ||
+        academicQualificationsLoading;
 
     if (isLoading) return <Loader />;
 
@@ -82,6 +86,7 @@ export default function CreateStudent({ onClose }) {
                     city_id: citiesData?.data,
                     kinship_id: kinshipsData?.data,
                     academic_level_id: academicLevelsData?.data,
+                    academic_qualification_id: academicQualificationsData?.data,
                     nationality_id: nationalitiesData?.data,
                     specification_id: specificationsData?.data,
                     major_id: majorsData?.data,

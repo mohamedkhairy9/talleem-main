@@ -561,6 +561,15 @@
             "integer": "Entity category must be selected",
             "min": "Please select a valid entity category"
         },
+        "memorization_program_entity_type": {
+            "label": "Memorization Program Entity Type",
+            "placeholder": "Memorization program entity type"
+        },
+        "memorization_program_entity_type_id": {
+            "label": "Memorization Program Entity Type",
+            "integer": "Memorization program entity type must be selected",
+            "min": "Please select a valid memorization program entity type"
+        },
         "memorization_amount": {
             "label": "Memorization Amount",
             "placeholder": "Enter memorization amount (e.g., 15 Juz)",

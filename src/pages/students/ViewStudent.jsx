@@ -12,6 +12,7 @@ import { useAcademicLevelsQuery } from '@/api/hooks/useAcademicLevels';
 import { useEntitiesQuery } from '@/api/hooks/useEntities';
 import { useNationalitiesQuery } from '@/api/hooks/useNationalities';
 import { useSpecificationsQuery } from '@/api/hooks/useSpecifications';
+import { useAcademicQualificationsQuery } from '@/api/hooks/useAcademicQualifications';
 import Loader from '@/components/common/Loader';
 import { allData } from '@/utils/constants/global.constants';
 import { enabledDisabledOptions } from '@/utils/constants/options';
@@ -50,6 +51,8 @@ export default function ViewStudent({ onClose, oldData }) {
         useNationalitiesQuery(allData);
     const { data: specificationsData, isLoading: specificationsLoading } =
         useSpecificationsQuery(allData);
+    const { data: academicQualificationsData, isLoading: academicQualificationsLoading } =
+        useAcademicQualificationsQuery(allData);
 
     const isLoading =
         branchesLoading ||
@@ -61,7 +64,8 @@ export default function ViewStudent({ onClose, oldData }) {
         academicLevelsLoading ||
         entitiesLoading ||
         nationalitiesLoading ||
-        specificationsLoading;
+        specificationsLoading ||
+        academicQualificationsLoading;
 
     if (isLoading) return <Loader />;
 
@@ -83,6 +87,7 @@ export default function ViewStudent({ onClose, oldData }) {
                     city_id: citiesData?.data,
                     kinship_id: kinshipsData?.data,
                     academic_level_id: academicLevelsData?.data,
+                    academic_qualification_id: academicQualificationsData?.data,
                     entity_id: entitiesData?.data,
                     nationality_id: nationalitiesData?.data,
                     specification_id: specificationsData?.data,
