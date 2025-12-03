@@ -1,6 +1,8 @@
 {
     "validation": {
         "required": "هذا الحقل مطلوب",
+        "please_fix_errors": "يرجى تصحيح الأخطاء التالية",
+        "field_required": "هذا الحقل مطلوب",
         "search": {
             "placeholder": "أدخل كلمة البحث"
         },

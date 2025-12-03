@@ -1,6 +1,8 @@
 {
     "validation": {
         "required": "This field is required",
+        "please_fix_errors": "Please fix the following errors",
+        "field_required": "This field is required",
         "search": {
             "placeholder": "Enter search keyword"
         },

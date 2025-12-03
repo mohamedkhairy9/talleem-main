@@ -39,19 +39,23 @@ export const studentsSchema = yup.object({
     education_program_entity_type_classification: yup
         .string()
         .nullable()
+        .transform((value) => (value === '' ? null : value))
         .when('main_program_id', {
             is: value => Number(value) === 1,
             then: schema =>
                 schema
                     .required(t('validation.required'))
                     .min(2, t('validation.education_program_entity_type_classification.min')),
-            otherwise: schema => schema.optional()
+            otherwise: schema => schema.nullable().optional()
         }),
     
     // Entity category is now the education_program_entity_type_id
     entity_category_id: yup
         .number()
         .nullable()
+        .transform((value, originalValue) => 
+            originalValue === '' || originalValue === null || originalValue === undefined ? null : value
+        )
         .when('main_program_id', {
             is: value => Number(value) === 1,
             then: schema =>
@@ -59,7 +63,7 @@ export const studentsSchema = yup.object({
                     .required(t('validation.required'))
                     .integer(t('validation.entity_category_id.integer'))
                     .min(1, t('validation.entity_category_id.min')),
-            otherwise: schema => schema.optional()
+            otherwise: schema => schema.nullable().optional()
         }),
     
     branch_id: yup
