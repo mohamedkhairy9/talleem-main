@@ -119,10 +119,12 @@
 .segmentation-view .main-content {
     display: grid;
     grid-template-columns: 500px 1fr;
-    gap: 20px;
+    gap: 10px;
     padding: 20px;
-    max-width: 1400px;
+    max-width: 1600px;
     margin: 0 auto;
+    /* Allow content to expand */
+    overflow: visible;
 }
 
 /* Segments Panel (Left) */
@@ -291,6 +293,15 @@
     background: #2563eb;
 }
 
+.segments-table .btn-view.active {
+    background: #4CAF50;
+    box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.3);
+}
+
+.segments-table .btn-view.active:hover {
+    background: #45a049;
+}
+
 .segments-table .btn-save {
     background: #10b981;
 }
@@ -354,120 +365,13 @@
 
 /* Quran Panel (Right) */
 .quran-panel {
-    background: white;
-    border-radius: 8px;
-    padding: 40px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    min-height: 600px;
-}
-
-.quran-panel .page-content {
-    max-width: 500px;
-    margin: 0 auto;
-    direction: rtl;
-}
-
-/* Font Loading */
-.font-loading {
+    background: transparent;
     display: flex;
-    flex-direction: column;
-    align-items: center;
     justify-content: center;
-    min-height: 400px;
-    gap: 20px;
-}
-
-.font-loading p {
-    color: #666;
-    font-size: 1em;
-}
-
-/* Lines */
-.segmentation-view .line {
-    margin: 0;
-    padding: 0;
-    line-height: 1.8;
-    font-size: 1.8em;
-    color: #000;
-}
-
-.segmentation-view .line.surah-name {
-    font-family: 'SurahHeaderFont', Arial, sans-serif !important;
-    font-size: 7em;
-    font-weight: 400;
-    padding-top: 18px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    line-height: 1.5;
-    text-align: center;
-    height: 78px;
-    margin-bottom: 10px;
-}
-
-.segmentation-view .line.basmallah {
-    font-family: 'BasmallahFont', Arial, sans-serif !important;
-    margin-bottom: 10px;
-    display: flex;
-    align-items: start;
-    justify-content: center;
-    height: 30px;
-    text-align: center;
-    font-feature-settings: "liga" 1, "calt" 1, "dlig" 1;
-}
-
-.segmentation-view .line.ayah {
-    text-align: justify;
-    text-align-last: justify;
-    font-family: inherit !important;
-}
-
-.segmentation-view .line.centered {
-    text-align: center !important;
-    text-align-last: center;
-}
-
-/* Words */
-.segmentation-view .word {
-    cursor: default;
-    transition: all 0.2s;
-    display: inline;
-    font-family: inherit !important;
-    font-size: inherit !important;
-}
-
-.segmentation-view .word.editable {
-    cursor: pointer;
-}
-
-.segmentation-view .word.editable:hover {
-    background: rgba(74, 144, 226, 0.2);
-    padding: 1px;
-    border-radius: 2px;
-}
-
-.segmentation-view .word.selected {
-    background: rgba(102, 126, 234, 0.5);
-    padding: 2px 4px;
-    border-radius: 3px;
-    box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.3);
-}
-
-/* Disabled (already used) words */
-.segmentation-view .word.disabled {
-    opacity: 0.4;
-    cursor: not-allowed !important;
-    color: #999;
-    background: rgba(200, 200, 200, 0.1);
-}
-
-.segmentation-view .word.disabled:hover {
-    background: rgba(200, 200, 200, 0.15) !important;
-}
-
-/* Don't allow selection of disabled words */
-.segmentation-view .word.disabled.editable {
-    cursor: not-allowed !important;
+    align-items: flex-start;
+    /* Allow panel to expand with larger mushaf page */
+    overflow: visible;
+    min-width: 0;
 }
 
 /* Loading & Error States */
@@ -509,11 +413,6 @@
     background: #357abd;
 }
 
-.no-content {
-    text-align: center;
-    padding: 40px;
-    color: #666;
-}
 
 /* Responsive */
 @media (max-width: 1200px) {
