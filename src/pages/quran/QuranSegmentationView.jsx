@@ -785,7 +785,7 @@ const QuranSegmentationView = () => {
                                                         onClick={() => viewSegment(segment)}
                                                         title={viewedSegmentId === segment.id ? t('mushaf_management.deselectSegment') : t('mushaf_management.view')}
                                                     >
-                                                        <FaEye color={viewedSegmentId === segment.id ? '#4CAF50' : '#fffe'}/>
+                                                        <FaEye color='#fffe'/>
                                                     </button>
                                                 )}
                                                 {!segment.id && (

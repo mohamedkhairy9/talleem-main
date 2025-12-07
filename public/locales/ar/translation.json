@@ -1319,6 +1319,7 @@
         "selectStart": "اختر البداية",
         "selectEnd": "اختر النهاية",
         "view": "عرض في المصحف",
+        "segmentDeselected": "تم إلغاء عرض المقطع",
         "save": "حفظ",
         "noSegments": "لا توجد مقاطع لهذه الصفحة",
         "editingNotice": "جاري التحديد... اضغط على",

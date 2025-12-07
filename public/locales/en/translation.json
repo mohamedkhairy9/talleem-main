@@ -1406,6 +1406,7 @@
         "selectStart": "Select Start",
         "selectEnd": "Select End",
         "view": "View in Quran",
+        "segmentDeselected": "Segment deselected",
         "save": "Save",
         "noSegments": "No segments for this page",
         "editingNotice": "Selecting... Click on",
