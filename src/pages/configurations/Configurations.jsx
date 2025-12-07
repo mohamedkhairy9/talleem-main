@@ -1,14 +1,18 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useMemo } from 'react';
 import { useConfigurationsQuery } from '@/api/hooks/useConfigurations';
 import Loader from '@/components/common/Loader';
 import useLocale from '@/utils/hooks/global/useLocale';
 import EditConfigurationModal from './EditConfigurationModal';
 import { useSearchParams } from 'react-router-dom';
+import { API_KEYS } from '@/api/endpoints';
+import useApiCalls from './useApiCalls';
+import i18next from 'i18next';
 
 export default function Configurations() {
     const { t } = useLocale();
     const [searchParams, setSearchParams] = useSearchParams();
     const [editingConfig, setEditingConfig] = useState(null);
+    const currentLang = i18next.language;
     
     // Get program from URL or default to 'general'
     const selectedProgram = searchParams.get('program') || 'general';
@@ -16,6 +20,26 @@ export default function Configurations() {
     const { data, isLoading } = useConfigurationsQuery(selectedProgram);
 
     const configGroups = data?.data || [];
+
+    // Fetch platforms data for mapping IDs to names
+    const { platformsData } = useApiCalls({
+        apiCalls: [{ key: API_KEYS.REMOTELY_ATTENDANCE_PLATFORMS }]
+    });
+
+    // Create a mapping of platform ID to platform name
+    const platformIdToNameMap = useMemo(() => {
+        if (!platformsData?.data) {
+            return {};
+        }
+
+        const map = {};
+        platformsData.data.forEach(platform => {
+            const name = platform.name?.[currentLang] || platform.name?.ar || platform.name?.en || platform.name;
+            map[platform.id] = name;
+        });
+
+        return map;
+    }, [platformsData, currentLang]);
 
     const tabs = [
         { value: 'general', label: t('configurations.general') },
@@ -51,6 +75,11 @@ export default function Configurations() {
                     ))}
                 </div>
             );
+        } else if (config.key === 'teaching_method') {
+            // Map platform ID to platform name
+            const platformId = Number(config.value);
+            const platformName = platformIdToNameMap[platformId] || platformIdToNameMap[config.value] || config.value;
+            displayValue = platformName;
         } else {
             displayValue = config.value;
         }
