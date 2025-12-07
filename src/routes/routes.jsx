@@ -50,6 +50,7 @@ import InspectorAssignments from '@/pages/inspector-assignments/Inspectorassignm
 import IssuingWarnings from '@/pages/issuing-warnings/Warnings';
 import CertificationNames from '@/pages/certification-names/CertificationNames';
 import QuranSegmentationView from '@/pages/quran/QuranSegmentationView';
+import SuggestedExamTemplates from '@/pages/quran/SuggestedExamTemplates';
 import SessionModes from '@/pages/sessionModes/SessionModes';
 import Certificates from '@/pages/upload-certificate/Certificates';
 import ExamSegmentsCount from '@/pages/exam-segments/ExamSegmentsCount';
@@ -94,6 +95,10 @@ export const routes = [
     {
         path: '/quran-segmentation',
         element: <QuranSegmentationView />
+    },
+    {
+        path: '/suggested-exam-templates',
+        element: <SuggestedExamTemplates />
     },
     {
         path: '/academic-qualifications',

@@ -4,14 +4,14 @@ import { CiWarning } from 'react-icons/ci';
 import Modal from './Modal';
 import useLocale from '@/utils/hooks/global/useLocale';
 
-export default function DeleteModal({ deleteFn, onClose, loading = false }) {
+export default function DeleteModal({ deleteFn, onClose, loading = false, message }) {
     const { t } = useLocale();
     return (
         <Modal onClose={onClose}>
             <div className="bg-white p-5 rounded-xl font-semibold">
                 <CiWarning className="mx-auto text-4xl text-red-500" />
                 <p className="text-center my-5">
-                    {t('common.are_you_sure_you_want_to_delete_this_item')}
+                    {message || t('common.are_you_sure_you_want_to_delete_this_item')}
                 </p>
                 <div className="flex justify-center gap-4">
                     <button
