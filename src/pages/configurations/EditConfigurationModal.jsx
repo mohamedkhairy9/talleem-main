@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useEffect } from 'react';
 import Modal from '@/components/common/form/Modal';
 import ModalHeader from '@/components/common/form/ModalHeader';
 import useRFH from '@/utils/hooks/global/useRFH';
@@ -8,22 +8,21 @@ import { useUpdateConfigurationMutation } from '@/api/hooks/useConfigurations';
 import useLocale from '@/utils/hooks/global/useLocale';
 import i18next from 'i18next';
 import Loader from '@/components/common/Loader';
-import useCustomQuery from '@/utils/hooks/global/useCustomQuery';
-import { API_KEYS } from '@/api/endpoints';
 import * as yup from 'yup';
-import { remotelyAttendancePlatformsServices } from '@/api/services/remotelyAttendancePlatforms';
-import { teachingMethodOptions, weekDaysOptions } from './configs';
+import { weekDaysOptions } from './configs';
+import { API_KEYS } from '@/api/endpoints';
+import useApiCalls from './useApiCalls';
 
 export default function EditConfigurationModal({ config, onClose }) {
     const { t } = useLocale();
     const currentLang = i18next.language;
     const { mutate, isPending } = useUpdateConfigurationMutation();
 
-    // Fetch platforms directly
-    const { data: platformsData, isLoading: platformsLoading } = useCustomQuery({
-        queryKey: [API_KEYS.REMOTELY_ATTENDANCE_PLATFORMS, { status: true }],
-        queryFn: () => remotelyAttendancePlatformsServices.getRemotelyAttendancePlatforms({ status: true }),
-        enabled: config.key === 'platform'
+    // Use the useApiCalls hook - fetch platforms for both 'platform' and 'teaching_method' fields
+    const { platformsData, isLoading: platformsLoading } = useApiCalls({
+        apiCalls: (config.key === 'platform' || config.key === 'teaching_method')
+            ? [{ key: API_KEYS.REMOTELY_ATTENDANCE_PLATFORMS }] 
+            : []
     });
 
     // Platform options from API - use ID as value for proper tracking
@@ -60,12 +59,13 @@ export default function EditConfigurationModal({ config, onClose }) {
                     : yup.string().required(t('validation.required'))
     });
 
-    // Prepare default value - convert platform names to IDs
+    // Prepare default value - convert platform names to IDs or use IDs directly
     const getDefaultValue = () => {
         if (config.type === 'checkbox') {
             return config.value === '1' || config.value === true;
         }
 
+        // Handle platform field (multi-select) - convert names to IDs
         if (isMultiSelect && config.value && platformOptions.length > 0) {
             // Split comma-separated platform names
             const platformNames = config.value.split(',').map(p => p.trim());
@@ -81,10 +81,38 @@ export default function EditConfigurationModal({ config, onClose }) {
             return platformIds;
         }
 
+        // Handle teaching_method field - value might be an ID or a name
+        if (config.key === 'teaching_method' && config.value) {
+            // Check if value is already an ID (number or numeric string)
+            const numericValue = Number(config.value);
+            if (!isNaN(numericValue) && platformOptions.length > 0) {
+                // Check if this ID exists in platformOptions
+                const platform = platformOptions.find(opt => opt.value === numericValue || opt.value === config.value);
+                if (platform) {
+                    return platform.value; // Use the ID directly
+                }
+            }
+            
+            // If not found as ID, try to find by name (for backward compatibility)
+            if (platformOptions.length > 0) {
+                const platform = platformOptions.find(opt => 
+                    opt.platformName === config.value || 
+                    opt.name === config.value ||
+                    opt.label === config.value
+                );
+                if (platform) {
+                    return platform.value; // Return the ID
+                }
+            }
+            
+            // If platformOptions not loaded yet, return the value as-is (will be handled when options load)
+            return config.value;
+        }
+
         return config.value;
     };
 
-    const { register, errors, handleSubmit, control, watch } = useRFH({
+    const { register, errors, handleSubmit, control, watch, setValue } = useRFH({
         schema,
         defaultValues: {
             value: getDefaultValue()
@@ -93,6 +121,30 @@ export default function EditConfigurationModal({ config, onClose }) {
 
     // Watch the value to see what's selected
     const currentValue = watch('value');
+
+    // Update form value when platformOptions loads (for teaching_method field)
+    useEffect(() => {
+        if (config.key === 'teaching_method' && config.value && platformOptions.length > 0) {
+            const numericValue = Number(config.value);
+            if (!isNaN(numericValue)) {
+                // Check if this ID exists in platformOptions
+                const platform = platformOptions.find(opt => opt.value === numericValue || opt.value === config.value);
+                if (platform) {
+                    setValue('value', platform.value, { shouldValidate: false });
+                }
+            } else {
+                // Try to find by name (for backward compatibility)
+                const platform = platformOptions.find(opt => 
+                    opt.platformName === config.value || 
+                    opt.name === config.value ||
+                    opt.label === config.value
+                );
+                if (platform) {
+                    setValue('value', platform.value, { shouldValidate: false });
+                }
+            }
+        }
+    }, [platformOptions, config.key, config.value, setValue]);
 
     function onSubmit(data) {
         let valueToSend = data.value;
@@ -107,6 +159,12 @@ export default function EditConfigurationModal({ config, onClose }) {
                 .filter(Boolean);
 
             valueToSend = platformNames.join(', ');
+        }
+        
+        // Handle teaching_method - send the ID directly (not convert to name)
+        if (config.key === 'teaching_method') {
+            // data.value is already the platform ID, send it as-is
+            valueToSend = data.value;
         }
 
         const payload = {
@@ -136,11 +194,11 @@ export default function EditConfigurationModal({ config, onClose }) {
             };
         }
 
-        // Check if it's teaching method
+        // Check if it's teaching method - use platformsData from API
         if (config.key === 'teaching_method') {
             return {
                 type: 'select',
-                options: teachingMethodOptions,
+                options: platformOptions,
                 isMulti: false
             };
         }

@@ -10,7 +10,7 @@ export default function useApiCalls({ apiCalls = [] } = {}) {
     const { queries, isAnyLoading } = useCustomQueries([
         {
             queryKey: [API_KEYS.REMOTELY_ATTENDANCE_PLATFORMS, { status: true }],
-            queryFn: () => remotelyAttendancePlatformsServices.getPlatforms({ status: true }),
+            queryFn: () => remotelyAttendancePlatformsServices.getRemotelyAttendancePlatforms({ status: true }),
             enabled: isEnabled(API_KEYS.REMOTELY_ATTENDANCE_PLATFORMS)
         }
     ]);
