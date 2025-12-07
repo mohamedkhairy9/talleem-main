@@ -1525,6 +1525,7 @@
         "select_platforms": "Select platforms (multiple)",
         "enter_value": "Enter value",
         "platform_helper": "You can select multiple platforms",
+        "selected_platforms": "Selected Platforms",
         "no_configurations": "No configurations found",
         "no_configurations_desc": "There are no configurations available for this program."
     },
