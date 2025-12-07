@@ -1541,6 +1541,7 @@
         "select_platforms": "اختر المنصات (متعدد)",
         "enter_value": "أدخل القيمة",
         "platform_helper": "يمكنك اختيار منصات متعددة",
+        "selected_platforms": "المنصات المختارة",
         "no_configurations": "لا توجد إعدادات",
         "no_configurations_desc": "لا توجد إعدادات متاحة لهذا البرنامج."
     },
