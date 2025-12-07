@@ -54,6 +54,8 @@ export default function Users() {
                 toggleModals={toggle}
                 pagination={pagination}
                 setPagination={setter('pagination')}
+                enableAdd={false}
+                enableEdit={false}
                 Filters={
                     <Filters filters={filters} handleFilter={handleFilter} />
                 }
