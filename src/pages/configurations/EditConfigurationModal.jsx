@@ -18,11 +18,17 @@ export default function EditConfigurationModal({ config, onClose }) {
     const currentLang = i18next.language;
     const { mutate, isPending } = useUpdateConfigurationMutation();
 
-    // Use the useApiCalls hook - fetch platforms for both 'platform' and 'teaching_method' fields
-    const { platformsData, isLoading: platformsLoading } = useApiCalls({
-        apiCalls: (config.key === 'platform' || config.key === 'teaching_method')
-            ? [{ key: API_KEYS.REMOTELY_ATTENDANCE_PLATFORMS }] 
-            : []
+    // Use the useApiCalls hook - fetch platforms for 'platform' and session modes for 'teaching_method'
+    const apiCallsToFetch = [];
+    if (config.key === 'platform') {
+        apiCallsToFetch.push({ key: API_KEYS.REMOTELY_ATTENDANCE_PLATFORMS });
+    }
+    if (config.key === 'teaching_method') {
+        apiCallsToFetch.push({ key: API_KEYS.SESSION_MODES });
+    }
+    
+    const { platformsData, sessionModesData, isLoading: platformsLoading } = useApiCalls({
+        apiCalls: apiCallsToFetch
     });
 
     // Platform options from API - use ID as value for proper tracking
@@ -44,6 +50,26 @@ export default function EditConfigurationModal({ config, onClose }) {
 
         return options;
     }, [platformsData, currentLang]);
+
+    // Session mode options from API - use ID as value for proper tracking
+    const sessionModeOptions = useMemo(() => {
+        if (!sessionModesData?.data) {
+            return [];
+        }
+
+        const options = sessionModesData.data.map(sessionMode => {
+            const name = sessionMode.name?.[currentLang] || sessionMode.name?.ar || sessionMode.name?.en || sessionMode.name;
+            return {
+                value: sessionMode.id, // Use ID as value for proper tracking
+                label: name,
+                id: sessionMode.id,
+                name: name,
+                sessionModeName: name // Store the display name
+            };
+        });
+
+        return options;
+    }, [sessionModesData, currentLang]);
 
     // Determine if field is multi-select for platform
     const isMultiSelect = config.key === 'platform';
@@ -85,27 +111,27 @@ export default function EditConfigurationModal({ config, onClose }) {
         if (config.key === 'teaching_method' && config.value) {
             // Check if value is already an ID (number or numeric string)
             const numericValue = Number(config.value);
-            if (!isNaN(numericValue) && platformOptions.length > 0) {
-                // Check if this ID exists in platformOptions
-                const platform = platformOptions.find(opt => opt.value === numericValue || opt.value === config.value);
-                if (platform) {
-                    return platform.value; // Use the ID directly
+            if (!isNaN(numericValue) && sessionModeOptions.length > 0) {
+                // Check if this ID exists in sessionModeOptions
+                const sessionMode = sessionModeOptions.find(opt => opt.value === numericValue || opt.value === config.value);
+                if (sessionMode) {
+                    return sessionMode.value; // Use the ID directly
                 }
             }
             
             // If not found as ID, try to find by name (for backward compatibility)
-            if (platformOptions.length > 0) {
-                const platform = platformOptions.find(opt => 
-                    opt.platformName === config.value || 
+            if (sessionModeOptions.length > 0) {
+                const sessionMode = sessionModeOptions.find(opt => 
+                    opt.sessionModeName === config.value || 
                     opt.name === config.value ||
                     opt.label === config.value
                 );
-                if (platform) {
-                    return platform.value; // Return the ID
+                if (sessionMode) {
+                    return sessionMode.value; // Return the ID
                 }
             }
             
-            // If platformOptions not loaded yet, return the value as-is (will be handled when options load)
+            // If sessionModeOptions not loaded yet, return the value as-is (will be handled when options load)
             return config.value;
         }
 
@@ -122,29 +148,29 @@ export default function EditConfigurationModal({ config, onClose }) {
     // Watch the value to see what's selected
     const currentValue = watch('value');
 
-    // Update form value when platformOptions loads (for teaching_method field)
+    // Update form value when sessionModeOptions loads (for teaching_method field)
     useEffect(() => {
-        if (config.key === 'teaching_method' && config.value && platformOptions.length > 0) {
+        if (config.key === 'teaching_method' && config.value && sessionModeOptions.length > 0) {
             const numericValue = Number(config.value);
             if (!isNaN(numericValue)) {
-                // Check if this ID exists in platformOptions
-                const platform = platformOptions.find(opt => opt.value === numericValue || opt.value === config.value);
-                if (platform) {
-                    setValue('value', platform.value, { shouldValidate: false });
+                // Check if this ID exists in sessionModeOptions
+                const sessionMode = sessionModeOptions.find(opt => opt.value === numericValue || opt.value === config.value);
+                if (sessionMode) {
+                    setValue('value', sessionMode.value, { shouldValidate: false });
                 }
             } else {
                 // Try to find by name (for backward compatibility)
-                const platform = platformOptions.find(opt => 
-                    opt.platformName === config.value || 
+                const sessionMode = sessionModeOptions.find(opt => 
+                    opt.sessionModeName === config.value || 
                     opt.name === config.value ||
                     opt.label === config.value
                 );
-                if (platform) {
-                    setValue('value', platform.value, { shouldValidate: false });
+                if (sessionMode) {
+                    setValue('value', sessionMode.value, { shouldValidate: false });
                 }
             }
         }
-    }, [platformOptions, config.key, config.value, setValue]);
+    }, [sessionModeOptions, config.key, config.value, setValue]);
 
     function onSubmit(data) {
         let valueToSend = data.value;
@@ -163,7 +189,7 @@ export default function EditConfigurationModal({ config, onClose }) {
         
         // Handle teaching_method - send the ID directly (not convert to name)
         if (config.key === 'teaching_method') {
-            // data.value is already the platform ID, send it as-is
+            // data.value is already the session mode ID, send it as-is
             valueToSend = data.value;
         }
 
@@ -194,11 +220,11 @@ export default function EditConfigurationModal({ config, onClose }) {
             };
         }
 
-        // Check if it's teaching method - use platformsData from API
+        // Check if it's teaching method - use sessionModesData from API
         if (config.key === 'teaching_method') {
             return {
                 type: 'select',
-                options: platformOptions,
+                options: sessionModeOptions,
                 isMulti: false
             };
         }

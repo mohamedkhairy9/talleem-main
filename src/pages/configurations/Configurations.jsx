@@ -21,12 +21,16 @@ export default function Configurations() {
 
     const configGroups = data?.data || [];
 
-    // Fetch platforms data for mapping IDs to names
-    const { platformsData } = useApiCalls({
-        apiCalls: [{ key: API_KEYS.REMOTELY_ATTENDANCE_PLATFORMS }]
+    // Fetch platforms and session modes data for mapping IDs to names
+    const { platformsData, sessionModesData } = useApiCalls({
+        apiCalls: [
+            { key: API_KEYS.REMOTELY_ATTENDANCE_PLATFORMS },
+            { key: API_KEYS.SESSION_MODES }
+        ]
     });
 
-    // Create a mapping of platform ID to platform name
+    // Create a mapping of platform ID to platform name (for potential future use)
+    // eslint-disable-next-line no-unused-vars
     const platformIdToNameMap = useMemo(() => {
         if (!platformsData?.data) {
             return {};
@@ -40,6 +44,21 @@ export default function Configurations() {
 
         return map;
     }, [platformsData, currentLang]);
+
+    // Create a mapping of session mode ID to session mode name
+    const sessionModeIdToNameMap = useMemo(() => {
+        if (!sessionModesData?.data) {
+            return {};
+        }
+
+        const map = {};
+        sessionModesData.data.forEach(sessionMode => {
+            const name = sessionMode.name?.[currentLang] || sessionMode.name?.ar || sessionMode.name?.en || sessionMode.name;
+            map[sessionMode.id] = name;
+        });
+
+        return map;
+    }, [sessionModesData, currentLang]);
 
     const tabs = [
         { value: 'general', label: t('configurations.general') },
@@ -76,10 +95,10 @@ export default function Configurations() {
                 </div>
             );
         } else if (config.key === 'teaching_method') {
-            // Map platform ID to platform name
-            const platformId = Number(config.value);
-            const platformName = platformIdToNameMap[platformId] || platformIdToNameMap[config.value] || config.value;
-            displayValue = platformName;
+            // Map session mode ID to session mode name
+            const sessionModeId = Number(config.value);
+            const sessionModeName = sessionModeIdToNameMap[sessionModeId] || sessionModeIdToNameMap[config.value] || config.value;
+            displayValue = sessionModeName;
         } else {
             displayValue = config.value;
         }
