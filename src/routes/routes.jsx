@@ -7,6 +7,7 @@ import Resources from '@/pages/resources/Resources';
 import Notifications from '@/pages/notifications/Notifications';
 import NotificationTemplates from '@/pages/notification-templates/NotificationTemplates';
 import ActivityLogs from '@/pages/activity-logs/ActivityLogs';
+import ImportErrors from '@/pages/import-errors/ImportErrors';
 import AcademicQualifications from '@/pages/academic-qualifications/AcademicQualifications';
 import Branches from '@/pages/branches/Branches';
 import MainPrograms from '@/pages/main-programs/MainPrograms';
@@ -91,6 +92,10 @@ export const routes = [
     {
         path: '/activity-logs',
         element: <ActivityLogs />
+    },
+    {
+        path: '/import-errors',
+        element: <ImportErrors />
     },
     {
         path: '/quran-segmentation',

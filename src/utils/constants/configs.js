@@ -70,6 +70,11 @@ export const sideMenuTabs = [
                 titleKey: 'sidebar.activity_logs',
                 path: '/activity-logs',
                 icon: VscDebugBreakpointLog
+            },
+            {
+                titleKey: 'sidebar.import_errors',
+                path: '/import-errors',
+                icon: VscDebugBreakpointLog
             }
         ]
     },

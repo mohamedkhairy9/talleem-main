@@ -371,6 +371,10 @@ export const API_URLS = {
         UPDATE: id => `/exam-segments-count/${id}`,
         DELETE: id => `/exam-segments-count/${id}`
     },
+    IMPORT_ERRORS: {
+        LIST: '/import-errors',
+        CLEAR: '/import-errors-clear'
+    },
 };
 
 export const API_KEYS = {
@@ -433,5 +437,7 @@ export const API_KEYS = {
     PARENTS: 'parents',
     ENTITY_ACTIVITIES: 'entity-activities',
     MAJORS: 'majors',
-    REMOTELY_ATTENDANCE_PLATFORMS: 'remotely-attendance-platforms'
+    REMOTELY_ATTENDANCE_PLATFORMS: 'remotely-attendance-platforms',
+    EXAM_SEGMENTS_COUNT: 'exam-segments-count',
+    IMPORT_ERRORS: 'import-errors'
 };
