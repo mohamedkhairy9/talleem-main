@@ -152,7 +152,8 @@ export const studentsSchema = yup.object({
     
     address: yup
         .string()
-        .required(t('validation.required'))
+        .nullable()
+        .optional()
         .min(5, t('validation.address.min')),
     
     date_of_birth: yup
@@ -384,5 +385,5 @@ export const studentsSchema = yup.object({
     
     files: yup.array().of(yup.mixed()).nullable().optional(),
     
-    profile_picture: yup.mixed().required(t('validation.required'))
+    profile_picture: yup.mixed().nullable().optional()
 });

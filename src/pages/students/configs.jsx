@@ -291,17 +291,17 @@ export const studentsFields = [
         conditional: true,
         showWhen: { main_program_id: 2 }
     },
-    {
-        name: 'academic_qualification_id',
-        label: 'validation.academic_qualification_id.label',
-        type: 'select',
-        placeholder: 'validation.academic_qualification_id.placeholder',
-        editMode: true,
-        viewMode: true,
-        conditional: true,
-        showWhen: { main_program_id: 2 },
-        requiredWhen: { main_program_id: 2 }
-    },
+    // {
+    //     name: 'academic_qualification_id',
+    //     label: 'validation.academic_qualification_id.label',
+    //     type: 'select',
+    //     placeholder: 'validation.academic_qualification_id.placeholder',
+    //     editMode: true,
+    //     viewMode: true,
+    //     conditional: true,
+    //     showWhen: { main_program_id: 2 },
+    //     requiredWhen: { main_program_id: 2 }
+    // },
     {
         name: 'specification_id',
         label: 'validation.specification_id.label',
