@@ -293,7 +293,18 @@ export const sideMenuTabs = [
                 titleKey: 'sidebar.memorization-program-entity-types',
                 path: '/memorization-program-entity-types',
                 icon: VscDebugBreakpointLog
+            },
+            {
+                titleKey: 'sidebar.suggested_exam_templates',
+                path: '/suggested-exam-templates',
+                icon: VscDebugBreakpointLog
+            },
+            {
+                titleKey: 'sidebar.exam_segments_count',
+                path: '/exam-segments-count',
+                icon: VscDebugBreakpointLog
             }
+
         ]
     },
 
@@ -333,7 +344,7 @@ export const sideMenuTabs = [
                 path: '/inspector-assignments',
                 icon: VscDebugBreakpointLog
             },
-]
+        ]
     },
 
     // config file
@@ -345,25 +356,17 @@ export const sideMenuTabs = [
 
     // Quran Management
     {
-        titleKey: 'sidebar.quran_management',
+        titleKey: 'sidebar.mushaf_management',
         icon: HiBookOpen,
-        subMenu: [
-            {
-                titleKey: 'sidebar.mushaf_management',
-                path: '/quran-segmentation',
-                icon: VscDebugBreakpointLog
-            },
-            {
-                titleKey: 'sidebar.suggested_exam_templates',
-                path: '/suggested-exam-templates',
-                icon: VscDebugBreakpointLog
-            },
-            {
-                titleKey: 'sidebar.exam_segments_count',
-                path: '/exam-segments-count',
-                icon: VscDebugBreakpointLog
-            }
-        ]
+        path: '/quran-segmentation',
+
+        // subMenu: [
+        //     {
+        //         titleKey: 'sidebar.mushaf_management',
+        //         path: '/quran-segmentation',
+        //         icon: VscDebugBreakpointLog
+        //     },
+        // ]
     },
 
     // صلة القربى
