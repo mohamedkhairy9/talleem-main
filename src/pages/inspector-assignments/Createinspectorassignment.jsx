@@ -12,7 +12,7 @@ import ErrorBoundary from '@/components/common/ErrorBoundary';
 export default function CreateInspectorAssignment({ onClose }) {
     const { mutate, isPending } = useCreateInspectorAssignmentMutation();
 
-    const { branchesData, entitiesData, usersData, mainProgramsData, isLoading } = useApiCalls({
+    const { branchesData, mainProgramsData, isLoading } = useApiCalls({
         apiCalls
     });
 
@@ -35,8 +35,6 @@ export default function CreateInspectorAssignment({ onClose }) {
                         assignment_type: assignmentTypeOptions,
                         main_program_id: mainProgramsData?.data,
                         branch_id: branchesData?.data,
-                        entity_ids: entitiesData?.data,
-                        supervisor_ids: usersData?.data,
                         status: enabledDisabledOptions
                     }}
                     oldData={inspectorAssignmentsDefaultValues}

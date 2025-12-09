@@ -12,13 +12,12 @@ import ErrorBoundary from '@/components/common/ErrorBoundary';
 export default function EditInspectorAssignment({ onClose, oldData }) {
     const { mutate, isPending } = useUpdateInspectorAssignmentMutation();
 
-    const { branchesData, entitiesData, usersData, mainProgramsData, isLoading } = useApiCalls({
+    const { branchesData, mainProgramsData, isLoading } = useApiCalls({
         apiCalls
     });
 
-    if (isLoading) return <Loader />;
-
     // تحويل البيانات من API إلى الشكل المطلوب للنموذج
+    // MUST be called before any early returns to maintain hooks order
     const transformedData = React.useMemo(() => {
         if (!oldData) return null;
         
@@ -37,10 +36,13 @@ export default function EditInspectorAssignment({ onClose, oldData }) {
             main_program_id: oldData.main_program?.id || '',
             branch_id: oldData.branch?.id || '',
             supervisor_ids: supervisorIds,
+            supervisors: oldData.supervisors, // Preserve original supervisors array for form options
             entity_ids: oldData.entity_ids || [], // مؤقتاً حتى يرجع الـ backend
             status: oldData.is_active !== undefined ? oldData.is_active : oldData.status
         };
     }, [oldData]);
+
+    if (isLoading) return <Loader />;
 
     const assignmentTypeOptions = [
         { id: 'regular', name: 'إشراف تربوي اعتيادي' },
@@ -61,8 +63,6 @@ export default function EditInspectorAssignment({ onClose, oldData }) {
                         assignment_type: assignmentTypeOptions,
                         main_program_id: mainProgramsData?.data,
                         branch_id: branchesData?.data,
-                        entity_ids: entitiesData?.data,
-                        supervisor_ids: usersData?.data,
                         status: enabledDisabledOptions
                     }}
                 />

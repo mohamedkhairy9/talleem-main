@@ -208,7 +208,5 @@ export const inspectorAssignmentsDefaultValues = {
 
 export const apiCalls = [
     API_KEYS.BRANCHES,
-    API_KEYS.ENTITIES,
-    API_KEYS.USERS,
     API_KEYS.MAIN_PROGRAMS
 ];

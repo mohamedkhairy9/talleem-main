@@ -1,6 +1,6 @@
 import useRFH from '@/utils/hooks/global/useRFH';
 import { inspectorAssignmentsSchema as schema } from '@/utils/yup/inspectorAssignments.schemas';
-import React, { useMemo } from 'react';
+import React, { useMemo, useEffect, useRef } from 'react';
 import { inspectorAssignmentsFields } from './configs';
 import InputRFH from '@/components/common/inputs/InputRFH';
 import Btn from '@/components/common/buttons/Btn';
@@ -9,6 +9,10 @@ import { generateOptions } from '@/utils/helpers/global.fns';
 import ModalContent from '@/components/common/form/ModalContent';
 import ModalFooter from '@/components/common/form/ModalFooter';
 import { isFieldRequired } from '@/utils/helpers/schemaHelpers';
+import { useEntitiesQuery } from '@/api/hooks/useEntities';
+import useCustomQueries from '@/utils/hooks/global/useCustomQueries';
+import { API_KEYS } from '@/api/endpoints';
+import { usersService } from '@/api/services/users.service';
 
 export default function FormInspectorAssignment({
     onClose,
@@ -36,35 +40,157 @@ export default function FormInspectorAssignment({
 
     const assignmentType = watch('assignment_type');
     const selectedBranchId = watch('branch_id');
+    const selectedProgramId = watch('main_program_id');
+    const selectedEntityIds = watch('entity_ids');
 
-    const filteredEntities = useMemo(() => {
-        if (!selectedBranchId || !options?.entity_ids) {
-            return options?.entity_ids || [];
+    // Get program and entity IDs from oldData for edit/view mode
+    const programIdForQuery = selectedProgramId || oldData?.main_program_id || oldData?.main_program?.id;
+    
+    // Get entity IDs - prioritize selected, fallback to oldData
+    const entityIdsForQuery = useMemo(() => {
+        if (Array.isArray(selectedEntityIds) && selectedEntityIds.length > 0) {
+            return selectedEntityIds;
+        }
+        
+        if (oldData?.entity_ids) {
+            return Array.isArray(oldData.entity_ids) ? oldData.entity_ids : [oldData.entity_ids];
+        }
+        
+        if (oldData?.entities && Array.isArray(oldData.entities)) {
+            return oldData.entities.map(e => e?.id || e);
+        }
+        
+        return [];
+    }, [selectedEntityIds, oldData?.entity_ids, oldData?.entities]);
+
+    // Prepare entities query params (use oldData values in edit/view mode)
+    const branchIdForEntitiesQuery = selectedBranchId || oldData?.branch_id || oldData?.branch?.id;
+    const programIdForEntitiesQuery = selectedProgramId || oldData?.main_program_id || oldData?.main_program?.id;
+    
+    const entitiesQueryParams = useMemo(() => {
+        if (!branchIdForEntitiesQuery || !programIdForEntitiesQuery) {
+            return null;
+        }
+        return {
+            branch_id: branchIdForEntitiesQuery,
+            program_id: programIdForEntitiesQuery
+        };
+    }, [branchIdForEntitiesQuery, programIdForEntitiesQuery]);
+
+    // Fetch entities with dynamic params
+    const { data: entitiesData } = useEntitiesQuery(entitiesQueryParams || {}, {
+        enabled: !!entitiesQueryParams
+    });
+
+    const entitiesOptions = useMemo(() => entitiesData?.data || [], [entitiesData]);
+
+    // Prepare users queries for each selected entity
+    // Use fixed number of queries to maintain stable hook order
+    const MAX_ENTITY_QUERIES = 20;
+    
+    const usersQueriesConfig = useMemo(() => {
+        const queries = [];
+        const safeEntityIds = Array.isArray(entityIdsForQuery) ? entityIdsForQuery : [];
+        
+        // In view mode, enable queries even if we have oldData to ensure options are loaded
+        const shouldFetchUsers = !!programIdForQuery && safeEntityIds.length > 0;
+        
+        for (let i = 0; i < MAX_ENTITY_QUERIES; i++) {
+            const entityId = safeEntityIds[i];
+            const shouldEnable = shouldFetchUsers && !!entityId && i < safeEntityIds.length;
+            
+            queries.push({
+                queryKey: [API_KEYS.USERS, 'employee', programIdForQuery || null, entityId || null, i],
+                queryFn: () => {
+                    if (!entityId || !programIdForQuery) {
+                        return Promise.resolve({ data: [] });
+                    }
+                    return usersService.getUsers({
+                        user_type: 'employee',
+                        entity_id: entityId,
+                        program_id: programIdForQuery
+                    });
+                },
+                enabled: shouldEnable
+            });
+        }
+        
+        return queries;
+    }, [programIdForQuery, entityIdsForQuery]);
+
+    // Fetch users for all selected entities
+    const { queries: usersQueries } = useCustomQueries(usersQueriesConfig);
+
+    // Combine and deduplicate users from all queries
+    const usersOptions = useMemo(() => {
+        const allUsers = [];
+        const seenIds = new Set();
+
+        // In view/edit mode, include selected supervisors first to ensure they're always available
+        // This is critical for view mode where the field needs to display the selected value
+        if ((viewMode || editMode) && oldData?.supervisors) {
+            let supervisors = [];
+            
+            if (Array.isArray(oldData.supervisors)) {
+                supervisors = oldData.supervisors.filter(Boolean);
+            } else if (oldData.supervisors && typeof oldData.supervisors === 'object') {
+                supervisors = [oldData.supervisors];
+            }
+            
+            supervisors.forEach(supervisor => {
+                if (supervisor?.id && !seenIds.has(supervisor.id)) {
+                    seenIds.add(supervisor.id);
+                    allUsers.push(supervisor);
+                }
+            });
         }
 
-        return options.entity_ids.filter(entity => {
-            return entity?.branch?.id === selectedBranchId;
+        // Add users from fetched queries
+        usersQueries?.forEach(query => {
+            if (query?.data?.data) {
+                query.data.data.forEach(user => {
+                    if (user?.id && !seenIds.has(user.id)) {
+                        seenIds.add(user.id);
+                        allUsers.push(user);
+                    }
+                });
+            }
         });
-    }, [selectedBranchId, options?.entity_ids]);
 
-    // عند تغيير الـ branch، نمسح الـ entities المختارة
-    React.useEffect(() => {
-        if (selectedBranchId && !editMode) {
-            setValue('entity_ids', []);
-        }
-    }, [selectedBranchId, setValue, editMode]);
+        return allUsers;
+    }, [usersQueries, viewMode, editMode, oldData?.supervisors]);
 
-    // عند تغيير assignment_type، نمسح المشرفين لتجنب تعارض single/multi select
-    React.useEffect(() => {
+    const hasSelectedEntity = entityIdsForQuery.length > 0;
+
+    // Reset entities when branch or program changes (create mode only)
+    const prevBranchIdRef = useRef(selectedBranchId);
+    const prevProgramIdRef = useRef(selectedProgramId);
+    
+    useEffect(() => {
         if (!editMode) {
-            // مسح المشرفين عند تغيير نوع التكليف لتجنب مشاكل التوافق بين single و multi select
+            const branchChanged = prevBranchIdRef.current !== selectedBranchId;
+            const programChanged = prevProgramIdRef.current !== selectedProgramId;
+            
+            if (branchChanged || programChanged) {
+                setValue('entity_ids', []);
+            }
+            
+            prevBranchIdRef.current = selectedBranchId;
+            prevProgramIdRef.current = selectedProgramId;
+        }
+    }, [selectedBranchId, selectedProgramId, setValue, editMode]);
+
+    // Reset supervisors when assignment type, program, or entities change (create mode only)
+    useEffect(() => {
+        if (!editMode) {
             setValue('supervisor_ids', assignmentType === 'committee' ? [] : '');
         }
-    }, [assignmentType, setValue, editMode]);
+    }, [assignmentType, selectedProgramId, selectedEntityIds, setValue, editMode]);
 
-    function onSubmit(data) {
-        console.log('data', data);
-        
+    const isEntitiesDisabled = !selectedBranchId || !selectedProgramId;
+    const isSupervisorDisabled = !programIdForQuery || !hasSelectedEntity;
+
+    const onSubmit = (data) => {
         const submissionData = {
             ...data,
             entity_ids: Array.isArray(data.entity_ids) ? data.entity_ids : [data.entity_ids],
@@ -74,11 +200,9 @@ export default function FormInspectorAssignment({
         const finalData = editMode ? { ...submissionData, id: oldData.id } : submissionData;
         
         mutate(finalData, {
-            onSuccess: () => {
-                onClose();
-            }
+            onSuccess: () => onClose()
         });
-    }
+    };
 
     return (
         <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col h-full">
@@ -92,18 +216,20 @@ export default function FormInspectorAssignment({
                             (!editMode && !viewMode)
                     )
                     .map(field => {
-                        let fieldType = field.type;
-                        let isMultiple = false;
                         let fieldOptions = options?.[field.name];
+                        let isMultiple = false;
 
                         if (field.name === 'entity_ids') {
-                            fieldOptions = filteredEntities;
+                            fieldOptions = entitiesOptions;
                             isMultiple = true;
-                        }
-
-                        if (field.name === 'supervisor_ids') {
+                        } else if (field.name === 'supervisor_ids') {
+                            fieldOptions = usersOptions;
                             isMultiple = assignmentType === 'committee';
                         }
+
+                        const isDisabled = viewMode || 
+                            (field.name === 'entity_ids' && isEntitiesDisabled) ||
+                            (field.name === 'supervisor_ids' && !viewMode && isSupervisorDisabled);
 
                         return (
                             <InputRFH
@@ -112,15 +238,13 @@ export default function FormInspectorAssignment({
                                 control={control}
                                 register={register}
                                 error={getNestedError(errors, field.name)}
-                                type={fieldType}
+                                type={field.type}
                                 placeholder={field.placeholder}
-                                disabled={viewMode || (field.name === 'entity_ids' && !selectedBranchId)}
+                                disabled={isDisabled}
                                 label={field.label}
                                 name={field.name}
                                 options={generateOptions(fieldOptions)}
-                                defaultValue={
-                                    oldData?.[field.name] || field.defaultValue
-                                }
+                                defaultValue={oldData?.[field.name] || field.defaultValue}
                                 isMulti={isMultiple}
                                 required={isFieldRequired(schema, field.name)}
                             />
