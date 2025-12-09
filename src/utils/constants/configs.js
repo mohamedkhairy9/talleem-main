@@ -299,11 +299,11 @@ export const sideMenuTabs = [
                 path: '/suggested-exam-templates',
                 icon: VscDebugBreakpointLog
             },
-            {
-                titleKey: 'sidebar.exam_segments_count',
-                path: '/exam-segments-count',
-                icon: VscDebugBreakpointLog
-            }
+            // {
+            //     titleKey: 'sidebar.exam_segments_count',
+            //     path: '/exam-segments-count',
+            //     icon: VscDebugBreakpointLog
+            // }
 
         ]
     },
