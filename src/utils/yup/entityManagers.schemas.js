@@ -73,7 +73,7 @@ export const entityManagersSchema = yup.object({
         .string()
         .required(t('validation.required'))
         .matches(/^[+]?[0-9]+$/, t('validation.phone.invalid')),
-    manager_email: yup.string().email(t('validation.email.invalid')),
+    manager_email: yup.string().required(t('validation.required')).email(t('validation.email.invalid')),
     memorization_amount: yup
         .string().optional(),
         address: yup.string().optional(),

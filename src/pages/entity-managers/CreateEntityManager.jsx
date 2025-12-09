@@ -5,8 +5,7 @@ import ModalHeader from '@/components/common/form/ModalHeader';
 import { useCreateEntityManagerMutation } from '@/api/hooks/useEntityManagers';
 import { entityManagersDefaultValues } from './configs';
 import { useBranchesQuery } from '@/api/hooks/useBranches';
-import { useEntityCategoriesQuery } from '@/api/hooks/useEntityCategories';
-import { useAcademicLevelsQuery } from '@/api/hooks/useAcademicLevels';
+// import { useAcademicLevelsQuery } from '@/api/hooks/useAcademicLevels';
 import { useAcademicQualificationsQuery } from '@/api/hooks/useAcademicQualifications';
 import { useSpecificationsQuery } from '@/api/hooks/useSpecifications';
 import { useCitiesQuery } from '@/api/hooks/useCities';
@@ -15,7 +14,7 @@ import { useEntitiesQuery } from '@/api/hooks/useEntities';
 import Loader from '@/components/common/Loader';
 import { allData } from '@/utils/constants/global.constants';
 import { enabledDisabledOptions, genderOptions } from '@/utils/constants/options';
-import { useMainProgramQuery, useMainProgramsQuery } from '@/api/hooks/useMainPrograms';
+import { useMainProgramsQuery } from '@/api/hooks/useMainPrograms';
 import { useMajorsQuery } from '@/api/hooks/useMajors';
 
 export default function CreateEntityManager({ onClose }) {
@@ -26,8 +25,8 @@ export default function CreateEntityManager({ onClose }) {
         useBranchesQuery(allData);
     const { data: entitiesData, isLoading: entitiesLoading } =
         useEntitiesQuery(allData);
-    const { data: academicLevelsData, isLoading: academicLevelsLoading } =
-        useAcademicLevelsQuery(allData);
+    // const { data: academicLevelsData, isLoading: academicLevelsLoading } =
+    //     useAcademicLevelsQuery(allData);
     const {
         data: academicQualificationsData,
         isLoading: academicQualificationsLoading
@@ -46,7 +45,7 @@ export default function CreateEntityManager({ onClose }) {
     const isLoading =
         branchesLoading ||
         entitiesLoading ||
-        academicLevelsLoading ||
+        // academicLevelsLoading ||
         academicQualificationsLoading ||
         specificationsLoading ||
         citiesLoading ||

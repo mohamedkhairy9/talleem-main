@@ -153,8 +153,7 @@ export const studentsSchema = yup.object({
     address: yup
         .string()
         .nullable()
-        .optional()
-        .min(5, t('validation.address.min')),
+        .optional(),
     
     date_of_birth: yup
         .string()

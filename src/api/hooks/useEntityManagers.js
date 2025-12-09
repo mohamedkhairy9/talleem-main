@@ -24,8 +24,15 @@ export const useEntityManagerQuery = (id, options = {}) => {
 export const useCreateEntityManagerMutation = () => {
     const queryClient = useQueryClient();
     return useCustomMutation({
-        mutationFn: data =>
-            entityManagersService.createEntityManager(prepareFormData(data)),
+        mutationFn: data => {
+            const transformedData = {
+                ...data,
+                status: data.status === true ? "1" : "0"
+            };
+            return entityManagersService.createEntityManager(
+                prepareFormData(transformedData)
+            );
+        },
         onSuccess: () => {
             queryClient.invalidateQueries({
                 queryKey: [API_KEYS.ENTITY_MANAGERS]
@@ -40,11 +47,16 @@ export const useCreateEntityManagerMutation = () => {
 export const useUpdateEntityManagerMutation = () => {
     const queryClient = useQueryClient();
     return useCustomMutation({
-        mutationFn: data =>
-            entityManagersService.updateEntityManager(
+        mutationFn: data => {
+            const transformedData = {
+                ...data,
+                status: data.status === true ? "1" : "0"
+            };
+            return entityManagersService.updateEntityManager(
                 data.id,
-                prepareFormData(data)
-            ),
+                prepareFormData(transformedData)
+            );
+        },
         onSuccess: () => {
             queryClient.invalidateQueries({
                 queryKey: [API_KEYS.ENTITY_MANAGERS]

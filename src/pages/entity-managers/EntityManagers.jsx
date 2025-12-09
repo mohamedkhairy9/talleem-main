@@ -38,7 +38,7 @@ export default function EntityManagers() {
         city_id: city?.id,
         user_id: user?.id,
         date_of_birth: onlyDate(date_of_birth),
-        main_program_id: main_program.id,
+        main_program_id: main_program?.id,
         status: +user.status,
         major_id: major?.id || major_id?.id
     }));
