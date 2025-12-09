@@ -1,6 +1,6 @@
 import * as yup from 'yup';
 import { t } from 'i18next';
-import { selectSchema } from './globals.schemas';
+import { optionalSelectSchema, selectSchema } from './globals.schemas';
 
 export const employeesSchema = yup.object({
     name: yup
@@ -10,16 +10,18 @@ export const employeesSchema = yup.object({
         })
         .required(t('validation.required')),
     job_id: selectSchema,
-    branch_id: selectSchema,
-    entity_id: selectSchema,
+    branch_id: optionalSelectSchema,
+    entity_id: optionalSelectSchema,
     nationality_id: selectSchema,
     academic_qualification_id: selectSchema,
     specification_id: selectSchema,
     major_id: yup
         .number()
-        .required(t('validation.required'))
-        .integer(t('validation.major_id.integer'))
-        .min(1, t('validation.major_id.min')),
+        .nullable()
+        .optional()
+        // .required(t('validation.required'))
+        .integer(t('validation.major_id.integer')),
+        // .min(1, t('validation.major_id.min')),
     national_id: yup
         .string()
         .required(t('validation.required'))
@@ -55,6 +57,6 @@ export const employeesSchema = yup.object({
         .required(t('validation.required'))
         .min(5, t('validation.address.min')),
     status: yup.boolean().required(t('validation.required')),
-    profile_picture: yup.mixed().required(t('validation.required')),
+    profile_picture: yup.mixed().optional().nullable(),
     files: yup.array().of(yup.mixed()).nullable().optional()
 });

@@ -6,3 +6,8 @@ export const selectSchema = yup
     .required(t('validation.required'))
     .min(1, t('validation.select.min'));
 
+    export const optionalSelectSchema = yup
+    .string()
+    .nullable()
+    .optional()
+
