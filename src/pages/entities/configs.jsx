@@ -94,16 +94,6 @@ export const entitiesFields = [
         viewMode: true
     },
     {
-        name: 'entity_category_id',
-        label: 'validation.entity_category_id.label',
-        type: 'select',
-        placeholder: 'validation.entity_category_id.placeholder',
-        editMode: true,
-        viewMode: true,
-        conditional: true,
-        showWhen: { main_program_id: [1, 2] }
-    },
-    {
         name: 'education_program_entity_type_classification',
         label: 'validation.education_program_entity_type_classification.label',
         type: 'select',
@@ -113,6 +103,16 @@ export const entitiesFields = [
         viewMode: true,
         conditional: true,
         showWhen: { main_program_id: 1 }
+    },
+    {
+        name: 'entity_category_id',
+        label: 'validation.entity_category_id.label',
+        type: 'select',
+        placeholder: 'validation.entity_category_id.placeholder',
+        editMode: true,
+        viewMode: true,
+        conditional: true,
+        showWhen: { main_program_id: [1, 2] }
     },
     {
         name: 'activity_ids',
