@@ -16,7 +16,6 @@ export default function ViewWarning({ onClose, oldData }) {
         mainProgramsData,
         studentsData,
         teachersData,
-        warningReasonsData,
         isLoading
     } = useApiCalls({ apiCalls });
 
@@ -43,7 +42,6 @@ export default function ViewWarning({ onClose, oldData }) {
                     entity_id: entitiesData?.data,
                     student_id: studentsData?.data,
                     teacher_id: teachersData?.data,
-                    warning_reason_id: warningReasonsData?.data,
                     status: enabledDisabledOptions
                 }}
             />

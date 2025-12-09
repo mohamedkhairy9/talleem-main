@@ -1048,6 +1048,7 @@
     "sidebar": {
         "home": "الرئيسية",
         "roles": "الأدوار",
+        "educational_supervision": "الإشراف التعليمي",
         "permissions": "الصلاحيات",
         "quran_management": "إدارة القرآن",
         "exam_settings": "إعدادات الإختبارات",

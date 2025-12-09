@@ -18,7 +18,6 @@ export default function EditWarning({ onClose, oldData }) {
         branchesData,
         entitiesData,
         mainProgramsData,
-        warningReasonsData,
         isLoading
     } = useApiCalls({ apiCalls });
 
@@ -45,7 +44,6 @@ export default function EditWarning({ onClose, oldData }) {
                         program_id: mainProgramsData?.data,
                         branch_id: branchesData?.data,
                         entity_id: entitiesData?.data,
-                        warning_reason_id: warningReasonsData?.data,
                         status: enabledDisabledOptions
                     }}
                 />

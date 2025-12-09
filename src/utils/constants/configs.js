@@ -56,12 +56,6 @@ export const sideMenuTabs = [
                 icon: VscDebugBreakpointLog
             },
             {
-                titleKey: 'sidebar.warning',
-                path: '/issuing-warnings',
-                icon: VscDebugBreakpointLog
-            },
-
-            {
                 titleKey: 'sidebar.users',
                 path: '/users',
                 icon: HiUser
@@ -151,11 +145,6 @@ export const sideMenuTabs = [
                     {
                         titleKey: 'sidebar.certification-names',
                         path: '/certification-names',
-                        icon: VscDebugBreakpointLog
-                    },
-                    {
-                        titleKey: 'sidebar.certificates',
-                        path: '/certificates',
                         icon: VscDebugBreakpointLog
                     },
                     {
@@ -321,12 +310,6 @@ export const sideMenuTabs = [
         ]
     },
 
-    // {
-    //     titleKey: 'sidebar.inspector-assignments',
-    //     path: '/inspector-assignments',
-    //     icon: VscDebugBreakpointLog
-    // },
-
     {
         titleKey: 'sidebar.education_program_settings',
         icon: HiAcademicCap,
@@ -357,6 +340,23 @@ export const sideMenuTabs = [
                 path: '/inspector-assignments',
                 icon: VscDebugBreakpointLog
             },
+        ]
+    },
+    {
+        titleKey: 'sidebar.educational_supervision',
+        icon: HiAcademicCap,
+        subMenu: [
+            {
+                titleKey: 'sidebar.warning',
+                path: '/issuing-warnings',
+                icon: VscDebugBreakpointLog
+            },
+            {
+                titleKey: 'sidebar.certificates',
+                path: '/certificates',
+                icon: VscDebugBreakpointLog
+            },
+
         ]
     },
 

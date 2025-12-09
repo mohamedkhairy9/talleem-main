@@ -6,7 +6,6 @@ import { entitiesService } from '@/api/services/entities.service';
 import { mainProgramsService } from '@/api/services/mainPrograms.service';
 import { studentsService } from '@/api/services/students.service';
 import { teachersService } from '@/api/services/teachers.service';
-import { warningReasonsService } from '@/api/services/warningReasons.service';
 
 export default function useApiCalls({ apiCalls = [] } = {}) {
     const isEnabled = key => apiCalls.includes(key);
@@ -36,11 +35,6 @@ export default function useApiCalls({ apiCalls = [] } = {}) {
             queryKey: [API_KEYS.TEACHERS, allData],
             queryFn: () => teachersService.getTeachers(allData),
             enabled: isEnabled(API_KEYS.TEACHERS)
-        },
-        {
-            queryKey: [API_KEYS.WARNING_REASONS, allData],
-            queryFn: () => warningReasonsService.getWarningReasons(allData),
-            enabled: isEnabled(API_KEYS.WARNING_REASONS)
         }
     ]);
 
@@ -49,8 +43,7 @@ export default function useApiCalls({ apiCalls = [] } = {}) {
         entitiesQuery,
         mainProgramsQuery,
         studentsQuery,
-        teachersQuery,
-        warningReasonsQuery
+        teachersQuery
     ] = queries;
 
     return {
@@ -59,7 +52,6 @@ export default function useApiCalls({ apiCalls = [] } = {}) {
         mainProgramsData: mainProgramsQuery?.data,
         studentsData: studentsQuery?.data,
         teachersData: teachersQuery?.data,
-        warningReasonsData: warningReasonsQuery?.data,
         isLoading: isAnyLoading
     };
 }

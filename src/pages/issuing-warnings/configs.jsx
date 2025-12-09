@@ -198,6 +198,5 @@ export const warningsDefaultValues = {
 export const apiCalls = [
     API_KEYS.BRANCHES,
     API_KEYS.ENTITIES,
-    API_KEYS.MAIN_PROGRAMS,
-    API_KEYS.WARNING_REASONS
+    API_KEYS.MAIN_PROGRAMS
 ];

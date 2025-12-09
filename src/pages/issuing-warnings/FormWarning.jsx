@@ -13,6 +13,7 @@ import { API_KEYS } from '@/api/endpoints';
 import ModalContent from '@/components/common/form/ModalContent';
 import ModalFooter from '@/components/common/form/ModalFooter';
 import { isFieldRequired } from '@/utils/helpers/schemaHelpers';
+import { useWarningReasonsQuery } from '@/api/hooks/useWarningReasons';
 
 export default function FormWarning({
     onClose,
@@ -42,6 +43,10 @@ export default function FormWarning({
     const warningType = watch('warning_type');
     const selectedBranchId = watch('branch_id');
     const selectedEntityId = watch('entity_id');
+    const selectedProgramId = watch('program_id');
+
+    // Get program ID from oldData for edit/view mode
+    const programIdForQuery = selectedProgramId || oldData?.program_id || oldData?.program?.id;
 
     // فلترة الـ entities حسب الـ branch المختار
     const filteredEntities = useMemo(() => {
@@ -71,6 +76,33 @@ export default function FormWarning({
         }),
         enabled: !!selectedEntityId && warningType === 'teacher'
     });
+
+    // Fetch warning reasons dynamically based on selected program
+    const { data: warningReasonsData } = useWarningReasonsQuery(
+        { program_id: programIdForQuery },
+        { enabled: !!programIdForQuery }
+    );
+
+    const warningReasonsOptions = useMemo(() => {
+        const allReasons = warningReasonsData?.data || [];
+
+        // In view/edit mode, include selected warning reason even if not in fetched results
+        if ((viewMode || editMode) && oldData?.warning_reason) {
+            const selectedReason = oldData.warning_reason;
+            if (selectedReason?.id && !allReasons.some(r => r.id === selectedReason.id)) {
+                return [selectedReason, ...allReasons];
+            }
+        }
+
+        return allReasons;
+    }, [warningReasonsData, viewMode, editMode, oldData?.warning_reason]);
+
+    // Reset warning_reason_id when program changes (create mode only)
+    React.useEffect(() => {
+        if (selectedProgramId && !editMode) {
+            setValue('warning_reason_id', '');
+        }
+    }, [selectedProgramId, setValue, editMode]);
 
     // عند تغيير الـ branch، نمسح الـ entity المختارة
     React.useEffect(() => {
@@ -177,6 +209,11 @@ export default function FormWarning({
                                 fieldOptions = teachersData?.data || [];
                             }
 
+                            // إذا كان الحقل warning_reason_id، استخدم الأسباب المفلترة حسب الـ program
+                            if (field.name === 'warning_reason_id') {
+                                fieldOptions = warningReasonsOptions;
+                            }
+
                             return (
                                 <InputRFH
                                     key={field.name}
@@ -190,7 +227,8 @@ export default function FormWarning({
                                         viewMode ||
                                         (field.name === 'entity_id' && !selectedBranchId) ||
                                         (field.name === 'student_id' && !selectedEntityId) ||
-                                        (field.name === 'teacher_id' && !selectedEntityId)
+                                        (field.name === 'teacher_id' && !selectedEntityId) ||
+                                        (field.name === 'warning_reason_id' && !programIdForQuery)
                                     }
                                     label={field.label}
                                     name={field.name}
