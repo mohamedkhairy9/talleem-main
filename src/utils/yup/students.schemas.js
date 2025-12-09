@@ -90,21 +90,21 @@ export const studentsSchema = yup.object({
         }),
     
     // Academic qualification (required only for memorization program)
-    academic_qualification_id: yup
-        .number()
-        .nullable()
-        .transform((value, originalValue) => 
-            originalValue === '' || originalValue === null || originalValue === undefined ? null : value
-        )
-        .when('main_program_id', {
-            is: value => Number(value) === 2,
-            then: schema =>
-                schema
-                    .required(t('validation.required'))
-                    .integer(t('validation.academic_qualification_id.integer'))
-                    .min(1, t('validation.academic_qualification_id.min')),
-            otherwise: schema => schema.nullable().optional()
-        }),
+    // academic_qualification_id: yup
+    //     .number()
+    //     .nullable()
+    //     .transform((value, originalValue) => 
+    //         originalValue === '' || originalValue === null || originalValue === undefined ? null : value
+    //     )
+    //     .when('main_program_id', {
+    //         is: value => Number(value) === 2,
+    //         then: schema =>
+    //             schema
+    //                 .required(t('validation.required'))
+    //                 .integer(t('validation.academic_qualification_id.integer'))
+    //                 .min(1, t('validation.academic_qualification_id.min')),
+    //         otherwise: schema => schema.nullable().optional()
+    //     }),
     
     branch_id: yup
         .number()
