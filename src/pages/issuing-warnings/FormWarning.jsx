@@ -14,6 +14,7 @@ import ModalContent from '@/components/common/form/ModalContent';
 import ModalFooter from '@/components/common/form/ModalFooter';
 import { isFieldRequired } from '@/utils/helpers/schemaHelpers';
 import { useWarningReasonsQuery } from '@/api/hooks/useWarningReasons';
+import { useEntitiesQuery } from '@/api/hooks/useEntities';
 
 export default function FormWarning({
     onClose,
@@ -41,23 +42,42 @@ export default function FormWarning({
     });
 
     const warningType = watch('warning_type');
-    const selectedBranchId = watch('branch_id');
     const selectedEntityId = watch('entity_id');
     const selectedProgramId = watch('program_id');
+    const selectedBranchId = watch('branch_id');
 
-    // Get program ID from oldData for edit/view mode
+    // Get program and branch IDs from oldData for edit/view mode
     const programIdForQuery = selectedProgramId || oldData?.program_id || oldData?.program?.id;
+    const branchIdForQuery = selectedBranchId || oldData?.branch_id || oldData?.branch?.id;
 
-    // فلترة الـ entities حسب الـ branch المختار
-    const filteredEntities = useMemo(() => {
-        if (!selectedBranchId || !options?.entity_id) {
-            return options?.entity_id || [];
+    // Fetch entities dynamically based on selected program and branch
+    const entitiesQueryParams = useMemo(() => {
+        if (!programIdForQuery || !branchIdForQuery) {
+            return null;
+        }
+        return {
+            program_id: programIdForQuery,
+            branch_id: branchIdForQuery
+        };
+    }, [programIdForQuery, branchIdForQuery]);
+
+    const { data: entitiesData } = useEntitiesQuery(entitiesQueryParams || {}, {
+        enabled: !!entitiesQueryParams
+    });
+
+    const entitiesOptions = useMemo(() => {
+        const allEntities = entitiesData?.data || [];
+
+        // In view/edit mode, include selected entity even if not in fetched results
+        if ((viewMode || editMode) && oldData?.entity) {
+            const selectedEntity = oldData.entity;
+            if (selectedEntity?.id && !allEntities.some(e => e.id === selectedEntity.id)) {
+                return [selectedEntity, ...allEntities];
+            }
         }
 
-        return options.entity_id.filter(entity => {
-            return entity?.branch?.id === selectedBranchId;
-        });
-    }, [selectedBranchId, options?.entity_id]);
+        return allEntities;
+    }, [entitiesData, viewMode, editMode, oldData?.entity]);
 
     // جلب الطلاب بناءً على الـ entity المختارة
     const { data: studentsData } = useQuery({
@@ -97,14 +117,15 @@ export default function FormWarning({
         return allReasons;
     }, [warningReasonsData, viewMode, editMode, oldData?.warning_reason]);
 
-    // Reset warning_reason_id when program changes (create mode only)
+    // Reset warning_reason_id and entity_id when program changes (create mode only)
     React.useEffect(() => {
         if (selectedProgramId && !editMode) {
             setValue('warning_reason_id', '');
+            setValue('entity_id', '');
         }
     }, [selectedProgramId, setValue, editMode]);
 
-    // عند تغيير الـ branch، نمسح الـ entity المختارة
+    // Reset entity_id when branch changes (create mode only)
     React.useEffect(() => {
         if (selectedBranchId && !editMode) {
             setValue('entity_id', '');
@@ -194,9 +215,9 @@ export default function FormWarning({
                         .map(field => {
                             let fieldOptions = options?.[field.name];
 
-                            // إذا كان الحقل entity_id، استخدم الـ entities المفلترة
+                            // إذا كان الحقل entity_id، استخدم الـ entities المفلترة حسب الـ program
                             if (field.name === 'entity_id') {
-                                fieldOptions = filteredEntities;
+                                fieldOptions = entitiesOptions;
                             }
 
                             // إذا كان الحقل student_id، استخدم الطلاب المفلترين حسب الـ entity
@@ -225,7 +246,7 @@ export default function FormWarning({
                                     placeholder={field.placeholder}
                                     disabled={
                                         viewMode ||
-                                        (field.name === 'entity_id' && !selectedBranchId) ||
+                                        (field.name === 'entity_id' && (!programIdForQuery || !branchIdForQuery)) ||
                                         (field.name === 'student_id' && !selectedEntityId) ||
                                         (field.name === 'teacher_id' && !selectedEntityId) ||
                                         (field.name === 'warning_reason_id' && !programIdForQuery)

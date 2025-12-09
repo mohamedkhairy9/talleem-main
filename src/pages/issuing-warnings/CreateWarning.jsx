@@ -14,7 +14,6 @@ export default function CreateWarning({ onClose }) {
 
     const {
         branchesData,
-        entitiesData,
         mainProgramsData,
         isLoading
     } = useApiCalls({ apiCalls });
@@ -39,7 +38,6 @@ export default function CreateWarning({ onClose }) {
                         warning_type: warningTypeOptions,
                         program_id: mainProgramsData?.data,
                         branch_id: branchesData?.data,
-                        entity_id: entitiesData?.data,
                         status: enabledDisabledOptions
                     }}
                     oldData={warningsDefaultValues}

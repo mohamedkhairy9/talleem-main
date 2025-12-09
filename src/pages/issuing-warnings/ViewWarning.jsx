@@ -12,7 +12,6 @@ export default function ViewWarning({ onClose, oldData }) {
 
     const {
         branchesData,
-        entitiesData,
         mainProgramsData,
         studentsData,
         teachersData,
@@ -39,7 +38,6 @@ export default function ViewWarning({ onClose, oldData }) {
                     warning_type: warningTypeOptions,
                     program_id: mainProgramsData?.data,
                     branch_id: branchesData?.data,
-                    entity_id: entitiesData?.data,
                     student_id: studentsData?.data,
                     teacher_id: teachersData?.data,
                     status: enabledDisabledOptions
