@@ -382,6 +382,13 @@ export const API_URLS = {
         UPDATE: id => `/request-types/${id}`,
         DELETE: id => `/request-types/${id}`
     },
+    PHASES: {
+        CREATE: '/phases',
+        LIST: '/phases',
+        DETAILS: id => `/phases/${id}`,
+        UPDATE: id => `/phases/${id}`,
+        DELETE: id => `/phases/${id}`
+    },
 };
 
 export const API_KEYS = {
@@ -447,5 +454,6 @@ export const API_KEYS = {
     REMOTELY_ATTENDANCE_PLATFORMS: 'remotely-attendance-platforms',
     EXAM_SEGMENTS_COUNT: 'exam-segments-count',
     IMPORT_ERRORS: 'import-errors',
-    REQUEST_TYPES: 'request-types'
+    REQUEST_TYPES: 'request-types',
+    PHASES: 'phases'
 };

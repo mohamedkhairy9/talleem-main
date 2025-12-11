@@ -98,6 +98,19 @@
             "required": "Program is required",
             "invalid": "Please select a valid program"
         },
+        "request_type_id": {
+            "label": "Request Type",
+            "placeholder": "Select Request Type",
+            "required": "Request Type is required",
+            "invalid": "Please select a valid request type"
+        },
+        "order": {
+            "label": "Order",
+            "placeholder": "Enter order number",
+            "required": "Order is required",
+            "invalid": "Order must be a positive number",
+            "integer": "Order must be an integer"
+        },
         "evaluation_for": {
             "label": "Evaluation For",
             "placeholder": "Select who to evaluate",
@@ -1158,7 +1171,8 @@
         "lookups": "Lookups",
         "remotely_attendance_platforms": "Remotely Attendance Platforms",
         "registration_requests": "Registration Requests",
-        "request_types": "Request Types"
+        "request_types": "Request Types",
+        "phases": "Phases"
     },
     "table_titles": {
         "notification_templates": "Notification Templates",
@@ -1210,7 +1224,8 @@
         "remotely_attendance_platforms": "Remotely Attendance Platforms",
         "evaluation_parameters": "Evaluation Parameters",
         "inspector_assignments": "Inspector Assignments to Entities",
-        "request_types": "Request Types"
+        "request_types": "Request Types",
+        "phases": "Phases"
     },
     "table": {
         "actions": "Actions",
@@ -1283,6 +1298,9 @@
         "created_at": "Created Date",
         "updated_at": "Updated Date",
         "name": "Name",
+        "request_type": "Request Type",
+        "order": "Order",
+        "steps_count": "Steps Count",
         "name": "Name",
         "evaluation_for": "Evaluation For",
         "total_grade": "Total Grade",
@@ -1399,6 +1417,12 @@
         "create": "Create Request Type",
         "update": "Update Request Type",
         "view": "View Request Type"
+    },
+    "phases": {
+        "steps": "Steps",
+        "step_type": "Step Type",
+        "assigned_to": "Assigned To",
+        "no_steps": "No steps available"
     },
     "warnings": {
         "create": "Add Warning",

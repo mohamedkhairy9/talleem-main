@@ -100,6 +100,19 @@
             "required": "البرنامج مطلوب",
             "invalid": "الرجاء اختيار برنامج صالح"
         },
+        "request_type_id": {
+            "label": "نوع الطلب",
+            "placeholder": "اختر نوع الطلب",
+            "required": "نوع الطلب مطلوب",
+            "invalid": "يرجى اختيار نوع طلب صحيح"
+        },
+        "order": {
+            "label": "الترتيب",
+            "placeholder": "أدخل رقم الترتيب",
+            "required": "الترتيب مطلوب",
+            "invalid": "يجب أن يكون الترتيب رقماً موجباً",
+            "integer": "يجب أن يكون الترتيب رقماً صحيحاً"
+        },
         "evaluation_for": {
             "label": "التقييم لـ",
             "placeholder": "اختر من سيتم تقييمه",
@@ -1130,7 +1143,8 @@
         "lookups": "ملفات الرموز",
         "remotely_attendance_platforms": "منصات الحضور عن بعد",
         "registration_requests": "طلبات التسجيل",
-        "request_types": "أنواع الطلبات"
+        "request_types": "أنواع الطلبات",
+        "phases": "المراحل"
     },
     "table_titles": {
         "notification_templates": "قوالب الإشعارات",
@@ -1182,7 +1196,8 @@
         "memorization-program-entity-types": "فئات الجهة",
         "remotely_attendance_platforms": "منصات الحضور عن بعد",
         "inspector_assignments": "إسناد المشرفين على الجهات",
-        "request_types": "أنواع الطلبات"
+        "request_types": "أنواع الطلبات",
+        "phases": "المراحل"
     },
     "table": {
         "actions": "الإجراءات",
@@ -1259,7 +1274,9 @@
         "created_at": "تاريخ الإنشاء",
         "updated_at": "تاريخ التحديث",
         "name": "الاسم",
-        "name": "الاسم",
+        "request_type": "نوع الطلب",
+        "order": "الترتيب",
+        "steps_count": "عدد الخطوات",
         "role": "الدور",
         "evaluation_for": "التقييم لـ",
         "total_grade": "الدرجة الكلية",
@@ -1525,6 +1542,12 @@
         "create": "إنشاء نوع طلب",
         "update": "تحديث نوع الطلب",
         "view": "عرض نوع الطلب"
+    },
+    "phases": {
+        "steps": "الخطوات",
+        "step_type": "نوع الخطوة",
+        "assigned_to": "مخصص ل",
+        "no_steps": "لا توجد خطوات متاحة"
     },
     "warnings": {
         "create": "إضافة إنذار",

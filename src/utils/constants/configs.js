@@ -268,6 +268,11 @@ export const sideMenuTabs = [
                 titleKey: 'sidebar.request_types',
                 path: '/request-types',
                 icon: VscDebugBreakpointLog
+            },
+            {
+                titleKey: 'sidebar.phases',
+                path: '/phases',
+                icon: VscDebugBreakpointLog
             }
         ]
     },

@@ -56,6 +56,7 @@ import SessionModes from '@/pages/sessionModes/SessionModes';
 import Certificates from '@/pages/upload-certificate/Certificates';
 import ExamSegmentsCount from '@/pages/exam-segments/ExamSegmentsCount';
 import RequestTypes from '@/pages/request-types/RequestTypes';
+import Phases from '@/pages/phases/Phases';
 
 export const routes = [
     {
@@ -286,5 +287,9 @@ export const routes = [
     {
         path: '/request-types',
         element: <RequestTypes />
+    },
+    {
+        path: '/phases',
+        element: <Phases />
     }
 ];
