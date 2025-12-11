@@ -38,7 +38,10 @@ import {
     MdSwapVert,
     MdShare,
     MdInfo,
-    MdUpload
+    MdUpload,
+    MdDragIndicator,
+    MdSave,
+    MdCancel
 } from 'react-icons/md';
 import { useTranslation } from 'react-i18next';
 import useLanguageStore from '@/utils/stores/language.store';
@@ -76,7 +79,17 @@ const Table = ({
     Actions = null,
     Filters = null,
     setFilters = null,
-    filters = null
+    filters = null,
+    // New props for expandable rows and drag-and-drop
+    enableExpandableRows = false,
+    renderExpandedRow = null,
+    enableDragAndDrop = false,
+    onDragEnd = null,
+    onSaveOrder = null,
+    onCancelOrder = null,
+    getRowId = null,
+    orderField = 'order',
+    isSavingOrder = false
 }) => {
     // Core state
     const { t } = useTranslation();
@@ -94,6 +107,15 @@ const Table = ({
     const [isFullscreen, setIsFullscreen] = useState(false);
     const [density, setDensity] = useState('normal');
     const [showFiltersModal, setShowFiltersModal] = useState(false);
+
+    // Expandable rows state
+    const [expandedRows, setExpandedRows] = useState(new Set());
+
+    // Drag and drop state
+    const [draggedIndex, setDraggedIndex] = useState(null);
+    const [dragOverIndex, setDragOverIndex] = useState(null);
+    const [isDragging, setIsDragging] = useState(false);
+    const [reorderedData, setReorderedData] = useState(null);
 
     const tableRef = useRef(null);
 
@@ -198,8 +220,56 @@ const Table = ({
     // Check if any action is enabled
     const hasAnyAction = enableEdit || enableDelete || enableCopy || enableView;
 
+    // Expandable column
+    const EXPAND = columnHelper.display({
+        id: 'expand',
+        size: 50,
+        header: () => null,
+        cell: ({ row }) => {
+            if (!enableExpandableRows || !renderExpandedRow) return null;
+            const rowId = getRowId ? getRowId(row.original) : row.id;
+            const isExpanded = expandedRows.has(rowId);
+            return (
+                <button
+                    onClick={(e) => {
+                        e.stopPropagation();
+                        setExpandedRows(prev => {
+                            const newSet = new Set(prev);
+                            if (newSet.has(rowId)) {
+                                newSet.delete(rowId);
+                            } else {
+                                newSet.add(rowId);
+                            }
+                            return newSet;
+                        });
+                    }}
+                    className="text-gray-600 hover:text-gray-800"
+                >
+                    {isExpanded ? (
+                        <MdExpandLess className="w-5 h-5" />
+                    ) : (
+                        <MdExpandMore className="w-5 h-5" />
+                    )}
+                </button>
+            );
+        }
+    });
+
+    // Drag handle column
+    const DRAG_HANDLE = columnHelper.display({
+        id: 'drag',
+        size: 50,
+        header: () => null,
+        cell: () => {
+            if (!enableDragAndDrop) return null;
+            return <MdDragIndicator className="w-5 h-5 text-gray-400" />;
+        }
+    });
+
     const columns = [
         ...(enableRowSelection ? [SELECT] : []),
+        ...(enableExpandableRows ? [EXPAND] : []),
+        ...(enableDragAndDrop ? [DRAG_HANDLE] : []),
         ...externalColumns,
         ...(hasAnyAction ? [ACTIONS] : [])
     ];
@@ -228,9 +298,12 @@ const Table = ({
         }
     };
 
+    // Use reordered data if dragging, otherwise use original data
+    const displayData = reorderedData || data || [];
+
     // Table instance
     const table = useReactTable({
-        data: data || [],
+        data: displayData,
         columns,
         getCoreRowModel: getCoreRowModel(),
         getFilteredRowModel: getFilteredRowModel(),
@@ -244,6 +317,7 @@ const Table = ({
         onGlobalFilterChange: setGlobalFilter,
         onColumnVisibilityChange: setColumnVisibility,
         onRowSelectionChange: setRowSelection,
+        getRowId: getRowId || ((row) => row.id?.toString() || Math.random().toString()),
         state: {
             pagination: tanstackPagination,
             sorting,
@@ -260,6 +334,96 @@ const Table = ({
         manualFiltering: false, // Keep client-side filtering enabled
         enableRowSelection: enableRowSelection
     });
+
+    // Drag and drop handlers
+    const handleDragStart = (e, index) => {
+        if (!enableDragAndDrop) return;
+        setDraggedIndex(index);
+        setIsDragging(true);
+        e.dataTransfer.effectAllowed = 'move';
+        e.dataTransfer.setData('text/plain', index.toString());
+        e.currentTarget.style.opacity = '0.5';
+    };
+
+    const handleDragOver = (e, index) => {
+        if (!enableDragAndDrop) return;
+        e.preventDefault();
+        e.dataTransfer.dropEffect = 'move';
+        if (draggedIndex !== null && draggedIndex !== index) {
+            setDragOverIndex(index);
+        }
+    };
+
+    const handleDragLeave = () => {
+        if (!enableDragAndDrop) return;
+        setDragOverIndex(null);
+    };
+
+    const handleDrop = (e, dropIndex) => {
+        if (!enableDragAndDrop) return;
+        e.preventDefault();
+        if (draggedIndex === null || draggedIndex === dropIndex) {
+            setDraggedIndex(null);
+            setDragOverIndex(null);
+            return;
+        }
+
+        // Create new order
+        const newData = [...displayData];
+        const draggedItem = newData[draggedIndex];
+        
+        // Remove from old position
+        newData.splice(draggedIndex, 1);
+        
+        // Insert at new position
+        newData.splice(dropIndex, 0, draggedItem);
+        
+        // Update order numbers if orderField is provided
+        const updatedData = newData.map((item, idx) => {
+            if (orderField && item[orderField] !== undefined) {
+                return {
+                    ...item,
+                    [orderField]: idx + 1
+                };
+            }
+            return item;
+        });
+
+        setReorderedData(updatedData);
+        setDraggedIndex(null);
+        setDragOverIndex(null);
+        
+        // Call onDragEnd callback if provided
+        if (onDragEnd) {
+            onDragEnd(updatedData);
+        }
+    };
+
+    const handleDragEnd = (e) => {
+        if (!enableDragAndDrop) return;
+        e.currentTarget.style.opacity = '1';
+    };
+
+    const handleSaveOrder = () => {
+        if (onSaveOrder && reorderedData) {
+            onSaveOrder(reorderedData, () => {
+                setReorderedData(null);
+                setIsDragging(false);
+                setDraggedIndex(null);
+                setDragOverIndex(null);
+            });
+        }
+    };
+
+    const handleCancelOrder = () => {
+        setReorderedData(null);
+        setIsDragging(false);
+        setDraggedIndex(null);
+        setDragOverIndex(null);
+        if (onCancelOrder) {
+            onCancelOrder();
+        }
+    };
 
     // Export functions
     const exportToCSV = () => {
@@ -758,6 +922,28 @@ const Table = ({
                             </div>
 
                             <div className="flex items-center space-x-2">
+                                {/* Save/Cancel buttons when dragging */}
+                                {enableDragAndDrop && isDragging && (
+                                    <div className="flex gap-2 mr-4">
+                                        <button
+                                            onClick={handleSaveOrder}
+                                            disabled={isSavingOrder}
+                                            className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors disabled:opacity-50"
+                                        >
+                                            <MdSave className="w-4 h-4" />
+                                            {t('common.save')}
+                                        </button>
+                                        <button
+                                            onClick={handleCancelOrder}
+                                            disabled={isSavingOrder}
+                                            className="flex items-center gap-2 px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors disabled:opacity-50"
+                                        >
+                                            <MdCancel className="w-4 h-4" />
+                                            {t('common.cancel')}
+                                        </button>
+                                    </div>
+                                )}
+
                                 {/* Density Control */}
                                 <div className="flex bg-gray-100 rounded-lg p-1">
                                     {['compact', 'normal', 'comfortable'].map(
@@ -1192,24 +1378,25 @@ const Table = ({
                                                             onClick={header.column.getToggleSortingHandler()}
                                                         >
                                                             <span className='min-w-fit'>
-                                                                {idx === 0 &&
-                                                                enableRowSelection
-                                                                    ? flexRender(
-                                                                          header
-                                                                              .column
-                                                                              .columnDef
-                                                                              .header,
-                                                                          header.getContext()
-                                                                      )
-                                                                    : t(
-                                                                          flexRender(
-                                                                              header
-                                                                                  .column
-                                                                                  .columnDef
-                                                                                  .header,
-                                                                              header.getContext()
-                                                                          )
-                                                                      )}
+                                                                {(() => {
+                                                                    const headerValue = flexRender(
+                                                                        header.column.columnDef.header,
+                                                                        header.getContext()
+                                                                    );
+                                                                    
+                                                                    // If header is null or empty, don't translate
+                                                                    if (headerValue === null || headerValue === undefined || headerValue === '') {
+                                                                        return headerValue;
+                                                                    }
+                                                                    
+                                                                    // If header is already a React element or object, render it directly
+                                                                    if (React.isValidElement(headerValue) || typeof headerValue === 'object') {
+                                                                        return headerValue;
+                                                                    }
+                                                                    
+                                                                    // If it's a string, translate it
+                                                                    return typeof headerValue === 'string' ? t(headerValue) : headerValue;
+                                                                })()}
                                                             </span>
                                                             {header.column.getCanSort() && (
                                                                 <div className="flex flex-col">
@@ -1302,10 +1489,27 @@ const Table = ({
                                     </td>
                                 </tr>
                             ) : (
-                                table.getRowModel().rows.map((row, index) => (
-                                    <tr
-                                        key={row.id}
-                                        className={`
+                                table.getRowModel().rows.map((row, index) => {
+                                    const rowId = getRowId ? getRowId(row.original) : row.id;
+                                    const isExpanded = enableExpandableRows && expandedRows.has(rowId);
+                                    const isDragged = enableDragAndDrop && draggedIndex === index;
+                                    const isDragOver = enableDragAndDrop && dragOverIndex === index;
+
+                                    return (
+                                        <React.Fragment key={row.id}>
+                                            <tr
+                                                draggable={enableDragAndDrop}
+                                                onDragStart={(e) => {
+                                                    if (enableDragAndDrop) {
+                                                        setIsDragging(true);
+                                                        handleDragStart(e, index);
+                                                    }
+                                                }}
+                                                onDragOver={(e) => enableDragAndDrop && handleDragOver(e, index)}
+                                                onDragLeave={enableDragAndDrop ? handleDragLeave : undefined}
+                                                onDrop={(e) => enableDragAndDrop && handleDrop(e, index)}
+                                                onDragEnd={enableDragAndDrop ? handleDragEnd : undefined}
+                                                className={`
                       hover:bg-primary-50 transition-all duration-200 group
                       ${
                           row.getIsSelected()
@@ -1313,24 +1517,39 @@ const Table = ({
                               : ''
                       }
                       ${index % 2 === 0 ? 'bg-gray-50/30' : 'bg-white'}
+                      ${enableDragAndDrop ? 'cursor-move' : ''}
+                      ${isDragged ? 'opacity-50 bg-blue-100' : ''}
+                      ${isDragOver ? 'border-t-2 border-blue-500 bg-blue-50' : ''}
                     `}
-                                        onClick={() =>
-                                            onRowClick?.(row.original)
-                                        }
-                                    >
-                                        {row.getVisibleCells().map(cell => (
-                                            <td
-                                                key={cell.id}
-                                                className={`${densityClasses[density]} whitespace-nowrap text-sm border-b border-gray-100 group-hover:border-primary-200 transition-colors`}
+                                                onClick={() =>
+                                                    onRowClick?.(row.original)
+                                                }
                                             >
-                                                {flexRender(
-                                                    cell.column.columnDef.cell,
-                                                    cell.getContext()
-                                                )}
-                                            </td>
-                                        ))}
-                                    </tr>
-                                ))
+                                                {row.getVisibleCells().map(cell => (
+                                                    <td
+                                                        key={cell.id}
+                                                        className={`${densityClasses[density]} whitespace-nowrap text-sm border-b border-gray-100 group-hover:border-primary-200 transition-colors`}
+                                                    >
+                                                        {flexRender(
+                                                            cell.column.columnDef.cell,
+                                                            cell.getContext()
+                                                        )}
+                                                    </td>
+                                                ))}
+                                            </tr>
+                                            {isExpanded && renderExpandedRow && (
+                                                <tr>
+                                                    <td
+                                                        colSpan={columns.length}
+                                                        className="px-6 py-4 bg-gray-50"
+                                                    >
+                                                        {renderExpandedRow(row.original, row)}
+                                                    </td>
+                                                </tr>
+                                            )}
+                                        </React.Fragment>
+                                    );
+                                })
                             )}
                         </tbody>
                     </table>
