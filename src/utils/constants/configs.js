@@ -27,7 +27,8 @@ import {
     HiGlobe,
     HiUser,
     HiClipboardCheck,
-    HiTemplate
+    HiTemplate,
+    HiDocumentAdd
 } from 'react-icons/hi';
 import { VscDebugBreakpointLog } from 'react-icons/vsc';
 import { IoGrid } from 'react-icons/io5';
@@ -254,6 +255,18 @@ export const sideMenuTabs = [
             {
                 titleKey: 'sidebar.notifications',
                 path: '/notifications',
+                icon: VscDebugBreakpointLog
+            }
+        ]
+    },
+
+    {
+        titleKey: 'sidebar.registration_requests',
+        icon: HiDocumentAdd,
+        subMenu: [
+            {
+                titleKey: 'sidebar.request_types',
+                path: '/request-types',
                 icon: VscDebugBreakpointLog
             }
         ]
