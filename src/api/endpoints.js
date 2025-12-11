@@ -81,11 +81,11 @@ export const API_URLS = {
         DELETE: id => `/main-programs/${id}`
     },
     QUORAN_PARTS: {
-        CREATE: '/quoran-parts',
-        LIST: '/quoran-parts',
-        DETAILS: id => `/quoran-parts/${id}`,
-        UPDATE: id => `/quoran-parts/${id}`,
-        DELETE: id => `/quoran-parts/${id}`
+        CREATE: '/quran-juzs',
+        LIST: '/quran-juzs',
+        DETAILS: id => `/quran-juzs/${id}`,
+        UPDATE: id => `/quran-juzs/${id}`,
+        DELETE: id => `/quran-juzs/${id}`
     },
     ATTENDANCES_TYPES: {
         CREATE: '/attendance-types',

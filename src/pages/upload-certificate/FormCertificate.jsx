@@ -48,7 +48,7 @@ export default function FormCertificate({
         return {
             main_program_id: mainProgramId,
             entity_id: entityId,
-            status: 'all'
+            status: true
         };
     }, [mainProgramId, entityId]);
 

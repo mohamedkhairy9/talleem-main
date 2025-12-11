@@ -31,21 +31,31 @@ export const inspectorAssignmentsColumns = [
         header: 'table_headers.branch',
         cell: info => <Cell value={info.row.original.branch?.name} />
     }),
-    columnHelper.accessor('entities', {
+    columnHelper.display({
+        id: 'supervisor_entities',
         header: 'table_headers.entities',
         cell: info => {
-            const entities = info.getValue();
-            if (!entities || entities.length === 0) return <Cell value="-" />;
+            const supervisors = info.row.original.supervisors;
+            if (!supervisors || supervisors.length === 0) return <Cell value="-" />;
             
-            // استخراج الأسماء بناءً على اللغة الحالية
-            const names = entities.map(e => {
-                if (typeof e.name === 'object' && e.name !== null) {
-                    return e.name[i18next.language] || e.name.ar || e.name.en;
+            // Extract entities for each supervisor
+            const supervisorEntitiesList = supervisors.map(supervisor => {                
+                const entities = supervisor.entities || [];
+                const entityNames = entities.map(e => {
+                    if (typeof e.name === 'object' && e.name !== null) {
+                        return e.name[i18next.language] || e.name.ar || e.name.en;
+                    }
+                    return e.name || '';
+                }).filter(name => name);
+                
+                if (entityNames.length === 0) {
+                    return `-`;
                 }
-                return e.name || '';
-            }).filter(name => name); // إزالة القيم الفارغة
+                
+                return entityNames.join(', ');
+            });
             
-            return <Cell value={names.join(', ') || '-'} />;
+            return <Cell value={supervisorEntitiesList.join(' | ') || '-'} />;
         }
     }),
     columnHelper.accessor('supervisors', {

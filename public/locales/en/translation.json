@@ -1351,7 +1351,10 @@
         "assignment_type": "Assignment Type",
         "entities": "Entities",
         "supervisors": "Supervisors",
-        "notes": "Notes"
+        "notes": "Notes",
+        "verses_count": "Verses Count",
+        "start_verse": "Start",
+        "end_verse": "End"
     },
     "nationalities": {
         "create": "Create Nationality",

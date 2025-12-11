@@ -28,13 +28,16 @@ export default function ViewInspectorAssignment({ onClose, oldData }) {
             supervisorIds = oldData.supervisors?.[0]?.id || '';
         }
         
+        // Extract entity_ids from supervisors.entities
+        const entityIds = oldData.supervisors?.flatMap(s => s.entities?.map(e => e.id) || []) || [];
+        console.log(oldData.supervisors);
         return {
             ...oldData,
             main_program_id: oldData.main_program?.id || '',
             branch_id: oldData.branch?.id || '',
             supervisor_ids: supervisorIds,
             supervisors: oldData.supervisors, // Preserve original supervisors array for form options
-            entity_ids: oldData.entity_ids || [], // مؤقتاً حتى يرجع الـ backend
+            entity_ids: entityIds.length > 0 ? entityIds : (oldData.entity_ids || []),
             status: oldData.is_active !== undefined ? oldData.is_active : oldData.status
         };
     }, [oldData]);

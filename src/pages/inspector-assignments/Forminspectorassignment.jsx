@@ -13,6 +13,8 @@ import { useEntitiesQuery } from '@/api/hooks/useEntities';
 import useCustomQueries from '@/utils/hooks/global/useCustomQueries';
 import { API_KEYS } from '@/api/endpoints';
 import { usersService } from '@/api/services/users.service';
+import i18next from 'i18next';
+import useLocale from '@/utils/hooks/global/useLocale';
 
 export default function FormInspectorAssignment({
     onClose,
@@ -73,7 +75,7 @@ export default function FormInspectorAssignment({
         }
         return {
             branch_id: branchIdForEntitiesQuery,
-            program_id: programIdForEntitiesQuery
+            main_program_id: programIdForEntitiesQuery
         };
     }, [branchIdForEntitiesQuery, programIdForEntitiesQuery]);
 
@@ -108,7 +110,7 @@ export default function FormInspectorAssignment({
                     return usersService.getUsers({
                         user_type: 'employee',
                         entity_id: entityId,
-                        program_id: programIdForQuery
+                        main_program_id: programIdForQuery
                     });
                 },
                 enabled: shouldEnable
@@ -189,6 +191,33 @@ export default function FormInspectorAssignment({
 
     const isEntitiesDisabled = !selectedBranchId || !selectedProgramId;
     const isSupervisorDisabled = !programIdForQuery || !hasSelectedEntity;
+    const { t } = useLocale();
+
+    // Get supervisors with entities for display in view mode
+    const supervisorsWithEntities = useMemo(() => {
+        if (!viewMode || !oldData?.supervisors) return [];
+        
+        return oldData.supervisors.map(supervisor => {
+            const supervisorName = supervisor.name 
+                ? (typeof supervisor.name === 'object' 
+                    ? supervisor.name[i18next.language] || supervisor.name.ar || supervisor.name.en
+                    : supervisor.name)
+                : '-';
+            
+            const entities = supervisor.entities || [];
+            const entityNames = entities.map(e => {
+                if (typeof e.name === 'object' && e.name !== null) {
+                    return e.name[i18next.language] || e.name.ar || e.name.en;
+                }
+                return e.name || '';
+            }).filter(name => name);
+            
+            return {
+                supervisorName,
+                entities: entityNames
+            };
+        });
+    }, [viewMode, oldData?.supervisors]);
 
     const onSubmit = (data) => {
         const submissionData = {
@@ -250,6 +279,31 @@ export default function FormInspectorAssignment({
                             />
                         );
                     })}
+                
+                {/* Display supervisors with entities in view mode */}
+                {viewMode && supervisorsWithEntities.length > 0 && (
+                    <div className="col-span-full">
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                            {t('table_headers.supervisors')} & {t('table_headers.entities')}
+                        </label>
+                        <div className="bg-gray-50 rounded-lg p-4 space-y-3">
+                            {supervisorsWithEntities.map((item, index) => (
+                                <div key={index} className="border-b border-gray-200 pb-3 last:border-b-0 last:pb-0">
+                                    <div className="font-semibold text-gray-900 mb-1">
+                                        {item.supervisorName}
+                                    </div>
+                                    <div className="text-sm text-gray-600 ml-4">
+                                        {item.entities.length > 0 ? (
+                                            <span>{t('table_headers.entities')}: {item.entities.join(', ')}</span>
+                                        ) : (
+                                            <span className="text-gray-400">-</span>
+                                        )}
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                )}
             </div>
             </ModalContent>
             {!viewMode && (

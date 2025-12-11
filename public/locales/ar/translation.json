@@ -1328,7 +1328,10 @@
         "assignment_type": "نوع الإسناد",
         "entities": "الجهات",
         "supervisors": "المشرفين",
-        "notes": "ملاحظات"
+        "notes": "ملاحظات",
+        "verses_count": "عدد الآيات",
+        "start_verse": "البداية",
+        "end_verse": "النهاية"
     },
     "mushaf_management": {
         "title": "تقسيم صفحات المصحف الشريف",

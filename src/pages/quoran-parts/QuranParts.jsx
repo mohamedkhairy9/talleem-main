@@ -8,7 +8,6 @@ import CreateQuoranPart from './CreateQuoranPart';
 import EditQuoranPart from './EditQuoranPart';
 import DeleteQuoranPart from './DeleteQuoranPart';
 import useLocale from '@/utils/hooks/global/useLocale';
-import i18next from 'i18next';
 import ViewQuoranPart from './ViewQuoranPart';
 import Filters from './Filters';
 
@@ -20,8 +19,7 @@ export default function QuranParts() {
     const { t } = useLocale();
 
     const tableData = data?.data?.map(item => ({
-        ...item,
-        name: item.name?.[i18next.language]
+        ...item
     }));
 
     console.log(tableData);
