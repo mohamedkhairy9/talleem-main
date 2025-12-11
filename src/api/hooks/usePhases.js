@@ -68,3 +68,18 @@ export const useDeletePhaseMutation = () => {
     });
 };
 
+export const useReorderStepsMutation = () => {
+    const queryClient = useQueryClient();
+    return useCustomMutation({
+        mutationFn: ({ phaseId, data }) => phasesService.reorderSteps(phaseId, data),
+        onSuccess: () => {
+            queryClient.invalidateQueries({
+                queryKey: [API_KEYS.PHASES]
+            });
+        },
+        onError: error => {
+            console.log(error);
+        }
+    });
+};
+

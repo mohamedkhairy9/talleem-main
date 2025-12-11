@@ -20,6 +20,10 @@ export const phasesService = {
 
     deletePhase: async id => {
         return await axiosInstance.delete(API_URLS.PHASES.DELETE(id));
+    },
+
+    reorderSteps: async (phaseId, data) => {
+        return await axiosInstance.post(API_URLS.PHASES.REORDER_STEPS(phaseId), data);
     }
 };
 

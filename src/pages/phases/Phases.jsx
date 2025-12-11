@@ -17,6 +17,7 @@ import { getOriginalObject } from '@/utils/helpers/global.fns';
 import useFiltering from '@/utils/hooks/global/useFiltering';
 import Filters from './Filters';
 import { useSearchParams } from 'react-router-dom';
+import StepsList from './StepsList';
 
 export default function Phases() {
     const { isOpen, toggle } = useIsOpen();
@@ -118,45 +119,12 @@ export default function Phases() {
 
     // Render expanded row content
     const renderExpandedRow = (phase) => {
-        if (!phase.steps || phase.steps.length === 0) {
-            return (
-                <div className="ml-8 py-4">
-                    <p className="text-sm text-gray-500">{t('phases.no_steps')}</p>
-                </div>
-            );
-        }
-
         return (
-            <div className="ml-8 py-4">
-                <h4 className="text-sm font-semibold text-gray-700 mb-3">
-                    {t('phases.steps')}
-                </h4>
-                <div className="space-y-2">
-                    {phase.steps.map((step, stepIndex) => (
-                        <div
-                            key={step.id}
-                            className="bg-white p-4 rounded-lg border border-gray-200 shadow-sm"
-                        >
-                            <div className="flex items-center justify-between">
-                                <div className="flex-1">
-                                    <div className="flex items-center gap-4">
-                                        <span className="text-sm font-medium text-gray-600">
-                                            {stepIndex + 1}. {step.name}
-                                        </span>
-                                        <span className="text-xs text-gray-500">
-                                            {t('phases.step_type')}: {step.step_type}
-                                        </span>
-                                        <span className="text-xs text-gray-500">
-                                            {t('phases.assigned_to')}: {step.assigned_to_type} ({step.assigned_to_id})
-                                        </span>
-                                    </div>
-                                </div>
-                                <ActiveCell info={{ getValue: () => step.status }} />
-                            </div>
-                        </div>
-                    ))}
-                </div>
-            </div>
+            <StepsList 
+                steps={phase.steps} 
+                phaseId={phase.id}
+                onReorderComplete={refresh}
+            />
         );
     };
 

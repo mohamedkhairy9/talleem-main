@@ -383,6 +383,7 @@ export const API_URLS = {
         DELETE: id => `/request-types/${id}`
     },
     PHASES: {
+        REORDER_STEPS: phaseId => `/phases/${phaseId}/steps/reorder`,
         CREATE: '/phases',
         LIST: '/phases',
         DETAILS: id => `/phases/${id}`,
