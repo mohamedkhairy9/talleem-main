@@ -61,6 +61,18 @@
             "ar_min": "Arabic name must be at least 2 characters",
             "en_max": "English name must not exceed 100 characters",
             "ar_max": "Arabic name must not exceed 100 characters",
+            "required": {
+                "en": "English name is required",
+                "ar": "Arabic name is required"
+            },
+            "min": {
+                "en": "English name must be at least 1 character",
+                "ar": "Arabic name must be at least 1 character"
+            },
+            "alphanumeric": {
+                "en": "English name must contain alphanumeric characters",
+                "ar": "Arabic name must contain alphanumeric or Arabic characters"
+            },
             "label": {
                 "en": "Name (English)",
                 "ar": "Name (Arabic)"
@@ -1144,7 +1156,9 @@
         "education-program-entity-types": "Education Program Types",
         "memorization-program-entity-types": "Memorization Program Types",
         "lookups": "Lookups",
-        "remotely_attendance_platforms": "Remotely Attendance Platforms"
+        "remotely_attendance_platforms": "Remotely Attendance Platforms",
+        "registration_requests": "Registration Requests",
+        "request_types": "Request Types"
     },
     "table_titles": {
         "notification_templates": "Notification Templates",
@@ -1195,7 +1209,8 @@
         "memorization-program-entity-types": "Memorization Program Types",
         "remotely_attendance_platforms": "Remotely Attendance Platforms",
         "evaluation_parameters": "Evaluation Parameters",
-        "inspector_assignments": "Inspector Assignments to Entities"
+        "inspector_assignments": "Inspector Assignments to Entities",
+        "request_types": "Request Types"
     },
     "table": {
         "actions": "Actions",
@@ -1267,6 +1282,7 @@
         "sent_via": "Sent Via",
         "created_at": "Created Date",
         "updated_at": "Updated Date",
+        "name": "Name",
         "name": "Name",
         "evaluation_for": "Evaluation For",
         "total_grade": "Total Grade",
@@ -1378,6 +1394,11 @@
         "create": "Create Warning Reason",
         "update": "Update Warning Reason",
         "view": "View Warning Reason"
+    },
+    "request_types": {
+        "create": "Create Request Type",
+        "update": "Update Request Type",
+        "view": "View Request Type"
     },
     "warnings": {
         "create": "Add Warning",

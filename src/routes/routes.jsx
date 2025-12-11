@@ -55,6 +55,7 @@ import SuggestedExamTemplates from '@/pages/quran/SuggestedExamTemplates';
 import SessionModes from '@/pages/sessionModes/SessionModes';
 import Certificates from '@/pages/upload-certificate/Certificates';
 import ExamSegmentsCount from '@/pages/exam-segments/ExamSegmentsCount';
+import RequestTypes from '@/pages/request-types/RequestTypes';
 
 export const routes = [
     {
@@ -281,5 +282,9 @@ export const routes = [
     {
         path: '/remotely-attendance-platforms',
         element: <RemotelyAttendancePlatforms />
+    },
+    {
+        path: '/request-types',
+        element: <RequestTypes />
     }
 ];

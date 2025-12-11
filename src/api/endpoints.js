@@ -375,6 +375,13 @@ export const API_URLS = {
         LIST: '/import-errors',
         CLEAR: '/import-errors-clear'
     },
+    REQUEST_TYPES: {
+        CREATE: '/request-types',
+        LIST: '/request-types',
+        DETAILS: id => `/request-types/${id}`,
+        UPDATE: id => `/request-types/${id}`,
+        DELETE: id => `/request-types/${id}`
+    },
 };
 
 export const API_KEYS = {
@@ -439,5 +446,6 @@ export const API_KEYS = {
     MAJORS: 'majors',
     REMOTELY_ATTENDANCE_PLATFORMS: 'remotely-attendance-platforms',
     EXAM_SEGMENTS_COUNT: 'exam-segments-count',
-    IMPORT_ERRORS: 'import-errors'
+    IMPORT_ERRORS: 'import-errors',
+    REQUEST_TYPES: 'request-types'
 };
