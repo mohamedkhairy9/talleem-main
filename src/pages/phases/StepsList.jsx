@@ -1,9 +1,13 @@
 import React, { useState, useMemo } from 'react';
 import { MdDragIndicator } from 'react-icons/md';
+import { FaEye } from 'react-icons/fa';
+import { MdAdd } from 'react-icons/md';
 import ActiveCell from '@/components/common/table/cells/ActiveCell';
 import useLocale from '@/utils/hooks/global/useLocale';
 import { useReorderStepsMutation } from '@/api/hooks/usePhases';
 import i18next from 'i18next';
+import ViewStep from '@/pages/steps/ViewStep';
+import CreateStep from '@/pages/steps/CreateStep';
 
 export default function StepsList({ steps, phaseId, onReorderComplete }) {
     const { t } = useLocale();
@@ -12,6 +16,8 @@ export default function StepsList({ steps, phaseId, onReorderComplete }) {
     const [draggedIndex, setDraggedIndex] = useState(null);
     const [dragOverIndex, setDragOverIndex] = useState(null);
     const [isDragging, setIsDragging] = useState(false);
+    const [viewingStepId, setViewingStepId] = useState(null);
+    const [showCreateStep, setShowCreateStep] = useState(false);
 
     // Use reordered steps if available, otherwise use original steps
     const displaySteps = reorderedSteps || steps || [];
@@ -159,24 +165,35 @@ export default function StepsList({ steps, phaseId, onReorderComplete }) {
                 <h4 className="text-sm font-semibold text-gray-700">
                     {t('phases.steps')}
                 </h4>
-                {isDragging && (
-                    <div className="flex gap-2">
+                <div className="flex items-center gap-2">
+                    {!isDragging && (
                         <button
-                            onClick={handleSaveOrder}
-                            disabled={isPending}
-                            className="px-3 py-1 text-xs bg-primary-600 text-white rounded hover:bg-primary-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                            onClick={() => setShowCreateStep(true)}
+                            className="px-3 py-1 text-xs bg-primary-600 text-white rounded hover:bg-primary-700 flex items-center gap-1"
                         >
-                            {t('common.save')}
+                            <MdAdd className="w-4 h-4" />
+                            {t('common.add')}
                         </button>
-                        <button
-                            onClick={handleCancelOrder}
-                            disabled={isPending}
-                            className="px-3 py-1 text-xs bg-gray-500 text-white rounded hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed"
-                        >
-                            {t('common.cancel')}
-                        </button>
-                    </div>
-                )}
+                    )}
+                    {isDragging && (
+                        <div className="flex gap-2">
+                            <button
+                                onClick={handleSaveOrder}
+                                disabled={isPending}
+                                className="px-3 py-1 text-xs bg-primary-600 text-white rounded hover:bg-primary-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                            >
+                                {t('common.save')}
+                            </button>
+                            <button
+                                onClick={handleCancelOrder}
+                                disabled={isPending}
+                                className="px-3 py-1 text-xs bg-gray-500 text-white rounded hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed"
+                            >
+                                {t('common.cancel')}
+                            </button>
+                        </div>
+                    )}
+                </div>
             </div>
             <div className="space-y-2">
                 {displaySteps.map((step, stepIndex) => {
@@ -216,12 +233,42 @@ export default function StepsList({ steps, phaseId, onReorderComplete }) {
                                         {t('phases.assigned_to')}: {step.assigned_to_type}
                                     </span>
                                 </div>
-                                <ActiveCell info={{ getValue: () => step.status }} />
+                                <div className="flex items-center gap-2">
+                                    <button
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            setViewingStepId(step.id);
+                                        }}
+                                        className="p-1 text-blue-600 hover:text-blue-800 hover:bg-blue-50 rounded transition-colors"
+                                        title={t('table.view')}
+                                    >
+                                        <FaEye className="w-4 h-4" />
+                                    </button>
+                                    <ActiveCell info={{ getValue: () => step.status }} />
+                                </div>
                             </div>
                         </div>
                     );
                 })}
             </div>
+            {viewingStepId && (
+                <ViewStep
+                    onClose={() => setViewingStepId(null)}
+                    stepId={viewingStepId}
+                />
+            )}
+            {showCreateStep && (
+                <CreateStep
+                    onClose={() => setShowCreateStep(false)}
+                    phaseId={phaseId}
+                    currentStepsCount={displaySteps.length}
+                    onStepCreated={() => {
+                        if (onReorderComplete) {
+                            onReorderComplete();
+                        }
+                    }}
+                />
+            )}
         </div>
     );
 }

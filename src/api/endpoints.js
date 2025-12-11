@@ -390,6 +390,20 @@ export const API_URLS = {
         UPDATE: id => `/phases/${id}`,
         DELETE: id => `/phases/${id}`
     },
+    STEPS: {
+        CREATE: '/steps',
+        LIST: '/steps',
+        DETAILS: id => `/steps/${id}`,
+        UPDATE: id => `/steps/${id}`,
+        DELETE: id => `/steps/${id}`
+    },
+    JOIN_REQUEST_FORMS: {
+        CREATE: '/join-request-forms',
+        LIST: '/join-request-forms',
+        DETAILS: id => `/join-request-forms/${id}`,
+        UPDATE: id => `/join-request-forms/${id}`,
+        DELETE: id => `/join-request-forms/${id}`
+    },
 };
 
 export const API_KEYS = {
@@ -456,5 +470,7 @@ export const API_KEYS = {
     EXAM_SEGMENTS_COUNT: 'exam-segments-count',
     IMPORT_ERRORS: 'import-errors',
     REQUEST_TYPES: 'request-types',
-    PHASES: 'phases'
+    PHASES: 'phases',
+    STEPS: 'steps',
+    JOIN_REQUEST_FORMS: 'join-request-forms'
 };
