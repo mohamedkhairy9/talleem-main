@@ -1,34 +1,30 @@
 import { useQueryClient } from '@tanstack/react-query';
-import { phasesService } from '../services/phases.service';
+import { stepsService } from '../services/steps.service';
 import { API_KEYS } from '../endpoints';
 import useCustomQuery from '../../utils/hooks/global/useCustomQuery';
 import useCustomMutation from '../../utils/hooks/global/useCustomMutation';
 
-export const usePhasesQuery = (params = {}, options = {}) => {
+export const useStepQuery = (id, options = {}) => {
     return useCustomQuery({
-        queryKey: [API_KEYS.PHASES, params],
-        queryFn: () => phasesService.getPhases(params),
+        queryKey: [API_KEYS.STEPS, id],
+        queryFn: () => stepsService.getStep(id),
+        enabled: !!id,
         ...options
     });
 };
 
-export const usePhaseQuery = (id, options = {}) => {
-    return useCustomQuery({
-        queryKey: [API_KEYS.PHASES, id],
-        queryFn: () => phasesService.getPhase(id),
-        ...options
-    });
-};
-
-export const useCreatePhaseMutation = () => {
+export const useCreateStepMutation = () => {
     const queryClient = useQueryClient();
     return useCustomMutation({
-        mutationFn: data => phasesService.createPhase(data),
-        mutationKey: 'create-phase',
-        queryKeys: [API_KEYS.PHASES],
+        mutationFn: data => stepsService.createStep(data),
+        mutationKey: 'create-step',
+        queryKeys: [API_KEYS.PHASES, API_KEYS.STEPS],
         onSuccess: () => {
             queryClient.invalidateQueries({
                 queryKey: [API_KEYS.PHASES]
+            });
+            queryClient.invalidateQueries({
+                queryKey: [API_KEYS.STEPS]
             });
         },
         onError: error => {
@@ -37,14 +33,17 @@ export const useCreatePhaseMutation = () => {
     });
 };
 
-export const useUpdatePhaseMutation = () => {
+export const useUpdateStepMutation = () => {
     const queryClient = useQueryClient();
     return useCustomMutation({
-        mutationFn: data =>
-            phasesService.updatePhase(data.id, data),
+        mutationFn: data => stepsService.updateStep(data.id, data),
+        queryKeys: [API_KEYS.PHASES, API_KEYS.STEPS],
         onSuccess: () => {
             queryClient.invalidateQueries({
                 queryKey: [API_KEYS.PHASES]
+            });
+            queryClient.invalidateQueries({
+                queryKey: [API_KEYS.STEPS]
             });
         },
         onError: error => {
@@ -53,28 +52,16 @@ export const useUpdatePhaseMutation = () => {
     });
 };
 
-export const useDeletePhaseMutation = () => {
+export const useDeleteStepMutation = () => {
     const queryClient = useQueryClient();
     return useCustomMutation({
-        mutationFn: id => phasesService.deletePhase(id),
+        mutationFn: id => stepsService.deleteStep(id),
         onSuccess: () => {
             queryClient.invalidateQueries({
                 queryKey: [API_KEYS.PHASES]
             });
-        },
-        onError: error => {
-            console.log(error);
-        }
-    });
-};
-
-export const useReorderStepsMutation = () => {
-    const queryClient = useQueryClient();
-    return useCustomMutation({
-        mutationFn: ({ phaseId, data }) => phasesService.reorderSteps(phaseId, data),
-        onSuccess: () => {
             queryClient.invalidateQueries({
-                queryKey: [API_KEYS.PHASES]
+                queryKey: [API_KEYS.STEPS]
             });
         },
         onError: error => {

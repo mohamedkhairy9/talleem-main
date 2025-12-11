@@ -17,13 +17,13 @@ import { getOriginalObject } from '@/utils/helpers/global.fns';
 import useFiltering from '@/utils/hooks/global/useFiltering';
 import Filters from './Filters';
 import { useSearchParams } from 'react-router-dom';
+import StepsList from './StepsList';
 
 export default function Phases() {
     const { isOpen, toggle } = useIsOpen();
     const [searchParams, setSearchParams] = useSearchParams();
     const { pagination, handleFilter, filters, setter, setFilters } =
         useFiltering(filtersDefaultValues);
-    const { data, isLoading, refresh } = usePhasesQuery(filters);
     const { data: requestTypesData, isLoading: isLoadingRequestTypes } = useRequestTypesQuery();
     const { mutate: updatePhase, isPending } = useUpdatePhaseMutation();
     const { t } = useLocale();
@@ -41,6 +41,9 @@ export default function Phases() {
 
     // Get selected request_type_id from URL or default to first request type
     const selectedRequestTypeId = useMemo(() => {
+        // Wait for request types to load
+        if (requestTypes.length === 0) return null;
+        
         const urlParam = searchParams.get('request_type_id');
         if (urlParam) {
             const id = parseInt(urlParam);
@@ -52,9 +55,12 @@ export default function Phases() {
         return requestTypes.length > 0 ? requestTypes[0].id : null;
     }, [searchParams, requestTypes]);
 
-    // Initialize URL and filters on mount or when request types load
+    // Track if filters have been initialized with request_type_id
+    const [filtersInitialized, setFiltersInitialized] = React.useState(false);
+
+    // Initialize URL and filters when request types are loaded
     useEffect(() => {
-        if (requestTypes.length > 0 && selectedRequestTypeId) {
+        if (requestTypes.length > 0 && selectedRequestTypeId && !filtersInitialized) {
             const urlParam = searchParams.get('request_type_id');
             const urlRequestTypeId = urlParam ? parseInt(urlParam) : null;
             
@@ -64,12 +70,15 @@ export default function Phases() {
             }
             
             // Update filters to send to API (server-side filtering)
-            if (filters.request_type_id !== selectedRequestTypeId) {
-                setFilters(prev => ({ ...prev, request_type_id: selectedRequestTypeId }));
-            }
+            setFilters(prev => ({ ...prev, request_type_id: selectedRequestTypeId }));
+            setFiltersInitialized(true);
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [requestTypes.length, selectedRequestTypeId]); // Only run when request types are loaded or selectedRequestTypeId changes
+    }, [requestTypes.length, selectedRequestTypeId, filtersInitialized]); // Only run when request types are loaded or selectedRequestTypeId changes
+
+    // Only call phases API when request types are loaded, filters are initialized, and request_type_id is set
+    const shouldFetchPhases = !isLoadingRequestTypes && filtersInitialized && selectedRequestTypeId !== null && filters.request_type_id === selectedRequestTypeId;
+    const { data, isLoading, refresh } = usePhasesQuery(filters, { enabled: shouldFetchPhases });
 
     // Create a map of request type IDs to names
     const requestTypesMap = useMemo(() => {
@@ -110,45 +119,12 @@ export default function Phases() {
 
     // Render expanded row content
     const renderExpandedRow = (phase) => {
-        if (!phase.steps || phase.steps.length === 0) {
-            return (
-                <div className="ml-8 py-4">
-                    <p className="text-sm text-gray-500">{t('phases.no_steps')}</p>
-                </div>
-            );
-        }
-
         return (
-            <div className="ml-8 py-4">
-                <h4 className="text-sm font-semibold text-gray-700 mb-3">
-                    {t('phases.steps')}
-                </h4>
-                <div className="space-y-2">
-                    {phase.steps.map((step, stepIndex) => (
-                        <div
-                            key={step.id}
-                            className="bg-white p-4 rounded-lg border border-gray-200 shadow-sm"
-                        >
-                            <div className="flex items-center justify-between">
-                                <div className="flex-1">
-                                    <div className="flex items-center gap-4">
-                                        <span className="text-sm font-medium text-gray-600">
-                                            {stepIndex + 1}. {step.name}
-                                        </span>
-                                        <span className="text-xs text-gray-500">
-                                            {t('phases.step_type')}: {step.step_type}
-                                        </span>
-                                        <span className="text-xs text-gray-500">
-                                            {t('phases.assigned_to')}: {step.assigned_to_type} ({step.assigned_to_id})
-                                        </span>
-                                    </div>
-                                </div>
-                                <ActiveCell info={{ getValue: () => step.status }} />
-                            </div>
-                        </div>
-                    ))}
-                </div>
-            </div>
+            <StepsList 
+                steps={phase.steps} 
+                phaseId={phase.id}
+                onReorderComplete={refresh}
+            />
         );
     };
 
@@ -208,7 +184,11 @@ export default function Phases() {
             });
     };
 
-    if (isLoading || isLoadingRequestTypes) return <Loader />;
+    // Show loader while request types are loading or filters are being initialized
+    if (isLoadingRequestTypes || !filtersInitialized) return <Loader />;
+    
+    // Show loader while phases are loading
+    if (isLoading) return <Loader />;
 
     const columns = phasesColumns(requestTypesMap);
 

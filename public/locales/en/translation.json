@@ -109,7 +109,35 @@
             "placeholder": "Enter order number",
             "required": "Order is required",
             "invalid": "Order must be a positive number",
-            "integer": "Order must be an integer"
+            "integer": "Order must be an integer",
+            "min": "Order must be at least 1"
+        },
+        "phase_id": {
+            "label": "Phase",
+            "placeholder": "Select Phase",
+            "required": "Phase is required",
+            "invalid": "Please select a valid phase"
+        },
+        "assigned_to_type": {
+            "label": "Assigned To Type",
+            "placeholder": "Select assigned to type",
+            "required": "Assigned to type is required"
+        },
+        "assigned_to_id": {
+            "label": "Assigned To ID",
+            "placeholder": "Enter assigned to ID",
+            "required": "Assigned to ID is required"
+        },
+        "step_type": {
+            "label": "Step Type",
+            "placeholder": "Select step type",
+            "required": "Step type is required"
+        },
+        "join_request_form_id": {
+            "label": "Join Request Form",
+            "placeholder": "Select join request form",
+            "required": "Join request form is required",
+            "invalid": "Please select a valid join request form"
         },
         "evaluation_for": {
             "label": "Evaluation For",
@@ -822,6 +850,7 @@
         "deleting": "Deleting...",
         "cancel": "Cancel",
         "delete": "Delete",
+        "add": "Add",
         "back": "Back",
         "wait": "Wait",
         "enabled": "Enabled",
@@ -1423,6 +1452,12 @@
         "step_type": "Step Type",
         "assigned_to": "Assigned To",
         "no_steps": "No steps available"
+    },
+    "steps": {
+        "create": "Create Step",
+        "view": "View Step",
+        "edit": "Edit Step",
+        "delete": "Delete Step"
     },
     "warnings": {
         "create": "Add Warning",
