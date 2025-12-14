@@ -47,14 +47,14 @@ export const stepsFields = [
         editMode: true,
         viewMode: true
     },
-    {
-        name: 'join_request_form_id',
-        label: 'validation.join_request_form_id.label',
-        type: 'select',
-        placeholder: 'validation.join_request_form_id.placeholder',
-        editMode: true,
-        viewMode: true
-    },
+    // {
+    //     name: 'join_request_form_id',
+    //     label: 'validation.join_request_form_id.label',
+    //     type: 'select',
+    //     placeholder: 'validation.join_request_form_id.placeholder',
+    //     editMode: true,
+    //     viewMode: true
+    // },
     {
         name: 'status',
         label: 'validation.status.label',

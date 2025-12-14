@@ -1701,5 +1701,22 @@
         "entity_category": "Please select an entity type first, as the entity category depends on the entity type",
         "entity": "Please select an branch first, as the entity depends on the branch"
     },
-    "logout": "Logout"
+    "logout": "Logout",
+    "api": {
+        "success": {
+            "generic": "Operation completed successfully",
+            "created": "Created successfully",
+            "updated": "Updated successfully",
+            "deleted": "Deleted successfully",
+            "reordered": "Reordered successfully"
+        },
+        "errors": {
+            "generic": "Something went wrong. Please try again.",
+            "network": "Network error. Please check your connection.",
+            "unauthorized": "You are not authorized to perform this action.",
+            "not_found": "The requested resource was not found.",
+            "validation": "Please check your input and try again.",
+            "server": "Server error. Please try again later."
+        }
+    }
 }
