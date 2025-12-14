@@ -57,6 +57,7 @@ import Certificates from '@/pages/upload-certificate/Certificates';
 import ExamSegmentsCount from '@/pages/exam-segments/ExamSegmentsCount';
 import RequestTypes from '@/pages/request-types/RequestTypes';
 import Phases from '@/pages/phases/Phases';
+import JoinRequestForms from '@/pages/join-request-forms/JoinRequestForms';
 
 export const routes = [
     {
@@ -291,5 +292,9 @@ export const routes = [
     {
         path: '/phases',
         element: <Phases />
+    },
+    {
+        path: '/join-request-forms',
+        element: <JoinRequestForms />
     }
 ];

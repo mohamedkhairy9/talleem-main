@@ -273,6 +273,11 @@ export const sideMenuTabs = [
                 titleKey: 'sidebar.phases',
                 path: '/phases',
                 icon: VscDebugBreakpointLog
+            },
+            {
+                titleKey: 'sidebar.join_request_forms',
+                path: '/join-request-forms',
+                icon: VscDebugBreakpointLog
             }
         ]
     },
