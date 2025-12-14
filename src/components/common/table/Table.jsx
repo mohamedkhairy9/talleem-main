@@ -39,9 +39,7 @@ import {
     MdShare,
     MdInfo,
     MdUpload,
-    MdDragIndicator,
-    MdSave,
-    MdCancel
+    MdDragIndicator
 } from 'react-icons/md';
 import { useTranslation } from 'react-i18next';
 import useLanguageStore from '@/utils/stores/language.store';
@@ -86,10 +84,8 @@ const Table = ({
     enableDragAndDrop = false,
     onDragEnd = null,
     onSaveOrder = null,
-    onCancelOrder = null,
     getRowId = null,
-    orderField = 'order',
-    isSavingOrder = false
+    orderField = 'order'
 }) => {
     // Core state
     const { t } = useTranslation();
@@ -114,8 +110,8 @@ const Table = ({
     // Drag and drop state
     const [draggedIndex, setDraggedIndex] = useState(null);
     const [dragOverIndex, setDragOverIndex] = useState(null);
-    const [isDragging, setIsDragging] = useState(false);
-    const [reorderedData, setReorderedData] = useState(null);
+    const [optimisticData, setOptimisticData] = useState(null); // Optimistic update state
+    const [movedItemInfo, setMovedItemInfo] = useState(null); // Track moved item for API call
 
     const tableRef = useRef(null);
 
@@ -298,8 +294,8 @@ const Table = ({
         }
     };
 
-    // Use reordered data if dragging, otherwise use original data
-    const displayData = reorderedData || data || [];
+    // Use optimistic data if available, otherwise use original data
+    const displayData = optimisticData || data || [];
 
     // Table instance
     const table = useReactTable({
@@ -339,7 +335,6 @@ const Table = ({
     const handleDragStart = (e, index) => {
         if (!enableDragAndDrop) return;
         setDraggedIndex(index);
-        setIsDragging(true);
         e.dataTransfer.effectAllowed = 'move';
         e.dataTransfer.setData('text/plain', index.toString());
         e.currentTarget.style.opacity = '0.5';
@@ -368,14 +363,14 @@ const Table = ({
             return;
         }
 
-        // Create new order
-        const newData = [...displayData];
-        const draggedItem = newData[draggedIndex];
+        // Get current data (use optimistic if available, otherwise original)
+        const currentData = optimisticData || data || [];
+        const draggedItem = currentData[draggedIndex];
+        const newOrder = dropIndex + 1;
         
-        // Remove from old position
+        // Optimistically update the UI immediately
+        const newData = [...currentData];
         newData.splice(draggedIndex, 1);
-        
-        // Insert at new position
         newData.splice(dropIndex, 0, draggedItem);
         
         // Update order numbers if orderField is provided
@@ -389,7 +384,15 @@ const Table = ({
             return item;
         });
 
-        setReorderedData(updatedData);
+        // Update UI immediately (optimistic update)
+        setOptimisticData(updatedData);
+        
+        // Store moved item info for API call
+        setMovedItemInfo({
+            item: draggedItem,
+            new_order: newOrder
+        });
+
         setDraggedIndex(null);
         setDragOverIndex(null);
         
@@ -402,26 +405,14 @@ const Table = ({
     const handleDragEnd = (e) => {
         if (!enableDragAndDrop) return;
         e.currentTarget.style.opacity = '1';
-    };
-
-    const handleSaveOrder = () => {
-        if (onSaveOrder && reorderedData) {
-            onSaveOrder(reorderedData, () => {
-                setReorderedData(null);
-                setIsDragging(false);
-                setDraggedIndex(null);
-                setDragOverIndex(null);
+        
+        // Call API automatically after drag ends if an item was moved
+        if (movedItemInfo && onSaveOrder) {
+            onSaveOrder(movedItemInfo.item, movedItemInfo.new_order, () => {
+                // Clear optimistic state and moved item info after API call completes
+                setOptimisticData(null);
+                setMovedItemInfo(null);
             });
-        }
-    };
-
-    const handleCancelOrder = () => {
-        setReorderedData(null);
-        setIsDragging(false);
-        setDraggedIndex(null);
-        setDragOverIndex(null);
-        if (onCancelOrder) {
-            onCancelOrder();
         }
     };
 
@@ -848,6 +839,15 @@ const Table = ({
         comfortable: 'px-8 py-6'
     };
 
+    // Clear optimistic data when new data arrives from server
+    useEffect(() => {
+        if (data && optimisticData) {
+            // Clear optimistic state when fresh data arrives
+            setOptimisticData(null);
+            setMovedItemInfo(null);
+        }
+    }, [data]);
+
     // Server-side actions
     useEffect(() => {
         if (serverPagination && onServerAction) {
@@ -922,27 +922,6 @@ const Table = ({
                             </div>
 
                             <div className="flex items-center space-x-2">
-                                {/* Save/Cancel buttons when dragging */}
-                                {enableDragAndDrop && isDragging && (
-                                    <div className="flex gap-2 mr-4">
-                                        <button
-                                            onClick={handleSaveOrder}
-                                            disabled={isSavingOrder}
-                                            className="px-3 py-1 w-fit flex items-center jystify-center gap-2 text-xs bg-primary-500 text-white rounded hover:bg-primary-700 disabled:opacity-50 disabled:cursor-not-allowed"
-                                        >
-                                            <MdSave className="w-4 h-4" />
-                                            {t('common.save')}
-                                        </button>
-                                        <button
-                                            onClick={handleCancelOrder}
-                                            disabled={isSavingOrder}
-                                            className="px-3 py-1 w-fit flex items-center jystify-center gap-2 text-xs bg-gray-600 text-white rounded hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed"
-                                        >
-                                            <MdCancel className="w-4 h-4" />
-                                            {t('common.cancel')}
-                                        </button>
-                                    </div>
-                                )}
 
                                 {/* Density Control */}
                                 <div className="flex bg-gray-100 rounded-lg p-1">
@@ -1501,7 +1480,6 @@ const Table = ({
                                                 draggable={enableDragAndDrop}
                                                 onDragStart={(e) => {
                                                     if (enableDragAndDrop) {
-                                                        setIsDragging(true);
                                                         handleDragStart(e, index);
                                                     }
                                                 }}

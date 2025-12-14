@@ -2,16 +2,16 @@ import React from 'react';
 import FormStep from './FormStep';
 import Modal from '@/components/common/form/Modal';
 import ModalHeader from '@/components/common/form/ModalHeader';
-import { useCreateStepMutation } from '@/api/hooks/useSteps';
+import { useUpdateStepMutation } from '@/api/hooks/useSteps';
 import { enabledDisabledOptions } from '@/utils/constants/options';
+import { useJoinRequestFormsQuery } from '@/api/hooks/useJoinRequestForms';
+import Loader from '@/components/common/Loader';
 
-export default function CreateStep({ onClose, phaseId, requestTypeId, currentStepsCount = 0, onStepCreated }) {
-    const { mutate, isPending } = useCreateStepMutation();
+export default function EditStep({ onClose, oldData, onStepUpdated }) {
+    const { mutate, isPending } = useUpdateStepMutation();
+    const { data: joinRequestFormsData, isLoading: isLoadingForms } = useJoinRequestFormsQuery();
 
-    // Get the next order number
-    const getNextOrder = () => {
-        return currentStepsCount + 1;
-    };
+    if (isLoadingForms) return <Loader />;
 
     // Step type options
     const stepTypeOptions = [
@@ -28,24 +28,21 @@ export default function CreateStep({ onClose, phaseId, requestTypeId, currentSte
     ];
 
     return (
-        <Modal onClose={onClose}>
-            <ModalHeader onClose={onClose} header="steps.create" />
+        <Modal onClose={onClose} size="4xl">
+            <ModalHeader onClose={onClose} header="steps.edit" />
             <FormStep
+                oldData={oldData}
                 mutate={mutate}
                 isPending={isPending}
                 onClose={onClose}
+                editMode={true}
                 options={{
                     status: enabledDisabledOptions,
                     step_type: stepTypeOptions,
                     assigned_to_type: assignedToTypeOptions
+                    // assigned_to_id will be populated dynamically in FormStep based on assigned_to_type
                 }}
-                onStepCreated={onStepCreated}
-                oldData={{ 
-                    phase_id: phaseId,
-                    join_request_form_id: requestTypeId, // Automatically set from current tab
-                    status: true,
-                    order: getNextOrder()
-                }}
+                onStepCreated={onStepUpdated}
             />
         </Modal>
     );

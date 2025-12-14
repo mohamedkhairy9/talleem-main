@@ -14,59 +14,27 @@ export const useStepQuery = (id, options = {}) => {
 };
 
 export const useCreateStepMutation = () => {
-    const queryClient = useQueryClient();
     return useCustomMutation({
         mutationFn: data => stepsService.createStep(data),
         mutationKey: 'create-step',
-        queryKeys: [API_KEYS.PHASES, API_KEYS.STEPS],
-        onSuccess: () => {
-            queryClient.invalidateQueries({
-                queryKey: [API_KEYS.PHASES]
-            });
-            queryClient.invalidateQueries({
-                queryKey: [API_KEYS.STEPS]
-            });
-        },
-        onError: error => {
-            console.log(error);
-        }
+        queryKeys: [API_KEYS.PHASES, API_KEYS.STEPS]
+        // Query invalidation is handled automatically by useCustomMutation via queryKeys
     });
 };
 
 export const useUpdateStepMutation = () => {
-    const queryClient = useQueryClient();
     return useCustomMutation({
         mutationFn: data => stepsService.updateStep(data.id, data),
-        queryKeys: [API_KEYS.PHASES, API_KEYS.STEPS],
-        onSuccess: () => {
-            queryClient.invalidateQueries({
-                queryKey: [API_KEYS.PHASES]
-            });
-            queryClient.invalidateQueries({
-                queryKey: [API_KEYS.STEPS]
-            });
-        },
-        onError: error => {
-            console.log(error);
-        }
+        queryKeys: [API_KEYS.PHASES, API_KEYS.STEPS]
+        // Query invalidation is handled automatically by useCustomMutation via queryKeys
     });
 };
 
 export const useDeleteStepMutation = () => {
-    const queryClient = useQueryClient();
     return useCustomMutation({
         mutationFn: id => stepsService.deleteStep(id),
-        onSuccess: () => {
-            queryClient.invalidateQueries({
-                queryKey: [API_KEYS.PHASES]
-            });
-            queryClient.invalidateQueries({
-                queryKey: [API_KEYS.STEPS]
-            });
-        },
-        onError: error => {
-            console.log(error);
-        }
+        queryKeys: [API_KEYS.PHASES, API_KEYS.STEPS]
+        // Query invalidation is handled automatically by useCustomMutation via queryKeys
     });
 };
 

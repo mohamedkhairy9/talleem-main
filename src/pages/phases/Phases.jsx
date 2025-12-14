@@ -123,65 +123,47 @@ export default function Phases() {
             <StepsList 
                 steps={phase.steps} 
                 phaseId={phase.id}
+                requestTypeId={selectedRequestTypeId}
                 onReorderComplete={refresh}
             />
         );
     };
 
-    // Handle save order - only update records that actually changed
-    const handleSaveOrder = (reorderedData, onComplete) => {
-        // Only find phases where the order actually changed
-        // Use Set to track which IDs we've already added to avoid duplicates
-        const updatesMap = new Map();
-        
-        reorderedData.forEach(phase => {
-            const originalPhase = originalPhasesMap.get(phase.id);
-            // Only update if:
-            // 1. Phase exists in original data
-            // 2. Order actually changed
-            // 3. We haven't already added this phase to updates
-            if (originalPhase && 
-                originalPhase.order !== phase.order && 
-                !updatesMap.has(phase.id)) {
-                updatesMap.set(phase.id, {
-                    id: phase.id,
-                    request_type_id: phase.request_type_id,
-                    name: phase.name,
-                    order: phase.order,
-                    status: phase.status
-                });
-            }
-        });
-
-        const updates = Array.from(updatesMap.values());
-
-        if (updates.length === 0) {
-            onComplete();
+    // Handle save order - called automatically after each drag
+    const handleSaveOrder = (movedPhase, newOrder, onComplete) => {
+        if (!movedPhase) {
+            if (onComplete) onComplete();
             return;
         }
 
-        // Update only the phases that changed - use Promise.all for parallel updates
-        const updatePromises = updates.map(phaseData => {
-            return new Promise((resolve, reject) => {
-                updatePhase(phaseData, {
-                    onSuccess: () => resolve(),
-                    onError: (error) => reject(error)
-                });
-            });
-        });
+        // Check if order actually changed
+        const originalPhase = originalPhasesMap.get(movedPhase.id);
+        if (!originalPhase || originalPhase.order === newOrder) {
+            if (onComplete) onComplete();
+            return;
+        }
 
-        Promise.all(updatePromises)
-            .then(() => {
-                // All updates completed, refresh data
-                setTimeout(() => {
-                    refresh();
-                    onComplete();
-                }, 500);
-            })
-            .catch(() => {
-                // Some updates failed, still complete
-                onComplete();
-            });
+        // Update only the moved phase
+        const phaseData = {
+            id: movedPhase.id,
+            request_type_id: movedPhase.request_type_id,
+            name: movedPhase.name,
+            order: newOrder,
+            status: movedPhase.status
+        };
+
+        updatePhase(phaseData, {
+            onSuccess: () => {
+                // Query invalidation will automatically trigger refetch
+                // Clear optimistic state - it will be replaced by fresh data
+                if (onComplete) onComplete();
+            },
+            onError: () => {
+                // On error, refresh to revert optimistic update
+                refresh();
+                if (onComplete) onComplete();
+            }
+        });
     };
 
     // Show loader while request types are loading or filters are being initialized
@@ -243,7 +225,6 @@ export default function Phases() {
                 enableDragAndDrop={true}
                 orderField="order"
                 onSaveOrder={handleSaveOrder}
-                isSavingOrder={isPending}
             />
             {isOpen.add && <CreatePhase onClose={toggle.add} />}
             {isOpen.edit && (
