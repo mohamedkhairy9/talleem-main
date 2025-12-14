@@ -1,6 +1,10 @@
 {
     "validation": {
         "required": "This field is required",
+        "required_field":{
+            "label": "Required Field",
+            "placeholder": "Enter required field"
+        },
         "please_fix_errors": "Please fix the following errors",
         "field_required": "This field is required",
         "search": {
@@ -138,6 +142,40 @@
             "placeholder": "Select join request form",
             "required": "Join request form is required",
             "invalid": "Please select a valid join request form"
+        },
+        "field_key": {
+            "label": "Field Key",
+            "placeholder": "Enter field key (e.g., name, email)",
+            "required": "Field key is required",
+            "invalid": "Field key must contain only English letters, numbers, and underscores",
+            "no_spaces": "Field key cannot contain spaces. Use underscore (_) instead.",
+            "hint": "Use only English letters, numbers, and underscores (e.g., full_name, email_address)"
+        },
+        "field_type": {
+            "label": "Field Type",
+            "placeholder": "Select field type",
+            "required": "Field type is required"
+        },
+        "validation_rules": {
+            "label": "Validation Rules",
+            "placeholder": "Enter validation rules (e.g., string|min:3|max:255)"
+        },
+        "fields": {
+            "min": "At least one field is required"
+        },
+        "label": {
+            "label": {
+                "en": "Label (English)",
+                "ar": "Label (Arabic)"
+            },
+            "placeholder": {
+                "en": "Enter label in English",
+                "ar": "Enter label in Arabic"
+            },
+            "required": {
+                "en": "English label is required",
+                "ar": "Arabic label is required"
+            }
         },
         "evaluation_for": {
             "label": "Evaluation For",
@@ -1201,7 +1239,8 @@
         "remotely_attendance_platforms": "Remotely Attendance Platforms",
         "registration_requests": "Registration Requests",
         "request_types": "Request Types",
-        "phases": "Phases"
+        "phases": "Phases",
+        "join_request_forms": "Join Request Forms"
     },
     "table_titles": {
         "notification_templates": "Notification Templates",
@@ -1254,7 +1293,8 @@
         "evaluation_parameters": "Evaluation Parameters",
         "inspector_assignments": "Inspector Assignments to Entities",
         "request_types": "Request Types",
-        "phases": "Phases"
+        "phases": "Phases",
+        "join_request_forms": "Join Request Forms"
     },
     "table": {
         "actions": "Actions",
@@ -1326,6 +1366,8 @@
         "sent_via": "Sent Via",
         "created_at": "Created Date",
         "updated_at": "Updated Date",
+        "description": "Description",
+        "fields_count": "Fields Count",
         "name": "Name",
         "request_type": "Request Type",
         "order": "Order",
@@ -1458,6 +1500,16 @@
         "view": "View Step",
         "edit": "Edit Step",
         "delete": "Delete Step"
+    },
+    "join_request_forms": {
+        "create": "Create Join Request Form",
+        "edit": "Edit Join Request Form",
+        "view": "View Join Request Form",
+        "delete": "Delete Join Request Form",
+        "form_fields": "Form Fields",
+        "add_field": "Add Field",
+        "field": "Field",
+        "no_fields": "No fields added yet. Click 'Add Field' to start building your form."
     },
     "warnings": {
         "create": "Add Warning",
