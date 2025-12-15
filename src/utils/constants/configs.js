@@ -78,6 +78,12 @@ export const sideMenuTabs = [
                 titleKey: 'sidebar.lookups',
                 icon: IoGrid,
                 subMenu: [
+                    // config file
+                    {
+                        titleKey: 'sidebar.configurations',
+                        path: '/configurations',
+                        icon: HiDocumentText
+                    },
                     {
                         titleKey: 'sidebar.main_programs',
                         path: '/main-programs',
@@ -169,6 +175,11 @@ export const sideMenuTabs = [
                         path: '/academic-qualifications',
                         icon: VscDebugBreakpointLog
                     },
+                    {
+                        titleKey: 'sidebar.academic_years',
+                        path: '/academic-years',
+                        icon: VscDebugBreakpointLog
+                    },        
                     {
                         titleKey: 'sidebar.majors',
                         path: '/majors',
@@ -297,11 +308,6 @@ export const sideMenuTabs = [
                 icon: VscDebugBreakpointLog
             },
             {
-                titleKey: 'sidebar.academic_years',
-                path: '/academic-years',
-                icon: VscDebugBreakpointLog
-            },
-            {
                 titleKey: 'sidebar.memorization-program-entity-types',
                 path: '/memorization-program-entity-types',
                 icon: VscDebugBreakpointLog
@@ -342,11 +348,6 @@ export const sideMenuTabs = [
                 icon: VscDebugBreakpointLog
             },
             {
-                titleKey: 'sidebar.academic_years',
-                path: '/academic-years',
-                icon: VscDebugBreakpointLog
-            },
-            {
                 titleKey: 'sidebar.education-program-entity-types',
                 path: '/education-program-entity-types',
                 icon: VscDebugBreakpointLog
@@ -381,13 +382,6 @@ export const sideMenuTabs = [
         ]
     },
 
-    // config file
-    {
-        titleKey: 'sidebar.configurations',
-        path: '/configurations',
-        icon: HiDocumentText
-    },
-
     // صلة القربى
 
     // أنواع الغياب
@@ -403,6 +397,5 @@ export const sideMenuTabs = [
         titleKey: 'sidebar.parents',
         path: '/parents',
         icon: HiUserGroup
-    },
-
+    }
 ];
