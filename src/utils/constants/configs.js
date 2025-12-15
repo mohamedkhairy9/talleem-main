@@ -405,39 +405,4 @@ export const sideMenuTabs = [
         icon: HiUserGroup
     },
 
-    // المستخدمين
-
-    // الحضور الإلكتروني
-
-    // إعداد السياسات واللافتات العامة
-    {
-        titleKey: 'sidebar.policies_and_banners',
-        icon: HiDocumentText,
-        subMenu: [
-            {
-                titleKey: 'sidebar.about_us',
-                path: '/about-us',
-                icon: VscDebugBreakpointLog
-            },
-            {
-                titleKey: 'sidebar.terms_and_conditions',
-                path: '/term-and-condition',
-                icon: VscDebugBreakpointLog
-            },
-            {
-                titleKey: 'sidebar.privacy_policies',
-                path: '/privacy-policies',
-                icon: VscDebugBreakpointLog
-            },
-            {
-                titleKey: 'sidebar.general_banners',
-                path: '/general-banners',
-                icon: VscDebugBreakpointLog
-            }
-        ]
-    }
-
-    // إعدادات برنامج التحفيظ
-
-    // إعدادات برنامج التعليم
 ];
