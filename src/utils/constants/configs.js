@@ -52,11 +52,6 @@ export const sideMenuTabs = [
                 icon: VscDebugBreakpointLog
             },
             {
-                titleKey: 'sidebar.warning_reasons',
-                path: '/warning-reasons',
-                icon: VscDebugBreakpointLog
-            },
-            {
                 titleKey: 'sidebar.users',
                 path: '/users',
                 icon: HiUser
@@ -148,6 +143,7 @@ export const sideMenuTabs = [
                         path: '/certification-names',
                         icon: VscDebugBreakpointLog
                     },
+
                     {
                         titleKey: 'sidebar.entity_activities',
                         path: '/entity-activities',
@@ -158,7 +154,11 @@ export const sideMenuTabs = [
                         path: '/session-modes',
                         icon: VscDebugBreakpointLog
                     },
-
+                    {
+                        titleKey: 'sidebar.warning_reasons',
+                        path: '/warning-reasons',
+                        icon: VscDebugBreakpointLog
+                    },
                     {
                         titleKey: 'sidebar.attendance_types',
                         path: '/attendances-types',
@@ -239,7 +239,7 @@ export const sideMenuTabs = [
                 titleKey: 'sidebar.students',
                 path: '/students',
                 icon: HiUserGroup
-            },
+            }
         ]
     },
 
@@ -310,7 +310,7 @@ export const sideMenuTabs = [
             {
                 titleKey: 'sidebar.mushaf_management',
                 icon: HiBookOpen,
-                path: '/quran-segmentation',
+                path: '/quran-segmentation'
             },
 
             {
@@ -327,7 +327,6 @@ export const sideMenuTabs = [
                         path: '/exam-segments-count',
                         icon: VscDebugBreakpointLog
                     }
-
                 ]
             }
         ]
@@ -362,7 +361,7 @@ export const sideMenuTabs = [
                 titleKey: 'sidebar.inspector-assignments',
                 path: '/inspector-assignments',
                 icon: VscDebugBreakpointLog
-            },
+            }
         ]
     },
     {
@@ -378,8 +377,7 @@ export const sideMenuTabs = [
                 titleKey: 'sidebar.certificates',
                 path: '/certificates',
                 icon: VscDebugBreakpointLog
-            },
-
+            }
         ]
     },
 
@@ -389,7 +387,6 @@ export const sideMenuTabs = [
         path: '/configurations',
         icon: HiDocumentText
     },
-
 
     // صلة القربى
 
