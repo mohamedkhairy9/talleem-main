@@ -155,11 +155,11 @@ export const sideMenuTabs = [
                         path: '/entity-activities',
                         icon: VscDebugBreakpointLog
                     },
-                    {
-                        titleKey: 'sidebar.session_modes',
-                        path: '/session-modes',
-                        icon: VscDebugBreakpointLog
-                    },
+                    // {
+                    //     titleKey: 'sidebar.session_modes',
+                    //     path: '/session-modes',
+                    //     icon: VscDebugBreakpointLog
+                    // },
                     {
                         titleKey: 'sidebar.warning_reasons',
                         path: '/warning-reasons',
