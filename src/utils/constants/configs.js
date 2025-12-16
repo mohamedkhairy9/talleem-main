@@ -355,20 +355,14 @@ export const sideMenuTabs = [
         ]
     },
     {
-        titleKey: 'sidebar.instructional_supervision',
+        titleKey: 'sidebar.educational_supervision',
         icon: HiAcademicCap,
         subMenu: [
             {
                 titleKey: 'sidebar.inspector-assignments',
                 path: '/inspector-assignments',
                 icon: VscDebugBreakpointLog
-            }
-        ]
-    },
-    {
-        titleKey: 'sidebar.educational_supervision',
-        icon: HiAcademicCap,
-        subMenu: [
+            },
             {
                 titleKey: 'sidebar.warning',
                 path: '/issuing-warnings',
