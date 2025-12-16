@@ -152,7 +152,8 @@ export const sideMenuTabs = [
 
                     {
                         titleKey: 'sidebar.entity_activities',
-                        path: '/entity-activities',
+                        //path: '/entity-activities',
+                        path: '/activities',
                         icon: VscDebugBreakpointLog
                     },
                     // {
