@@ -177,13 +177,13 @@ export const sideMenuTabs = [
                         icon: VscDebugBreakpointLog
                     },
                     {
+                        titleKey: 'sidebar.academic_years',
+                        path: '/academic-years',
+                        icon: VscDebugBreakpointLog
+                    },        
+                    {
                         titleKey: 'sidebar.majors',
                         path: '/majors',
-                        icon: VscDebugBreakpointLog
-                    },
-                    {
-                        titleKey: 'sidebar.academic_levels',
-                        path: '/academic-levels',
                         icon: VscDebugBreakpointLog
                     },
                     {
@@ -299,10 +299,10 @@ export const sideMenuTabs = [
                 icon: VscDebugBreakpointLog
             },
             {
-                titleKey: 'sidebar.academic_years',
-                path: '/academic-years',
+                titleKey: 'sidebar.academic_levels',
+                path: '/academic-levels',
                 icon: VscDebugBreakpointLog
-            },        
+            },
             {
                 titleKey: 'sidebar.quoran_parts',
                 path: '/quoran-parts',
