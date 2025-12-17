@@ -1360,7 +1360,7 @@ const Table = ({
                         }}
                     >
                         <table className="w-full">
-                            <thead className="bg-gradient-to-r from-gray-50 to-gray-100 sticky top-0 z-20 shadow-sm">
+                            <thead className="bg-gradient-to-r from-gray-50 to-gray-100 sticky top-0 z-40 shadow-sm">
                             {table.getHeaderGroups().map(headerGroup => (
                                 <tr key={headerGroup.id}>
                                     {headerGroup.headers.map((header, idx) => {
@@ -1379,7 +1379,7 @@ const Table = ({
                                                 stickyStyle = {
                                                     position: 'sticky',
                                                     [isRTL ? 'right' : 'left']: 0,
-                                                    zIndex: 30,
+                                                    zIndex: 50, // Increased from 30 to 50 to ensure headers stay above row cells
                                                     backgroundColor: '#f9fafb' // gray-50 to match thead - solid, not transparent
                                                 };
                                             } else if (isSecondColumn) {
@@ -1387,7 +1387,7 @@ const Table = ({
                                                 stickyStyle = {
                                                     position: 'sticky',
                                                     [isRTL ? 'right' : 'left']: stickyColumnsInfo.secondColumnLeft,
-                                                    zIndex: 30,
+                                                    zIndex: 50, // Increased from 30 to 50 to ensure headers stay above row cells
                                                     backgroundColor: '#f9fafb' // gray-50 to match thead - solid, not transparent
                                                 };
                                             } else if (isActionsColumn) {
@@ -1395,7 +1395,7 @@ const Table = ({
                                                 stickyStyle = {
                                                     position: 'sticky',
                                                     [isRTL ? 'left' : 'right']: 0,
-                                                    zIndex: 30,
+                                                    zIndex: 50, // Increased from 30 to 50 to ensure headers stay above row cells
                                                     backgroundColor: '#f9fafb' // gray-50 to match thead - solid, not transparent
                                                 };
                                             }
