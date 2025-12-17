@@ -56,7 +56,7 @@ export default function FormWarning({
             return null;
         }
         return {
-            program_id: programIdForQuery,
+            maim_program_id: programIdForQuery,
             branch_id: branchIdForQuery
         };
     }, [programIdForQuery, branchIdForQuery]);
