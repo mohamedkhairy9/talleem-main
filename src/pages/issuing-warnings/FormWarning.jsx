@@ -99,7 +99,7 @@ export default function FormWarning({
 
     // Fetch warning reasons dynamically based on selected program
     const { data: warningReasonsData } = useWarningReasonsQuery(
-        { program_id: programIdForQuery },
+        { main_program_id: programIdForQuery },
         { enabled: !!programIdForQuery }
     );
 
