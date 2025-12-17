@@ -122,6 +122,15 @@ export const usersFields = [
         options: enabledDisabledOptions,
         editMode: true,
         viewMode: true
+    },
+    {
+        name: 'roles',
+        label: 'validation.users.roles.label',
+        type: 'select',
+        placeholder: 'validation.users.roles.placeholder',
+        editMode: false,
+        viewMode: true,
+        isMulti: true
     }
 ];
 

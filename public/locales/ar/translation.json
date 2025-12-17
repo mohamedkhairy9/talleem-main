@@ -539,6 +539,10 @@
                 "label": "الاسم",
                 "placeholder": "أدخل الاسم"
             },
+            "roles": {
+                "label": "الأدوار",
+                "placeholder": "اختر الأدوار"
+            },
             "email": {
                 "label": "البريد الإلكتروني",
                 "placeholder": "أدخل البريد الإلكتروني"
