@@ -177,11 +177,6 @@ export const sideMenuTabs = [
                         icon: VscDebugBreakpointLog
                     },
                     {
-                        titleKey: 'sidebar.academic_years',
-                        path: '/academic-years',
-                        icon: VscDebugBreakpointLog
-                    },        
-                    {
                         titleKey: 'sidebar.majors',
                         path: '/majors',
                         icon: VscDebugBreakpointLog
@@ -303,6 +298,11 @@ export const sideMenuTabs = [
                 path: '/session-periods',
                 icon: VscDebugBreakpointLog
             },
+            {
+                titleKey: 'sidebar.academic_years',
+                path: '/academic-years',
+                icon: VscDebugBreakpointLog
+            },        
             {
                 titleKey: 'sidebar.quoran_parts',
                 path: '/quoran-parts',
