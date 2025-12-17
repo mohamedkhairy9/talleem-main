@@ -4,7 +4,7 @@ import DateCell from '@/components/common/table/cells/DateCell';
 import NameCell from '@/components/common/table/cells/NameCell';
 import { createColumnHelper } from '@tanstack/react-table';
 import React from 'react';
-import { getMaxDateForMinAge } from '@/utils/helpers/dateHelpers';
+import { getMaxDateForMinAge, getTodayDate } from '@/utils/helpers/dateHelpers';
 
 const columnHelper = createColumnHelper();
 
@@ -195,7 +195,7 @@ export const teachersFields = [
         placeholder: 'validation.registration_date.placeholder',
         editMode: true,
         viewMode: true,
-        max: new Date().toISOString().split('T')[0]
+        max: getTodayDate()
     },
     {
         name: 'licence_number',
