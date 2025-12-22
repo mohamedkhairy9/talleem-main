@@ -52,11 +52,6 @@ export const sideMenuTabs = [
                 icon: VscDebugBreakpointLog
             },
             {
-                titleKey: 'sidebar.warning_reasons',
-                path: '/warning-reasons',
-                icon: VscDebugBreakpointLog
-            },
-            {
                 titleKey: 'sidebar.users',
                 path: '/users',
                 icon: HiUser
@@ -83,6 +78,12 @@ export const sideMenuTabs = [
                 titleKey: 'sidebar.lookups',
                 icon: IoGrid,
                 subMenu: [
+                    // config file
+                    {
+                        titleKey: 'sidebar.configurations',
+                        path: '/configurations',
+                        icon: HiDocumentText
+                    },
                     {
                         titleKey: 'sidebar.main_programs',
                         path: '/main-programs',
@@ -148,17 +149,23 @@ export const sideMenuTabs = [
                         path: '/certification-names',
                         icon: VscDebugBreakpointLog
                     },
+
                     {
                         titleKey: 'sidebar.entity_activities',
-                        path: '/entity-activities',
+                        //path: '/entity-activities',
+                        path: '/activities',
                         icon: VscDebugBreakpointLog
                     },
+                    // {
+                    //     titleKey: 'sidebar.session_modes',
+                    //     path: '/session-modes',
+                    //     icon: VscDebugBreakpointLog
+                    // },
                     {
-                        titleKey: 'sidebar.session_modes',
-                        path: '/session-modes',
+                        titleKey: 'sidebar.warning_reasons',
+                        path: '/warning-reasons',
                         icon: VscDebugBreakpointLog
                     },
-
                     {
                         titleKey: 'sidebar.attendance_types',
                         path: '/attendances-types',
@@ -170,13 +177,13 @@ export const sideMenuTabs = [
                         icon: VscDebugBreakpointLog
                     },
                     {
+                        titleKey: 'sidebar.academic_years',
+                        path: '/academic-years',
+                        icon: VscDebugBreakpointLog
+                    },        
+                    {
                         titleKey: 'sidebar.majors',
                         path: '/majors',
-                        icon: VscDebugBreakpointLog
-                    },
-                    {
-                        titleKey: 'sidebar.academic_levels',
-                        path: '/academic-levels',
                         icon: VscDebugBreakpointLog
                     },
                     {
@@ -239,7 +246,7 @@ export const sideMenuTabs = [
                 titleKey: 'sidebar.students',
                 path: '/students',
                 icon: HiUserGroup
-            },
+            }
         ]
     },
 
@@ -292,13 +299,13 @@ export const sideMenuTabs = [
                 icon: VscDebugBreakpointLog
             },
             {
-                titleKey: 'sidebar.quoran_parts',
-                path: '/quoran-parts',
+                titleKey: 'sidebar.academic_levels',
+                path: '/academic-levels',
                 icon: VscDebugBreakpointLog
             },
             {
-                titleKey: 'sidebar.academic_years',
-                path: '/academic-years',
+                titleKey: 'sidebar.quoran_parts',
+                path: '/quoran-parts',
                 icon: VscDebugBreakpointLog
             },
             {
@@ -310,7 +317,7 @@ export const sideMenuTabs = [
             {
                 titleKey: 'sidebar.mushaf_management',
                 icon: HiBookOpen,
-                path: '/quran-segmentation',
+                path: '/quran-segmentation'
             },
 
             {
@@ -327,7 +334,6 @@ export const sideMenuTabs = [
                         path: '/exam-segments-count',
                         icon: VscDebugBreakpointLog
                     }
-
                 ]
             }
         ]
@@ -343,11 +349,6 @@ export const sideMenuTabs = [
                 icon: VscDebugBreakpointLog
             },
             {
-                titleKey: 'sidebar.academic_years',
-                path: '/academic-years',
-                icon: VscDebugBreakpointLog
-            },
-            {
                 titleKey: 'sidebar.education-program-entity-types',
                 path: '/education-program-entity-types',
                 icon: VscDebugBreakpointLog
@@ -355,7 +356,7 @@ export const sideMenuTabs = [
         ]
     },
     {
-        titleKey: 'sidebar.instructional_supervision',
+        titleKey: 'sidebar.educational_supervision',
         icon: HiAcademicCap,
         subMenu: [
             {
@@ -363,12 +364,6 @@ export const sideMenuTabs = [
                 path: '/inspector-assignments',
                 icon: VscDebugBreakpointLog
             },
-        ]
-    },
-    {
-        titleKey: 'sidebar.educational_supervision',
-        icon: HiAcademicCap,
-        subMenu: [
             {
                 titleKey: 'sidebar.warning',
                 path: '/issuing-warnings',
@@ -378,18 +373,9 @@ export const sideMenuTabs = [
                 titleKey: 'sidebar.certificates',
                 path: '/certificates',
                 icon: VscDebugBreakpointLog
-            },
-
+            }
         ]
     },
-
-    // config file
-    {
-        titleKey: 'sidebar.configurations',
-        path: '/configurations',
-        icon: HiDocumentText
-    },
-
 
     // صلة القربى
 
@@ -406,41 +392,5 @@ export const sideMenuTabs = [
         titleKey: 'sidebar.parents',
         path: '/parents',
         icon: HiUserGroup
-    },
-
-    // المستخدمين
-
-    // الحضور الإلكتروني
-
-    // إعداد السياسات واللافتات العامة
-    {
-        titleKey: 'sidebar.policies_and_banners',
-        icon: HiDocumentText,
-        subMenu: [
-            {
-                titleKey: 'sidebar.about_us',
-                path: '/about-us',
-                icon: VscDebugBreakpointLog
-            },
-            {
-                titleKey: 'sidebar.terms_and_conditions',
-                path: '/term-and-condition',
-                icon: VscDebugBreakpointLog
-            },
-            {
-                titleKey: 'sidebar.privacy_policies',
-                path: '/privacy-policies',
-                icon: VscDebugBreakpointLog
-            },
-            {
-                titleKey: 'sidebar.general_banners',
-                path: '/general-banners',
-                icon: VscDebugBreakpointLog
-            }
-        ]
     }
-
-    // إعدادات برنامج التحفيظ
-
-    // إعدادات برنامج التعليم
 ];

@@ -50,8 +50,6 @@ export default function FormEvaluationParameter({
 
     // Watch evaluation_for to filter out from dashboards options
     const evaluationFor = watch('evaluation_for');
-    const selectedDashboards = watch('dashboards') || [];
-    const selectedReceivers = watch('receivers') || [];
 
     // Watch criteria to handle dynamic fields
     const criteria = watch('criteria') || initialFormData.criteria || [{ criteria_name: { en: '', ar: '' }, degree: '' }];
@@ -97,20 +95,58 @@ export default function FormEvaluationParameter({
     }, [roleSelectOptions, evaluationFor]);
 
     // Effect to clear evaluation_for from dashboards if it's selected
+    // Only run when evaluationFor changes, not when selectedDashboards changes
     useEffect(() => {
-        if (evaluationFor && selectedDashboards.includes(evaluationFor)) {
-            const newDashboards = selectedDashboards.filter(d => d !== evaluationFor);
-            setValue('dashboards', newDashboards);
+        if (!evaluationFor) {
+            return;
         }
-    }, [evaluationFor, selectedDashboards, setValue]);
+        
+        // Read current values inside the effect to avoid stale closures
+        const currentDashboards = watch('dashboards') || [];
+        
+        if (!Array.isArray(currentDashboards) || currentDashboards.length === 0) {
+            return;
+        }
+        
+        // Use a more robust comparison that handles type differences
+        const hasEvaluationFor = currentDashboards.some(d => {
+            return String(d) === String(evaluationFor) || Number(d) === Number(evaluationFor);
+        });
+        
+        if (hasEvaluationFor) {
+            const newDashboards = currentDashboards.filter(d => {
+                return String(d) !== String(evaluationFor) && Number(d) !== Number(evaluationFor);
+            });
+            setValue('dashboards', newDashboards, { shouldValidate: false });
+        }
+    }, [evaluationFor, watch, setValue]); // Only depend on evaluationFor
 
     // Effect to clear evaluation_for from receivers if it's selected
+    // Only run when evaluationFor changes, not when selectedReceivers changes
     useEffect(() => {
-        if (evaluationFor && selectedReceivers.includes(evaluationFor)) {
-            const newReceivers = selectedReceivers.filter(r => r !== evaluationFor);
-            setValue('receivers', newReceivers);
+        if (!evaluationFor) {
+            return;
         }
-    }, [evaluationFor, selectedReceivers, setValue]);
+        
+        // Read current values inside the effect to avoid stale closures
+        const currentReceivers = watch('receivers') || [];
+        
+        if (!Array.isArray(currentReceivers) || currentReceivers.length === 0) {
+            return;
+        }
+        
+        // Use a more robust comparison that handles type differences
+        const hasEvaluationFor = currentReceivers.some(r => {
+            return String(r) === String(evaluationFor) || Number(r) === Number(evaluationFor);
+        });
+        
+        if (hasEvaluationFor) {
+            const newReceivers = currentReceivers.filter(r => {
+                return String(r) !== String(evaluationFor) && Number(r) !== Number(evaluationFor);
+            });
+            setValue('receivers', newReceivers, { shouldValidate: false });
+        }
+    }, [evaluationFor, watch, setValue]); // Only depend on evaluationFor
 
     // Add new criteria row
     const addCriteria = () => {

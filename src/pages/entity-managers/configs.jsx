@@ -238,7 +238,7 @@ export const entityManagersFilters = [
         name: 'status',
         type: 'select',
         placeholder: 'validation.status.placeholder',
-        defaultValue: 1
+        defaultValue: true
     }
 ];
 

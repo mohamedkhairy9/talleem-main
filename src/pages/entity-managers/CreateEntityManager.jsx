@@ -71,10 +71,7 @@ export default function CreateEntityManager({ onClose }) {
                     specification_id: specificationsData?.data,
                     city_id: citiesData?.data,
                     gender: genderOptions,
-                    status: enabledDisabledOptions.map(field => {
-                        field.value = +field.value
-                        return field;
-                    }),
+                    status: enabledDisabledOptions,
                     main_program_id: mainProgramsData?.data,
                     major_id: majorsData?.data
                 }}

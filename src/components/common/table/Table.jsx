@@ -887,6 +887,41 @@ const Table = ({
     const selectedRows = table.getSelectedRowModel().rows;
     const selectedCount = selectedRows.length;
 
+    // Calculate sticky column positions
+    const stickyColumnsInfo = useMemo(() => {
+        const visibleColumns = table.getVisibleFlatColumns();
+        const firstColumnIndex = 0;
+        const secondColumnIndex = 1; // Second column (first data column after checkbox)
+        const actionsColumnIndex = visibleColumns.findIndex(col => col.id === 'actions');
+        
+        // Calculate left positions for sticky columns
+        let firstColumnLeft = 0;
+        let secondColumnLeft = 0;
+        const hasSecondColumn = visibleColumns.length > 1 && secondColumnIndex < visibleColumns.length;
+        if (hasSecondColumn) {
+            // Second column should be positioned right after the first column
+            secondColumnLeft = visibleColumns[0]?.getSize() || 50;
+        }
+        
+        // Calculate right position for actions column (cumulative width of columns after it)
+        let actionsColumnRight = 0;
+        if (actionsColumnIndex !== -1) {
+            for (let i = actionsColumnIndex + 1; i < visibleColumns.length; i++) {
+                actionsColumnRight += visibleColumns[i].getSize() || 120;
+            }
+        }
+        
+        return {
+            firstColumnIndex,
+            secondColumnIndex,
+            actionsColumnIndex,
+            firstColumnLeft,
+            secondColumnLeft,
+            actionsColumnRight,
+            hasSecondColumn
+        };
+    }, [table, columnVisibility]);
+
     return (
         <div
             className={`text-lg ${
@@ -1325,14 +1360,52 @@ const Table = ({
                         }}
                     >
                         <table className="w-full">
-                            <thead className="bg-gradient-to-r from-gray-50 to-gray-100 sticky top-0 z-20 shadow-sm">
+                            <thead className="bg-gradient-to-r from-gray-50 to-gray-100 sticky top-0 z-40 shadow-sm">
                             {table.getHeaderGroups().map(headerGroup => (
                                 <tr key={headerGroup.id}>
-                                    {headerGroup.headers.map((header, idx) => (
+                                    {headerGroup.headers.map((header, idx) => {
+                                        const isFirstColumn = idx === stickyColumnsInfo.firstColumnIndex;
+                                        const isSecondColumn = stickyColumnsInfo.hasSecondColumn && idx === stickyColumnsInfo.secondColumnIndex;
+                                        const isActionsColumn = header.id === 'actions';
+                                        const isSticky = isFirstColumn || isSecondColumn || isActionsColumn;
+                                        
+                                        // Calculate sticky position
+                                        let stickyStyle = {};
+                                        let stickyShadowClass = '';
+                                        if (isSticky) {
+                                            // Add shadow for sticky columns
+                                            if (isFirstColumn) {
+                                                stickyShadowClass = isRTL ? 'shadow-[2px_0_4px_rgba(0,0,0,0.1)]' : 'shadow-[2px_0_4px_rgba(0,0,0,0.1)]';
+                                                stickyStyle = {
+                                                    position: 'sticky',
+                                                    [isRTL ? 'right' : 'left']: 0,
+                                                    zIndex: 50, // Increased from 30 to 50 to ensure headers stay above row cells
+                                                    backgroundColor: '#f9fafb' // gray-50 to match thead - solid, not transparent
+                                                };
+                                            } else if (isSecondColumn) {
+                                                stickyShadowClass = isRTL ? 'shadow-[2px_0_4px_rgba(0,0,0,0.1)]' : 'shadow-[2px_0_4px_rgba(0,0,0,0.1)]';
+                                                stickyStyle = {
+                                                    position: 'sticky',
+                                                    [isRTL ? 'right' : 'left']: stickyColumnsInfo.secondColumnLeft,
+                                                    zIndex: 50, // Increased from 30 to 50 to ensure headers stay above row cells
+                                                    backgroundColor: '#f9fafb' // gray-50 to match thead - solid, not transparent
+                                                };
+                                            } else if (isActionsColumn) {
+                                                stickyShadowClass = isRTL ? 'shadow-[-2px_0_4px_rgba(0,0,0,0.1)]' : 'shadow-[-2px_0_4px_rgba(0,0,0,0.1)]';
+                                                stickyStyle = {
+                                                    position: 'sticky',
+                                                    [isRTL ? 'left' : 'right']: 0,
+                                                    zIndex: 50, // Increased from 30 to 50 to ensure headers stay above row cells
+                                                    backgroundColor: '#f9fafb' // gray-50 to match thead - solid, not transparent
+                                                };
+                                            }
+                                        }
+                                        
+                                        return (
                                         <th
                                             key={header.id}
-                                            className={`${densityClasses[density]} min-w-fit text-left text-sm font-semibold text-gray-900 uppercase tracking-wider border-b-2 border-gray-200`}
-                                            style={{ width: header.getSize() }}
+                                            className={`${densityClasses[density]} min-w-fit text-left text-sm font-semibold text-gray-900 uppercase tracking-wider border-b-2 border-gray-200  ${stickyShadowClass}`}
+                                            style={{ width: header.getSize(), ...stickyStyle }}
                                         >
                                             <div
                                                 className={`flex items-center ${
@@ -1400,7 +1473,8 @@ const Table = ({
                                                 )} */}
                                             </div>
                                         </th>
-                                    ))}
+                                        );
+                                    })}
                                 </tr>
                             ))}
                         </thead>
@@ -1503,17 +1577,66 @@ const Table = ({
                                                     onRowClick?.(row.original)
                                                 }
                                             >
-                                                {row.getVisibleCells().map(cell => (
+                                                {row.getVisibleCells().map((cell, cellIdx) => {
+                                                    const isFirstColumn = cellIdx === stickyColumnsInfo.firstColumnIndex;
+                                                    const isSecondColumn = stickyColumnsInfo.hasSecondColumn && cellIdx === stickyColumnsInfo.secondColumnIndex;
+                                                    const isActionsColumn = cell.column.id === 'actions';
+                                                    const isSticky = isFirstColumn || isSecondColumn || isActionsColumn;
+                                                    
+                                                    // Calculate sticky position
+                                                    let stickyStyle = {};
+                                                    let stickyClassName = '';
+                                                    let stickyShadowClass = '';
+                                                    if (isSticky) {
+                                                        if (isFirstColumn) {
+                                                            stickyShadowClass = isRTL ? 'shadow-[2px_0_4px_rgba(0,0,0,0.1)]' : 'shadow-[2px_0_4px_rgba(0,0,0,0.1)]';
+                                                            stickyStyle = {
+                                                                position: 'sticky',
+                                                                [isRTL ? 'right' : 'left']: 0,
+                                                                zIndex: 20
+                                                            };
+                                                            // Solid background colors - no transparency
+                                                            stickyClassName = row.getIsSelected() 
+                                                                ? 'bg-primary-100' 
+                                                                : (index % 2 === 0 ? 'bg-gray-50' : 'bg-white');
+                                                        } else if (isSecondColumn) {
+                                                            stickyShadowClass = isRTL ? 'shadow-[2px_0_4px_rgba(0,0,0,0.1)]' : 'shadow-[2px_0_4px_rgba(0,0,0,0.1)]';
+                                                            stickyStyle = {
+                                                                position: 'sticky',
+                                                                [isRTL ? 'right' : 'left']: stickyColumnsInfo.secondColumnLeft,
+                                                                zIndex: 20
+                                                            };
+                                                            // Solid background colors - no transparency
+                                                            stickyClassName = row.getIsSelected() 
+                                                                ? 'bg-primary-100' 
+                                                                : (index % 2 === 0 ? 'bg-gray-50' : 'bg-white');
+                                                        } else if (isActionsColumn) {
+                                                            stickyShadowClass = isRTL ? 'shadow-[-2px_0_4px_rgba(0,0,0,0.1)]' : 'shadow-[-2px_0_4px_rgba(0,0,0,0.1)]';
+                                                            stickyStyle = {
+                                                                position: 'sticky',
+                                                                [isRTL ? 'left' : 'right']: 0,
+                                                                zIndex: 20
+                                                            };
+                                                            // Solid background colors - no transparency
+                                                            stickyClassName = row.getIsSelected() 
+                                                                ? 'bg-primary-100' 
+                                                                : (index % 2 === 0 ? 'bg-gray-50' : 'bg-white');
+                                                        }
+                                                    }
+                                                    
+                                                    return (
                                                     <td
                                                         key={cell.id}
-                                                        className={`${densityClasses[density]} whitespace-nowrap text-sm border-b border-gray-100 group-hover:border-primary-200 transition-colors`}
+                                                        className={`${densityClasses[density]} whitespace-nowrap text-sm border-b border-gray-100 group-hover:border-primary-200 transition-colors ${stickyClassName} ${isSticky ? 'group-hover:bg-primary-50' : ''} ${stickyShadowClass}`}
+                                                        style={stickyStyle}
                                                     >
                                                         {flexRender(
                                                             cell.column.columnDef.cell,
                                                             cell.getContext()
                                                         )}
                                                     </td>
-                                                ))}
+                                                    );
+                                                })}
                                             </tr>
                                             {isExpanded && renderExpandedRow && (
                                                 <tr>

@@ -49,6 +49,11 @@ export default function FormPhase({
         });
     }
 
+    // Hide request_type_id field in create mode (it's set from URL)
+    // Disable it in edit mode (shouldn't be changed)
+    const shouldHideRequestTypeId = !editMode && !viewMode && oldData?.request_type_id;
+    const shouldDisableRequestTypeId = editMode;
+
     return (
         <form onSubmit={handleSubmit(onSubmit)} className="p-4 space-y-2">
             {phasesFields
@@ -81,7 +86,10 @@ export default function FormPhase({
                         placeholder={field.placeholder}
                         label={field.label}
                         name={field.name}
-                        disabled={viewMode}
+                        disabled={
+                            viewMode || 
+                            (field.name === 'request_type_id' && shouldDisableRequestTypeId)
+                        }
                         defaultValue={
                             normalizedOldData?.[field.name] || field.defaultValue
                         }

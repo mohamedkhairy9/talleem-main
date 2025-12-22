@@ -32,7 +32,7 @@ export default function CreatePhase({ onClose }) {
         return requestTypesData.data.length > 0 ? requestTypesData.data[0].id : null;
     }, [searchParams, requestTypesData]);
 
-    // Fetch phases filtered by request_type_id to calculate correct order
+    // Fetch phases filtered by request_type_id
     const phasesFilters = useMemo(() => {
         if (!selectedRequestTypeId) return {};
         return { request_type_id: selectedRequestTypeId };
@@ -42,9 +42,12 @@ export default function CreatePhase({ onClose }) {
         enabled: selectedRequestTypeId !== null 
     });
 
-    // Get the next order number based on phases for the current request_type_id
+    // Calculate the next order number based on phases for the current request_type_id
     const nextOrder = useMemo(() => {
+        // If we don't have a selected request type yet, default to 1
         if (!selectedRequestTypeId) return 1;
+        
+        // If phases are still loading, default to 1 (will be updated when data loads)
         if (isLoadingPhases || !phasesData?.data) return 1;
         
         // Filter phases by request_type_id (should already be filtered by API, but double-check)
@@ -56,7 +59,9 @@ export default function CreatePhase({ onClose }) {
         return maxOrder + 1;
     }, [phasesData, selectedRequestTypeId, isLoadingPhases]);
 
-    const isLoading = isLoadingRequestTypes || isLoadingApiCalls || (selectedRequestTypeId !== null && isLoadingPhases);
+    // Wait for phases to load if we have a selected request type (to calculate correct order)
+    const shouldWaitForPhases = selectedRequestTypeId !== null && isLoadingPhases;
+    const isLoading = isLoadingRequestTypes || isLoadingApiCalls || shouldWaitForPhases;
     if (isLoading) return <Loader />;
 
     return (

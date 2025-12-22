@@ -539,6 +539,10 @@
                 "label": "الاسم",
                 "placeholder": "أدخل الاسم"
             },
+            "roles": {
+                "label": "الأدوار",
+                "placeholder": "اختر الأدوار"
+            },
             "email": {
                 "label": "البريد الإلكتروني",
                 "placeholder": "أدخل البريد الإلكتروني"
@@ -1148,7 +1152,7 @@
         "suggested_exam_templates": "نماذج إختبارات مقترحة",
         "session_modes": "أنماط الجلسات",
         "warning_reasons": "أسباب الإنذارات",
-        "instructional_supervision": "الإشراف التعليمي",
+        "instructional_supervision": "الإشراف التربوي",
         "warning": "إصدار الإنذارات",
         "certificates": "إدراج الشهادات",
         "exam_segments_count": "عدد أجزاء الامتحان",
@@ -1613,6 +1617,9 @@
         "view": "عرض نوع الطلب"
     },
     "phases": {
+        "create": "إنشاء مرحلة",
+        "update": "تعديل المرحلة",
+        "view": "عرض المرحلة",  
         "steps": "الخطوات",
         "step_type": "نوع الخطوة",
         "assigned_to": "مخصص ل",

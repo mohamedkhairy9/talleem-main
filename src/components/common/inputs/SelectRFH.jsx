@@ -35,19 +35,23 @@ export default function SelectRFH({
                     ? valueToTransform 
                     : [valueToTransform];
                 
-                // تحويل جميع القيم إلى numbers للمقارنة
+                // Normalize values - keep as strings or numbers, don't force conversion to avoid NaN issues
                 const normalizedValues = valueArray.map(el => {
                     const val = el?.id !== undefined ? el.id : el?.value !== undefined ? el.value : el;
-                    return Number(val);
+                    // Keep original type, only convert if it's actually a number string
+                    return val;
                 });
                 
                 return availableOptions
                     ?.filter(item => {
                         // Check both id and value fields
-                        const itemId = item.id !== undefined ? Number(item.id) : null;
-                        const itemValue = item.value !== undefined ? Number(item.value) : null;
+                        const itemId = item.id !== undefined ? item.id : null;
+                        const itemValue = item.value !== undefined ? item.value : null;
                         
-                        return normalizedValues.includes(itemId) || normalizedValues.includes(itemValue);
+                        // Compare using strict equality - this works for both strings and numbers
+                        return normalizedValues.some(normalizedVal => {
+                            return normalizedVal === itemId || normalizedVal === itemValue;
+                        });
                     })
                     .map(option => ({
                         value: option.value !== undefined ? option.value : option.id,
@@ -60,13 +64,14 @@ export default function SelectRFH({
                     : valueToTransform;
                 
                 const x = availableOptions?.find(el => {
-                    // Try both string and number comparison for both id and value
+                    // Check both id and value fields using strict equality
                     const elId = el.id !== undefined ? el.id : null;
                     const elValue = el.value !== undefined ? el.value : null;
                     
+                    // Use strict equality - works for both strings and numbers
                     return (
-                        (elId !== null && (elId === singleValue || Number(elId) === Number(singleValue))) ||
-                        (elValue !== null && (elValue === singleValue || Number(elValue) === Number(singleValue)))
+                        (elId !== null && elId === singleValue) ||
+                        (elValue !== null && elValue === singleValue)
                     );
                 });
                 

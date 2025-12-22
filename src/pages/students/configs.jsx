@@ -1,7 +1,7 @@
 import Cell from '@/components/common/table/cells/Cell';
 import DateCell from '@/components/common/table/cells/DateCell';
 import NameCell from '@/components/common/table/cells/NameCell';
-import { getMaxDateForMinAge, getYesterdayDate } from '@/utils/helpers/dateHelpers';
+import { getMaxDateForMinAge, getTodayDate } from '@/utils/helpers/dateHelpers';
 import { createColumnHelper } from '@tanstack/react-table';
 import React from 'react';
 
@@ -279,7 +279,7 @@ export const studentsFields = [
         placeholder: 'validation.registration_date.placeholder',
         editMode: true,
         viewMode: true,
-        max: getYesterdayDate()
+        max: getTodayDate() // Changed from getYesterdayDate() to allow selecting today's date
     },
     {
         name: 'academic_level_id',

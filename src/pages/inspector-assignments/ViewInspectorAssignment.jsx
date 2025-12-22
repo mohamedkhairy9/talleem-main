@@ -30,7 +30,10 @@ export default function ViewInspectorAssignment({ onClose, oldData }) {
         
         // Extract entity_ids from supervisors.entities
         const entityIds = oldData.supervisors?.flatMap(s => s.entities?.map(e => e.id) || []) || [];
-        console.log(oldData.supervisors);
+        
+        // Extract all entities from supervisors to include in form options
+        const allEntities = oldData.supervisors?.flatMap(s => s.entities || []) || [];
+        
         return {
             ...oldData,
             main_program_id: oldData.main_program?.id || '',
@@ -38,6 +41,7 @@ export default function ViewInspectorAssignment({ onClose, oldData }) {
             supervisor_ids: supervisorIds,
             supervisors: oldData.supervisors, // Preserve original supervisors array for form options
             entity_ids: entityIds.length > 0 ? entityIds : (oldData.entity_ids || []),
+            entities: allEntities, // Include entities from response for form options
             status: oldData.is_active !== undefined ? oldData.is_active : oldData.status
         };
     }, [oldData]);
