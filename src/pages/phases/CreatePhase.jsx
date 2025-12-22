@@ -77,7 +77,8 @@ export default function CreatePhase({ onClose }) {
                 }}
                 oldData={{ 
                     status: true,
-                    order: nextOrder
+                    order: nextOrder,
+                    request_type_id: selectedRequestTypeId
                 }}
             />
         </Modal>
