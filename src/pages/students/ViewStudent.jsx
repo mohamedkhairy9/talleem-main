@@ -91,7 +91,10 @@ export default function ViewStudent({ onClose, oldData }) {
                     entity_id: entitiesData?.data,
                     nationality_id: nationalitiesData?.data,
                     specification_id: specificationsData?.data,
-                    status: enabledDisabledOptions,
+                    status: enabledDisabledOptions.map(field => ({
+                        ...field,
+                        value: field.value ? 1 : 0
+                    })),
                     gender: genderOptions,
                     has_medical_issues: yesNoOptions,
                     has_high_school: yesNoOptions,

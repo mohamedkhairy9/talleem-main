@@ -62,6 +62,21 @@ export default function FileInputRFH({
                         isExisting: true // Flag to indicate this is an existing file
                     });
                 }
+                // Check if it's a URL string (from API)
+                else if (typeof item === 'string' && (item.startsWith('http://') || item.startsWith('https://'))) {
+                    const fileName = item.split('/').pop() || 'file';
+                    initialPreviews.push({
+                        file: null, // Not a File object, just a reference
+                        preview: item,
+                        type: item.match(/\.(jpg|jpeg|png|gif|webp)$/i)
+                            ? 'image'
+                            : 'file',
+                        name: fileName,
+                        size: null,
+                        url: item,
+                        isExisting: true // Flag to indicate this is an existing file
+                    });
+                }
             });
 
             setFiles(initialFiles);

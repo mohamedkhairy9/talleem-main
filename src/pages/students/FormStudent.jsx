@@ -1,6 +1,6 @@
 import useRFH from '@/utils/hooks/global/useRFH';
 import { studentsSchema as schema } from '@/utils/yup/students.schemas';
-import React, { useEffect, useMemo } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { studentsFields } from './configs';
 import InputRFH from '@/components/common/inputs/InputRFH';
 import FileInputRFH from '@/components/common/inputs/FileInputRFH';
@@ -53,6 +53,19 @@ export default function FormStudent({
 }) {
     const { t } = useLocale();
     const lang = i18next.language;
+
+    // Profile picture state
+    const [profileImagePreview, setProfileImagePreview] = useState(
+        oldData?.profile_picture || null
+    );
+    const [profileImageChanged, setProfileImageChanged] = useState(false);
+
+    // Update profile image preview when oldData changes (for view mode)
+    useEffect(() => {
+        if (oldData?.profile_picture && !profileImageChanged) {
+            setProfileImagePreview(oldData.profile_picture);
+        }
+    }, [oldData?.profile_picture, profileImageChanged]);
 
     // Extract education entity type info
     const educationEntityTypeInfo = useMemo(() =>
@@ -276,6 +289,29 @@ export default function FormStudent({
             ...submitData
         } = data;
 
+        // In edit mode, if profile picture not changed, don't send it
+        if (editMode && !profileImageChanged) {
+            delete submitData.profile_picture;
+        }
+
+        // In edit mode, filter out file fields that are links (not File objects)
+        // The API only accepts actual File objects, not URLs/links
+        if (editMode && submitData.files) {
+            // Filter to only include File instances, exclude URL objects
+            const fileArray = Array.isArray(submitData.files) 
+                ? submitData.files 
+                : [submitData.files];
+            
+            const actualFiles = fileArray.filter(file => file instanceof File);
+            
+            // If there are actual files, use them; otherwise, remove the field
+            if (actualFiles.length > 0) {
+                submitData.files = actualFiles;
+            } else {
+                delete submitData.files;
+            }
+        }
+
         const finalData = {
             ...submitData,
             status: submitData.status ? 1 : 0,
@@ -498,20 +534,58 @@ export default function FormStudent({
                                 key={field.name}
                                 className={isFullWidth ? 'md:col-span-2 lg:col-span-3' : ''}
                             >
-                                {field.type === 'file' && field.name !== 'profile_picture' ? (
-                                    <FileInputRFH
-                                        register={register}
-                                        control={control}
-                                        error={getNestedError(errors, field.name)}
-                                        placeholder={field.placeholder}
-                                        disabled={viewMode}
-                                        label={field.label}
-                                        name={field.name}
-                                        multiple={field.multiple}
-                                        defaultValue={oldData?.files || []}
-                                        setValue={setValue}
-                                        required={isConditionallyRequired(field)}
-                                    />
+                                {field.type === 'file' ? (
+                                    field.name === 'profile_picture' ? (
+                                        <div className="space-y-2">
+                                            <InputRFH
+                                                p="px-3 py-3"
+                                                control={control}
+                                                register={register}
+                                                error={getNestedError(errors, field.name)}
+                                                type={field.type}
+                                                placeholder={field.placeholder}
+                                                disabled={viewMode}
+                                                label={field.label}
+                                                name={field.name}
+                                                accept={field.accept}
+                                                required={isConditionallyRequired(field)}
+                                                onChange={e => {
+                                                    const file = e.target.files?.[0];
+                                                    if (file) {
+                                                        setProfileImageChanged(true);
+                                                        const reader = new FileReader();
+                                                        reader.onloadend = () => {
+                                                            setProfileImagePreview(reader.result);
+                                                        };
+                                                        reader.readAsDataURL(file);
+                                                    }
+                                                }}
+                                            />
+                                            {profileImagePreview && (
+                                                <div className="mt-2">
+                                                    <img
+                                                        src={profileImagePreview}
+                                                        alt="Profile Preview"
+                                                        className="h-32 w-32 object-cover rounded-full border-2 border-gray-300"
+                                                    />
+                                                </div>
+                                            )}
+                                        </div>
+                                    ) : (
+                                        <FileInputRFH
+                                            register={register}
+                                            control={control}
+                                            error={getNestedError(errors, field.name)}
+                                            placeholder={field.placeholder}
+                                            disabled={viewMode}
+                                            label={field.label}
+                                            name={field.name}
+                                            multiple={field.multiple}
+                                            defaultValue={oldData?.files || []}
+                                            setValue={setValue}
+                                            required={isConditionallyRequired(field)}
+                                        />
+                                    )
                                 ) : (
                                     <InputRFH
                                         key={`${field.name}-${enhancedOptions[field.name]?.length || 0}`}

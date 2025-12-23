@@ -53,7 +53,30 @@ export default function Students() {
             ...item.qualification,
             major_id: item.major?.id || item.qualification?.major_id
         },
-        has_medical_issues: +item.has_medical_issues
+        has_medical_issues: +item.has_medical_issues,
+        // Map status from user.status or item.status (convert to boolean for form)
+        status: item.user?.status !== undefined ? (item.user.status ? 1 : 0) : (item.status !== undefined ? (item.status ? 1 : 0) : 1),
+        // Ensure profile_picture and files are passed through
+        profile_picture: item.profile_picture,
+        // Transform files array: convert URL strings to objects with { url, name, size } structure
+        files: Array.isArray(item.files) 
+            ? item.files.map(file => {
+                // If it's already an object with url property, return as is
+                if (typeof file === 'object' && file !== null && file.url) {
+                    return file;
+                }
+                // If it's a URL string, convert to object format
+                if (typeof file === 'string') {
+                    const fileName = file.split('/').pop() || 'file';
+                    return {
+                        url: file,
+                        name: fileName,
+                        size: null // Size not available from URL
+                    };
+                }
+                return file;
+            })
+            : []
     }));
 
     return (
