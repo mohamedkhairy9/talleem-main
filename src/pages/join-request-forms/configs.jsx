@@ -13,6 +13,9 @@ export const joinRequestFormsColumns = [
         cell: info => {
             // Handle both string and object formats
             const name = info.row.original.name;
+            if (!name) {
+                return <Cell value="-" />;
+            }
             if (typeof name === 'string') {
                 return <Cell value={name} />;
             }
