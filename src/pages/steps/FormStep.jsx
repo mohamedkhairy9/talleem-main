@@ -62,13 +62,40 @@ export default function FormStep({
                 const selectedUser = users.find(u => u.id === oldData.assigned_to_id);
                 if (!selectedUser) {
                     // Add the selected user if not found in the list
-                    users.unshift({ id: oldData.assigned_to_id, name: `User ${oldData.assigned_to_id}`, email: '' });
+                    users.unshift({ 
+                        id: oldData.assigned_to_id, 
+                        name: { en: `User ${oldData.assigned_to_id}`, ar: `User ${oldData.assigned_to_id}` }, 
+                        email: '' 
+                    });
                 }
             }
-            return users.map(user => ({
-                label: user.name || user.email || `User ${user.id}`,
-                value: user.id
-            }));
+            return users.map(user => {
+                // Safely extract label from name object
+                let label = `User ${user.id}`; // Default fallback
+                
+                if (user.name) {
+                    if (typeof user.name === 'object' && user.name !== null) {
+                        // Handle multilingual object {en: "...", ar: "..."}
+                        label = user.name.en || user.name.ar || label;
+                    } else if (typeof user.name === 'string') {
+                        // Handle string name
+                        label = user.name;
+                    }
+                } else if (user.email) {
+                    // Fallback to email if name is not available
+                    label = user.email;
+                }
+                
+                // Ensure label is always a string (safety check)
+                if (typeof label !== 'string') {
+                    label = String(label) || `User ${user.id}`;
+                }
+                
+                return {
+                    label: label,
+                    value: user.id
+                };
+            });
         } else if (currentAssignedToType === 'role') {
             const roles = rolesData?.data || [];
             // In view/edit mode, ensure the selected role is included even if not in the list
@@ -79,10 +106,37 @@ export default function FormStep({
                     roles.unshift({ id: oldData.assigned_to_id, display_name: { en: `Role ${oldData.assigned_to_id}`, ar: `Role ${oldData.assigned_to_id}` } });
                 }
             }
-            return roles.map(role => ({
-                label: role.display_name?.en || role.display_name?.ar || role.name || `Role ${role.id}`,
-                value: role.id
-            }));
+            return roles.map(role => {
+                // Safely extract label from display_name object
+                let label = `Role ${role.id}`; // Default fallback
+                
+                if (role.display_name) {
+                    if (typeof role.display_name === 'object' && role.display_name !== null) {
+                        // Handle multilingual object {en: "...", ar: "..."}
+                        label = role.display_name.en || role.display_name.ar || label;
+                    } else if (typeof role.display_name === 'string') {
+                        // Handle string display_name
+                        label = role.display_name;
+                    }
+                } else if (role.name) {
+                    // Handle name field (could be string or object)
+                    if (typeof role.name === 'object' && role.name !== null) {
+                        label = role.name.en || role.name.ar || label;
+                    } else if (typeof role.name === 'string') {
+                        label = role.name;
+                    }
+                }
+                
+                // Ensure label is always a string (safety check)
+                if (typeof label !== 'string') {
+                    label = String(label) || `Role ${role.id}`;
+                }
+                
+                return {
+                    label: label,
+                    value: role.id
+                };
+            });
         }
         return [];
     }, [assignedToType, usersData, rolesData, oldData, viewMode, editMode]);

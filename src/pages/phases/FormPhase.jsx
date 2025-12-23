@@ -17,15 +17,31 @@ export default function FormPhase({
     mutate,
     options
 }) {
+    // Convert status from number (1/0) to boolean (true/false) for form display
+    const normalizedOldData = React.useMemo(() => {
+        if (!oldData) return oldData;
+        return {
+            ...oldData,
+            status: oldData.status === 1 || oldData.status === true ? true : false
+        };
+    }, [oldData]);
+
     const { register, errors, handleSubmit, control } = useRFH({
         schema,
-        defaultValues: oldData
+        defaultValues: normalizedOldData
     });
 
     function onSubmit(data) {
-        const submissionData = editMode && oldData?.id 
-            ? { ...data, id: oldData.id } 
-            : data;
+        // Convert status from boolean to number (1/0) for API
+        const submissionData = {
+            ...data,
+            status: data.status ? 1 : 0
+        };
+        
+        if (editMode && oldData?.id) {
+            submissionData.id = oldData.id;
+        }
+        
         mutate(submissionData, {
             onSuccess: () => {
                 onClose();
@@ -33,14 +49,31 @@ export default function FormPhase({
         });
     }
 
+    // Hide request_type_id field in create mode (it's set from URL)
+    // Disable it in edit mode (shouldn't be changed)
+    const shouldHideRequestTypeId = !editMode && !viewMode && oldData?.request_type_id;
+    const shouldDisableRequestTypeId = editMode;
+
     return (
         <form onSubmit={handleSubmit(onSubmit)} className="p-4 space-y-2">
             {phasesFields
                 .filter(
-                    field =>
-                        (editMode && field.editMode) ||
-                        (viewMode && field.viewMode) ||
-                        (!editMode && !viewMode)
+                    field => {
+                        // Remove request_type_id field from edit, view, and create modes (when set from URL)
+                        if (field.name === 'request_type_id') {
+                            // Hide in edit and view modes
+                            if (editMode || viewMode) {
+                                return false;
+                            }
+                            // Hide in create mode if it's set from URL
+                            if (!editMode && !viewMode && normalizedOldData?.request_type_id) {
+                                return false;
+                            }
+                        }
+                        return (editMode && field.editMode) ||
+                            (viewMode && field.viewMode) ||
+                            (!editMode && !viewMode);
+                    }
                 )
                 .map(field => (
                     <InputRFH
@@ -53,9 +86,12 @@ export default function FormPhase({
                         placeholder={field.placeholder}
                         label={field.label}
                         name={field.name}
-                        disabled={viewMode}
+                        disabled={
+                            viewMode || 
+                            (field.name === 'request_type_id' && shouldDisableRequestTypeId)
+                        }
                         defaultValue={
-                            oldData?.[field.name] || field.defaultValue
+                            normalizedOldData?.[field.name] || field.defaultValue
                         }
                         options={generateOptions(options?.[field.name])}
                         required={isFieldRequired(schema, field.name)}

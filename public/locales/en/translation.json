@@ -547,6 +547,10 @@
                 "label": "Name",
                 "placeholder": "Enter name"
             },
+            "roles": {
+                "label": "Roles",
+                "placeholder": "Select roles"
+            },
             "email": {
                 "label": "Email",
                 "placeholder": "Enter email address"
@@ -1490,6 +1494,9 @@
         "view": "View Request Type"
     },
     "phases": {
+        "create": "Create Phase",
+        "update": "Update Phase",
+        "view": "View Phase",
         "steps": "Steps",
         "step_type": "Step Type",
         "assigned_to": "Assigned To",

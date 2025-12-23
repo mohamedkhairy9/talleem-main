@@ -3,7 +3,12 @@
  * @returns {string} - Date string in YYYY-MM-DD format
  */
 export const getTodayDate = () => {
-    return new Date().toISOString().split('T')[0];
+    const today = new Date();
+    // Use local time methods to avoid timezone issues
+    const year = today.getFullYear();
+    const month = String(today.getMonth() + 1).padStart(2, '0');
+    const day = String(today.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
 };
 
 /**
@@ -13,7 +18,11 @@ export const getTodayDate = () => {
 export const getYesterdayDate = () => {
     const yesterday = new Date();
     yesterday.setDate(yesterday.getDate() - 1);
-    return yesterday.toISOString().split('T')[0];
+    // Use local time methods to avoid timezone issues
+    const year = yesterday.getFullYear();
+    const month = String(yesterday.getMonth() + 1).padStart(2, '0');
+    const day = String(yesterday.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
 };
 
 /**

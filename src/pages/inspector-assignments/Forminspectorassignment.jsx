@@ -25,6 +25,7 @@ export default function FormInspectorAssignment({
     mutate,
     options
 }) {
+
     const { register, errors, handleSubmit, control, watch, setValue } = useRFH({
         schema,
         defaultValues: oldData || {
@@ -79,12 +80,60 @@ export default function FormInspectorAssignment({
         };
     }, [branchIdForEntitiesQuery, programIdForEntitiesQuery]);
 
-    // Fetch entities with dynamic params
+    // Fetch entities with dynamic params - enable query if we have params OR if we have oldData entities (for view mode)
+    const shouldEnableEntitiesQuery = !!entitiesQueryParams || ((viewMode || editMode) && oldData?.entities && oldData.entities.length > 0);
     const { data: entitiesData } = useEntitiesQuery(entitiesQueryParams || {}, {
-        enabled: !!entitiesQueryParams
+        enabled: shouldEnableEntitiesQuery
     });
 
-    const entitiesOptions = useMemo(() => entitiesData?.data || [], [entitiesData]);
+    // Include entities from oldData in view/edit mode to ensure selected values are visible
+    const entitiesOptions = useMemo(() => {
+        const apiEntities = entitiesData?.data || [];
+        const allEntities = [...apiEntities];
+        
+        // In view/edit mode, add entities from oldData if they're not already in the list
+        if ((viewMode || editMode) && oldData?.entities) {
+            const oldEntities = Array.isArray(oldData.entities) ? oldData.entities : [oldData.entities];
+            const seenIds = new Set(apiEntities.map(e => e?.id || e));
+            
+            oldEntities.forEach(entity => {
+                const entityId = entity?.id || entity;
+                if (entityId && !seenIds.has(entityId)) {
+                    seenIds.add(entityId);
+                    // If entity is an object, use it; otherwise create a minimal object
+                    if (typeof entity === 'object' && entity !== null) {
+                        allEntities.push(entity);
+                    } else {
+                        allEntities.push({ id: entityId, name: { en: `Entity ${entityId}`, ar: `جهة ${entityId}` } });
+                    }
+                }
+            });
+        }
+        
+        // Also check supervisors.entities for additional entities
+        if ((viewMode || editMode) && oldData?.supervisors) {
+            const supervisors = Array.isArray(oldData.supervisors) ? oldData.supervisors : [oldData.supervisors];
+            const seenIds = new Set(allEntities.map(e => e?.id || e));
+            
+            supervisors.forEach(supervisor => {
+                if (supervisor?.entities && Array.isArray(supervisor.entities)) {
+                    supervisor.entities.forEach(entity => {
+                        const entityId = entity?.id || entity;
+                        if (entityId && !seenIds.has(entityId)) {
+                            seenIds.add(entityId);
+                            if (typeof entity === 'object' && entity !== null) {
+                                allEntities.push(entity);
+                            } else {
+                                allEntities.push({ id: entityId, name: { en: `Entity ${entityId}`, ar: `جهة ${entityId}` } });
+                            }
+                        }
+                    });
+                }
+            });
+        }
+        
+        return allEntities;
+    }, [entitiesData, viewMode, editMode, oldData?.entities, oldData?.supervisors]);
 
     // Prepare users queries for each selected entity
     // Use fixed number of queries to maintain stable hook order
@@ -189,6 +238,24 @@ export default function FormInspectorAssignment({
         }
     }, [assignmentType, selectedProgramId, selectedEntityIds, setValue, editMode]);
 
+    // In view mode, ensure supervisor_ids is set after options are loaded
+    useEffect(() => {
+        if (viewMode && oldData?.supervisor_ids !== undefined && usersOptions.length > 0) {
+            const supervisorId = oldData.supervisor_ids;
+            const supervisorExists = usersOptions.some(u => u?.id === supervisorId);
+            
+            if (supervisorExists) {
+                if (assignmentType === 'committee') {
+                    const ids = Array.isArray(supervisorId) ? supervisorId : [supervisorId];
+                    setValue('supervisor_ids', ids, { shouldValidate: false });
+                } else {
+                    const id = Array.isArray(supervisorId) ? supervisorId[0] : supervisorId;
+                    setValue('supervisor_ids', id, { shouldValidate: false });
+                }
+            } 
+        }
+    }, [viewMode, oldData?.supervisor_ids, usersOptions, assignmentType, setValue]);
+
     const isEntitiesDisabled = !selectedBranchId || !selectedProgramId;
     const isSupervisorDisabled = !programIdForQuery || !hasSelectedEntity;
     const { t } = useLocale();
@@ -254,11 +321,30 @@ export default function FormInspectorAssignment({
                         } else if (field.name === 'supervisor_ids') {
                             fieldOptions = usersOptions;
                             isMultiple = assignmentType === 'committee';
+                            
                         }
 
                         const isDisabled = viewMode || 
                             (field.name === 'entity_ids' && isEntitiesDisabled) ||
                             (field.name === 'supervisor_ids' && !viewMode && isSupervisorDisabled);
+
+                        // Handle supervisor_ids defaultValue - ensure correct format
+                        let supervisorDefaultValue = field.defaultValue;
+                        if (field.name === 'supervisor_ids' && oldData?.supervisor_ids !== undefined) {
+                            if (isMultiple) {
+                                // Committee mode: ensure it's an array
+                                supervisorDefaultValue = Array.isArray(oldData.supervisor_ids) 
+                                    ? oldData.supervisor_ids 
+                                    : oldData.supervisor_ids !== '' && oldData.supervisor_ids !== null
+                                    ? [oldData.supervisor_ids]
+                                    : [];
+                            } else {
+                                // Regular mode: ensure it's a single value
+                                supervisorDefaultValue = Array.isArray(oldData.supervisor_ids)
+                                    ? oldData.supervisor_ids[0] || ''
+                                    : oldData.supervisor_ids;
+                            }
+                        }
 
                         return (
                             <InputRFH
@@ -273,7 +359,13 @@ export default function FormInspectorAssignment({
                                 label={field.label}
                                 name={field.name}
                                 options={generateOptions(fieldOptions)}
-                                defaultValue={oldData?.[field.name] || field.defaultValue}
+                                defaultValue={
+                                    field.name === 'entity_ids' 
+                                        ? (oldData?.entity_ids || [])
+                                        : field.name === 'supervisor_ids'
+                                        ? supervisorDefaultValue
+                                        : oldData?.[field.name] || field.defaultValue
+                                }
                                 isMulti={isMultiple}
                                 required={isFieldRequired(schema, field.name)}
                             />

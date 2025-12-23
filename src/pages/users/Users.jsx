@@ -38,7 +38,8 @@ export default function Users() {
         phone: item.phone,
         status: item.status,
         user_type: item.user_type,
-        branch_id: item.branch?.id
+        branch_id: item.branch?.id,
+        roles: item.roles // Include roles from the response
     }));
 
     return (

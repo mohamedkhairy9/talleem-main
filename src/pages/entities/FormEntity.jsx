@@ -182,7 +182,9 @@ export default function FormEntity({
                 : mainProgramId === 2
                 ? options.memorization_program_entity_type_id || []
                 : [],
-        activity_ids: dynamicActivitiesData?.data || options.activity_ids || []
+        // Only use dynamic activities data when mainProgramId is selected
+        // Otherwise use empty array (field will be disabled)
+        activity_ids: mainProgramId ? (dynamicActivitiesData?.data || []) : []
     };
 
     useEffect(() => {
