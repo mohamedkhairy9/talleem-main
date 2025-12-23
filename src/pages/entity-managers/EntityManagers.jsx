@@ -40,7 +40,10 @@ export default function EntityManagers() {
         date_of_birth: onlyDate(date_of_birth),
         main_program_id: main_program?.id,
         status: +user.status,
-        major_id: major?.id || major_id?.id
+        // major_id can be either an object with id or already an id
+        major_id: major?.id || (major_id?.id !== undefined ? major_id.id : major_id),
+        // academic_qualification_id is already a number in the API response, keep it as is
+        academic_qualification_id: item.academic_qualification_id
     }));
 
     return (

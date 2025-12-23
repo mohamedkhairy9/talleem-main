@@ -123,6 +123,24 @@ export default function FormEntityManager({
             delete submissionData.profile_image;
         }
 
+        // In edit mode, filter out file fields that are links (not File objects)
+        // The API only accepts actual File objects, not URLs/links
+        if (editMode && submissionData.files) {
+            // Filter to only include File instances, exclude URL objects
+            const fileArray = Array.isArray(submissionData.files) 
+                ? submissionData.files 
+                : [submissionData.files];
+            
+            const actualFiles = fileArray.filter(file => file instanceof File);
+            
+            // If there are actual files, use them; otherwise, remove the field
+            if (actualFiles.length > 0) {
+                submissionData.files = actualFiles;
+            } else {
+                delete submissionData.files;
+            }
+        }
+
         mutate(submissionData, {
             onSuccess: () => {
                 onClose();
@@ -163,7 +181,15 @@ export default function FormEntityManager({
     const getFieldOptions = (fieldName) => {
         // For fields that shouldn't be filtered, always use original options
         if (['main_program_id', 'academic_qualification_id', 'major_id', 'nationality_id', 'city_id', 'gender', 'status'].includes(fieldName)) {
-            return generateOptions(options[fieldName]);
+            const generatedOptions = generateOptions(options[fieldName]);
+            // Debug log for academic_qualification_id
+            if (fieldName === 'academic_qualification_id') {
+                console.log('FormEntityManager - getFieldOptions for academic_qualification_id:');
+                console.log('  - Raw options:', options[fieldName]);
+                console.log('  - Generated options:', generatedOptions);
+                console.log('  - oldData value:', oldData?.[fieldName]);
+            }
+            return generatedOptions;
         }
         
         // For filtered fields, use enhanced options
@@ -296,7 +322,18 @@ export default function FormEntityManager({
                                         label={field.label}
                                         name={field.name}
                                         options={getFieldOptions(field.name)}
-                                        defaultValue={oldData?.[field.name] || field.defaultValue}
+                                        defaultValue={(() => {
+                                            const defaultValue = oldData?.[field.name] || field.defaultValue;
+                                            // Debug log for academic_qualification_id
+                                            if (field.name === 'academic_qualification_id') {
+                                                console.log('FormEntityManager - InputRFH for academic_qualification_id:');
+                                                console.log('  - Field name:', field.name);
+                                                console.log('  - oldData:', oldData);
+                                                console.log('  - defaultValue:', defaultValue);
+                                                console.log('  - Options:', getFieldOptions(field.name));
+                                            }
+                                            return defaultValue;
+                                        })()}
                                         info={field.info}
                                         min={field.min}
                                         max={field.max}
