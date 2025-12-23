@@ -69,10 +69,30 @@ export default function FormTeacher({
     const { t } = useLocale();
     const lang = i18next.language;
 
-    const [profileImagePreview, setProfileImagePreview] = useState(
-        oldData?.profile_image || oldData?.profile_picture || null
-    );
+    // Initialize profile image preview from oldData if available
+    const getInitialProfileImage = () => {
+        const profilePic = oldData?.profile_image || oldData?.profile_picture;
+        if (profilePic && typeof profilePic === 'string' && profilePic.trim() !== '') {
+            return profilePic;
+        }
+        return null;
+    };
+
+    const [profileImagePreview, setProfileImagePreview] = useState(getInitialProfileImage());
     const [profileImageChanged, setProfileImageChanged] = useState(false);
+
+    // Update profile image preview when oldData changes (for view/edit mode)
+    useEffect(() => {
+        if (!profileImageChanged) {
+            const profilePic = oldData?.profile_image || oldData?.profile_picture;
+            // Only set preview if profilePic is a non-empty string
+            if (profilePic && typeof profilePic === 'string' && profilePic.trim() !== '') {
+                setProfileImagePreview(profilePic);
+            } else {
+                setProfileImagePreview(null);
+            }
+        }
+    }, [oldData?.profile_image, oldData?.profile_picture, profileImageChanged]);
 
     // Extract entity type info
     const educationEntityTypeInfo = useMemo(() =>
@@ -89,7 +109,8 @@ export default function FormTeacher({
     const defaultValues = useMemo(() => {
         const baseValues = {
             ...oldData,
-            dob: onlyDate(oldData?.dob)
+            dob: onlyDate(oldData?.dob),
+            registration_date: onlyDate(oldData?.registration_date)
         };
 
         // In edit/view mode, set the classification and category
@@ -302,6 +323,61 @@ export default function FormTeacher({
             ...submitData
         } = data;
 
+        // Handle profile image
+        if (editMode && !profileImageChanged) {
+            // If profile image not changed, don't send it
+            delete submitData.profile_image;
+            delete submitData.profile_picture;
+        } else if (profileImageChanged) {
+            // If profile image was changed, extract File from FileList if needed
+            let profileImageFile = null;
+            
+            // Check if it's a FileList (from file input)
+            if (submitData.profile_image instanceof FileList && submitData.profile_image.length > 0) {
+                profileImageFile = submitData.profile_image[0];
+            }
+            // Check if it's already a File object
+            else if (submitData.profile_image instanceof File) {
+                profileImageFile = submitData.profile_image;
+            }
+            // Check profile_picture field
+            else if (submitData.profile_picture instanceof FileList && submitData.profile_picture.length > 0) {
+                profileImageFile = submitData.profile_picture[0];
+            }
+            else if (submitData.profile_picture instanceof File) {
+                profileImageFile = submitData.profile_picture;
+            }
+            
+            if (profileImageFile instanceof File) {
+                // Set as profile_picture (the API field name)
+                submitData.profile_picture = profileImageFile;
+                delete submitData.profile_image;
+            } else {
+                // If it's not a File object (e.g., URL string or empty), remove it
+                console.warn('Profile image changed but no File object found in submitData:', submitData.profile_image, submitData.profile_picture);
+                delete submitData.profile_image;
+                delete submitData.profile_picture;
+            }
+        }
+
+        // In edit mode, filter out file fields that are links (not File objects)
+        // The API only accepts actual File objects, not URLs/links
+        if (editMode && submitData.files) {
+            // Filter to only include File instances, exclude URL objects
+            const fileArray = Array.isArray(submitData.files) 
+                ? submitData.files 
+                : [submitData.files];
+            
+            const actualFiles = fileArray.filter(file => file instanceof File);
+            
+            // If there are actual files, use them; otherwise, remove the field
+            if (actualFiles.length > 0) {
+                submitData.files = actualFiles;
+            } else {
+                delete submitData.files;
+            }
+        }
+
         const finalData = {
             ...submitData,
             // Don't convert status - send as is ('active', 'canceled', 'unauthorized')
@@ -315,12 +391,6 @@ export default function FormTeacher({
         // For memorization program, set memorization_program_entity_type_id
         if (Number(submitData.main_program_id) === 2) {
             finalData.memorization_program_entity_type_id = submitData.entity_category_id;
-        }
-
-        // In edit mode, if profile image not changed, don't send it
-        if (editMode && !profileImageChanged) {
-            delete finalData.profile_image;
-            delete finalData.profile_picture;
         }
 
         console.log('Submitting teacher data:', finalData);
@@ -500,14 +570,19 @@ export default function FormTeacher({
                                             const file = e.target.files?.[0];
                                             if (file) {
                                                 setProfileImageChanged(true);
+                                                // The registered onChange from react-hook-form will handle the FileList
+                                                // We just need to update the preview
                                                 const reader = new FileReader();
                                                 reader.onloadend = () => {
                                                     setProfileImagePreview(reader.result);
                                                 };
                                                 reader.readAsDataURL(file);
+                                            } else {
+                                                // If no file selected, clear the field
+                                                setProfileImageChanged(false);
+                                                setValue(field.name, null, { shouldValidate: true });
                                             }
                                         }}
-                                        defaultValue={oldData?.[field.name]}
                                     />
                                     {profileImagePreview && (
                                         <div className="mt-2">
@@ -547,7 +622,11 @@ export default function FormTeacher({
                                     label={field.label}
                                     name={field.name}
                                     options={generateOptions(enhancedOptions[field.name] || options[field.name])}
-                                    defaultValue={defaultValues[field.name] || field.defaultValue}
+                                    defaultValue={
+                                        field.name === 'registration_date' 
+                                            ? onlyDate(oldData?.registration_date) || defaultValues[field.name] || field.defaultValue
+                                            : defaultValues[field.name] || field.defaultValue
+                                    }
                                     min={field.min}
                                     max={field.max}
                                     required={isFieldRequired(schema, field.name)}

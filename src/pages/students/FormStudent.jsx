@@ -60,10 +60,13 @@ export default function FormStudent({
     );
     const [profileImageChanged, setProfileImageChanged] = useState(false);
 
-    // Update profile image preview when oldData changes (for view mode)
+    // Update profile image preview when oldData changes (for view/edit mode)
     useEffect(() => {
-        if (oldData?.profile_picture && !profileImageChanged) {
-            setProfileImagePreview(oldData.profile_picture);
+        const profilePic = oldData?.profile_picture;
+        if (profilePic && !profileImageChanged) {
+            setProfileImagePreview(profilePic);
+        } else if (!profilePic && !profileImageChanged) {
+            setProfileImagePreview(null);
         }
     }, [oldData?.profile_picture, profileImageChanged]);
 
@@ -549,6 +552,7 @@ export default function FormStudent({
                                                 name={field.name}
                                                 accept={field.accept}
                                                 required={isConditionallyRequired(field)}
+                                                defaultValue={oldData?.profile_picture || field.defaultValue}
                                                 onChange={e => {
                                                     const file = e.target.files?.[0];
                                                     if (file) {
@@ -600,7 +604,11 @@ export default function FormStudent({
                                         name={field.name}
                                         info={field.info}
                                         options={generateOptions(enhancedOptions[field.name] || options[field.name])}
-                                        defaultValue={defaultValues[field.name] || field.defaultValue}
+                                        defaultValue={
+                                            field.name === 'registration_date' 
+                                                ? onlyDate(oldData?.registration_date) || defaultValues[field.name] || field.defaultValue
+                                                : defaultValues[field.name] || field.defaultValue
+                                        }
                                         min={field.min}
                                         max={field.max}
                                         required={isConditionallyRequired(field)}

@@ -34,25 +34,61 @@ export default function Teachers() {
         main_program: item.main_program?.name?.[i18next.language]
     }));
 
-    const formData = data?.data?.map(item => ({
-        ...item,
-        user_id: item.user?.id,
-        branch_id: item.branch?.id,
-        main_program_id: item.main_program?.id,
-        entity_id: item.entity?.id,
-        major_id: item.major?.id,
-        nationality_id: item.nationality?.id,
-        academic_qualification_id: item.academic_qualification?.id,
-        specification_id: item.specification?.id,
-        city_id: item.city?.id,
-        education_program_entity_type_classification: null, // Will be set in FormTeacher based on entity_category_id
-        entity_category_id:
-            item.main_program?.id == 1
-                ? item.education_program_entity_type?.id
-                : item.main_program?.id == 2
-                ? item.memorization_program_entity_type?.id
-                : null
-    }));
+    const formData = data?.data?.map(item => {
+        // Map gender from Arabic text to value
+        let genderValue = item.gender;
+        if (typeof item.gender === 'string') {
+            // Map Arabic gender text to values
+            if (item.gender === 'أنثى' || item.gender === '\u0623\u0646\u062b\u0649') {
+                genderValue = 'female';
+            } else if (item.gender === 'ذكر' || item.gender === '\u0630\u0643\u0631') {
+                genderValue = 'male';
+            }
+        }
+
+        return {
+            ...item,
+            user_id: item.user?.id,
+            branch_id: item.branch?.id,
+            main_program_id: item.main_program?.id,
+            entity_id: item.entity?.id,
+            major_id: item.major?.id,
+            nationality_id: item.nationality?.id,
+            academic_qualification_id: item.academic_qualification?.id,
+            specification_id: item.specification?.id,
+            city_id: item.city?.id,
+            gender: genderValue,
+            education_program_entity_type_classification: null, // Will be set in FormTeacher based on entity_category_id
+            entity_category_id:
+                item.main_program?.id == 1
+                    ? item.education_program_entity_type?.id
+                    : item.main_program?.id == 2
+                    ? item.memorization_program_entity_type?.id
+                    : null,
+            // Ensure profile_picture and files are passed through
+            profile_picture: item.profile_picture || item.profile_image || '',
+            profile_image: item.profile_image || item.profile_picture || '',
+            // Transform files array: ensure proper format for FileInputRFH
+            files: Array.isArray(item.files) 
+                ? item.files.map(file => {
+                    // If it's already an object with url property, return as is
+                    if (typeof file === 'object' && file !== null && file.url) {
+                        return file;
+                    }
+                    // If it's a URL string, convert to object format
+                    if (typeof file === 'string') {
+                        const fileName = file.split('/').pop() || 'file';
+                        return {
+                            url: file,
+                            name: fileName,
+                            size: null
+                        };
+                    }
+                    return file;
+                })
+                : []
+        };
+    });
 
     return (
         <div>
