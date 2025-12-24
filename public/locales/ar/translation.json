@@ -1577,7 +1577,11 @@
         "create": "إضافة مدير جهة",
         "update": "تعديل مدير جهة",
         "view": "عرض مدير جهة",
-        "manager_information": "المعلومات الشخصية لمدير الجهة"
+        "manager_information": "المعلومات الشخصية لمدير الجهة",
+        "warning": {
+            "replace_manager_title": "استبدال مدير الجهة الموجود",
+            "replace_manager_message": "الجهة المختارة لديها بالفعل مدير معين ({{managerName}}). تعيين مدير جديد سيؤدي إلى إلغاء تفعيل المدير الحالي. هل تريد المتابعة؟"
+        }
     },
     "branch_administrations": {
         "create": "إضافة إدارة فرع",

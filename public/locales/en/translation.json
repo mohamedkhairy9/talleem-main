@@ -1087,7 +1087,11 @@
         "create": "Create Entity Manager",
         "update": "Update Entity Manager",
         "view": "View Entity Manager",
-        "manager_information": "Manager Information"
+        "manager_information": "Manager Information",
+        "warning": {
+            "replace_manager_title": "Replace Existing Entity Manager",
+            "replace_manager_message": "The selected entity already has an assigned manager ({{managerName}}). Assigning a new manager will deactivate the current one. Do you want to continue?"
+        }
     },
     "branch_administrations": {
         "create": "Create Branch Administration",

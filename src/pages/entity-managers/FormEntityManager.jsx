@@ -13,6 +13,8 @@ import i18next from 'i18next';
 import ModalContent from '@/components/common/form/ModalContent';
 import ModalFooter from '@/components/common/form/ModalFooter';
 import { isFieldRequired } from '@/utils/helpers/schemaHelpers';
+import WarningModal from '@/components/common/form/WarningModal';
+import { useEntitiesQuery } from '@/api/hooks/useEntities';
 
 export default function FormEntityManager({
     onClose,
@@ -30,6 +32,9 @@ export default function FormEntityManager({
         oldData?.profile_image || null
     );
     const [profileImageChanged, setProfileImageChanged] = useState(false);
+    const [showWarningModal, setShowWarningModal] = useState(false);
+    const [pendingSubmissionData, setPendingSubmissionData] = useState(null);
+    const [existingManagerName, setExistingManagerName] = useState('');
 
     const { register, errors, handleSubmit, control, setValue, watch } = useRFH({
         schema,
@@ -44,6 +49,7 @@ export default function FormEntityManager({
     const cityId = watch('city_id');
     const branchId = watch('branch_id');
     const mainProgramId = watch('main_program_id');
+    const entityId = watch('entity_id');
 
     // Filter branches based on selected city
     const filteredBranches = useMemo(() => {        
@@ -56,36 +62,43 @@ export default function FormEntityManager({
         return filtered;
     }, [cityId, options.branch_id]);
 
-    // Filter entities based on main program AND branch
-    const filteredEntities = useMemo(() => {        
-        if (!mainProgramId || !options.entity_id) {
-            return [];
+    // Query entities dynamically based on main_program_id and branch_id
+    const entitiesQueryParams = useMemo(() => {
+        // In edit/view mode, use oldData values if current values are not set
+        const programId = mainProgramId || oldData?.main_program_id;
+        const branch = branchId || oldData?.branch_id;
+        
+        if (!programId || !branch) {
+            return null;
         }
+        return {
+            main_program_id: programId,
+            branch_id: branch
+        };
+    }, [mainProgramId, branchId, oldData?.main_program_id, oldData?.branch_id]);
 
-        if (!branchId) {
-            return [];
+    // Fetch entities with dynamic params
+    // Enable query if we have params OR if we're in edit/view mode (to show selected entity)
+    const shouldEnableEntitiesQuery = !!entitiesQueryParams || (viewMode || editMode);
+    const { data: entitiesData, isLoading: entitiesLoading } = useEntitiesQuery(
+        entitiesQueryParams || {},
+        { enabled: shouldEnableEntitiesQuery }
+    );
+
+    // Include selected entity from oldData in edit/view mode
+    const filteredEntities = useMemo(() => {
+        const entities = entitiesData?.data || [];
+        
+        // In view/edit mode, include selected entity even if not in fetched results
+        if ((viewMode || editMode) && oldData?.entity_id && options?.entity_id) {
+            const selectedEntity = options.entity_id.find(e => e.id === oldData.entity_id);
+            if (selectedEntity && !entities.some(e => e.id === selectedEntity.id)) {
+                return [selectedEntity, ...entities];
+            }
         }
         
-        const entities = options.entity_id;
-        
-        const filtered = entities.filter(entity => {
-            const matchesProgram = entity.main_program?.id === Number(mainProgramId);
-            
-            let matchesBranch = false;
-            
-            if (entity.branch_id) {
-                matchesBranch = entity.branch_id === Number(branchId);
-            } else if (entity.branch?.id) {
-                matchesBranch = entity.branch.id === Number(branchId);
-            } else if (Array.isArray(entity.branches)) {
-                matchesBranch = entity.branches.some(branch => 
-                    branch.id === Number(branchId) || branch === Number(branchId)
-                );
-            }            
-            return matchesProgram && matchesBranch;
-        });
-        return filtered;
-    }, [mainProgramId, branchId, options.entity_id, lang]);
+        return entities;
+    }, [entitiesData, viewMode, editMode, oldData?.entity_id, options?.entity_id]);
 
     // Reset branch and entity when city changes (only in create mode)
     useEffect(() => {
@@ -116,7 +129,13 @@ export default function FormEntityManager({
         branch_id: filteredBranches
     }), [options, filteredEntities, filteredBranches]);
 
-    function onSubmit(data) {
+    // Get the selected entity to check for existing manager
+    const selectedEntity = useMemo(() => {
+        if (!entityId || !filteredEntities) return null;
+        return filteredEntities.find(entity => entity.id === Number(entityId));
+    }, [entityId, filteredEntities]);
+
+    function prepareSubmissionData(data) {
         const submissionData = { ...data };
         // In edit mode, if profile image not changed, don't send it
         if (editMode && !profileImageChanged) {
@@ -140,12 +159,50 @@ export default function FormEntityManager({
                 delete submissionData.files;
             }
         }
+        return submissionData;
+    }
 
+    function proceedWithSubmission(data) {
+        const submissionData = prepareSubmissionData(data);
         mutate(submissionData, {
             onSuccess: () => {
                 onClose();
             }
         });
+    }
+
+    function onSubmit(data) {
+        // Check if selected entity has a manager (only in create mode or if entity changed in edit mode)
+        const shouldCheckManager = !editMode || (editMode && entityId && entityId !== oldData?.entity_id);
+        
+        if (selectedEntity?.manager && shouldCheckManager) {
+            // Get manager name from entity.manager
+            const managerName = selectedEntity.manager.name?.[lang] || 
+                              selectedEntity.manager.name?.en || 
+                              selectedEntity.manager.name?.ar || 
+                              t('common.entity_manager');
+            setExistingManagerName(managerName);
+            setPendingSubmissionData(data);
+            setShowWarningModal(true);
+            return;
+        }
+
+        // No existing manager, proceed with submission
+        proceedWithSubmission(data);
+    }
+
+    function handleConfirmWarning() {
+        setShowWarningModal(false);
+        if (pendingSubmissionData) {
+            proceedWithSubmission(pendingSubmissionData);
+            setPendingSubmissionData(null);
+        }
+    }
+
+    function handleCancelWarning() {
+        setShowWarningModal(false);
+        setPendingSubmissionData(null);
+        setExistingManagerName('');
     }
 
     const handleProfileImageChange = e => {
@@ -197,8 +254,22 @@ export default function FormEntityManager({
     };
 
     return (
-        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col h-full">
-            <ModalContent>
+        <>
+            {showWarningModal && (
+                <WarningModal
+                    onConfirm={handleConfirmWarning}
+                    onCancel={handleCancelWarning}
+                    loading={isPending}
+                    title={t('entity_managers.warning.replace_manager_title')}
+                    message={t('entity_managers.warning.replace_manager_message', { 
+                        managerName: existingManagerName 
+                    })}
+                    confirmLabel={t('common.yes')}
+                    cancelLabel={t('common.cancel')}
+                />
+            )}
+            <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col h-full">
+                <ModalContent>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {entityManagersFields
                     .filter(
@@ -233,9 +304,9 @@ export default function FormEntityManager({
                             );
                         }
 
-                        // Special handling for entity field - disabled until branch is selected
+                        // Special handling for entity field - disabled until branch and main program are selected
                         if (field.name === 'entity_id') {
-                            const isEntityDisabled = !branchId || viewMode;
+                            const isEntityDisabled = !branchId || !mainProgramId || viewMode || entitiesLoading;
                             
                             return (
                                 <div key={field.name}>
@@ -356,5 +427,6 @@ export default function FormEntityManager({
                 </ModalFooter>
             )}
         </form>
+        </>
     );
 }
