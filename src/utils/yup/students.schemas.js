@@ -269,9 +269,10 @@ export const studentsSchema = yup.object({
         .test('is-past-date', t('validation.registration_date.past_only'), value => {
             if (!value) return true;
             const selectedDate = new Date(value);
+            selectedDate.setHours(0, 0, 0, 0);
             const today = new Date();
             today.setHours(0, 0, 0, 0);
-            return selectedDate < today;
+            return selectedDate <= today;
         }),
     
     academic_level_id: yup
