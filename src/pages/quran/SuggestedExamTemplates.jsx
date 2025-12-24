@@ -6,6 +6,7 @@ import toastService from '@/utils/helpers/Toastservice';
 import useLocale from '@/utils/hooks/global/useLocale';
 import MushafPage from '@/components/quran/MushafPage';
 import DeleteModal from '@/components/common/form/DeleteModal';
+import { MdDelete, MdEdit } from 'react-icons/md';
 import './SuggestedExamTemplates.css';
 
 /**
@@ -38,6 +39,7 @@ const SuggestedExamTemplates = () => {
     const [editingField, setEditingField] = useState(null); // 'start' or 'end'
     const [selectedAyahs, setSelectedAyahs] = useState(new Set());
     const [isLoadingFromApi, setIsLoadingFromApi] = useState(false); // Flag to prevent useEffect from clearing loaded data
+    const [originalSegments, setOriginalSegments] = useState([]); // Store original segments to track changes
 
     // Loading & error states
     const [isLoading, setIsLoading] = useState(true);
@@ -76,6 +78,7 @@ const SuggestedExamTemplates = () => {
         } else {
             setExistingData(null);
             setSegments([]);
+            setOriginalSegments([]);
             setSegmentsCount('');
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -90,18 +93,30 @@ const SuggestedExamTemplates = () => {
             const count = parseInt(segmentsCount);
 
             // Only create new segments if current segments don't match the count
-            // This will immediately add new rows when count increases
+            // When count increases, append new empty segments to existing ones
             if (segments.length !== count) {
                 setSegments(prevSegments => {
-                    const newSegments = Array.from({ length: count }, (_, i) => {
-                        // Preserve existing segment data if it exists
-                        return prevSegments[i] || {
-                            first_verse_key: '',
-                            last_verse_key: '',
-                            order: i + 1
-                        };
-                    });
-                    return newSegments;
+                    if (count > prevSegments.length) {
+                        // Increasing count: append new empty segments
+                        const newSegments = [...prevSegments];
+                        for (let i = prevSegments.length; i < count; i++) {
+                            newSegments.push({
+                                first_verse_key: '',
+                                last_verse_key: '',
+                                order: i + 1
+                            });
+                        }
+                        return newSegments;
+                    } else {
+                        // Decreasing count: keep only the first 'count' segments
+                        // But only if they don't have data beyond the new count
+                        const hasDataBeyondCount = prevSegments.slice(count).some(seg => seg.first_verse_key);
+                        if (hasDataBeyondCount) {
+                            // Don't allow decreasing if there's data beyond the new count
+                            return prevSegments;
+                        }
+                        return prevSegments.slice(0, count);
+                    }
                 });
             }
         } else if (segmentsCount === '') {
@@ -165,6 +180,8 @@ const SuggestedExamTemplates = () => {
                     }));
 
                     setSegments(newSegments);
+                    // Store original segments to track changes
+                    setOriginalSegments(JSON.parse(JSON.stringify(newSegments)));
 
                     // Load display info for segments
                     loadSegmentDisplayInfo(newSegments);
@@ -177,6 +194,7 @@ const SuggestedExamTemplates = () => {
                         order: i + 1
                     }));
                     setSegments(emptySegments);
+                    setOriginalSegments(JSON.parse(JSON.stringify(emptySegments)));
                     setSegmentDisplayInfo({});
                 }
 
@@ -185,6 +203,7 @@ const SuggestedExamTemplates = () => {
             } else {
                 setExistingData(null);
                 setSegments([]);
+                setOriginalSegments([]);
                 setSegmentsCount('');
             }
         } catch (error) {
@@ -295,6 +314,8 @@ const SuggestedExamTemplates = () => {
 
         setSegments(newSegments);
         const currentIndex = editingSegmentIndex;
+        
+        // Clear editing mode after selection
         setEditingSegmentIndex(null);
         setEditingField(null);
         setSelectedAyahs(new Set());
@@ -320,6 +341,12 @@ const SuggestedExamTemplates = () => {
      * Start editing segment field
      */
     const startEditing = (index, field) => {
+        // Block editing if this is a saved segment (exists in originalSegments)
+        if (existingData && originalSegments[index] && originalSegments[index].first_verse_key) {
+            toastService.warning(t('exam_templates.cannotEditSavedSegment'));
+            return;
+        }
+        
         setEditingSegmentIndex(index);
         setEditingField(field);
         setSelectedAyahs(new Set());
@@ -327,6 +354,39 @@ const SuggestedExamTemplates = () => {
             ? t('exam_templates.clickFirstAyah')
             : t('exam_templates.clickLastAyah');
         toastService.info(message);
+    };
+
+    /**
+     * Remove a segment (only for new/unsaved segments)
+     */
+    const handleRemoveSegment = (index) => {
+        // Only allow removing if it's a new record (no existingData) or if the segment is not in originalSegments
+        if (existingData && originalSegments[index] && originalSegments[index].first_verse_key) {
+            toastService.warning(t('exam_templates.cannotRemoveSavedSegment'));
+            return;
+        }
+
+        const newSegments = segments.filter((_, i) => i !== index);
+        setSegments(newSegments);
+        setSegmentsCount(newSegments.length.toString());
+        
+        // Update segment display info - shift indices for segments after the removed one
+        const newDisplayInfo = {};
+        newSegments.forEach((seg, i) => {
+            // For segments before the removed index, keep same index
+            // For segments after the removed index, shift index by -1
+            const sourceIndex = i < index ? i : i + 1;
+            if (segmentDisplayInfo[sourceIndex]) {
+                newDisplayInfo[i] = segmentDisplayInfo[sourceIndex];
+            }
+        });
+        setSegmentDisplayInfo(newDisplayInfo);
+        
+        // Update original segments reference
+        if (originalSegments.length > 0) {
+            const newOriginalSegments = originalSegments.filter((_, i) => i !== index);
+            setOriginalSegments(newOriginalSegments);
+        }
     };
 
     /**
@@ -496,8 +556,15 @@ const SuggestedExamTemplates = () => {
 
             toastService.success(t('exam_templates.saveSuccess'));
 
+            // Clear editing state
+            setEditingSegmentIndex(null);
+            setEditingField(null);
+            setSelectedAyahs(new Set());
+
             // Reload data
             await loadExistingData(parseInt(selectedJuz));
+            // Update original segments after save
+            setOriginalSegments(JSON.parse(JSON.stringify(segments)));
         } catch (error) {
             console.error('Error saving exam segments:', error);
             const errorMessage = error.response?.data?.message || error.message || t('exam_templates.saveFailed');
@@ -535,6 +602,7 @@ const SuggestedExamTemplates = () => {
             // Clear form
             setExistingData(null);
             setSegments([]);
+            setOriginalSegments([]);
             setSegmentsCount('');
             setSelectedJuz('');
             setSelectedPage('');
@@ -628,6 +696,7 @@ const SuggestedExamTemplates = () => {
                                     }
                                     setSegmentsCount(newValue);
                                 }}
+                                readOnly={!!existingData}
                                 required
                             />
                         </div>
@@ -689,88 +758,147 @@ const SuggestedExamTemplates = () => {
                                     <th>{t('exam_templates.segment')}</th>
                                     <th>{t('exam_templates.fromVerse')}</th>
                                     <th>{t('exam_templates.toVerse')}</th>
+                                    {!existingData && segments.length > 0 && (
+                                        <th>{t('exam_templates.actions')}</th>
+                                    )}
                                 </tr>
                             </thead>
                             <tbody>
                                 {segments.length === 0 ? (
                                     <tr>
-                                        <td colSpan="3" style={{ textAlign: 'center', padding: '20px', color: '#666' }}>
+                                        <td colSpan={existingData ? "3" : "4"} style={{ textAlign: 'center', padding: '20px', color: '#666' }}>
                                             {t('exam_templates.noSegments')}
                                         </td>
                                     </tr>
                                 ) : (
-                                    segments.map((segment, index) => (
-                                        <tr key={index}>
-                                            <td style={{ textAlign: "center" }}>
-                                                {currentLocale === 'ar'
-                                                    ? ['الأول', 'الثاني', 'الثالث', 'الرابع', 'الخامس', 'السادس', 'السابع', 'الثامن', 'التاسع', 'العاشر'][index] || `مقطع ${index + 1}`
-                                                    : `Segment ${index + 1}`
-                                                }
-                                            </td>
-                                            <td style={{ textAlign: "center" }}>
-                                                {segment.first_verse_key ? (
-                                                    <div className="verse-display w-fit mx-auto">
-                                                        {segmentDisplayInfo[index] && segmentDisplayInfo[index].first ? (
-                                                            <>
-                                                                <div className='w-fit'><strong>{t('exam_templates.page')}:</strong> {segmentDisplayInfo[index].first.page || '-'}</div>
-                                                                <div className='w-fit'><strong>{t('exam_templates.surah')}:</strong> {segmentDisplayInfo[index].first.surah || '-'}</div>
-                                                                <div className='w-fit'><strong>{t('exam_templates.ayah')}:</strong> {segmentDisplayInfo[index].first.ayah || getVerseNumber(segment.first_verse_key)}</div>
-                                                            </>
-                                                        ) : (
-                                                            <span>{getVerseNumber(segment.first_verse_key)}</span>
-                                                        )}
-                                                    </div>
-                                                ) : (
-                                                    <button
-                                                        type="button"
-                                                        className="btn-select"
-                                                        onClick={() => {
-                                                            if (!selectedPage) {
-                                                                toastService.warning(t('exam_templates.selectPageFirst'));
-                                                                return;
-                                                            }
-                                                            startEditing(index, 'start');
-                                                        }}
-                                                    >
-                                                        {t('exam_templates.clickFirstAyah')}
-                                                    </button>
-                                                )}
-                                            </td>
-                                            <td style={{ textAlign: "center" }}>
-                                                {segment.last_verse_key ? (
-                                                    <div className="verse-display w-fit mx-auto">
-                                                        {segmentDisplayInfo[index] && segmentDisplayInfo[index].last ? (
-                                                            <>
-                                                                <div className='w-fit'><strong>{t('exam_templates.page')}:</strong> {segmentDisplayInfo[index].last.page || '-'}</div>
-                                                                <div className='w-fit'><strong>{t('exam_templates.surah')}:</strong> {segmentDisplayInfo[index].last.surah || '-'}</div>
-                                                                <div className='w-fit'><strong>{t('exam_templates.ayah')}:</strong> {segmentDisplayInfo[index].last.ayah || getVerseNumber(segment.last_verse_key)}</div>
-                                                            </>
-                                                        ) : (
-                                                            <span>{getVerseNumber(segment.last_verse_key)}</span>
-                                                        )}
-                                                    </div>
-                                                ) : (
-                                                    <div className="teacher-dependent-message">
-                                                        <span className="message-text">{t('exam_templates.teacherDetermines')}</span>
+                                    segments.map((segment, index) => {
+                                        // Check if this segment is from saved data
+                                        const isSavedSegment = existingData && originalSegments[index] && originalSegments[index].first_verse_key;
+                                        
+                                        return (
+                                            <tr key={index}>
+                                                <td style={{ textAlign: "center" }}>
+                                                    {currentLocale === 'ar'
+                                                        ? ['الأول', 'الثاني', 'الثالث', 'الرابع', 'الخامس', 'السادس', 'السابع', 'الثامن', 'التاسع', 'العاشر'][index] || `مقطع ${index + 1}`
+                                                        : `Segment ${index + 1}`
+                                                    }
+                                                </td>
+                                                <td style={{ textAlign: "center" }}>
+                                                    {segment.first_verse_key ? (
+                                                        <div className="verse-display" style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: '8px', justifyContent: 'center' }}>
+                                                            <div>
+                                                                {segmentDisplayInfo[index] && segmentDisplayInfo[index].first ? (
+                                                                    <>
+                                                                        <div><strong>{t('exam_templates.page')}:</strong> {segmentDisplayInfo[index].first.page || '-'}</div>
+                                                                        <div><strong>{t('exam_templates.surah')}:</strong> {segmentDisplayInfo[index].first.surah || '-'}</div>
+                                                                        <div><strong>{t('exam_templates.ayah')}:</strong> {segmentDisplayInfo[index].first.ayah || getVerseNumber(segment.first_verse_key)}</div>
+                                                                    </>
+                                                                ) : (
+                                                                    <span>{getVerseNumber(segment.first_verse_key)}</span>
+                                                                )}
+                                                            </div>
+                                                            {!isSavedSegment && (
+                                                                <button
+                                                                    type="button"
+                                                                    className="btn-icon"
+                                                                    onClick={() => {
+                                                                        if (!selectedPage) {
+                                                                            toastService.warning(t('exam_templates.selectPageFirst'));
+                                                                            return;
+                                                                        }
+                                                                        startEditing(index, 'start');
+                                                                    }}
+                                                                    title={t('exam_templates.editStart')}
+                                                                >
+                                                                    <MdEdit className="text-blue-600" size={20} />
+                                                                </button>
+                                                            )}
+                                                        </div>
+                                                    ) : (
                                                         <button
                                                             type="button"
-                                                            className="btn-select-small"
+                                                            className="btn-select"
                                                             onClick={() => {
                                                                 if (!selectedPage) {
                                                                     toastService.warning(t('exam_templates.selectPageFirst'));
                                                                     return;
                                                                 }
-                                                                startEditing(index, 'end');
+                                                                startEditing(index, 'start');
                                                             }}
-                                                            title={t('exam_templates.clickLastAyah')}
+                                                            disabled={isSavedSegment}
                                                         >
-                                                            {t('exam_templates.optionalSelect')}
+                                                            {t('exam_templates.clickFirstAyah')}
                                                         </button>
-                                                    </div>
+                                                    )}
+                                                </td>
+                                                <td style={{ textAlign: "center" }}>
+                                                    {segment.last_verse_key ? (
+                                                        <div className="verse-display" style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: '8px', justifyContent: 'center' }}>
+                                                            <div>
+                                                                {segmentDisplayInfo[index] && segmentDisplayInfo[index].last ? (
+                                                                    <>
+                                                                        <div><strong>{t('exam_templates.page')}:</strong> {segmentDisplayInfo[index].last.page || '-'}</div>
+                                                                        <div><strong>{t('exam_templates.surah')}:</strong> {segmentDisplayInfo[index].last.surah || '-'}</div>
+                                                                        <div><strong>{t('exam_templates.ayah')}:</strong> {segmentDisplayInfo[index].last.ayah || getVerseNumber(segment.last_verse_key)}</div>
+                                                                    </>
+                                                                ) : (
+                                                                    <span>{getVerseNumber(segment.last_verse_key)}</span>
+                                                                )}
+                                                            </div>
+                                                            {!isSavedSegment && (
+                                                                <button
+                                                                    type="button"
+                                                                    className="btn-icon"
+                                                                    onClick={() => {
+                                                                        if (!selectedPage) {
+                                                                            toastService.warning(t('exam_templates.selectPageFirst'));
+                                                                            return;
+                                                                        }
+                                                                        startEditing(index, 'end');
+                                                                    }}
+                                                                    title={t('exam_templates.editEnd')}
+                                                                >
+                                                                    <MdEdit className="text-blue-600" size={20} />
+                                                                </button>
+                                                            )}
+                                                        </div>
+                                                    ) : (
+                                                        <div className="teacher-dependent-message" style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: '8px', justifyContent: 'center' }}>
+                                                            <span className="message-text">{t('exam_templates.teacherDetermines')}</span>
+                                                            {!isSavedSegment && (
+                                                                <button
+                                                                    type="button"
+                                                                    className="btn-select-small"
+                                                                    onClick={() => {
+                                                                        if (!selectedPage) {
+                                                                            toastService.warning(t('exam_templates.selectPageFirst'));
+                                                                            return;
+                                                                        }
+                                                                        startEditing(index, 'end');
+                                                                    }}
+                                                                    title={t('exam_templates.clickLastAyah')}
+                                                                >
+                                                                    {t('exam_templates.optionalSelect')}
+                                                                </button>
+                                                            )}
+                                                        </div>
+                                                    )}
+                                                </td>
+                                                {!existingData && segments.length > 0 && (
+                                                    <td style={{ textAlign: "center" }}>
+                                                        <button
+                                                            type="button"
+                                                            className="btn-icon"
+                                                            onClick={() => handleRemoveSegment(index)}
+                                                            title={t('exam_templates.removeSegment')}
+                                                        >
+                                                            <MdDelete className="text-red-600" size={20} />
+                                                        </button>
+                                                    </td>
                                                 )}
-                                            </td>
-                                        </tr>
-                                    ))
+                                            </tr>
+                                        );
+                                    })
                                 )}
                             </tbody>
                         </table>
@@ -797,21 +925,36 @@ const SuggestedExamTemplates = () => {
                     </div>
 
                     <div className="form-actions flex gap-2 justify-center items-center">
-                        <button
-                            type="submit"
-                            className="btn-save"
-                            onClick={handleSubmit}
-                            disabled={isSaving || !selectedJuz || !segmentsCount || segments.length === 0}
-                        >
-                            {isSaving ? t('exam_templates.saving') : t('exam_templates.saveRecord')}
-                        </button>
+                        {(() => {
+                            // Check if there are unsaved changes
+                            const hasChanges = JSON.stringify(segments) !== JSON.stringify(originalSegments) ||
+                                             (existingData && existingData.is_active !== isActive) ||
+                                             (existingData && existingData.segments_count !== parseInt(segmentsCount));
+                            
+                            // Only show save button if there are changes or if it's a new record
+                            if (!hasChanges && existingData) {
+                                return null;
+                            }
+                            
+                            return (
+                                <button
+                                    type="submit"
+                                    className="btn-save"
+                                    onClick={handleSubmit}
+                                    disabled={isSaving || !selectedJuz || !segmentsCount || segments.length === 0}
+                                >
+                                    {isSaving ? t('exam_templates.saving') : t('exam_templates.saveRecord')}
+                                </button>
+                            );
+                        })()}
                         {existingData && existingData.id && (
                             <button
                                 type="button"
-                                className="btn-delete"
+                                className="btn-delete flex items-center gap-2"
                                 onClick={handleDeleteClick}
                                 disabled={isSaving}
                             >
+                                <MdDelete size={20} />
                                 {t('exam_templates.deleteRecord')}
                             </button>
                         )}

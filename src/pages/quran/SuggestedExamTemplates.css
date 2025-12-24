@@ -276,6 +276,12 @@
     text-align: right;
 }
 
+.verse-display.flex {
+    flex-direction: row;
+    align-items: center;
+    gap: 8px;
+}
+
 .verse-display div {
     font-size: 0.85em;
     line-height: 1.4;
@@ -316,6 +322,27 @@
 
 .btn-select-small:hover {
     background: #357abd;
+}
+
+.btn-icon {
+    padding: 4px;
+    background: transparent;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s;
+}
+
+.btn-icon:hover {
+    background: rgba(0, 0, 0, 0.05);
+}
+
+.btn-icon:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
 }
 
 /* Quran Panel (Right) */

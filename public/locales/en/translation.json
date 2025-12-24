@@ -1653,10 +1653,17 @@
         "cancel": "Cancel",
         "teacherDetermines": "The teacher will determine the end location",
         "optionalSelect": "Optional: Select End",
+        "change": "Change",
         "retry": "Retry",
         "error": "Error",
         "defineSegments": "Define Segments",
-        "cannotDecreaseSegments": "Cannot decrease the number of segments below the existing segments with data. Please remove data from segments first."
+        "cannotDecreaseSegments": "Cannot decrease the number of segments below the existing segments with data. Please remove data from segments first.",
+        "cannotEditSavedSegment": "Cannot edit saved segments. Please delete the record first to make changes.",
+        "cannotRemoveSavedSegment": "Cannot remove saved segments. Please delete the record first to make changes.",
+        "removeSegment": "Remove Segment",
+        "editStart": "Edit Start Verse",
+        "editEnd": "Edit End Verse",
+        "actions": "Actions"
     },
     "quran_viewer": {
         "no_content_page": "No content for this page"
