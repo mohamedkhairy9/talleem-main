@@ -29,10 +29,8 @@ export default function BranchAdministrations() {
 
     const formData = data?.data?.map(item => ({
         id: item.id,
-        description: item.description,
-        status: item.status,
-        branch_id: item.branch?.id,
-        user_id: item.user?.id
+        name: item.name,
+        status: item.status
     }));
 
     return (

@@ -16,10 +16,5 @@ export const branchAdministrationsSchema = yup.object({
                 .max(100, t('validation.name.ar_max'))
         })
         .required(t('validation.required')),
-    branch_id: yup
-        .number()
-        .required(t('validation.required'))
-        .integer(t('validation.branch_id.integer'))
-        .min(1, t('validation.branch_id.min')),
     status: yup.boolean().required(t('validation.required'))
 });

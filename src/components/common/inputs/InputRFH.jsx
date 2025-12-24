@@ -105,6 +105,7 @@ export default function InputRFH({
                             {...getInputProps()}
                             type={type}
                             id={name}
+                            defaultValue={defaultValue}
                             className={`w-full ${p} border outline-none rounded-lg focus:border-accent transition-colors duration-200 
                                 ${error ? 'border-red-300 focus:border-red-500' : 'border-gray-300'}
                             `}
@@ -121,6 +122,7 @@ export default function InputRFH({
                         <textarea
                             {...register(name)}
                             id={name}
+                            defaultValue={defaultValue}
                             disabled={disabled}
                             className={`w-full ${p} border outline-none rounded-lg focus:border-accent transition-colors duration-200 
                                 ${error ? 'border-red-300 focus:border-red-500' : 'border-gray-300'}
