@@ -12,10 +12,10 @@ export const branchAdministrationsColumns = [
         header: 'table_headers.name',
         cell: info => <NameCell directValue={info.row.original.name} />
     }),
-    columnHelper.accessor('branch', {
-        header: 'table_headers.branch',
-        cell: info => <NameCell directValue={info.row.original.branch} />
-    }),
+    // columnHelper.accessor('branch', {
+    //     header: 'table_headers.branch',
+    //     cell: info => <NameCell directValue={info.row.original.branch} />
+    // }),
     columnHelper.accessor('status', {
         header: 'table_headers.status',
         cell: info => {
@@ -48,14 +48,14 @@ export const branchAdministrationsFields = [
         editMode: true,
         viewMode: true
     },
-    {
-        name: 'branch_id',
-        label: 'validation.branch_id.label',
-        type: 'select',
-        placeholder: 'validation.branch_id.placeholder',
-        editMode: true,
-        viewMode: true
-    },
+    // {
+    //     name: 'branch_id',
+    //     label: 'validation.branch_id.label',
+    //     type: 'select',
+    //     placeholder: 'validation.branch_id.placeholder',
+    //     editMode: true,
+    //     viewMode: true
+    // },
     {
         name: 'status',
         label: 'validation.status.label',
