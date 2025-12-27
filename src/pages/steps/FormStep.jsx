@@ -24,12 +24,43 @@ export default function FormStep({
     onStepCreated
 }) {
     // Convert status from number (1/0) to boolean (true/false) for form display
+    // Also handle custom file names - if required_files contains a value that's not in predefined options,
+    // treat it as a custom file name and set it up for editing
     const normalizedOldData = useMemo(() => {
         if (!oldData) return oldData;
-        return {
+        const normalized = {
             ...oldData,
             status: oldData.status === 1 || oldData.status === true ? true : false
         };
+        
+        // Handle custom file names in required_files
+        if (oldData.config?.required_files) {
+            const requiredFiles = Array.isArray(oldData.config.required_files) 
+                ? oldData.config.required_files 
+                : [oldData.config.required_files];
+            
+            const predefinedOptions = ['national_id_front', 'national_id_back', 'passport', 'certificate', 'photo', 'medical_report', 'other_document'];
+            
+            // Check if there's a custom file name (not in predefined options)
+            const customFile = requiredFiles.find(file => !predefinedOptions.includes(file));
+            
+            if (customFile) {
+                // Replace custom file with "other_document" in the array for the select
+                normalized.config = {
+                    ...(normalized.config || {}),
+                    required_files: requiredFiles.map(f => f === customFile ? 'other_document' : f),
+                    custom_file_name: {
+                        en: customFile,
+                        ar: customFile
+                    }
+                };
+            } else if (normalized.config) {
+                // Ensure config object exists even if no custom file
+                normalized.config = { ...normalized.config };
+            }
+        }
+        
+        return normalized;
     }, [oldData]);
 
     const { register, errors, handleSubmit, control, watch, setValue } = useRFH({
@@ -39,6 +70,12 @@ export default function FormStep({
 
     // Watch assigned_to_type to determine which API to call
     const assignedToType = watch('assigned_to_type') || oldData?.assigned_to_type;
+    
+    // Watch required_files to check if "other_document" is selected
+    const requiredFiles = watch('config.required_files') || normalizedOldData?.config?.required_files || [];
+    const hasOtherDocument = Array.isArray(requiredFiles) 
+        ? requiredFiles.includes('other_document') 
+        : requiredFiles === 'other_document';
 
     // Fetch users when assigned_to_type is "user" (or in view/edit mode to show selected value)
     const shouldFetchUsers = assignedToType === 'user' || (viewMode || editMode) && oldData?.assigned_to_type === 'user';
@@ -204,6 +241,56 @@ export default function FormStep({
             status: data.status ? 1 : 0
         };
         
+        // React-hook-form with dot notation creates nested objects
+        // Access nested config values
+        const configRequiredFiles = data.config?.required_files;
+        const configAutoApprove = data.config?.auto_approve_after_hours;
+        const configMaxUpload = data.config?.rules?.max_upload_size_mb;
+        const customFileName = data.config?.custom_file_name;
+        
+        // Build config object only if at least one config field has a value
+        if (configRequiredFiles || configAutoApprove !== undefined || configMaxUpload !== undefined || customFileName) {
+            submissionData.config = {};
+            
+            // Handle required_files array
+            if (configRequiredFiles) {
+                let filesArray = Array.isArray(configRequiredFiles) 
+                    ? [...configRequiredFiles] 
+                    : [configRequiredFiles].filter(Boolean);
+                
+                // If "other_document" is selected and custom name is provided, replace it with the custom name
+                if (filesArray.includes('other_document') && customFileName) {
+                    const customNameEn = customFileName.en?.trim();
+                    const customNameAr = customFileName.ar?.trim();
+                    
+                    if (customNameEn || customNameAr) {
+                        // Remove "other_document" and add custom name
+                        filesArray = filesArray.filter(f => f !== 'other_document');
+                        // Use English name if available, otherwise Arabic, otherwise keep other_document
+                        const customName = customNameEn || customNameAr || 'other_document';
+                        filesArray.push(customName);
+                    }
+                }
+                
+                submissionData.config.required_files = filesArray;
+            }
+            
+            // Handle auto_approve_after_hours
+            if (configAutoApprove !== undefined && configAutoApprove !== null && configAutoApprove !== '') {
+                submissionData.config.auto_approve_after_hours = Number(configAutoApprove);
+            }
+            
+            // Handle rules.max_upload_size_mb
+            if (configMaxUpload !== undefined && configMaxUpload !== null && configMaxUpload !== '') {
+                submissionData.config.rules = {
+                    max_upload_size_mb: Number(configMaxUpload)
+                };
+            }
+        } else {
+            // Remove config if it's empty
+            delete submissionData.config;
+        }
+        
         if (editMode && oldData?.id) {
             submissionData.id = oldData.id;
         }
@@ -219,6 +306,17 @@ export default function FormStep({
         });
     }
 
+    // Options for required_files field
+    const requiredFilesOptions = useMemo(() => [
+        { label: 'National ID Front', value: 'national_id_front' },
+        { label: 'National ID Back', value: 'national_id_back' },
+        { label: 'Passport', value: 'passport' },
+        { label: 'Certificate', value: 'certificate' },
+        { label: 'Photo', value: 'photo' },
+        { label: 'Medical Report', value: 'medical_report' },
+        { label: 'Other Document', value: 'other_document' }
+    ], []);
+
     // Helper to get options for a field
     const getFieldOptions = (fieldName) => {
         if (fieldName === 'assigned_to_id') {
@@ -226,6 +324,9 @@ export default function FormStep({
         }
         if (fieldName === 'join_request_form_id') {
             return generateOptions(joinRequestFormOptions);
+        }
+        if (fieldName === 'config.required_files') {
+            return generateOptions(requiredFilesOptions);
         }
         return generateOptions(options?.[fieldName]);
     };
@@ -239,18 +340,43 @@ export default function FormStep({
         return false;
     };
 
+    // Filter fields based on conditional logic
+    const filteredFields = stepsFields.filter(field => {
+        // Check edit/view mode
+        const modeMatch =
+            (editMode && field.editMode) ||
+            (viewMode && field.viewMode) ||
+            (!editMode && !viewMode);
+
+        if (!modeMatch) return false;
+
+        // Check conditional fields
+        if (field.conditional && field.showWhen) {
+            if (field.showWhen.hasOtherDocument !== undefined) {
+                return hasOtherDocument === field.showWhen.hasOtherDocument;
+            }
+        }
+
+        return true;
+    });
+
     return (
         <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col h-full">
             <ModalContent>
                 <div className="space-y-2">
-                    {stepsFields
-                        .filter(
-                            field =>
-                                (editMode && field.editMode) ||
-                                (viewMode && field.viewMode) ||
-                                (!editMode && !viewMode)
-                        )
-                        .map(field => (
+                    {filteredFields.map(field => {
+                        // Handle nested field default values (e.g., config.required_files, config.rules.max_upload_size_mb)
+                        const getDefaultValue = () => {
+                            if (field.defaultValue !== undefined) {
+                                return field.defaultValue;
+                            }
+                            if (field.name.includes('.')) {
+                                return field.name.split('.').reduce((obj, key) => obj?.[key], normalizedOldData);
+                            }
+                            return normalizedOldData?.[field.name];
+                        };
+
+                        return (
                             <InputRFH
                                 p="px-3 py-3"
                                 control={control}
@@ -262,13 +388,13 @@ export default function FormStep({
                                 label={field.label}
                                 name={field.name}
                                 disabled={isFieldDisabled(field.name)}
-                                defaultValue={
-                                    oldData?.[field.name] || field.defaultValue
-                                }
+                                defaultValue={getDefaultValue()}
                                 options={getFieldOptions(field.name)}
+                                isMulti={field.isMulti}
                                 required={isFieldRequired(schema, field.name)}
                             />
-                        ))}
+                        );
+                    })}
                 </div>
             </ModalContent>
             {!viewMode && (

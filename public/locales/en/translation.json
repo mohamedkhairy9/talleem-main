@@ -143,6 +143,32 @@
             "required": "Join request form is required",
             "invalid": "Please select a valid join request form"
         },
+        "config": {
+            "required_files": {
+                "label": "Required Files",
+                "placeholder": "Select required files"
+            },
+            "auto_approve_after_hours": {
+                "label": "Auto Approve After Hours",
+                "placeholder": "Enter hours for auto approval"
+            },
+            "custom_file_name": {
+                "label": {
+                    "en": "Custom File Name (English)",
+                    "ar": "Custom File Name (Arabic)"
+                },
+                "placeholder": {
+                    "en": "Enter custom file name in English",
+                    "ar": "Enter custom file name in Arabic"
+                }
+            },
+            "rules": {
+                "max_upload_size_mb": {
+                    "label": "Max Upload Size (MB)",
+                    "placeholder": "Enter maximum upload size in MB"
+                }
+            }
+        },
         "field_key": {
             "label": "Field Key",
             "placeholder": "Enter field key (e.g., name, email)",
