@@ -11,6 +11,7 @@ import ModalContent from '@/components/common/form/ModalContent';
 import ModalFooter from '@/components/common/form/ModalFooter';
 import { useUsersQuery } from '@/api/hooks/useUsers';
 import { useRolesQuery } from '@/api/hooks/useRoles';
+import { useJoinRequestFormsQuery } from '@/api/hooks/useJoinRequestForms';
 
 export default function FormStep({
     onClose,
@@ -22,9 +23,18 @@ export default function FormStep({
     options,
     onStepCreated
 }) {
+    // Convert status from number (1/0) to boolean (true/false) for form display
+    const normalizedOldData = useMemo(() => {
+        if (!oldData) return oldData;
+        return {
+            ...oldData,
+            status: oldData.status === 1 || oldData.status === true ? true : false
+        };
+    }, [oldData]);
+
     const { register, errors, handleSubmit, control, watch, setValue } = useRFH({
         schema,
-        defaultValues: oldData
+        defaultValues: normalizedOldData
     });
 
     // Watch assigned_to_type to determine which API to call
@@ -42,6 +52,12 @@ export default function FormStep({
     const { data: rolesData } = useRolesQuery(
         { status: true },
         { enabled: shouldFetchRoles }
+    );
+
+    // Fetch join request forms for the select dropdown
+    const { data: joinRequestFormsData } = useJoinRequestFormsQuery(
+        { status: true },
+        { enabled: true }
     );
 
     // Reset assigned_to_id when assigned_to_type changes (only in create/edit mode, not view mode)
@@ -141,10 +157,57 @@ export default function FormStep({
         return [];
     }, [assignedToType, usersData, rolesData, oldData, viewMode, editMode]);
 
+    // Generate options for join_request_form_id from API
+    const joinRequestFormOptions = useMemo(() => {
+        const forms = joinRequestFormsData?.data || [];
+        // In view/edit mode, ensure the selected form is included even if not in the list
+        if ((viewMode || editMode) && oldData?.join_request_form_id) {
+            const selectedForm = forms.find(f => f.id === oldData.join_request_form_id);
+            if (!selectedForm) {
+                // Add the selected form if not found in the list
+                forms.unshift({ 
+                    id: oldData.join_request_form_id, 
+                    name: { en: `Form ${oldData.join_request_form_id}`, ar: `Form ${oldData.join_request_form_id}` }
+                });
+            }
+        }
+        return forms.map(form => {
+            // Safely extract label from name object
+            let label = `Form ${form.id}`; // Default fallback
+            
+            if (form.name) {
+                if (typeof form.name === 'object' && form.name !== null) {
+                    // Handle multilingual object {en: "...", ar: "..."}
+                    label = form.name.en || form.name.ar || label;
+                } else if (typeof form.name === 'string') {
+                    // Handle string name
+                    label = form.name;
+                }
+            }
+            
+            // Ensure label is always a string (safety check)
+            if (typeof label !== 'string') {
+                label = String(label) || `Form ${form.id}`;
+            }
+            
+            return {
+                label: label,
+                value: form.id
+            };
+        });
+    }, [joinRequestFormsData, oldData, viewMode, editMode]);
+
     function onSubmit(data) {
-        const submissionData = editMode && oldData?.id 
-            ? { ...data, id: oldData.id } 
-            : data;
+        // Convert status from boolean to number (1/0) for API
+        const submissionData = {
+            ...data,
+            status: data.status ? 1 : 0
+        };
+        
+        if (editMode && oldData?.id) {
+            submissionData.id = oldData.id;
+        }
+        
         mutate(submissionData, {
             onSuccess: () => {
                 onClose();
@@ -160,6 +223,9 @@ export default function FormStep({
     const getFieldOptions = (fieldName) => {
         if (fieldName === 'assigned_to_id') {
             return generateOptions(assignedToIdOptions);
+        }
+        if (fieldName === 'join_request_form_id') {
+            return generateOptions(joinRequestFormOptions);
         }
         return generateOptions(options?.[fieldName]);
     };
