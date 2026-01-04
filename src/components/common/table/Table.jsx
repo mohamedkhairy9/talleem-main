@@ -956,7 +956,7 @@ const Table = ({
                                 </div>
                             </div>
 
-                            <div className="flex items-center space-x-2">
+                            <div className="flex flex-wrap items-center gap-2">
 
                                 {/* Density Control */}
                                 <div className="flex bg-gray-100 rounded-lg p-1">
@@ -965,13 +965,14 @@ const Table = ({
                                             <button
                                                 key={d}
                                                 onClick={() => setDensity(d)}
-                                                className={`px-3 py-1 text-xs font-medium rounded transition-colors ${
+                                                className={`px-2 sm:px-3 py-1 text-xs font-medium rounded transition-colors ${
                                                     density === d
                                                         ? 'bg-white text-gray-900 shadow-sm'
                                                         : 'text-gray-600 hover:text-gray-900'
                                                 }`}
                                             >
-                                                {t(`table.${d}`)}
+                                                <span className="hidden sm:inline">{t(`table.${d}`)}</span>
+                                                <span className="sm:hidden">{t(`table.${d}`).charAt(0).toUpperCase()}</span>
                                             </button>
                                         )
                                     )}
@@ -1005,10 +1006,11 @@ const Table = ({
                                 {Filters && (
                                     <button
                                         onClick={() => setShowFiltersModal(true)}
-                                        className="flex items-center space-x-2 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+                                        className="flex items-center space-x-1 sm:space-x-2 px-2 sm:px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+                                        title={t('table.filters')}
                                     >
-                                        <MdFilterList className="w-4 h-4" />
-                                        <span className="text-sm font-medium">
+                                        <MdFilterList className="w-4 h-4 flex-shrink-0" />
+                                        <span className="text-sm font-medium hidden sm:inline">
                                             {t('table.filters')}
                                         </span>
                                     </button>
@@ -1016,15 +1018,16 @@ const Table = ({
                             </div>
 
                             {/* Action Buttons */}
-                            <div className="flex items-center space-x-2">
+                            <div className="flex flex-wrap items-center gap-2">
                                 {/* Add Button */}
                                 {enableAdd && (
                                     <button
                                         onClick={toggleModals?.add}
-                                        className="flex items-center space-x-2 px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary transition-colors min-w-fit"
+                                        className="flex items-center space-x-1 sm:space-x-2 px-2 sm:px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary transition-colors"
+                                        title={t('table.add_new')}
                                     >
-                                        <MdAdd className="w-4 h-4" />
-                                        <span className="text-sm font-medium">
+                                        <MdAdd className="w-4 h-4 flex-shrink-0" />
+                                        <span className="text-sm font-medium hidden sm:inline">
                                             {t('table.add_new')}
                                         </span>
                                     </button>
@@ -1034,10 +1037,11 @@ const Table = ({
                                 {enableImport && onImport && (
                                     <button
                                         onClick={onImport}
-                                        className="flex items-center space-x-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
+                                        className="flex items-center space-x-1 sm:space-x-2 px-2 sm:px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
+                                        title={t('table.import')}
                                     >
-                                        <MdUpload className="w-4 h-4" />
-                                        <span className="text-sm font-medium">
+                                        <MdUpload className="w-4 h-4 flex-shrink-0" />
+                                        <span className="text-sm font-medium hidden sm:inline">
                                             {t('table.import')}
                                         </span>
                                     </button>
@@ -1047,10 +1051,11 @@ const Table = ({
                                 {enableExportExample && onExportExample && (
                                     <button
                                         onClick={onExportExample}
-                                        className="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                                        className="flex items-center space-x-1 sm:space-x-2 px-2 sm:px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                                        title={t('table.download_example')}
                                     >
-                                        <MdFileDownload className="w-4 h-4" />
-                                        <span className="text-sm font-medium">
+                                        <MdFileDownload className="w-4 h-4 flex-shrink-0" />
+                                        <span className="text-sm font-medium hidden sm:inline">
                                             {t('table.download_example')}
                                         </span>
                                     </button>
@@ -1124,17 +1129,18 @@ const Table = ({
                                                     !showExportMenu
                                                 )
                                             }
-                                            className="flex items-center space-x-2 px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors"
+                                            className="flex items-center space-x-1 sm:space-x-2 px-2 sm:px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors"
+                                            title={t('table.export')}
                                         >
-                                            <MdDownload className="w-4 h-4" />
-                                            <span className="text-sm font-medium">
+                                            <MdDownload className="w-4 h-4 flex-shrink-0" />
+                                            <span className="text-sm font-medium hidden sm:inline">
                                                 {t('table.export')}
                                             </span>
-                                            <MdExpandMore className="w-4 h-4" />
+                                            <MdExpandMore className="w-4 h-4 flex-shrink-0 hidden sm:block" />
                                         </button>
 
                                         {showExportMenu && (
-                                            <div className="absolute right-0 top-12 bg-white border border-gray-200 rounded-lg shadow-lg z-50 w-48">
+                                            <div className={`absolute ${isRTL ? 'left-0' : 'right-0'} top-12 bg-white border border-gray-200 rounded-lg shadow-lg z-50 w-48`}>
                                                 <div className="p-2">
                                                     <button
                                                         onClick={exportToCSV}

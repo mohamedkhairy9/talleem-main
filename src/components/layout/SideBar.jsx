@@ -216,7 +216,7 @@ export default function SideBar() {
         <>
             {isMobile && isOpen && (
                 <div
-                    className="fixed inset-0 animate-fade-in bg-black/50 z-40 duration-100"
+                    className="fixed inset-0 animate-fade-in bg-black/50 z-[45] duration-100"
                     onClick={() => setIsOpen(false)}
                 />
             )}
@@ -241,7 +241,7 @@ export default function SideBar() {
 
             <div
                 className={`flex shrink-0 flex-col sidebar-container
-                fixed top-0 h-screen bg-white shadow-xl z-40
+                fixed top-0 h-screen bg-white shadow-xl z-50
                 transition-all duration-200 ease-in-out
                 ${isOpen ? 'w-[270px]' : 'w-[70px]'}
                 ${isRTL
