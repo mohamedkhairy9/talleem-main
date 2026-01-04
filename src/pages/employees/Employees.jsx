@@ -46,6 +46,7 @@ export default function Employees() {
         nationality_id: item.nationality?.id,
         academic_qualification_id: item.academic_qualification?.id,
         specification_id: item.specification?.id,
+        major_id: item.major?.id,
         city_id: item.city?.id
     }));
 

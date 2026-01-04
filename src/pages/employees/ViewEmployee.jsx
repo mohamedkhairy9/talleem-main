@@ -9,6 +9,7 @@ import { useAcademicQualificationsQuery } from '@/api/hooks/useAcademicQualifica
 import { useSpecificationsQuery } from '@/api/hooks/useSpecifications';
 import { useCitiesQuery } from '@/api/hooks/useCities';
 import { useNationalitiesQuery } from '@/api/hooks/useNationalities';
+import { useMajorsQuery } from '@/api/hooks/useMajors';
 import Loader from '@/components/common/Loader';
 import { allData } from '@/utils/constants/global.constants';
 import { enabledDisabledOptions } from '@/utils/constants/options';
@@ -30,6 +31,8 @@ export default function ViewEmployee({ onClose, oldData }) {
         useCitiesQuery(allData);
     const { data: nationalitiesData, isLoading: nationalitiesLoading } =
         useNationalitiesQuery(allData);
+    const { data: majorsData, isLoading: majorsLoading } =
+        useMajorsQuery(allData);
 
     const isLoading =
         jobsLoading ||
@@ -38,7 +41,8 @@ export default function ViewEmployee({ onClose, oldData }) {
         academicQualificationsLoading ||
         specificationsLoading ||
         citiesLoading ||
-        nationalitiesLoading;
+        nationalitiesLoading ||
+        majorsLoading;
 
     if (isLoading) return <Loader />;
 
@@ -58,6 +62,7 @@ export default function ViewEmployee({ onClose, oldData }) {
                     entity_id: entitiesData?.data,
                     academic_qualification_id: academicQualificationsData?.data,
                     specification_id: specificationsData?.data,
+                    major_id: majorsData?.data,
                     city_id: citiesData?.data,
                     status: enabledDisabledOptions
                 }}

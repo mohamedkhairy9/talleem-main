@@ -158,6 +158,7 @@ export default function FormInspectorAssignment({
                     }
                     return usersService.getUsers({
                         user_type: 'employee',
+                        job_id: 1,
                         entity_id: entityId,
                         main_program_id: programIdForQuery
                     });
