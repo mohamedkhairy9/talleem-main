@@ -1,13 +1,13 @@
 import React from 'react';
 import { teachersFilters } from './configs';
 import FilterSelect from '@/components/common/inputs/FilterSelect';
-import { enabledDisabledOptions } from '@/utils/constants/options';
+import { teacherStatusOptions } from '@/utils/constants/options';
 import { generateOptions } from '@/utils/helpers/global.fns';
 import FilterText from '@/components/common/inputs/FilterText';
 
 export default function Filters({ filters, handleFilter }) {
     const options = {
-        status: enabledDisabledOptions
+        status: teacherStatusOptions
     };
 
     return teachersFilters.map(filter =>

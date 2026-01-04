@@ -380,7 +380,7 @@ export default function FormTeacher({
 
         const finalData = {
             ...submitData,
-            // Don't convert status - send as is ('active', 'canceled', 'unauthorized')
+            // Don't convert status - send as is ('active', 'cancelled', 'unauthorized')
         };
 
         // For education program, set education_program_entity_type_id

@@ -30,11 +30,11 @@ export const teachersSchema = yup.object({
             return date <= new Date(); // تاريخ الانضمام لازم يكون في الماضي أو النهاردة
         }),
 
-    // UPDATED: Status accepts 'active', 'canceled', 'unauthorized'
+    // UPDATED: Status accepts 'active', 'cancelled', 'unauthorized'
     status: yup
         .string()
         .required(t('validation.required'))
-        .oneOf(['active', 'canceled', 'unauthorized'], t('validation.status.invalid')),
+        .oneOf(['active', 'cancelled', 'unauthorized'], t('validation.status.invalid')),
 
     city_id: yup
         .number()
