@@ -139,14 +139,14 @@ export const employeesFields = [
         editMode: true,
         viewMode: true
     },
-    {
-        name: 'specification_id',
-        label: 'validation.specification_id.label',
-        type: 'select',
-        placeholder: 'validation.specification_id.placeholder',
-        editMode: true,
-        viewMode: true
-    },
+    // {
+    //     name: 'specification_id',
+    //     label: 'validation.specification_id.label',
+    //     type: 'select',
+    //     placeholder: 'validation.specification_id.placeholder',
+    //     editMode: true,
+    //     viewMode: true
+    // },
     {
         name: 'major_id',
         label: 'validation.major_id.label',

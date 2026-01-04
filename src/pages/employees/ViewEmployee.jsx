@@ -6,7 +6,7 @@ import { useJobsQuery } from '@/api/hooks/useJobs';
 import { useBranchesQuery } from '@/api/hooks/useBranches';
 import { useEntitiesQuery } from '@/api/hooks/useEntities';
 import { useAcademicQualificationsQuery } from '@/api/hooks/useAcademicQualifications';
-import { useSpecificationsQuery } from '@/api/hooks/useSpecifications';
+// import { useSpecificationsQuery } from '@/api/hooks/useSpecifications';
 import { useCitiesQuery } from '@/api/hooks/useCities';
 import { useNationalitiesQuery } from '@/api/hooks/useNationalities';
 import { useMajorsQuery } from '@/api/hooks/useMajors';
@@ -25,8 +25,8 @@ export default function ViewEmployee({ onClose, oldData }) {
         data: academicQualificationsData,
         isLoading: academicQualificationsLoading
     } = useAcademicQualificationsQuery(allData);
-    const { data: specificationsData, isLoading: specificationsLoading } =
-        useSpecificationsQuery(allData);
+    // const { data: specificationsData, isLoading: specificationsLoading } =
+    //     useSpecificationsQuery(allData);
     const { data: citiesData, isLoading: citiesLoading } =
         useCitiesQuery(allData);
     const { data: nationalitiesData, isLoading: nationalitiesLoading } =
@@ -39,7 +39,7 @@ export default function ViewEmployee({ onClose, oldData }) {
         branchesLoading ||
         entitiesLoading ||
         academicQualificationsLoading ||
-        specificationsLoading ||
+        // specificationsLoading ||
         citiesLoading ||
         nationalitiesLoading ||
         majorsLoading;
@@ -61,7 +61,7 @@ export default function ViewEmployee({ onClose, oldData }) {
                     branch_id: branchesData?.data,
                     entity_id: entitiesData?.data,
                     academic_qualification_id: academicQualificationsData?.data,
-                    specification_id: specificationsData?.data,
+                    // specification_id: specificationsData?.data,
                     major_id: majorsData?.data,
                     city_id: citiesData?.data,
                     status: enabledDisabledOptions

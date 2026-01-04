@@ -7,7 +7,7 @@ import { employeesDefaultValues } from './configs';
 import { useJobsQuery } from '@/api/hooks/useJobs';
 import { useBranchesQuery } from '@/api/hooks/useBranches';
 import { useAcademicQualificationsQuery } from '@/api/hooks/useAcademicQualifications';
-import { useSpecificationsQuery } from '@/api/hooks/useSpecifications';
+// import { useSpecificationsQuery } from '@/api/hooks/useSpecifications';
 import { useCitiesQuery } from '@/api/hooks/useCities';
 import { useNationalitiesQuery } from '@/api/hooks/useNationalities';
 import { useMajorsQuery } from '@/api/hooks/useMajors';
@@ -26,8 +26,8 @@ export default function CreateEmployee({ onClose }) {
         data: academicQualificationsData,
         isLoading: academicQualificationsLoading
     } = useAcademicQualificationsQuery(allData);
-    const { data: specificationsData, isLoading: specificationsLoading } =
-        useSpecificationsQuery(allData);
+    // const { data: specificationsData, isLoading: specificationsLoading } =
+    //     useSpecificationsQuery(allData);
     const { data: citiesData, isLoading: citiesLoading } =
         useCitiesQuery(allData);
     const { data: nationalitiesData, isLoading: nationalitiesLoading } =
@@ -39,7 +39,7 @@ export default function CreateEmployee({ onClose }) {
         jobsLoading ||
         branchesLoading ||
         academicQualificationsLoading ||
-        specificationsLoading ||
+        // specificationsLoading ||
         citiesLoading ||
         nationalitiesLoading ||
         majorsLoading;
@@ -59,7 +59,7 @@ export default function CreateEmployee({ onClose }) {
                     job_id: jobsData?.data,
                     branch_id: branchesData?.data,
                     academic_qualification_id: academicQualificationsData?.data,
-                    specification_id: specificationsData?.data,
+                    // specification_id: specificationsData?.data,
                     city_id: citiesData?.data,
                     major_id: majorsData?.data,
                     status: enabledDisabledOptions

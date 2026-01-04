@@ -14,7 +14,7 @@ export const employeesSchema = yup.object({
     entity_id: optionalSelectSchema,
     nationality_id: selectSchema,
     academic_qualification_id: selectSchema,
-    specification_id: selectSchema,
+    // specification_id: selectSchema,
     major_id: yup
         .number()
         .nullable()
