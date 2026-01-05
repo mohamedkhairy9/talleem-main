@@ -428,6 +428,10 @@
             "placeholder": "اختر الحالة",
             "invalid": "يجب أن تكون الحالة إما مفعلة  أو معطلة"
         },
+        "with_excuse": {
+            "label": "مع عذر",
+            "placeholder": "اختر مع عذر"
+        },
         "enabled": {
             "label": "مفعل"
         },
@@ -1022,10 +1026,10 @@
         "update": "تحديث صلة القرابة",
         "view": "عرض صلة القرابة"
     },
-    "attendance_types": {
-        "create": "إنشاء نوع حضور",
-        "update": "تحديث نوع الحضور",
-        "view": "عرض نوع الحضور"
+    "absences_types": {
+        "create": "إنشاء نوع غياب",
+        "update": "تحديث نوع الغياب",
+        "view": "عرض نوع الغياب"
     },
     "quoran_parts": {
         "create": "إنشاء جزء قرآن",
@@ -1205,7 +1209,7 @@
         "session_periods": "فترات الحلقة",
         "kinships": "صلة القربى",
         "certification-names": "وصف أسماء الشهادات",
-        "attendance_types": "أنواع الغياب",
+        "absences_types": "أنواع الغياب",
         "quoran_parts": "أجزاء القرآن",
         "main_programs": "البرامج الرئيسية",
         "memorization_programs": "برامج التحفيظ",
@@ -1272,7 +1276,7 @@
         "entity_categories": "فئات الجهات",
         "session_periods": "فترات الحلقة",
         "kinships": "صلة القرابة",
-        "attendance_types": "أنواع الحضور",
+        "absences_types": "أنواع الغياب",
         "quoran_parts": "أجزاء القرآن",
         "main_programs": "البرامج الرئيسية",
         "memorization_programs": "برامج الحفظ",
@@ -1402,6 +1406,7 @@
         "response": "الاستجابة",
         "description": "الوصف",
         "status": "الحالة",
+        "with_excuse": "مع عذر",
         "email": "البريد الإلكتروني",
         "phone": "الهاتف",
         "phone_1": "الهاتف الأول",
@@ -1423,7 +1428,7 @@
         "entity_categories": "فئات الجهات",
         "session_periods": "فترات الحلقة",
         "kinships": "صلة القرابة",
-        "attendance_types": "أنواع الحضور",
+        "absences_types": "أنواع الغياب",
         "quoran_parts": "أجزاء القرآن",
         "main_programs": "البرامج الرئيسية",
         "memorization_programs": "برامج الحفظ",

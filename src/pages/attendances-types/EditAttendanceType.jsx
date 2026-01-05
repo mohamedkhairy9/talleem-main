@@ -3,7 +3,7 @@ import Modal from '@/components/common/form/Modal';
 import ModalHeader from '@/components/common/form/ModalHeader';
 import React from 'react';
 import FormAttendanceType from './FormAttendanceType';
-import { enabledDisabledOptions } from '@/utils/constants/options';
+import { enabledDisabledOptions, yesNoOptions } from '@/utils/constants/options';
 
 export default function EditAttendanceType({ onClose, oldData }) {
     console.log('oldData', oldData);
@@ -11,7 +11,7 @@ export default function EditAttendanceType({ onClose, oldData }) {
     const { mutate, isPending } = useUpdateAttendanceTypeMutation();
     return (
         <Modal onClose={onClose}>
-            <ModalHeader onClose={onClose} header="attendance_types.update" />
+            <ModalHeader onClose={onClose} header="absences_types.update" />
             <FormAttendanceType
                 oldData={oldData}
                 mutate={mutate}
@@ -19,7 +19,8 @@ export default function EditAttendanceType({ onClose, oldData }) {
                 onClose={onClose}
                 editMode={true}
                 options={{
-                    status: enabledDisabledOptions
+                    status: enabledDisabledOptions,
+                    with_excuse: yesNoOptions
                 }}
             />
         </Modal>

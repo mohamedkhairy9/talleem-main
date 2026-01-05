@@ -3,15 +3,16 @@ import ActiveCell from '@/components/common/table/cells/ActiveCell';
 import DateCell from '@/components/common/table/cells/DateCell';
 import NameCell from '@/components/common/table/cells/NameCell';
 import StatusCell from '@/components/common/table/cells/StatusCell';
+import YesNoCell from '@/components/common/table/cells/YesNoCell';
 import { createColumnHelper } from '@tanstack/react-table';
 import React from 'react';
-import { enabledDisabledOptions } from '@/utils/constants/options';
+import { enabledDisabledOptions, yesNoOptions } from '@/utils/constants/options';
 
 const columnHelper = createColumnHelper();
 
 export const attendanceTypesColumns = [
     columnHelper.accessor('name', {
-        header: 'table_headers.attendance_types',
+        header: 'table_headers.absences_types',
         cell: info => <NameCell directValue={info.row.original.name} />
     }),
     columnHelper.accessor('code', {
@@ -21,6 +22,10 @@ export const attendanceTypesColumns = [
     columnHelper.accessor('status', {
         header: 'table_headers.status',
         cell: info => <ActiveCell info={info} />
+    }),
+    columnHelper.accessor('with_excuse', {
+        header: 'table_headers.with_excuse',
+        cell: info => <YesNoCell info={info} />
     }),
     columnHelper.accessor('created_at', {
         header: 'table_headers.created_at',
@@ -61,6 +66,16 @@ export const attendanceTypesFields = [
         placeholder: 'validation.status.placeholder',
         defaultValue: true,
         options: enabledDisabledOptions,
+        editMode: true,
+        viewMode: true
+    },
+    {
+        name: 'with_excuse',
+        label: 'validation.with_excuse.label',
+        type: 'select',
+        placeholder: 'validation.with_excuse.placeholder',
+        defaultValue: false,
+        options: yesNoOptions,
         editMode: true,
         viewMode: true
     }

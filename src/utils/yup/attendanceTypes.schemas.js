@@ -12,5 +12,8 @@ export const attendanceTypesSchema = yup.object({
         .number()
         .required(t('validation.required'))
         .integer(t('validation.code.integer'))
-        .min(1, t('validation.code.min'))
+        .min(1, t('validation.code.min')),
+    with_excuse: yup
+        .boolean()
+        .required(t('validation.required'))
 });

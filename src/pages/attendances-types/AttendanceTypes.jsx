@@ -29,13 +29,14 @@ export default function AttendanceTypes() {
         id: item.id,
         name: item.name,
         code: item.code,
-        status: item.status
+        status: item.status,
+        with_excuse: item.with_excuse
     }))
 
     return (
         <div>
             <Table
-                title={t('table_titles.attendance_types')}
+                title={t('table_titles.absences_types')}
                 refresh={refresh}
                 loading={isLoading}
                 data={tableData}

@@ -436,6 +436,10 @@
             "placeholder": "Select status",
             "invalid": "Status must be either enabled or disabled"
         },
+        "with_excuse": {
+            "label": "With Excuse",
+            "placeholder": "Select with excuse"
+        },
         "enabled": {
             "label": "Enabled"
         },
@@ -999,10 +1003,10 @@
         "update": "Update Relationship",
         "view": "View Relationship"
     },
-    "attendance_types": {
-        "create": "Create Attendance Type",
-        "update": "Update Attendance Type",
-        "view": "View Attendance Type"
+    "absences_types": {
+        "create": "Create Absence Type",
+        "update": "Update Absence Type",
+        "view": "View Absence Type"
     },
     "quoran_parts": {
         "create": "Create Quoran Part",
@@ -1237,7 +1241,7 @@
         "kinships": "Relationships",
         "certification-names": "Certificate Names",
         "inspector-assignments": "Supervisor Assignments",
-        "attendance_types": "Absence Types",
+        "absences_types": "Absence Types",
         "quoran_parts": "Quran Parts",
         "main_programs": "Main Programs",
         "memorization_programs": "Memorization Programs",
@@ -1303,7 +1307,7 @@
         "entity_categories": "Entity Categories",
         "session_periods": "Session Periods",
         "kinships": "Relationships",
-        "attendance_types": "Attendance Types",
+        "absences_types": "Absence Types",
         "quoran_parts": "Quran Parts",
         "main_programs": "Main Programs",
         "memorization_programs": "Memorization Programs",
@@ -1433,6 +1437,7 @@
         "response": "Response",
         "description": "Description",
         "status": "Status",
+        "with_excuse": "With Excuse",
         "email": "Email",
         "phone": "Phone",
         "phone_1": "Phone 1",
@@ -1452,7 +1457,7 @@
         "entity_categories": "Entity Categories",
         "session_periods": "Session Periods",
         "kinships": "Relationships",
-        "attendance_types": "Attendance Types",
+        "absences_types": "Absence Types",
         "quoran_parts": "Quran Parts",
         "main_programs": "Main Programs",
         "memorization_programs": "Memorization Programs",
