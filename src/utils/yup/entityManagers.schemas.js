@@ -40,6 +40,9 @@ export const entityManagersSchema = yup.object({
         .number()
         .nullable()
         .optional()
+        .transform((value, originalValue) => 
+            originalValue === '' || originalValue === null || originalValue === undefined || isNaN(originalValue) ? null : value
+        )
         .integer(t('validation.academic_qualification_id.integer'))
         .min(1, t('validation.academic_qualification_id.min')),
     // specification_id: yup
@@ -48,10 +51,16 @@ export const entityManagersSchema = yup.object({
     //     .min(1, t('validation.specification_id.min')),
     main_program_id: yup
         .number()
+        .required(t('validation.required'))
         .integer(t('validation.main_program_id.integer'))
         .min(1, t('validation.main_program_id.min')),
     major_id: yup
         .number()
+        .nullable()
+        .optional()
+        .transform((value, originalValue) => 
+            originalValue === '' || originalValue === null || originalValue === undefined || isNaN(originalValue) ? null : value
+        )
         .integer(t('validation.major_id.integer'))
         .min(1, t('validation.major_id.min')),
     national_id: yup
@@ -70,6 +79,7 @@ export const entityManagersSchema = yup.object({
     years_of_experience: yup
         .string()
         .nullable()
+        .transform((value) => (value === '' ? null : value))
         .optional(),
     manager_phone: yup
         .string()
@@ -79,8 +89,13 @@ export const entityManagersSchema = yup.object({
     memorization_amount: yup
         .string()
         .nullable()
+        .transform((value) => (value === '' ? null : value))
         .optional(),
-    address: yup.string().nullable().optional(),
+    address: yup
+        .string()
+        .nullable()
+        .transform((value) => (value === '' ? null : value))
+        .optional(),
     files: yup.array().of(yup.mixed()).nullable().optional(),
     profile_image: yup.mixed().nullable().optional()
 });
