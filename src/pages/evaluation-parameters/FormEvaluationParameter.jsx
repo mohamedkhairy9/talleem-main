@@ -7,7 +7,7 @@ import { getNestedError } from '@/utils/helpers/getNestedError';
 import { generateOptions } from '@/utils/helpers/global.fns';
 import useLocale from '@/utils/hooks/global/useLocale';
 import i18next from 'i18next';
-import { roleOptions, evaluationSystemOptions, simpleFields, criteriaFields } from './configs';
+import { roleOptions, evaluationSystemOptions, simpleFields, criteriaFields, dashboardOptions, evaluationForOptions } from './configs';
 import { enabledDisabledOptions } from '@/utils/constants/options';
 import { isFieldRequired } from '@/utils/helpers/schemaHelpers';
 
@@ -54,13 +54,23 @@ export default function FormEvaluationParameter({
     // Watch criteria to handle dynamic fields
     const criteria = watch('criteria') || initialFormData.criteria || [{ criteria_name: { en: '', ar: '' }, degree: '' }];
 
-    // Transform role options for select display
-    const roleSelectOptions = useMemo(() =>
-        roleOptions.map(role => ({
-            value: role.value,
-            label: role.label[currentLang],
-            id: role.value,
-            name: role.label[currentLang] // Add name for compatibility
+    // Transform dashboard options for select display
+    const dashboardSelectOptions = useMemo(() =>
+        dashboardOptions.map(option => ({
+            value: option.value,
+            label: option.label[currentLang],
+            id: option.value,
+            name: option.label[currentLang] // Add name for compatibility
+        }))
+        , [currentLang]);
+
+    // Transform evaluation for options for select display
+    const evaluationForSelectOptions = useMemo(() =>
+        evaluationForOptions.map(option => ({
+            value: option.value,
+            label: option.label[currentLang],
+            id: option.value,
+            name: option.label[currentLang] // Add name for compatibility
         }))
         , [currentLang]);
 
@@ -86,13 +96,13 @@ export default function FormEvaluationParameter({
 
     // Filter dashboards options - exclude evaluation_for value
     const dashboardsFilteredOptions = useMemo(() => {
-        return roleSelectOptions.filter(option => option.value !== evaluationFor);
-    }, [roleSelectOptions, evaluationFor]);
+        return dashboardSelectOptions.filter(option => option.value !== evaluationFor);
+    }, [dashboardSelectOptions, evaluationFor]);
 
-    // Filter receivers options - exclude evaluation_for value
+    // Filter receivers options - exclude evaluation_for value (use dashboard options for receivers)
     const receiversFilteredOptions = useMemo(() => {
-        return roleSelectOptions.filter(option => option.value !== evaluationFor);
-    }, [roleSelectOptions, evaluationFor]);
+        return dashboardSelectOptions.filter(option => option.value !== evaluationFor);
+    }, [dashboardSelectOptions, evaluationFor]);
 
     // Effect to clear evaluation_for from dashboards if it's selected
     // Only run when evaluationFor changes, not when selectedDashboards changes
@@ -164,27 +174,27 @@ export default function FormEvaluationParameter({
         console.log('Form data before transformation:', data);
 
         // Helper function to transform value to bilingual object
-        const toBilingualObject = (value) => {
-            const roleOption = roleOptions.find(r => r.value === value);
+        const toBilingualObject = (value, optionsArray) => {
+            const option = optionsArray.find(r => r.value === value);
             return {
                 en: value,
-                ar: roleOption?.label.ar || value
+                ar: option?.label.ar || value
             };
         };
 
         // Transform data to match API expectations
         const transformedData = {
             ...data,
-            evaluation_for: toBilingualObject(data.evaluation_for),
+            evaluation_for: toBilingualObject(data.evaluation_for, evaluationForOptions),
             evaluation_system: {
                 en: data.evaluation_system,
                 ar: evaluationSystemOptions.find(s => s.value === data.evaluation_system)?.label.ar || data.evaluation_system
             },
             dashboards: Array.isArray(data.dashboards)
-                ? data.dashboards.map(value => toBilingualObject(value))
+                ? data.dashboards.map(value => toBilingualObject(value, dashboardOptions))
                 : [],
             receivers: Array.isArray(data.receivers)
-                ? data.receivers.map(value => toBilingualObject(value))
+                ? data.receivers.map(value => toBilingualObject(value, dashboardOptions))
                 : []
         };
 
@@ -260,7 +270,7 @@ export default function FormEvaluationParameter({
                     label={t('validation.evaluation_for.label')}
                     name="evaluation_for"
                     disabled={viewMode}
-                    options={roleSelectOptions}
+                    options={evaluationForSelectOptions}
                     required={isFieldRequired(schema, "evaluation_for")}/>
 
                 {/* 5. Evaluation System */}

@@ -89,6 +89,70 @@ export const roleOptions = [
     }
 ];
 
+// Dashboard Options - Only: Entity, Teacher, Student, Branch Manager, General Administration
+export const dashboardOptions = [
+    {
+        value: 'entity',
+        label: {
+            en: 'Entity',
+            ar: 'الجهة'
+        }
+    },
+    {
+        value: 'teacher',
+        label: {
+            en: 'Teacher',
+            ar: 'المعلم'
+        }
+    },
+    {
+        value: 'student',
+        label: {
+            en: 'Student',
+            ar: 'الطالب'
+        }
+    },
+    {
+        value: 'branch-manager',
+        label: {
+            en: 'Branch Manager',
+            ar: 'مدير الفرع'
+        }
+    },
+    {
+        value: 'general-administration',
+        label: {
+            en: 'General Administration',
+            ar: 'الإدارة العامة'
+        }
+    }
+];
+
+// Evaluation For Options - Only: Entity, Teacher, Student
+export const evaluationForOptions = [
+    {
+        value: 'entity',
+        label: {
+            en: 'Entity',
+            ar: 'الجهة'
+        }
+    },
+    {
+        value: 'teacher',
+        label: {
+            en: 'Teacher',
+            ar: 'المعلم'
+        }
+    },
+    {
+        value: 'student',
+        label: {
+            en: 'Student',
+            ar: 'الطالب'
+        }
+    }
+];
+
 // Evaluation System Options
 export const evaluationSystemOptions = [
     { 
