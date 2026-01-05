@@ -15,6 +15,10 @@ export const evaluationParametersSchema = yup.object().shape({
         .number()
         .required('validation.program.required')
         .positive('validation.program.invalid'),
+    form_type: yup
+        .string()
+        .required('validation.form_type.required')
+        .oneOf(['general', 'exams', 'interviews'], 'validation.form_type.invalid'),
     evaluation_for: yup
         .string()
         .required('validation.evaluation_for.required')
@@ -35,12 +39,12 @@ export const evaluationParametersSchema = yup.object().shape({
         .integer('validation.pass_grade.integer'),
     dashboards: yup
         .array()
-        .of(yup.string().oneOf(['student', 'teacher', 'entity', 'branch-manager', 'general-administration']))
+        .of(yup.string().oneOf(['student', 'teacher', 'entity', 'branch-manager', 'admin-portal-branch', 'general-administration', 'admin-portal-main-administration']))
         .min(1, 'validation.dashboards.min')
         .required('validation.dashboards.required'),
     receivers: yup
         .array()
-        .of(yup.string().oneOf(['student', 'teacher', 'entity', 'branch-manager', 'general-administration']))
+        .of(yup.string().oneOf(['student', 'teacher', 'entity', 'branch-manager', 'admin-portal-branch', 'general-administration', 'admin-portal-main-administration']))
         .min(1, 'validation.receivers.min')
         .required('validation.receivers.required'),
     criteria: yup

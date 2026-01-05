@@ -213,6 +213,12 @@
             "placeholder": "Select evaluation system",
             "required": "Evaluation system is required"
         },
+        "form_type": {
+            "label": "Form Type",
+            "placeholder": "Select form type",
+            "required": "Form type is required",
+            "invalid": "Form type must be General, Exams, or Interviews"
+        },
         "session_mode_id": {
             "label": "Session Mode",
             "placeholder": "Select session mode",

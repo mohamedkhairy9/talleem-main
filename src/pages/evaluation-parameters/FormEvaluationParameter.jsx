@@ -7,7 +7,7 @@ import { getNestedError } from '@/utils/helpers/getNestedError';
 import { generateOptions } from '@/utils/helpers/global.fns';
 import useLocale from '@/utils/hooks/global/useLocale';
 import i18next from 'i18next';
-import { roleOptions, evaluationSystemOptions, simpleFields, criteriaFields, dashboardOptions, evaluationForOptions } from './configs';
+import { roleOptions, evaluationSystemOptions, simpleFields, criteriaFields, dashboardOptions, evaluationForOptions, formTypeOptions } from './configs';
 import { enabledDisabledOptions } from '@/utils/constants/options';
 import { isFieldRequired } from '@/utils/helpers/schemaHelpers';
 
@@ -32,6 +32,7 @@ export default function FormEvaluationParameter({
 
         return {
             ...oldData,
+            form_type: oldData.form_type?.en || oldData.form_type || '',
             evaluation_for: oldData.evaluation_for?.en || oldData.evaluation_for || '',
             evaluation_system: oldData.evaluation_system?.en || oldData.evaluation_system || '',
             dashboards: Array.isArray(oldData.dashboards)
@@ -81,6 +82,16 @@ export default function FormEvaluationParameter({
             label: system.label[currentLang],
             id: system.value,
             name: system.label[currentLang]
+        }))
+        , [currentLang]);
+
+    // Transform form type options for select display
+    const formTypeSelectOptions = useMemo(() =>
+        formTypeOptions.map(option => ({
+            value: option.value,
+            label: option.label[currentLang],
+            id: option.value,
+            name: option.label[currentLang]
         }))
         , [currentLang]);
 
@@ -185,6 +196,7 @@ export default function FormEvaluationParameter({
         // Transform data to match API expectations
         const transformedData = {
             ...data,
+            form_type: toBilingualObject(data.form_type, formTypeOptions),
             evaluation_for: toBilingualObject(data.evaluation_for, evaluationForOptions),
             evaluation_system: {
                 en: data.evaluation_system,
@@ -243,6 +255,20 @@ export default function FormEvaluationParameter({
                         disabled={viewMode}
                         required={isFieldRequired(schema, field.name)}/>
                 ))}
+
+                {/* 2.5. Form Type - Single Select */}
+                <InputRFH
+                    p="px-3 py-3"
+                    control={control}
+                    register={register}
+                    error={getNestedError(errors, 'form_type')}
+                    type="select"
+                    placeholder={t('validation.form_type.placeholder')}
+                    label={t('validation.form_type.label')}
+                    name="form_type"
+                    disabled={viewMode}
+                    options={formTypeSelectOptions}
+                    required={isFieldRequired(schema, "form_type")}/>
 
                 {/* 3. Dashboards (Multi-Select) - Filtered to exclude evaluation_for */}
                 <InputRFH

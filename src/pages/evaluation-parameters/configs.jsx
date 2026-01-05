@@ -89,7 +89,7 @@ export const roleOptions = [
     }
 ];
 
-// Dashboard Options - Only: Entity, Teacher, Student, Branch Manager, General Administration
+// Dashboard Options - Entity, Teacher, Student, Branch Manager, General Administration, Admin Portal/Branch, Admin Portal/Main administration
 export const dashboardOptions = [
     {
         value: 'entity',
@@ -120,10 +120,49 @@ export const dashboardOptions = [
         }
     },
     {
+        value: 'admin-portal-branch',
+        label: {
+            en: 'Admin Portal/Branch',
+            ar: 'البوابة الرئيسية / إدارة الفرع'
+        }
+    },
+    {
         value: 'general-administration',
         label: {
             en: 'General Administration',
             ar: 'الإدارة العامة'
+        }
+    },
+    {
+        value: 'admin-portal-main-administration',
+        label: {
+            en: 'Admin Portal/Main Administration',
+            ar: 'البوابة الرئيسية / الإدارة العامة'
+        }
+    }
+];
+
+// Form Type Options - General, Exams, Interviews
+export const formTypeOptions = [
+    {
+        value: 'general',
+        label: {
+            en: 'General',
+            ar: 'عام'
+        }
+    },
+    {
+        value: 'exams',
+        label: {
+            en: 'Exams',
+            ar: 'اختبارات'
+        }
+    },
+    {
+        value: 'interviews',
+        label: {
+            en: 'Interviews',
+            ar: 'مقابلات'
         }
     }
 ];
