@@ -552,7 +552,6 @@ export default function FormStudent({
                                                 name={field.name}
                                                 accept={field.accept}
                                                 required={isConditionallyRequired(field)}
-                                                defaultValue={oldData?.profile_picture || field.defaultValue}
                                                 onChange={e => {
                                                     const file = e.target.files?.[0];
                                                     if (file) {
