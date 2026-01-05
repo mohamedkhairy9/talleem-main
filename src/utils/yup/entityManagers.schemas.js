@@ -38,7 +38,8 @@ export const entityManagersSchema = yup.object({
         .min(1, t('validation.city_id.min')),
     academic_qualification_id: yup
         .number()
-        .required(t('validation.required'))
+        .nullable()
+        .optional()
         .integer(t('validation.academic_qualification_id.integer'))
         .min(1, t('validation.academic_qualification_id.min')),
     // specification_id: yup
@@ -68,15 +69,18 @@ export const entityManagersSchema = yup.object({
         .required(t('validation.date_of_birth.required')),
     years_of_experience: yup
         .string()
-        .required('validation.required'),
+        .nullable()
+        .optional(),
     manager_phone: yup
         .string()
         .required(t('validation.required'))
         .matches(/^[+]?[0-9]+$/, t('validation.phone.invalid')),
     manager_email: yup.string().required(t('validation.required')).email(t('validation.email.invalid')),
     memorization_amount: yup
-        .string().optional(),
-        address: yup.string().optional(),
+        .string()
+        .nullable()
+        .optional(),
+    address: yup.string().nullable().optional(),
     files: yup.array().of(yup.mixed()).nullable().optional(),
     profile_image: yup.mixed().nullable().optional()
 });

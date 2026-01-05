@@ -13,7 +13,7 @@ export const employeesSchema = yup.object({
     branch_id: optionalSelectSchema,
     entity_id: optionalSelectSchema,
     nationality_id: selectSchema,
-    academic_qualification_id: selectSchema,
+    academic_qualification_id: yup.number().nullable().optional().integer(),
     // specification_id: selectSchema,
     major_id: yup
         .number()
@@ -54,7 +54,8 @@ export const employeesSchema = yup.object({
     years_of_experience: yup.string().optional().nullable(),
     address: yup
         .string()
-        .required(t('validation.required'))
+        .nullable()
+        .optional()
         .min(5, t('validation.address.min')),
     status: yup.boolean().required(t('validation.required')),
     profile_picture: yup.mixed().optional().nullable(),

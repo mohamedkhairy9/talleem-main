@@ -107,7 +107,8 @@ export const teachersSchema = yup.object({
 
     academic_qualification_id: yup
         .number()
-        .required(t('validation.required'))
+        .nullable()
+        .optional()
         .integer(t('validation.academic_qualification_id.integer'))
         .min(1, t('validation.academic_qualification_id.min')),
 
@@ -115,7 +116,8 @@ export const teachersSchema = yup.object({
 
     years_of_experience: yup
         .number()
-        .required(t('validation.required'))
+        .nullable()
+        .optional()
         .integer(t('validation.years_of_experience.integer'))
         .min(0, t('validation.years_of_experience.min')),
 
@@ -144,7 +146,8 @@ export const teachersSchema = yup.object({
 
     address: yup
         .string()
-        .required(t('validation.required'))
+        .nullable()
+        .optional()
         .min(5, t('validation.address.min')),
 
     files: yup.array().of(yup.mixed()).nullable().optional(),

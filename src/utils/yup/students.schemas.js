@@ -134,15 +134,7 @@ export const studentsSchema = yup.object({
     school_name: yup
         .string()
         .nullable()
-        .when('main_program_id', {
-            is: value => Number(value) === 2,
-            then: schema =>
-                schema
-                    .required(t('validation.required'))
-                    .min(2, t('validation.school_name.min'))
-                    .max(100, t('validation.school_name.max')),
-            otherwise: schema => schema.nullable().optional()
-        }),
+        .optional(),
     
     city_id: yup
         .number()
@@ -278,19 +270,12 @@ export const studentsSchema = yup.object({
     academic_level_id: yup
         .number()
         .nullable()
-        .when('main_program_id', {
-            is: value => Number(value) === 2,
-            then: schema =>
-                schema
-                    .required(t('validation.required'))
-                    .integer(t('validation.academic_level_id.integer'))
-                    .min(1, t('validation.academic_level_id.min')),
-            otherwise: schema => schema.nullable().optional()
-        }),
+        .optional(),
     
     specification_id: yup
         .number()
-        .required(t('validation.required'))
+        .nullable()
+        .optional()
         .integer(t('validation.specification_id.integer'))
         .min(1, t('validation.specification_id.min')),
     

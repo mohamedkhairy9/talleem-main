@@ -120,7 +120,12 @@ export const entitiesSchema = yup.object({
                 .integer(t('validation.nationality_id.integer'))
                 .min(1, t('validation.nationality_id.min')),
             city_id: selectSchema,
-            academic_qualification_id: selectSchema,
+            academic_qualification_id: yup
+                .number()
+                .nullable()
+                .optional()
+                .integer(t('validation.academic_qualification_id.integer'))
+                .min(1, t('validation.academic_qualification_id.min')),
             specification_id: selectSchema,
             date_of_birth: yup
                 .string()
