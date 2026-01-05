@@ -89,7 +89,8 @@ export const teachersSchema = yup.object({
 
     major_id: yup
         .number()
-        .required(t('validation.required'))
+        .nullable()
+        .optional()
         .integer(t('validation.major_id.integer'))
         .min(1, t('validation.major_id.min')),
 
@@ -117,6 +118,9 @@ export const teachersSchema = yup.object({
     years_of_experience: yup
         .number()
         .nullable()
+        .transform((value, originalValue) => 
+            originalValue === '' || originalValue === null || originalValue === undefined || isNaN(originalValue) ? null : value
+        )
         .optional()
         .integer(t('validation.years_of_experience.integer'))
         .min(0, t('validation.years_of_experience.min')),
@@ -147,8 +151,12 @@ export const teachersSchema = yup.object({
     address: yup
         .string()
         .nullable()
+        .transform((value) => (value === '' ? null : value))
         .optional()
-        .min(5, t('validation.address.min')),
+        .test('min-length', t('validation.address.min'), function(value) {
+            if (!value || value === '') return true; // Allow empty values
+            return value.length >= 5;
+        }),
 
     files: yup.array().of(yup.mixed()).nullable().optional(),
 

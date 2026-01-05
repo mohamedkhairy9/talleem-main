@@ -135,7 +135,11 @@ export const entitiesSchema = yup.object({
             date_of_birth: yup
                 .string()
                 .required(t('validation.date_of_birth.required')),
-            address: yup.string().optional().nullable(),
+            address: yup
+                .string()
+                .nullable()
+                .transform((value) => (value === '' ? null : value))
+                .optional(),
             memorization_amount: yup.string().optional().nullable(),
             years_of_experience: yup.string().optional().nullable(),
             files: yup.array().of(yup.mixed()).nullable().optional(),

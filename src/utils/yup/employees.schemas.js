@@ -55,8 +55,12 @@ export const employeesSchema = yup.object({
     address: yup
         .string()
         .nullable()
+        .transform((value) => (value === '' ? null : value))
         .optional()
-        .min(5, t('validation.address.min')),
+        .test('min-length', t('validation.address.min'), function(value) {
+            if (!value || value === '') return true; // Allow empty values
+            return value.length >= 5;
+        }),
     status: yup.boolean().required(t('validation.required')),
     profile_picture: yup.mixed().optional().nullable(),
     files: yup.array().of(yup.mixed()).nullable().optional()
