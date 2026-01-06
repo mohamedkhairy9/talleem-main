@@ -15,10 +15,10 @@ export const evaluationParametersSchema = yup.object().shape({
         .number()
         .required('validation.program.required')
         .positive('validation.program.invalid'),
-    form_type: yup
+    model_type: yup
         .string()
-        .required('validation.form_type.required')
-        .oneOf(['general', 'exams', 'interviews'], 'validation.form_type.invalid'),
+        .required('validation.model_type.required')
+        .oneOf(['general evaluation', 'exams', 'interviews'], 'validation.model_type.invalid'),
     evaluation_for: yup
         .string()
         .required('validation.evaluation_for.required')
@@ -29,9 +29,14 @@ export const evaluationParametersSchema = yup.object().shape({
         .oneOf(['percentage', 'numeric'], 'validation.evaluation_system.invalid'),
     total_grade: yup
         .number()
-        .required('validation.total_grade.required')
-        .positive('validation.total_grade.positive')
-        .integer('validation.total_grade.integer'),
+        .when('evaluation_system', {
+            is: (value) => value !== 'percentage',
+            then: (schema) => schema
+                .required('validation.total_grade.required')
+                .positive('validation.total_grade.positive')
+                .integer('validation.total_grade.integer'),
+            otherwise: (schema) => schema.nullable().optional()
+        }),
     pass_grade: yup
         .number()
         .required('validation.pass_grade.required')
@@ -57,8 +62,8 @@ export const evaluationParametersSchema = yup.object().shape({
                 }),
                 degree: yup
                     .number()
-                    .required('validation.degree.required')
-                    .positive('validation.degree.positive')
+                    .nullable()
+                    .optional()
             })
         )
         .min(1, 'validation.criteria.min')

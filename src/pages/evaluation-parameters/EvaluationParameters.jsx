@@ -1,7 +1,7 @@
 import React from 'react';
 import { useEvaluationParametersQuery } from '@/api/hooks/useEvaluationParameters';
 import Table from '@/components/common/table/Table';
-import { evaluationParametersColumns, filtersDefaultValues } from './configs';
+import { evaluationParametersColumns, filtersDefaultValues, modelTypeOptions } from './configs';
 import useIsOpen from '@/utils/hooks/global/useIsOpen';
 import CreateEvaluationParameter from './CreateEvaluationParameter';
 import EditEvaluationParameter from './EditEvaluationParameter';
@@ -29,11 +29,19 @@ export default function EvaluationParameters() {
             program => program.id === item.main_program_id
         );
 
+        // Map model_type value to display label
+        let modelTypeDisplay = '';
+        if (item.model_type) {
+            const modelTypeOption = modelTypeOptions.find(opt => opt.value === item.model_type);
+            modelTypeDisplay = modelTypeOption?.label[i18next.language] || item.model_type;
+        }
+
         return {
             ...item,
             name_display: item.name?.[i18next.language],
             program_name: mainProgram?.name?.[i18next.language] || item.main_program_id,
-            evaluation_for_display: item.evaluation_for?.[i18next.language]
+            evaluation_for_display: item.evaluation_for?.[i18next.language],
+            model_type_display: modelTypeDisplay
         };
     });
 

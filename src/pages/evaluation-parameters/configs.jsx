@@ -21,6 +21,10 @@ export const evaluationParametersColumns = [
         header: 'table_headers.evaluation_for',
         cell: info => <Cell value={info.getValue()} />
     }),
+    columnHelper.accessor('model_type_display', {
+        header: 'table_headers.model_type',
+        cell: info => <Cell value={info.getValue()} />
+    }),
     columnHelper.accessor('total_grade', {
         header: 'table_headers.total_grade',
         cell: info => <Cell value={info.getValue()} />
@@ -89,7 +93,7 @@ export const roleOptions = [
     }
 ];
 
-// Dashboard Options - Entity, Teacher, Student, Branch Manager, General Administration, Admin Portal/Branch, Admin Portal/Main administration
+// Dashboard Options - Entity, Teacher, Student, Inspector, General Administration, Admin Portal/Branch, Admin Portal/Main administration
 export const dashboardOptions = [
     {
         value: 'entity',
@@ -115,8 +119,8 @@ export const dashboardOptions = [
     {
         value: 'branch-manager',
         label: {
-            en: 'Branch Manager',
-            ar: 'مدير الفرع'
+            en: 'Inspector',
+            ar: 'مشرف'
         }
     },
     {
@@ -126,13 +130,13 @@ export const dashboardOptions = [
             ar: 'البوابة الرئيسية / إدارة الفرع'
         }
     },
-    {
-        value: 'general-administration',
-        label: {
-            en: 'General Administration',
-            ar: 'الإدارة العامة'
-        }
-    },
+    // {
+    //     value: 'general-administration',
+    //     label: {
+    //         en: 'General Administration',
+    //         ar: 'الإدارة العامة'
+    //     }
+    // },
     {
         value: 'admin-portal-main-administration',
         label: {
@@ -149,6 +153,31 @@ export const formTypeOptions = [
         label: {
             en: 'General',
             ar: 'عام'
+        }
+    },
+    {
+        value: 'exams',
+        label: {
+            en: 'Exams',
+            ar: 'اختبارات'
+        }
+    },
+    {
+        value: 'interviews',
+        label: {
+            en: 'Interviews',
+            ar: 'مقابلات'
+        }
+    }
+];
+
+// Model Type Options - General Evaluation, Exams, Interviews
+export const modelTypeOptions = [
+    {
+        value: 'general evaluation',
+        label: {
+            en: 'General Evaluation',
+            ar: 'تقييم عام'
         }
     },
     {

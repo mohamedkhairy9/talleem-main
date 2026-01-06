@@ -219,6 +219,12 @@
             "required": "Form type is required",
             "invalid": "Form type must be General, Exams, or Interviews"
         },
+        "model_type": {
+            "label": "Model Type",
+            "placeholder": "Select model type",
+            "required": "Model type is required",
+            "invalid": "Model type must be General Evaluation, Exams, or Interviews"
+        },
         "session_mode_id": {
             "label": "Session Mode",
             "placeholder": "Select session mode",
@@ -305,7 +311,8 @@
         },
         "criteria": {
             "min": "At least one criterion is required",
-            "required": "Criteria are required"
+            "required": "Criteria are required",
+            "sum_equals_total_grade": "The sum of all criteria degrees must equal the total grade"
         },
         "is_active": {
             "label": "Active",
@@ -1418,6 +1425,7 @@
         "steps_count": "Steps Count",
         "name": "Name",
         "evaluation_for": "Evaluation For",
+        "model_type": "Model Type",
         "total_grade": "Total Grade",
         "role": "Role",
         "guard": "Guard",
@@ -1586,7 +1594,10 @@
         "basic_info": "Basic Information",
         "criteria": "Evaluation Criteria",
         "add_criteria": "Add Criteria",
-        "criterion": "Criterion"
+        "criterion": "Criterion",
+        "degrees_calculation": "Degrees Calculation",
+        "degrees_match": "Match",
+        "degrees_mismatch": "Mismatch"
     },
     "program": {
         "label": "Program",
