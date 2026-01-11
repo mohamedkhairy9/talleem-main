@@ -1,6 +1,8 @@
 import i18n from '@/i18n';
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
+import { useUserStore } from './user.store';
+import { axiosInstance } from '@/api/axiosInstance';
 
 const useLanguageStore = create(
     persist(
@@ -18,6 +20,28 @@ const useLanguageStore = create(
                     document.documentElement.lang = language;
 
                     set({ language, isRTL });
+
+                    // Update user locale on server
+                    const user = useUserStore.getState().user;
+                    if (user?.id) {
+                        try {
+                            // Send as x-www-form-urlencoded format
+                            const formData = new URLSearchParams();
+                            formData.append('locale', language);
+                            
+                            await axiosInstance.put(
+                                '/profile/locale',
+                                formData.toString(),
+                                {
+                                    headers: {
+                                        'Content-Type': 'application/x-www-form-urlencoded'
+                                    }
+                                }
+                            );
+                        } catch (error) {
+                            console.error('Error updating user locale:', error);
+                        }
+                    }
 
                     console.log('Language changed to:', language);
                 } catch (error) {
