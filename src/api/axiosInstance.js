@@ -60,7 +60,7 @@ axiosInstance.interceptors.response.use(
     error => {
         const normalizedError = {
             status: error.response?.status,
-            message: error.response?.data?.message || error.message,
+            message: error.response?.data?.message || error.response?.data?.error || error.message,
             data: error.response?.data
         };
 

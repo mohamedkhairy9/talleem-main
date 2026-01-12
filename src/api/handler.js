@@ -43,7 +43,13 @@ const getLocalizedMessage = (message, fallbackKey) => {
  * @returns {string} Localized error message
  */
 const getErrorMessage = (error) => {
-    const errorMessage = error?.message || error?.data?.message || error?.response?.data?.message;
+    // Check for error message in various locations and formats
+    const errorMessage = 
+        error?.message || 
+        error?.data?.message || 
+        error?.data?.error || 
+        error?.response?.data?.message || 
+        error?.response?.data?.error;
     
     if (errorMessage) {
         return getLocalizedMessage(errorMessage, 'api.errors.generic');
