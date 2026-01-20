@@ -65,14 +65,17 @@ export default function RequestTypes() {
                 }
                 setFilters={setFilters}
                 filters={filters}
+                enableAdd={false}
+                enableEdit={false}
+                enableDelete={false}
             />
-            {isOpen.add && <CreateRequestType onClose={toggle.add} />}
-            {isOpen.edit && (
+            {/* {isOpen.add && <CreateRequestType onClose={toggle.add} />} */}
+            {/* {isOpen.edit && (
                 <EditRequestType
                     onClose={toggle.edit}
                     oldData={getOriginalObject(isOpen.edit, formData)}
                 />
-            )}
+            )} */}
             {isOpen.view && (
                 <ViewRequestType
                     onClose={toggle.view}
