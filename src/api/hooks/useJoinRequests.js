@@ -1,12 +1,26 @@
+import { useQueryClient } from '@tanstack/react-query';
 import { joinRequestsService } from '../services/joinRequests.service';
 import { API_KEYS } from '../endpoints';
 import useCustomQuery from '../../utils/hooks/global/useCustomQuery';
+import useCustomMutation from '../../utils/hooks/global/useCustomMutation';
 
 export const useJoinRequestsQuery = (params = {}, options = {}) => {
     return useCustomQuery({
         queryKey: [API_KEYS.JOIN_REQUESTS, params],
         queryFn: () => joinRequestsService.getJoinRequests(params),
         ...options
+    });
+};
+
+export const useProcessJoinRequestStepMutation = () => {
+    const queryClient = useQueryClient();
+    return useCustomMutation({
+        mutationFn: ({ id, data }) => joinRequestsService.processStep(id, data),
+        onSuccess: () => {
+            queryClient.invalidateQueries({
+                queryKey: [API_KEYS.JOIN_REQUESTS]
+            });
+        }
     });
 };
 

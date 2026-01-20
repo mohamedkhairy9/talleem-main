@@ -405,7 +405,8 @@ export const API_URLS = {
         DELETE: id => `/join-request-forms/${id}`
     },
     JOIN_REQUESTS: {
-        LIST: '/join-requests'
+        LIST: '/join-requests',
+        PROCESS_STEP: id => `/join-requests/${id}/process-step`
     },
 };
 

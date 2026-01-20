@@ -9,8 +9,12 @@ import { joinRequestsColumns, filtersDefaultValues } from './configs';
 import useFiltering from '@/utils/hooks/global/useFiltering';
 import Filters from './Filters';
 import { useSearchParams } from 'react-router-dom';
+import useIsOpen from '@/utils/hooks/global/useIsOpen';
+import ViewJoinRequest from './ViewJoinRequest';
+import { getOriginalObject } from '@/utils/helpers/global.fns';
 
 export default function JoinRequests() {
+    const { isOpen, toggle } = useIsOpen();
     const [searchParams, setSearchParams] = useSearchParams();
     const { pagination, handleFilter, filters, setter, setFilters } =
         useFiltering(filtersDefaultValues);
@@ -126,7 +130,16 @@ export default function JoinRequests() {
                 }
                 setFilters={setFilters}
                 filters={filters}
+                toggleModals={toggle}
+                enableEdit={false}
+                enableDelete={false}
             />
+            {isOpen.view && (
+                <ViewJoinRequest
+                    onClose={toggle.view}
+                    oldData={getOriginalObject(isOpen.view, data?.data || [])}
+                />
+            )}
         </div>
     );
 }

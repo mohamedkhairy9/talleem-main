@@ -449,6 +449,20 @@
             "placeholder": "اختر الحالة",
             "invalid": "يجب أن تكون الحالة إما مفعلة  أو معطلة"
         },
+        "process_step": {
+            "status": {
+                "label": "الحالة",
+                "placeholder": "اختر الحالة"
+            },
+            "notes": {
+                "label": "ملاحظات",
+                "placeholder": "أدخل الملاحظات (اختياري)"
+            },
+            "files": {
+                "label": "الملفات",
+                "placeholder": "اختر الملفات (اختياري)"
+            }
+        },
         "with_excuse": {
             "label": "مع عذر",
             "placeholder": "اختر مع عذر"
@@ -1708,6 +1722,16 @@
         "add_field": "إضافة حقل",
         "field": "حقل",
         "no_fields": "لم تتم إضافة حقول بعد. انقر على 'إضافة حقل' لبدء بناء النموذج."
+    },
+    "join_requests": {
+        "view": "عرض طلب الانضمام",
+        "process_step": "معالجة الخطوة",
+        "process": "معالجة",
+        "request_info": "معلومات الطلب",
+        "request_details": "تفاصيل الطلب",
+        "submitted_data": "البيانات المقدمة",
+        "parent_info": "معلومات الوالد",
+        "qualification": "المؤهلات"
     },
     "warnings": {
         "create": "إضافة إنذار",

@@ -457,6 +457,20 @@
             "placeholder": "Select status",
             "invalid": "Status must be either enabled or disabled"
         },
+        "process_step": {
+            "status": {
+                "label": "Status",
+                "placeholder": "Select status"
+            },
+            "notes": {
+                "label": "Notes",
+                "placeholder": "Enter notes (optional)"
+            },
+            "files": {
+                "label": "Files",
+                "placeholder": "Select files (optional)"
+            }
+        },
         "with_excuse": {
             "label": "With Excuse",
             "placeholder": "Select with excuse"
@@ -1578,6 +1592,16 @@
         "add_field": "Add Field",
         "field": "Field",
         "no_fields": "No fields added yet. Click 'Add Field' to start building your form."
+    },
+    "join_requests": {
+        "view": "View Join Request",
+        "process_step": "Process Step",
+        "process": "Process",
+        "request_info": "Request Information",
+        "request_details": "Request Details",
+        "submitted_data": "Submitted Data",
+        "parent_info": "Parent Information",
+        "qualification": "Qualification"
     },
     "warnings": {
         "create": "Add Warning",
