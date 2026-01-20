@@ -130,29 +130,47 @@ export default function ViewJoinRequest({ onClose, oldData }) {
 
         const isNested = level > 0;
         
+        // Filter out null, undefined, and empty arrays
+        const filteredEntries = Object.entries(data).filter(([key, value]) => {
+            // Skip null or undefined
+            if (value === null || value === undefined) return false;
+            
+            // Skip empty arrays
+            if (Array.isArray(value) && value.length === 0) return false;
+            
+            // For nested objects, check if they have any valid entries recursively
+            if (isNestedObject(value)) {
+                // Check if nested object has any non-null, non-empty entries
+                const hasValidEntries = Object.values(value).some(v => {
+                    if (v === null || v === undefined) return false;
+                    if (Array.isArray(v) && v.length === 0) return false;
+                    if (typeof v === 'object' && !Array.isArray(v) && Object.keys(v).length === 0) return false;
+                    return true;
+                });
+                return hasValidEntries;
+            }
+            
+            return true;
+        });
+
+        // If no valid entries after filtering, return null
+        if (filteredEntries.length === 0) return null;
+        
         return (
             <div className={isNested ? "grid grid-cols-1 md:grid-cols-2 gap-4 p-4 bg-gray-50 rounded-lg" : "grid grid-cols-1 md:grid-cols-2 gap-4"}>
-                {Object.entries(data).map(([key, value]) => {
-                    // Skip if value is null/undefined
-                    if (value === null || value === undefined) {
-                        return (
-                            <div key={key}>
-                                <label className="block text-sm font-medium text-gray-700 mb-1">
-                                    {formatKey(key)}
-                                </label>
-                                <div className="text-sm text-gray-900">-</div>
-                            </div>
-                        );
-                    }
-
+                {filteredEntries.map(([key, value]) => {
                     // Handle nested objects
                     if (isNestedObject(value)) {
+                        const nestedContent = renderSubmittedData(value, level + 1);
+                        // Only render if nested content has valid entries
+                        if (!nestedContent) return null;
+                        
                         return (
                             <div key={key} className="md:col-span-2">
                                 <h4 className="text-md font-semibold text-gray-800 mb-3 mt-2">
                                     {formatKey(key)}
                                 </h4>
-                                {renderSubmittedData(value, level + 1)}
+                                {nestedContent}
                             </div>
                         );
                     }
