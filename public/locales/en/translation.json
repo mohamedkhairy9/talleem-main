@@ -327,6 +327,10 @@
             "required": "Status is required",
             "placeholder": "Select active"
         },
+        "include_attachments": {
+            "label": "Include Attachments",
+            "placeholder": "Select to include attachments"
+        },
         "description": {
             "en_min": "English description must be at least 10 characters",
             "ar_min": "Arabic description must be at least 10 characters",

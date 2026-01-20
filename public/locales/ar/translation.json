@@ -320,6 +320,10 @@
             "required": "الحالة مطلوبة",
             "placeholder": "اختر الحالة"
         },
+        "include_attachments": {
+            "label": "تضمين المرفقات",
+            "placeholder": "اختر لتضمين المرفقات"
+        },
         "entity_name": {
             "label": {
                 "en": "اسم الجهة بالإنجليزية",

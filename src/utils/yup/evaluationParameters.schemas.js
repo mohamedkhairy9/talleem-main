@@ -68,5 +68,6 @@ export const evaluationParametersSchema = yup.object().shape({
         )
         .min(1, 'validation.criteria.min')
         .required('validation.criteria.required'),
-    is_active: yup.boolean().required('validation.is_active.required')
+    is_active: yup.boolean().required('validation.is_active.required'),
+    include_attachments: yup.boolean().nullable().optional()
 });

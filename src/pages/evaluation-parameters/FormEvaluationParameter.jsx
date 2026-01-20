@@ -8,7 +8,7 @@ import { generateOptions } from '@/utils/helpers/global.fns';
 import useLocale from '@/utils/hooks/global/useLocale';
 import i18next from 'i18next';
 import { roleOptions, evaluationSystemOptions, simpleFields, criteriaFields, dashboardOptions, evaluationForOptions, modelTypeOptions } from './configs';
-import { enabledDisabledOptions } from '@/utils/constants/options';
+import { enabledDisabledOptions, yesNoOptions } from '@/utils/constants/options';
 import { isFieldRequired } from '@/utils/helpers/schemaHelpers';
 import ModalContent from '@/components/common/form/ModalContent';
 import ModalFooter from '@/components/common/form/ModalFooter';
@@ -28,6 +28,7 @@ export default function FormEvaluationParameter({
     const initialFormData = useMemo(() => {
         if (!oldData) return {
             is_active: true,
+            include_attachments: false,
             pass_grade: '',
             criteria: [{ criteria_name: { en: '', ar: '' }, degree: '' }]
         };
@@ -132,6 +133,16 @@ export default function FormEvaluationParameter({
             label: option.label[currentLang], // Extract current language
             id: option.value,
             name: option.label[currentLang] // Add name for compatibility
+        }));
+    }, [currentLang]);
+
+    // Transform yes/no options for include_attachments
+    const yesNoSelectOptions = useMemo(() => {
+        return yesNoOptions.map(option => ({
+            value: option.value,
+            label: option.label[currentLang],
+            id: option.value,
+            name: option.label[currentLang]
         }));
     }, [currentLang]);
 
@@ -447,6 +458,20 @@ export default function FormEvaluationParameter({
                     disabled={viewMode}
                     options={receiversFilteredOptions}
                     required={isFieldRequired(schema, "receivers")}/>
+
+                {/* Include Attachments - Yes/No Select */}
+                <InputRFH
+                    p="px-3 py-3"
+                    control={control}
+                    register={register}
+                    error={getNestedError(errors, 'include_attachments')}
+                    type="select"
+                    placeholder={t('validation.include_attachments.placeholder')}
+                    label={t('validation.include_attachments.label')}
+                    name="include_attachments"
+                    disabled={viewMode}
+                    options={yesNoSelectOptions}
+                />
 
                 {/* 10. Active - Using transformed statusOptions */}
                 <InputRFH
