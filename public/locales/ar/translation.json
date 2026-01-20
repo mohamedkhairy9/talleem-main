@@ -18,6 +18,14 @@
             "label": "رقم التصريح",
             "placeholder": "أدخل رقم التصريح"
         },
+        "entry_type": {
+            "label": "نوع الإدخال",
+            "placeholder": "اختر نوع الإدخال",
+            "options": {
+                "new_with_approval": "جديد بالموافقة",
+                "active_with_license": "نشط برخصة"
+            }
+        },
         "file": {
             "label": "الملف",
             "placeholder": "ارفع الملف"

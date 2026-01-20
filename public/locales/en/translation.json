@@ -18,6 +18,14 @@
             "label": "License Number",
             "placeholder": "Enter license number"
         },
+        "entry_type": {
+            "label": "Entry Type",
+            "placeholder": "Select entry type",
+            "options": {
+                "new_with_approval": "New with Approval",
+                "active_with_license": "Active with License"
+            }
+        },
         "entity_manager_address": {
             "label": "Entity Living Address",
             "placeholder": "Enter the living address"

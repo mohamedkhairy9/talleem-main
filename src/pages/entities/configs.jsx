@@ -60,14 +60,6 @@ export const entitiesFields = [
         viewMode: true
     },
     {
-        name: 'license_number',
-        label: 'validation.license_number.label',
-        type: 'text',
-        placeholder: 'validation.license_number.placeholder',
-        editMode: true,
-        viewMode: true
-    },
-    {
         name: 'status',
         label: 'validation.status.label',
         type: 'select',
@@ -75,6 +67,24 @@ export const entitiesFields = [
         defaultValue: 'active',
         editMode: true,
         viewMode: true
+    },
+    {
+        name: 'entry_type',
+        label: 'validation.entry_type.label',
+        type: 'select',
+        placeholder: 'validation.entry_type.placeholder',
+        editMode: true,
+        viewMode: true
+    },
+    {
+        name: 'license_number',
+        label: 'validation.license_number.label',
+        type: 'text',
+        placeholder: 'validation.license_number.placeholder',
+        editMode: true,
+        viewMode: true,
+        conditional: true,
+        showWhen: { entry_type: 'active_with_license' }
     },
     {
         name: 'registration_date',

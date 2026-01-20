@@ -79,7 +79,18 @@ export const entitiesSchema = yup.object({
     lecture_halls_count: yup.string().optional().nullable(),
     files: yup.array().of(yup.mixed()).nullable().optional(),
     registration_date: yup.string().required(t('validation.required')),
-    license_number: yup.string().required(t('validation.required')),
+    entry_type: yup
+        .string()
+        .required(t('validation.required'))
+        .oneOf(['new_with_approval', 'active_with_license'], t('validation.required')),
+    license_number: yup
+        .string()
+        .nullable()
+        .when('entry_type', {
+            is: 'active_with_license',
+            then: schema => schema.required(t('validation.required')),
+            otherwise: schema => schema.nullable().optional()
+        }),
     manager: yup
         .object({
             name: yup

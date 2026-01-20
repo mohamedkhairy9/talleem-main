@@ -107,6 +107,7 @@ export default function FormEntity({
 
     const cityId = watch('city_id');
     const mainProgramId = watch('main_program_id');
+    const entryType = watch('entry_type');
     const educationClassification = watch(
         'education_program_entity_type_classification'
     );
@@ -405,11 +406,19 @@ export default function FormEntity({
 
         // Check conditional fields
         if (field.conditional && field.showWhen) {
-            const condition = field.showWhen.main_program_id;
-            if (Array.isArray(condition)) {
-                return condition.includes(mainProgramId);
-            } else {
-                return mainProgramId === condition;
+            // Handle main_program_id condition
+            if (field.showWhen.main_program_id !== undefined) {
+                const condition = field.showWhen.main_program_id;
+                if (Array.isArray(condition)) {
+                    return condition.includes(mainProgramId);
+                } else {
+                    return mainProgramId === condition;
+                }
+            }
+            
+            // Handle entry_type condition
+            if (field.showWhen.entry_type !== undefined) {
+                return entryType === field.showWhen.entry_type;
             }
         }
 

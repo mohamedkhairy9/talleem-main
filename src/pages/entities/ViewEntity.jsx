@@ -12,9 +12,15 @@ import {
 
 const statusOptions = [
     { label: { ar: 'نشط', en: 'Active' }, value: 'active' },
+    { label: { ar: 'غير نشط', en: 'Inactive' }, value: 'inactive' },
     { label: { ar: 'معلق', en: 'Suspended' }, value: 'suspended' },
     { label: { ar: 'ملغاة', en: 'Canceled' }, value: 'canceled' },
     { label: { ar: 'غير مصرح', en: 'Unauthorized' }, value: 'unauthorized' }
+];
+
+const entryTypeOptions = [
+    { label: { ar: 'جديد بالموافقة', en: 'New with Approval' }, value: 'new_with_approval' },
+    { label: { ar: 'نشط برخصة', en: 'Active with License' }, value: 'active_with_license' }
 ];
 
 export default function ViewEntity({ onClose, oldData }) {
@@ -64,7 +70,8 @@ export default function ViewEntity({ onClose, oldData }) {
                     academic_level_id: academicLevelsData?.data,
                     specification_id: specificationsData?.data,
                     gender: genderOptions,
-                    session_mode_id: sessionModesData?.data, 
+                    session_mode_id: sessionModesData?.data,
+                    entry_type: entryTypeOptions,
                     'manager.city_id': citiesData?.data,
                     'manager.nationality_id': nationalitiesData?.data,
                     'manager.academic_qualification_id':

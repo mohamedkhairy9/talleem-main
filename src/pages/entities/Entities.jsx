@@ -65,6 +65,7 @@ export default function Entities() {
         lecture_halls_count: item.lecture_halls_count ?? 0,
         activity_ids: item.activities?.map(activity => activity.id),
         registration_date: item.registration_date,
+        entry_type: item.entry_type,
         license_number: item.license_number,
         files: item.files,
         latitude: item.latitude,
