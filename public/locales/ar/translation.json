@@ -1267,7 +1267,8 @@
         "registration_requests": "طلبات التسجيل",
         "request_types": "أنواع الطلبات",
         "phases": "المراحل",
-        "join_request_forms": "نماذج طلبات الانضمام"
+        "join_request_forms": "نماذج طلبات الانضمام",
+        "join_requests": "طلبات الانضمام"
     },
     "table_titles": {
         "notification_templates": "قوالب الإشعارات",
@@ -1321,7 +1322,8 @@
         "inspector_assignments": "إسناد المشرفين على الجهات",
         "request_types": "أنواع الطلبات",
         "phases": "المراحل",
-        "join_request_forms": "نماذج طلبات الانضمام"
+        "join_request_forms": "نماذج طلبات الانضمام",
+        "join_requests": "طلبات الانضمام"
     },
     "table": {
         "actions": "الإجراءات",
@@ -1428,6 +1430,8 @@
         "response": "الاستجابة",
         "description": "الوصف",
         "status": "الحالة",
+        "form": "النموذج",
+        "current_phase": "المرحلة الحالية",
         "with_excuse": "مع عذر",
         "email": "البريد الإلكتروني",
         "phone": "الهاتف",

@@ -1299,7 +1299,8 @@
         "registration_requests": "Registration Requests",
         "request_types": "Request Types",
         "phases": "Phases",
-        "join_request_forms": "Join Request Forms"
+        "join_request_forms": "Join Request Forms",
+        "join_requests": "Join Requests"
     },
     "table_titles": {
         "notification_templates": "Notification Templates",
@@ -1353,7 +1354,8 @@
         "inspector_assignments": "Inspector Assignments to Entities",
         "request_types": "Request Types",
         "phases": "Phases",
-        "join_request_forms": "Join Request Forms"
+        "join_request_forms": "Join Request Forms",
+        "join_requests": "Join Requests"
     },
     "table": {
         "actions": "Actions",
@@ -1459,6 +1461,8 @@
         "response": "Response",
         "description": "Description",
         "status": "Status",
+        "form": "Form",
+        "current_phase": "Current Phase",
         "with_excuse": "With Excuse",
         "email": "Email",
         "phone": "Phone",

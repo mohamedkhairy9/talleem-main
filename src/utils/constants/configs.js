@@ -285,6 +285,11 @@ export const sideMenuTabs = [
                 titleKey: 'sidebar.join_request_forms',
                 path: '/join-request-forms',
                 icon: VscDebugBreakpointLog
+            },
+            {
+                titleKey: 'sidebar.join_requests',
+                path: '/join-requests',
+                icon: VscDebugBreakpointLog
             }
         ]
     },

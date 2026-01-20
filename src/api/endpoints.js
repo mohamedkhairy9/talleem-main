@@ -404,6 +404,9 @@ export const API_URLS = {
         UPDATE: id => `/join-request-forms/${id}`,
         DELETE: id => `/join-request-forms/${id}`
     },
+    JOIN_REQUESTS: {
+        LIST: '/join-requests'
+    },
 };
 
 export const API_KEYS = {
@@ -472,5 +475,6 @@ export const API_KEYS = {
     REQUEST_TYPES: 'request-types',
     PHASES: 'phases',
     STEPS: 'steps',
-    JOIN_REQUEST_FORMS: 'join-request-forms'
+    JOIN_REQUEST_FORMS: 'join-request-forms',
+    JOIN_REQUESTS: 'join-requests'
 };
