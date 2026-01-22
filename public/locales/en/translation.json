@@ -18,6 +18,23 @@
             "label": "License Number",
             "placeholder": "Enter license number"
         },
+        "license_image": {
+            "label": "License Image",
+            "placeholder": "Upload license image",
+            "must_be_file": "The license image field must be a file.",
+            "file_type": "The license image field must be a file of type: jpg, jpeg, png, pdf."
+        },
+        "license_issue_date": {
+            "label": "License Issue Date",
+            "placeholder": "Select license issue date",
+            "past_or_today": "License issue date must be today or in the past"
+        },
+        "license_expiration_date": {
+            "label": "License Expiration Date",
+            "placeholder": "Select license expiration date",
+            "future": "License expiration date must be a future date",
+            "after_issue": "License expiration date must be after the issue date"
+        },
         "entry_type": {
             "label": "Entry Type",
             "placeholder": "Select entry type",

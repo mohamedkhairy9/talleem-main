@@ -77,6 +77,22 @@ export default function FormEntity({
             ...submitData
         } = data;
 
+        // Handle license_image - convert array to single file
+        if (submitData.license_image) {
+            // If it's an array, get the first file
+            if (Array.isArray(submitData.license_image) && submitData.license_image.length > 0) {
+                // Filter to get only File objects (not URL strings)
+                const fileObjects = submitData.license_image.filter(file => file instanceof File);
+                submitData.license_image = fileObjects.length > 0 ? fileObjects[0] : null;
+            }
+            // If it's a FileList, get the first file
+            else if (submitData.license_image instanceof FileList && submitData.license_image.length > 0) {
+                submitData.license_image = submitData.license_image[0];
+            }
+            // If it's already a single File, keep it as is
+            // If it's a string (existing file URL), keep it as is
+        }
+
         mutate(
             {
                 ...submitData,

@@ -179,10 +179,11 @@ export default function FormStudent({
     }, [entityId, entities]);
 
     // Filter branches based on selected city
-    const filteredBranches = useMemo(() => {
-        if (!city || !options.branch_id) return [];
-        return options.branch_id.filter(branch => branch.city?.id === Number(city));
-    }, [city, options.branch_id]);
+    // COMMENTED OUT: Branch filtering by city removed - may revert if needed
+    // const filteredBranches = useMemo(() => {
+    //     if (!city || !options.branch_id) return [];
+    //     return options.branch_id.filter(branch => branch.city?.id === Number(city));
+    // }, [city, options.branch_id]);
 
     // When entity is selected, auto-fill category and classification (CREATE mode only)
     useEffect(() => {
@@ -243,35 +244,31 @@ export default function FormStudent({
         }
     }, [mainProgramId, oldData?.main_program_id]);
 
-    // Reset branch and entity when city changes
-    useEffect(() => {
-        if (city && city !== oldData?.city_id) {
-            setValue('branch_id', '');
-            setValue('entity_id', '');
-            setValue('entity_category_id', '');
-            setValue('education_program_entity_type_classification', '');
-            setValue('memorization_program_entity_type', '');
-            setValue('memorization_program_entity_type_id', '');
-        }
-    }, [city, oldData?.city_id]);
+    // Reset branch when city changes (entities are not filtered by city)
+    // COMMENTED OUT: Branch reset on city change removed - branches are no longer filtered by city
+    // useEffect(() => {
+    //     if (city && city !== oldData?.city_id) {
+    //         setValue('branch_id', '');
+    //     }
+    // }, [city, oldData?.city_id, setValue]);
 
-    // Reset entity when branch changes (only if city hasn't changed)
+    // Reset entity when branch changes
     useEffect(() => {
-        if (branchId && branchId !== oldData?.branch_id && city === oldData?.city_id) {
+        if (branchId && branchId !== oldData?.branch_id) {
             setValue('entity_id', '');
             setValue('entity_category_id', '');
             setValue('education_program_entity_type_classification', '');
             setValue('memorization_program_entity_type', '');
             setValue('memorization_program_entity_type_id', '');
         }
-    }, [branchId, city, oldData?.branch_id, oldData?.city_id]);
+    }, [branchId, oldData?.branch_id, setValue]);
 
     // Enhanced options with filtered/dynamic data
     const enhancedOptions = useMemo(() => ({
         ...options,
         entity_id: entities,
-        branch_id: filteredBranches
-    }), [options, entities, filteredBranches]);
+        branch_id: options.branch_id // Using all branches instead of filteredBranches
+    }), [options, entities]);
 
     // Get display value for category (educational_entity_classification)
     const categoryDisplayValue = useMemo(() => {
@@ -478,8 +475,10 @@ export default function FormStudent({
                         }
 
                         // Special handling for branch field - disabled until city is selected
+                        // COMMENTED OUT: Branch disabled logic based on city removed - branches are no longer filtered by city
                         if (field.name === 'branch_id') {
-                            const isBranchDisabled = !city || viewMode;
+                            // const isBranchDisabled = !city || viewMode;
+                            const isBranchDisabled = viewMode; // Only disabled in view mode
 
                             return (
                                 <div key={field.name}>

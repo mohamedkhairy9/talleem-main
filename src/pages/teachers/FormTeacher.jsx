@@ -142,6 +142,7 @@ export default function FormTeacher({
     const branchId = watch('branch_id');
     const mainProgramId = watch('main_program_id');
     const entityId = watch('entity_id');
+    const entryType = watch('entry_type');
     const educationClassification = watch('education_program_entity_type_classification');
     const entityCategory = watch('entity_category_id');
 
@@ -209,10 +210,11 @@ export default function FormTeacher({
     }, [mainProgramId, branchId, options.entity_id, lang]);
 
     // Filter branches based on selected city
-    const filteredBranches = useMemo(() => {
-        if (!cityId || !options.branch_id) return [];
-        return options.branch_id.filter(branch => branch.city?.id === Number(cityId));
-    }, [cityId, options.branch_id]);
+    // COMMENTED OUT: Branch filtering by city removed - may revert if needed
+    // const filteredBranches = useMemo(() => {
+    //     if (!cityId || !options.branch_id) return [];
+    //     return options.branch_id.filter(branch => branch.city?.id === Number(cityId));
+    // }, [cityId, options.branch_id]);
 
     // When entity is selected, auto-fill category and classification (CREATE mode only)
     useEffect(() => {
@@ -256,33 +258,31 @@ export default function FormTeacher({
         }
     }, [mainProgramId, oldData?.main_program_id, setValue]);
 
-    // Reset branch and entity when city changes
-    useEffect(() => {
-        if (cityId && cityId !== oldData?.city_id) {
-            console.log('City changed, resetting branch and entity');
-            setValue('branch_id', '');
-            setValue('entity_id', '');
-            setValue('entity_category_id', '');
-            setValue('education_program_entity_type_classification', '');
-        }
-    }, [cityId, oldData?.city_id, setValue]);
+    // Reset branch when city changes (entities are not filtered by city)
+    // COMMENTED OUT: Branch reset on city change removed - branches are no longer filtered by city
+    // useEffect(() => {
+    //     if (cityId && cityId !== oldData?.city_id) {
+    //         console.log('City changed, resetting branch');
+    //         setValue('branch_id', '');
+    //     }
+    // }, [cityId, oldData?.city_id, setValue]);
 
-    // Reset entity when branch changes (only if city hasn't changed)
+    // Reset entity when branch changes
     useEffect(() => {
-        if (branchId && branchId !== oldData?.branch_id && cityId === oldData?.city_id) {
+        if (branchId && branchId !== oldData?.branch_id) {
             console.log('Branch changed, resetting entity');
             setValue('entity_id', '');
             setValue('entity_category_id', '');
             setValue('education_program_entity_type_classification', '');
         }
-    }, [branchId, cityId, oldData?.branch_id, oldData?.city_id, setValue]);
+    }, [branchId, oldData?.branch_id, setValue]);
 
     // Enhanced options with filtered data
     const enhancedOptions = useMemo(() => ({
         ...options,
         entity_id: filteredEntities,
-        branch_id: filteredBranches
-    }), [options, filteredEntities, filteredBranches]);
+        branch_id: options.branch_id // Using all branches instead of filteredBranches
+    }), [options, filteredEntities]);
 
     // Get display value for category
     const categoryDisplayValue = useMemo(() => {
@@ -360,6 +360,22 @@ export default function FormTeacher({
             }
         }
 
+        // Handle license_image - convert array to single file
+        if (submitData.license_image) {
+            // If it's an array, get the first file
+            if (Array.isArray(submitData.license_image) && submitData.license_image.length > 0) {
+                // Filter to get only File objects (not URL strings)
+                const fileObjects = submitData.license_image.filter(file => file instanceof File);
+                submitData.license_image = fileObjects.length > 0 ? fileObjects[0] : null;
+            }
+            // If it's a FileList, get the first file
+            else if (submitData.license_image instanceof FileList && submitData.license_image.length > 0) {
+                submitData.license_image = submitData.license_image[0];
+            }
+            // If it's already a single File, keep it as is
+            // If it's a string (existing file URL), keep it as is
+        }
+
         // In edit mode, filter out file fields that are links (not File objects)
         // The API only accepts actual File objects, not URLs/links
         if (editMode && submitData.files) {
@@ -430,11 +446,19 @@ export default function FormTeacher({
 
         // Check conditional fields
         if (field.conditional && field.showWhen) {
-            const condition = field.showWhen.main_program_id;
-            if (Array.isArray(condition)) {
-                return condition.includes(Number(mainProgramId));
-            } else {
-                return Number(mainProgramId) === condition;
+            // Handle main_program_id condition
+            if (field.showWhen.main_program_id !== undefined) {
+                const condition = field.showWhen.main_program_id;
+                if (Array.isArray(condition)) {
+                    return condition.includes(Number(mainProgramId));
+                } else {
+                    return Number(mainProgramId) === condition;
+                }
+            }
+            
+            // Handle entry_type condition
+            if (field.showWhen.entry_type !== undefined) {
+                return entryType === field.showWhen.entry_type;
             }
         }
 
@@ -493,8 +517,10 @@ export default function FormTeacher({
                     }
 
                     // Special handling for branch field - disabled until city is selected
+                    // COMMENTED OUT: Branch disabled logic based on city removed - branches are no longer filtered by city
                     if (field.name === 'branch_id') {
-                        const isBranchDisabled = !cityId || viewMode;
+                        // const isBranchDisabled = !cityId || viewMode;
+                        const isBranchDisabled = viewMode; // Only disabled in view mode
 
                         return (
                             <div key={field.name}>

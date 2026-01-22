@@ -13,6 +13,11 @@ import { useUsersQuery } from '@/api/hooks/useUsers';
 import Loader from '@/components/common/Loader';
 import { allData } from '@/utils/constants/global.constants';
 import { genderOptions, teacherStatusOptions } from '@/utils/constants/options';
+
+const entryTypeOptions = [
+    { label: { ar: 'جديد بالموافقة', en: 'New with Approval' }, value: 'new_with_approval' },
+    { label: { ar: 'نشط برخصة', en: 'Active with License' }, value: 'active_with_license' }
+];
 import { useEntitiesQuery } from '@/api/hooks/useEntities';
 import { useMemorizationProgramEntityTypesQuery } from '@/api/hooks/useMemorizationProgramEntityTypes';
 import { useMajorsQuery } from '@/api/hooks/useMajors';
@@ -87,7 +92,8 @@ export default function ViewTeacher({ onClose, oldData }) {
                     specification_id: specificationsData?.data,
                     city_id: citiesData?.data,
                     status: teacherStatusOptions,
-                    gender: genderOptions
+                    gender: genderOptions,
+                    entry_type: entryTypeOptions
                 }}
             />
         </Modal>

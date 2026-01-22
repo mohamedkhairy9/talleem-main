@@ -87,6 +87,38 @@ export const entitiesFields = [
         showWhen: { entry_type: 'active_with_license' }
     },
     {
+        name: 'license_image',
+        label: 'validation.license_image.label',
+        type: 'file',
+        placeholder: 'validation.license_image.placeholder',
+        editMode: true,
+        viewMode: true,
+        conditional: true,
+        showWhen: { entry_type: 'active_with_license' },
+        accept: 'image/*,.pdf,.PDF'
+    },
+    {
+        name: 'license_issue_date',
+        label: 'validation.license_issue_date.label',
+        type: 'date',
+        placeholder: 'validation.license_issue_date.placeholder',
+        editMode: true,
+        viewMode: true,
+        conditional: true,
+        showWhen: { entry_type: 'active_with_license' },
+        max: getTodayDate()
+    },
+    {
+        name: 'license_expiration_date',
+        label: 'validation.license_expiration_date.label',
+        type: 'date',
+        placeholder: 'validation.license_expiration_date.placeholder',
+        editMode: true,
+        viewMode: true,
+        conditional: true,
+        showWhen: { entry_type: 'active_with_license' }
+    },
+    {
         name: 'registration_date',
         label: 'validation.registration_date.label',
         type: 'date',
