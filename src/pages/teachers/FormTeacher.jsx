@@ -258,6 +258,18 @@ export default function FormTeacher({
         }
     }, [mainProgramId, oldData?.main_program_id, setValue]);
 
+    // Auto-set status based on entry_type
+    useEffect(() => {
+        if (entryType && !viewMode) {
+            if (entryType === 'active_with_license') {
+                setValue('status', 'active', { shouldValidate: false });
+            } else if (entryType === 'new_with_approval') {
+                // For teachers, use 'cancelled' as the inactive status
+                setValue('status', 'cancelled', { shouldValidate: false });
+            }
+        }
+    }, [entryType, viewMode, setValue]);
+
     // Reset branch when city changes (entities are not filtered by city)
     // COMMENTED OUT: Branch reset on city change removed - branches are no longer filtered by city
     // useEffect(() => {

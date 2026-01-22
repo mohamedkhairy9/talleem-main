@@ -82,12 +82,12 @@ export const entitiesSchema = yup.object({
     entry_type: yup
         .string()
         .required(t('validation.required'))
-        .oneOf(['new_with_approval', 'active_with_license'], t('validation.required')),
+        .oneOf(['new_with_approval', 'new_with_license'], t('validation.required')),
     license_number: yup
         .string()
         .nullable()
         .when('entry_type', {
-            is: 'active_with_license',
+            is: 'new_with_license',
             then: schema => schema.required(t('validation.required')),
             otherwise: schema => schema.nullable().optional()
         }),
@@ -95,7 +95,7 @@ export const entitiesSchema = yup.object({
         .mixed()
         .nullable()
         .when('entry_type', {
-            is: 'active_with_license',
+            is: 'new_with_license',
             then: schema => schema
                 .required(t('validation.required'))
                 .test('is-file', t('validation.license_image.must_be_file'), function(value) {
@@ -144,7 +144,7 @@ export const entitiesSchema = yup.object({
         .string()
         .nullable()
         .when('entry_type', {
-            is: 'active_with_license',
+            is: 'new_with_license',
             then: schema => schema
                 .required(t('validation.required'))
                 .test('is-valid-date', t('validation.invalid_date'), value => {
@@ -166,7 +166,7 @@ export const entitiesSchema = yup.object({
         .string()
         .nullable()
         .when('entry_type', {
-            is: 'active_with_license',
+            is: 'new_with_license',
             then: schema => schema
                 .test('is-valid-date', t('validation.invalid_date'), function(value) {
                     if (!value) return true; // Optional field

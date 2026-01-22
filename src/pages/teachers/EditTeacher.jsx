@@ -17,7 +17,7 @@ import { genderOptions, teacherStatusOptions } from '@/utils/constants/options';
 
 const entryTypeOptions = [
     { label: { ar: 'جديد بالموافقة', en: 'New with Approval' }, value: 'new_with_approval' },
-    { label: { ar: 'نشط برخصة', en: 'Active with License' }, value: 'active_with_license' }
+    { label: { ar: 'نشط برخصة', en: 'Active with License' }, value: 'new_with_license' }
 ];
 import { useMajorsQuery } from '@/api/hooks/useMajors';
 import { useEntitiesQuery } from '@/api/hooks/useEntities';

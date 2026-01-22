@@ -40,7 +40,7 @@
             "placeholder": "Select entry type",
             "options": {
                 "new_with_approval": "New with Approval",
-                "active_with_license": "Active with License"
+                "new_with_license": "Active with License"
             }
         },
         "entity_manager_address": {

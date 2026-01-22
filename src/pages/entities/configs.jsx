@@ -84,7 +84,7 @@ export const entitiesFields = [
         editMode: true,
         viewMode: true,
         conditional: true,
-        showWhen: { entry_type: 'active_with_license' }
+        showWhen: { entry_type: 'new_with_license' }
     },
     {
         name: 'license_image',
@@ -94,7 +94,7 @@ export const entitiesFields = [
         editMode: true,
         viewMode: true,
         conditional: true,
-        showWhen: { entry_type: 'active_with_license' },
+        showWhen: { entry_type: 'new_with_license' },
         accept: 'image/*,.pdf,.PDF'
     },
     {
@@ -105,7 +105,7 @@ export const entitiesFields = [
         editMode: true,
         viewMode: true,
         conditional: true,
-        showWhen: { entry_type: 'active_with_license' },
+        showWhen: { entry_type: 'new_with_license' },
         max: getTodayDate()
     },
     {
@@ -116,7 +116,7 @@ export const entitiesFields = [
         editMode: true,
         viewMode: true,
         conditional: true,
-        showWhen: { entry_type: 'active_with_license' }
+        showWhen: { entry_type: 'new_with_license' }
     },
     {
         name: 'registration_date',

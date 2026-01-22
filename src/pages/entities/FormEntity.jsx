@@ -284,6 +284,17 @@ export default function FormEntity({
         setValue
     ]);
 
+    // Auto-set status based on entry_type
+    useEffect(() => {
+        if (entryType && !viewMode) {
+            if (entryType === 'active_with_license') {
+                setValue('status', 'active', { shouldValidate: false });
+            } else if (entryType === 'new_with_approval') {
+                setValue('status', 'inactive', { shouldValidate: false });
+            }
+        }
+    }, [entryType, viewMode, setValue]);
+
     useEffect(() => {
         if ((cityId && cityId != oldData?.city_id) || !oldData?.city_id) {
             setValue('branch_id', '');

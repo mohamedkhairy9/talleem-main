@@ -22,7 +22,7 @@ const statusOptions = [
 
 const entryTypeOptions = [
     { label: { ar: 'جديد بالموافقة', en: 'New with Approval' }, value: 'new_with_approval' },
-    { label: { ar: 'نشط برخصة', en: 'Active with License' }, value: 'active_with_license' }
+    { label: { ar: 'نشط برخصة', en: 'Active with License' }, value: 'new_with_license' }
 ];
 
 export default function CreateEntity({ onClose }) {

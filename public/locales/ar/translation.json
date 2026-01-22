@@ -40,7 +40,7 @@
             "placeholder": "اختر نوع الإدخال",
             "options": {
                 "new_with_approval": "جديد بالموافقة",
-                "active_with_license": "نشط برخصة"
+                "new_with_license": "نشط برخصة"
             }
         },
         "file": {
