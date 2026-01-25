@@ -81,6 +81,48 @@ export const teachersFields = [
         viewMode: true
     },
     {
+        name: 'licence_number',
+        label: 'validation.licence_number.label',
+        type: 'text',
+        placeholder: 'validation.licence_number.placeholder',
+        editMode: true,
+        viewMode: true,
+        conditional: true,
+        showWhen: { entry_type: 'active_with_license' }
+    },
+    {
+        name: 'license_image',
+        label: 'validation.license_image.label',
+        type: 'file',
+        placeholder: 'validation.license_image.placeholder',
+        editMode: true,
+        viewMode: true,
+        conditional: true,
+        showWhen: { entry_type: 'active_with_license' },
+        accept: 'image/*,.pdf,.PDF'
+    },
+    {
+        name: 'license_issue_date',
+        label: 'validation.license_issue_date.label',
+        type: 'date',
+        placeholder: 'validation.license_issue_date.placeholder',
+        editMode: true,
+        viewMode: true,
+        conditional: true,
+        showWhen: { entry_type: 'active_with_license' },
+        max: getTodayDate()
+    },
+    {
+        name: 'license_expiration_date',
+        label: 'validation.license_expiration_date.label',
+        type: 'date',
+        placeholder: 'validation.license_expiration_date.placeholder',
+        editMode: true,
+        viewMode: true,
+        conditional: true,
+        showWhen: { entry_type: 'active_with_license' }
+    },
+    {
         name: 'main_program_id',
         label: 'validation.main_program_id.label',
         type: 'select',
@@ -106,6 +148,15 @@ export const teachersFields = [
         viewMode: true
     },
     {
+        name: 'entity_id',
+        label: 'validation.entity_id.label',
+        type: 'select',
+        placeholder: 'validation.entity_id.placeholder',
+        editMode: true,
+        viewMode: true
+    },
+
+    {
         name: 'education_program_entity_type_classification',
         label: 'validation.education_program_entity_type_classification.label',
         type: 'text',
@@ -127,14 +178,6 @@ export const teachersFields = [
         conditional: true,
         showWhen: { main_program_id: [1, 2] },
         readOnly: true
-    },
-    {
-        name: 'entity_id',
-        label: 'validation.entity_id.label',
-        type: 'select',
-        placeholder: 'validation.entity_id.placeholder',
-        editMode: true,
-        viewMode: true
     },
     {
         name: 'nationality_id',
@@ -204,48 +247,6 @@ export const teachersFields = [
         editMode: true,
         viewMode: true,
         max: getTodayDate()
-    },
-    {
-        name: 'licence_number',
-        label: 'validation.licence_number.label',
-        type: 'text',
-        placeholder: 'validation.licence_number.placeholder',
-        editMode: true,
-        viewMode: true,
-        conditional: true,
-        showWhen: { entry_type: 'active_with_license' }
-    },
-    {
-        name: 'license_image',
-        label: 'validation.license_image.label',
-        type: 'file',
-        placeholder: 'validation.license_image.placeholder',
-        editMode: true,
-        viewMode: true,
-        conditional: true,
-        showWhen: { entry_type: 'active_with_license' },
-        accept: 'image/*,.pdf,.PDF'
-    },
-    {
-        name: 'license_issue_date',
-        label: 'validation.license_issue_date.label',
-        type: 'date',
-        placeholder: 'validation.license_issue_date.placeholder',
-        editMode: true,
-        viewMode: true,
-        conditional: true,
-        showWhen: { entry_type: 'active_with_license' },
-        max: getTodayDate()
-    },
-    {
-        name: 'license_expiration_date',
-        label: 'validation.license_expiration_date.label',
-        type: 'date',
-        placeholder: 'validation.license_expiration_date.placeholder',
-        editMode: true,
-        viewMode: true,
-        conditional: true,
-        showWhen: { entry_type: 'active_with_license' }
     },
     {
         name: 'national_id',
