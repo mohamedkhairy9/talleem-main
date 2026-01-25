@@ -80,6 +80,10 @@ export default function FormTeacher({
 
     const [profileImagePreview, setProfileImagePreview] = useState(getInitialProfileImage());
     const [profileImageChanged, setProfileImageChanged] = useState(false);
+    const [licenseImagePreview, setLicenseImagePreview] = useState(
+        oldData?.license_image || null
+    );
+    const [licenseImageChanged, setLicenseImageChanged] = useState(false);
 
     // Update profile image preview when oldData changes (for view/edit mode)
     useEffect(() => {
@@ -93,6 +97,18 @@ export default function FormTeacher({
             }
         }
     }, [oldData?.profile_image, oldData?.profile_picture, profileImageChanged]);
+
+    // Update license image preview when oldData changes (for view/edit mode)
+    useEffect(() => {
+        if (!licenseImageChanged) {
+            const licenseImg = oldData?.license_image;
+            if (licenseImg && typeof licenseImg === 'string' && licenseImg.trim() !== '') {
+                setLicenseImagePreview(licenseImg);
+            } else {
+                setLicenseImagePreview(null);
+            }
+        }
+    }, [oldData?.license_image, licenseImageChanged]);
 
     // Extract entity type info
     const educationEntityTypeInfo = useMemo(() =>
@@ -372,20 +388,9 @@ export default function FormTeacher({
             }
         }
 
-        // Handle license_image - convert array to single file
-        if (submitData.license_image) {
-            // If it's an array, get the first file
-            if (Array.isArray(submitData.license_image) && submitData.license_image.length > 0) {
-                // Filter to get only File objects (not URL strings)
-                const fileObjects = submitData.license_image.filter(file => file instanceof File);
-                submitData.license_image = fileObjects.length > 0 ? fileObjects[0] : null;
-            }
-            // If it's a FileList, get the first file
-            else if (submitData.license_image instanceof FileList && submitData.license_image.length > 0) {
-                submitData.license_image = submitData.license_image[0];
-            }
-            // If it's already a single File, keep it as is
-            // If it's a string (existing file URL), keep it as is
+        // Remove license_image if not changed in edit mode
+        if (editMode && !licenseImageChanged) {
+            delete submitData.license_image;
         }
 
         // In edit mode, filter out file fields that are links (not File objects)
@@ -582,7 +587,7 @@ export default function FormTeacher({
 
                     // Determine column span
                     const isFullWidth = field.type === 'textarea' ||
-                        (field.type === 'file' && field.name !== 'profile_image');
+                        (field.type === 'file' && field.name !== 'profile_image' && field.name !== 'license_image');
 
                     return (
                         <div
@@ -629,6 +634,60 @@ export default function FormTeacher({
                                                 alt="Profile Preview"
                                                 className="h-32 w-32 object-cover rounded-full border-2 border-gray-300"
                                             />
+                                        </div>
+                                    )}
+                                </div>
+                            ) : field.type === 'file' && field.name === 'license_image' ? (
+                                <div className="space-y-2">
+                                    <InputRFH
+                                        p="px-3 py-3"
+                                        control={control}
+                                        register={register}
+                                        error={getNestedError(errors, field.name)}
+                                        type={field.type}
+                                        placeholder={field.placeholder}
+                                        disabled={isFieldDisabled(field.name)}
+                                        label={field.label}
+                                        name={field.name}
+                                        accept={field.accept}
+                                        required={isFieldRequired(schema, field.name)}
+                                        onChange={e => {
+                                            const file = e.target.files?.[0];
+                                            if (file) {
+                                                setLicenseImageChanged(true);
+                                                if (file.type.startsWith('image/')) {
+                                                    const reader = new FileReader();
+                                                    reader.onloadend = () => {
+                                                        setLicenseImagePreview(reader.result);
+                                                    };
+                                                    reader.readAsDataURL(file);
+                                                } else if (file.type === 'application/pdf' || file.name.toLowerCase().endsWith('.pdf')) {
+                                                    setLicenseImagePreview(file.name);
+                                                }
+                                            }
+                                        }}
+                                    />
+                                    {licenseImagePreview && (
+                                        <div className="mt-2">
+                                            {licenseImagePreview && 
+                                             (typeof licenseImagePreview === 'string' && 
+                                              (licenseImagePreview.startsWith('data:image') || 
+                                               licenseImagePreview.match(/\.(jpg|jpeg|png|gif)$/i))) ? (
+                                                <img
+                                                    src={licenseImagePreview}
+                                                    alt="License Preview"
+                                                    className="h-32 w-32 object-cover rounded border-2 border-gray-300"
+                                                />
+                                            ) : licenseImagePreview && 
+                                              typeof licenseImagePreview === 'string' && 
+                                              (licenseImagePreview.includes('.pdf') || licenseImagePreview.startsWith('data:application/pdf')) ? (
+                                                <div className="flex items-center gap-2 p-2 border-2 border-gray-300 rounded">
+                                                    <svg className="w-8 h-8 text-red-500" fill="currentColor" viewBox="0 0 20 20">
+                                                        <path fillRule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4z" clipRule="evenodd" />
+                                                    </svg>
+                                                    <span className="text-sm text-gray-700">{typeof licenseImagePreview === 'string' && licenseImagePreview.includes('.pdf') ? licenseImagePreview : 'PDF File'}</span>
+                                                </div>
+                                            ) : null}
                                         </div>
                                     )}
                                 </div>
