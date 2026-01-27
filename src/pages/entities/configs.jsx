@@ -197,6 +197,15 @@ export const entitiesFields = [
         editMode: true,
         viewMode: true
     },
+    {
+        name: 'branch_id',
+        label: 'validation.branch_id.label',
+        type: 'select',
+        placeholder: 'validation.branch_id.placeholder',
+        editMode: true,
+        viewMode: true,
+        info: 'info.branch_id'
+    },
     // Facility Details
     {
         name: 'area',
@@ -256,15 +265,6 @@ export const entitiesFields = [
         editMode: true,
         viewMode: true,
         info: 'info.neighborhood_id'
-    },
-    {
-        name: 'branch_id',
-        label: 'validation.branch_id.label',
-        type: 'select',
-        placeholder: 'validation.branch_id.placeholder',
-        editMode: true,
-        viewMode: true,
-        info: 'info.branch_id'
     },
     {
         name: 'address',

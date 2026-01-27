@@ -24,6 +24,7 @@ import { useQuery } from '@tanstack/react-query';
 import { API_KEYS } from '@/api/endpoints';
 import { isFieldRequired } from '@/utils/helpers/schemaHelpers';
 import { useNeighborhoodsQuery } from '@/api/hooks/useNeighborhoods';
+import { useCitiesQuery } from '@/api/hooks/useCities';
 
 export default function FormEntity({
     onClose,
@@ -127,6 +128,7 @@ export default function FormEntity({
         );
     }
 
+    const branchId = watch('branch_id');
     const cityId = watch('city_id');
     const mainProgramId = watch('main_program_id');
     const entryType = watch('entry_type');
@@ -146,6 +148,29 @@ export default function FormEntity({
         queryFn: () => activitiesService.getActivities({ ...allData, main_program_id: mainProgramId }),
         enabled: !!mainProgramId
     });
+
+    // Fetch cities dynamically based on selected branch
+    const { data: citiesData } = useCitiesQuery(
+        branchId ? { ...allData, branch_id: branchId } : {},
+        { enabled: !!branchId }
+    );
+
+    // Include selected city from oldData in edit/view mode
+    const filteredCities = useMemo(() => {
+        const cities = citiesData?.data || [];
+        
+        // In view/edit mode, include selected city even if not in fetched results
+        if ((viewMode || editMode) && oldData?.city_id && options?.city_id) {
+            const selectedCity = options.city_id.find(
+                c => c.id === oldData.city_id
+            );
+            if (selectedCity && !cities.some(c => c.id === selectedCity.id)) {
+                return [selectedCity, ...cities];
+            }
+        }
+        
+        return cities;
+    }, [citiesData, viewMode, editMode, oldData?.city_id, options?.city_id]);
 
     // Fetch neighborhoods dynamically based on selected city
     const { data: neighborhoodsData } = useNeighborhoodsQuery(
@@ -210,10 +235,8 @@ export default function FormEntity({
 
     const enhancedOptions = {
         ...options,
+        city_id: filteredCities,
         neighborhood_id: filteredNeighborhoods,
-        branch_id:
-            options.branch_id?.filter(branch => branch.city?.id === cityId) ||
-            [],
         education_program_entity_type_classification:
             uniqueEducationClassifications,
         entity_category_id:
@@ -322,8 +345,14 @@ export default function FormEntity({
     }, [entryType, viewMode, setValue]);
 
     useEffect(() => {
+        if ((branchId && branchId != oldData?.branch_id) || !oldData?.branch_id) {
+            setValue('city_id', '');
+            setValue('neighborhood_id', '');
+        }
+    }, [branchId, oldData?.branch_id, setValue]);
+
+    useEffect(() => {
         if ((cityId && cityId != oldData?.city_id) || !oldData?.city_id) {
-            setValue('branch_id', '');
             setValue('neighborhood_id', '');
         }
     }, [cityId, oldData?.city_id, setValue]);
@@ -485,10 +514,12 @@ export default function FormEntity({
 
         // Disable activity_ids field if main_program_id is not selected
         const isActivityFieldDisabled = fieldName === 'activity_ids' && !mainProgramId;
+        // Disable city_id field if branch_id is not selected
+        const isCityFieldDisabled = fieldName === 'city_id' && !branchId;
         // Disable neighborhood_id field if city_id is not selected
         const isNeighborhoodFieldDisabled = fieldName === 'neighborhood_id' && !cityId;
         // Check if field has disabled property
-        const isFieldDisabled = field.disabled || viewMode || isActivityFieldDisabled || isNeighborhoodFieldDisabled;
+        const isFieldDisabled = field.disabled || viewMode || isActivityFieldDisabled || isCityFieldDisabled || isNeighborhoodFieldDisabled;
 
         return (
             <InputRFH
