@@ -80,8 +80,6 @@ export default function FormEntity({
         }
     }, [oldData?.license_image, licenseImageChanged])
 
-    console.log('errors', errors);
-
     function onSubmit(data) {
         // Remove profile_image if not changed in edit mode
         if (editMode && data.manager && !profileImageChanged) {
@@ -134,12 +132,6 @@ export default function FormEntity({
     const educationClassification = watch(
         'education_program_entity_type_classification'
     );
-
-    const [prevEducationClassification, setPrevEducationClassification] = useState(null);
-
-    console.log("change:", educationClassification)
-
-    console.log('mainProgramId', mainProgramId);
 
     // Fetch activities dynamically based on selected mainProgramId
     const { data: dynamicActivitiesData } = useQuery({
@@ -277,28 +269,6 @@ export default function FormEntity({
             setValue('activity_ids', []); // Reset activities when program changes
         }
     }, [mainProgramId, oldData?.main_program_id, setValue]);
-
-    // useEffect(() => {
-    //     if (mainProgramId === 1) {
-    //         if(educationClassification !== prevEducationClassification && prevEducationClassification !== null){
-    //             setValue('entity_category_id', '');
-    //         } 
-    //         setPrevEducationClassification(educationClassification);
-    //         // if (
-    //         //     (educationClassification &&
-    //         //         educationClassification !=
-    //         //             oldData?.education_program_entity_type_classification) ||
-    //         //     !oldData?.education_program_entity_type_classification
-    //         // ) {
-    //         //     setValue('entity_category_id', '');
-    //         // }
-    //     }
-    // }, [
-    //     educationClassification,
-    //     mainProgramId,
-    //     oldData?.education_program_entity_type_classification,
-    //     setValue
-    // ]);
 
     // Set the classification value when editing (based on entity_category_id's name)
     useEffect(() => {
