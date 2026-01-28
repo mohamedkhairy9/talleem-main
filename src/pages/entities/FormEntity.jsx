@@ -24,7 +24,6 @@ import { useQuery } from '@tanstack/react-query';
 import { API_KEYS } from '@/api/endpoints';
 import { isFieldRequired } from '@/utils/helpers/schemaHelpers';
 import { useNeighborhoodsQuery } from '@/api/hooks/useNeighborhoods';
-import { useCitiesQuery } from '@/api/hooks/useCities';
 
 export default function FormEntity({
     onClose,
@@ -149,28 +148,43 @@ export default function FormEntity({
         enabled: !!mainProgramId
     });
 
-    // Fetch cities dynamically based on selected branch
-    const { data: citiesData } = useCitiesQuery(
-        branchId ? { ...allData, branch_id: branchId } : {},
-        { enabled: !!branchId }
-    );
+    // Get selected branch data to extract city
+    const selectedBranch = useMemo(() => {
+        if (!branchId || !options?.branch_id) return null;
+        return options.branch_id.find(branch => branch.id === branchId);
+    }, [branchId, options?.branch_id]);
 
-    // Include selected city from oldData in edit/view mode
+    // Get city from selected branch
+    const branchCity = useMemo(() => {
+        return selectedBranch?.city || null;
+    }, [selectedBranch]);
+
+    // Create cities array with only the branch's city
+    // In edit/view mode, include the city from oldData if it exists
     const filteredCities = useMemo(() => {
-        const cities = citiesData?.data || [];
+        const cities = [];
         
-        // In view/edit mode, include selected city even if not in fetched results
+        // Add branch's city if available
+        if (branchCity) {
+            cities.push({
+                id: branchCity.id,
+                name: branchCity.name,
+                ...branchCity
+            });
+        }
+        
+        // In view/edit mode, include selected city from oldData if not already in list
         if ((viewMode || editMode) && oldData?.city_id && options?.city_id) {
             const selectedCity = options.city_id.find(
                 c => c.id === oldData.city_id
             );
             if (selectedCity && !cities.some(c => c.id === selectedCity.id)) {
-                return [selectedCity, ...cities];
+                cities.push(selectedCity);
             }
         }
         
         return cities;
-    }, [citiesData, viewMode, editMode, oldData?.city_id, options?.city_id]);
+    }, [branchCity, viewMode, editMode, oldData?.city_id, options?.city_id]);
 
     // Fetch neighborhoods dynamically based on selected city
     const { data: neighborhoodsData } = useNeighborhoodsQuery(
@@ -344,12 +358,31 @@ export default function FormEntity({
         }
     }, [entryType, viewMode, setValue]);
 
+    // Initialize city from branch in edit/view mode
     useEffect(() => {
-        if ((branchId && branchId != oldData?.branch_id) || !oldData?.branch_id) {
+        if ((editMode || viewMode) && oldData?.branch_id && !cityId && selectedBranch?.city?.id) {
+            setValue('city_id', selectedBranch.city.id, { shouldValidate: false });
+        }
+    }, [editMode, viewMode, oldData?.branch_id, cityId, selectedBranch, setValue]);
+
+    // Auto-set city_id from selected branch's city when branch changes
+    useEffect(() => {
+        if (branchId && selectedBranch?.city?.id) {
+            const branchCityId = selectedBranch.city.id;
+            // Set city_id to branch's city (will override any existing value when branch changes)
+            if (cityId !== branchCityId) {
+                setValue('city_id', branchCityId, { shouldValidate: false });
+                // Reset neighborhood when city changes (unless in view mode)
+                if (!viewMode) {
+                    setValue('neighborhood_id', '');
+                }
+            }
+        } else if (!branchId && !viewMode && !editMode) {
+            // Reset city and neighborhood when branch is cleared (only in create mode)
             setValue('city_id', '');
             setValue('neighborhood_id', '');
         }
-    }, [branchId, oldData?.branch_id, setValue]);
+    }, [branchId, selectedBranch, cityId, viewMode, editMode, setValue]);
 
     useEffect(() => {
         if ((cityId && cityId != oldData?.city_id) || !oldData?.city_id) {
@@ -514,8 +547,8 @@ export default function FormEntity({
 
         // Disable activity_ids field if main_program_id is not selected
         const isActivityFieldDisabled = fieldName === 'activity_ids' && !mainProgramId;
-        // Disable city_id field if branch_id is not selected
-        const isCityFieldDisabled = fieldName === 'city_id' && !branchId;
+        // Always disable city_id field (it's auto-filled from branch)
+        const isCityFieldDisabled = fieldName === 'city_id';
         // Disable neighborhood_id field if city_id is not selected
         const isNeighborhoodFieldDisabled = fieldName === 'neighborhood_id' && !cityId;
         // Check if field has disabled property
@@ -599,6 +632,8 @@ export default function FormEntity({
                                     ? 'md:col-span-2 lg:col-span-3'
                                     : field.type === 'file' && field.name !== 'license_image'
                                     ? 'md:col-span-2 lg:col-span-3'
+                                    : field.name === 'city_id' || field.name === 'neighborhood_id'
+                                    ? 'md:col-span-1 lg:col-span-1'
                                     : ''
                             }
                         >
