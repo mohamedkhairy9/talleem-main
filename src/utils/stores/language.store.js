@@ -10,7 +10,7 @@ const useLanguageStore = create(
             language: localStorage.getItem('i18nextLng') || 'ar',
             isRTL: false,
 
-            setLanguage: async language => {
+            setLanguage: async (language, skipApiCall = false) => {
                 try {
                     await i18n.changeLanguage(language);
                     const isRTL = language === 'ar';
@@ -21,25 +21,27 @@ const useLanguageStore = create(
 
                     set({ language, isRTL });
 
-                    // Update user locale on server
-                    const user = useUserStore.getState().user;
-                    if (user?.id) {
-                        try {
-                            // Send as x-www-form-urlencoded format
-                            const formData = new URLSearchParams();
-                            formData.append('locale', language);
-                            
-                            await axiosInstance.put(
-                                '/profile/locale',
-                                formData.toString(),
-                                {
-                                    headers: {
-                                        'Content-Type': 'application/x-www-form-urlencoded'
+                    // Update user locale on server (skip if flag is set)
+                    if (!skipApiCall) {
+                        const user = useUserStore.getState().user;
+                        if (user?.id) {
+                            try {
+                                // Send as x-www-form-urlencoded format
+                                const formData = new URLSearchParams();
+                                formData.append('locale', language);
+                                
+                                await axiosInstance.put(
+                                    '/profile/locale',
+                                    formData.toString(),
+                                    {
+                                        headers: {
+                                            'Content-Type': 'application/x-www-form-urlencoded'
+                                        }
                                     }
-                                }
-                            );
-                        } catch (error) {
-                            console.error('Error updating user locale:', error);
+                                );
+                            } catch (error) {
+                                console.error('Error updating user locale:', error);
+                            }
                         }
                     }
 
@@ -58,6 +60,23 @@ const useLanguageStore = create(
                 document.documentElement.lang = language;
 
                 set({ isRTL });
+            },
+
+            clearLanguage: () => {
+                // Clear language from localStorage
+                localStorage.removeItem('language-storage');
+                localStorage.removeItem('i18nextLng');
+                
+                // Reset to default language (ar) for the session only
+                // Don't update store state to avoid persist middleware re-saving it
+                // The next login will set the language from user's preference
+                const defaultLanguage = 'ar';
+                i18n.changeLanguage(defaultLanguage);
+                document.documentElement.dir = 'rtl';
+                document.documentElement.lang = defaultLanguage;
+                
+                // Note: We don't call set() here to avoid persist middleware
+                // re-saving 'ar' to localStorage. The store will be updated on next login.
             }
         }),
         {
