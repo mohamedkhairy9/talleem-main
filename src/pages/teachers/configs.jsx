@@ -113,16 +113,6 @@ export const teachersFields = [
         max: getTodayDate()
     },
     {
-        name: 'license_expiration_date',
-        label: 'validation.license_expiration_date.label',
-        type: 'date',
-        placeholder: 'validation.license_expiration_date.placeholder',
-        editMode: true,
-        viewMode: true,
-        conditional: true,
-        showWhen: { entry_type: 'active_with_license' }
-    },
-    {
         name: 'main_program_id',
         label: 'validation.main_program_id.label',
         type: 'select',

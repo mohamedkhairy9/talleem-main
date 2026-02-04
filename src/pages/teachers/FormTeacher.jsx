@@ -500,6 +500,11 @@ export default function FormTeacher({
             return true;
         }
 
+        // Disable status field when entry_type is selected (status is auto-set based on entry_type)
+        if (fieldName === 'status' && entryType) {
+            return true;
+        }
+
         return false;
     };
 

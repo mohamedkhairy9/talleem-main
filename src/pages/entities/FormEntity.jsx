@@ -521,8 +521,10 @@ export default function FormEntity({
         const isCityFieldDisabled = fieldName === 'city_id';
         // Disable neighborhood_id field if city_id is not selected
         const isNeighborhoodFieldDisabled = fieldName === 'neighborhood_id' && !cityId;
+        // Disable status field when entry_type is selected (status is auto-set based on entry_type)
+        const isStatusFieldDisabled = fieldName === 'status' && entryType;
         // Check if field has disabled property
-        const isFieldDisabled = field.disabled || viewMode || isActivityFieldDisabled || isCityFieldDisabled || isNeighborhoodFieldDisabled;
+        const isFieldDisabled = field.disabled || viewMode || isActivityFieldDisabled || isCityFieldDisabled || isNeighborhoodFieldDisabled || isStatusFieldDisabled;
 
         return (
             <InputRFH

@@ -162,37 +162,6 @@ export const entitiesSchema = yup.object({
                 }),
             otherwise: schema => schema.nullable().optional()
         }),
-    license_expiration_date: yup
-        .string()
-        .nullable()
-        .when('entry_type', {
-            is: 'active_with_license',
-            then: schema => schema
-                .test('is-valid-date', t('validation.invalid_date'), function(value) {
-                    if (!value) return true; // Optional field
-                    const date = new Date(value);
-                    return !isNaN(date.getTime());
-                })
-                .test('is-future-date', t('validation.license_expiration_date.future'), function(value) {
-                    if (!value) return true; // Optional field
-                    const selectedDate = new Date(value);
-                    selectedDate.setHours(0, 0, 0, 0);
-                    const today = new Date();
-                    today.setHours(0, 0, 0, 0);
-                    return selectedDate > today;
-                })
-                .test('is-after-issue-date', t('validation.license_expiration_date.after_issue'), function(value) {
-                    if (!value) return true; // Optional field
-                    const { license_issue_date } = this.parent;
-                    if (!license_issue_date) return true;
-                    const expirationDate = new Date(value);
-                    const issueDate = new Date(license_issue_date);
-                    expirationDate.setHours(0, 0, 0, 0);
-                    issueDate.setHours(0, 0, 0, 0);
-                    return expirationDate > issueDate;
-                }),
-            otherwise: schema => schema.nullable().optional()
-        }),
     manager: yup
         .object({
             name: yup
