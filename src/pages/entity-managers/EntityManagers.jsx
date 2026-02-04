@@ -34,6 +34,7 @@ export default function EntityManagers() {
         ...item,
         entity_id: entity?.id,
         nationality_id: nationality?.id,
+        nationality: nationality, // Keep nationality object for form options
         branch_id: branch?.id || entity?.branch?.id,
         city_id: city?.id,
         user_id: user?.id,
