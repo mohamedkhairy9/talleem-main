@@ -1,5 +1,8 @@
 import useLocale from '@/utils/hooks/global/useLocale';
 import SelectRFH from './SelectRFH';
+import { shouldUseAsyncSelect, createLoadOptionsForField, getDefaultOptionsForField } from '@/utils/helpers/asyncSelectFieldMapper';
+import { useMemo } from 'react';
+import i18next from 'i18next';
 
 export default function InputRFH({
     error,
@@ -20,12 +23,98 @@ export default function InputRFH({
     min,
     max,
     required = false,
-    loading = false
+    loading = false,
+    isAsync = false,
+    loadOptions = null,
+    defaultOptions = false,
+    cacheOptions = true,
+    oldData = null,
+    fieldParams = {}
 }) {
     const { t } = useLocale();
 
+    // Auto-detect if field should use async select (if not explicitly set and field is API-backed)
+    const asyncConfig = useMemo(() => {
+        // If explicitly set, use that
+        if (isAsync !== false || loadOptions !== null) {
+            return {
+                isAsync: isAsync || !!loadOptions,
+                loadOptions,
+                defaultOptions
+            };
+        }
+        
+        // Auto-detect for select fields that are API-backed
+        // Always use async for API-backed fields to enable pagination (ignore options prop)
+        if (type === 'select' && shouldUseAsyncSelect(name)) {
+            // Get the option object from oldData if available
+            const fieldValue = oldData?.[name];
+            let includeOption = null;
+            
+            // Try to get the full object
+            const fieldObjectName = name.replace('_id', '');
+            const fieldObject = oldData?.[fieldObjectName] || null;
+            
+            if (fieldObject && typeof fieldObject === 'object' && fieldObject.id) {
+                includeOption = fieldObject;
+            } else if (fieldValue && typeof fieldValue === 'object' && fieldValue.id) {
+                includeOption = fieldValue;
+            }
+            
+            const asyncLoadOptions = createLoadOptionsForField(
+                name,
+                fieldParams[name] || {},
+                includeOption
+            );
+            
+            const asyncDefaultOptions = getDefaultOptionsForField(
+                name,
+                oldData,
+                i18next.language
+            );
+            
+            return {
+                isAsync: true,
+                loadOptions: asyncLoadOptions,
+                defaultOptions: asyncDefaultOptions
+            };
+        }
+        
+        return {
+            isAsync: false,
+            loadOptions: null,
+            defaultOptions: false
+        };
+    }, [type, name, isAsync, loadOptions, defaultOptions, oldData, fieldParams]);
+
     // Select input returns early
     if (type === 'select') {
+        // Build props - completely separate async and regular props
+        if (asyncConfig.isAsync && asyncConfig.loadOptions) {
+            // ASYNC SELECT - No options prop at all
+            return (
+                <SelectRFH
+                    info={info}
+                    defaultValue={defaultValue}
+                    control={control}
+                    register={register}
+                    error={error}
+                    label={label}
+                    name={name}
+                    disabled={disabled}
+                    placeholder={placeholder}
+                    isMulti={isMulti}
+                    required={required}
+                    loading={loading}
+                    isAsync={true}
+                    loadOptions={asyncConfig.loadOptions}
+                    defaultOptions={asyncConfig.defaultOptions}
+                    cacheOptions={cacheOptions}
+                />
+            );
+        }
+        
+        // REGULAR SELECT - Include options
         return (
             <SelectRFH
                 info={info}
@@ -35,12 +124,13 @@ export default function InputRFH({
                 error={error}
                 label={label}
                 name={name}
-                options={options}
+                options={Array.isArray(options) ? options : []}
                 disabled={disabled}
                 placeholder={placeholder}
                 isMulti={isMulti}
                 required={required}
                 loading={loading}
+                isAsync={false}
             />
         );
     }

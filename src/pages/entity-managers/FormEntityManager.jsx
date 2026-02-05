@@ -102,24 +102,6 @@ export default function FormEntityManager({
         return entities;
     }, [entitiesData, viewMode, editMode, oldData?.entity_id, options?.entity_id]);
 
-    // Include selected nationality from oldData in edit/view mode
-    const enhancedNationalities = useMemo(() => {
-        const nationalities = options?.nationality_id || [];
-        
-        // In view/edit mode, include selected nationality even if not in fetched results
-        if ((viewMode || editMode) && oldData?.nationality_id) {
-            // Check if nationality is already in the list
-            const nationalityExists = nationalities.some(n => n.id === oldData.nationality_id);
-            
-            // If not found and we have the nationality object from oldData, add it
-            if (!nationalityExists && oldData?.nationality) {
-                return [oldData.nationality, ...nationalities];
-            }
-        }
-        
-        return nationalities;
-    }, [options?.nationality_id, viewMode, editMode, oldData?.nationality_id, oldData?.nationality]);
-
     // Reset branch and entity when city changes (only in create mode)
     useEffect(() => {
         if (!editMode && !viewMode && cityId && cityId !== oldData?.city_id) {
@@ -142,26 +124,15 @@ export default function FormEntityManager({
         }
     }, [mainProgramId, oldData?.main_program_id, setValue, editMode, viewMode]);
 
-    // Set nationality_id from oldData when in edit/view mode and options are ready
-    useEffect(() => {
-        if ((editMode || viewMode) && oldData?.nationality_id) {
-            const currentValue = watch('nationality_id');
-            // Set nationality_id if not already set or if it's different
-            // Also ensure the nationality exists in the options before setting
-            const nationalityExists = enhancedNationalities.some(n => n.id === oldData.nationality_id);
-            if (nationalityExists && currentValue !== oldData.nationality_id) {
-                setValue('nationality_id', oldData.nationality_id, { shouldValidate: false });
-            }
-        }
-    }, [editMode, viewMode, oldData?.nationality_id, enhancedNationalities, setValue, watch]);
+    // Note: nationality_id is now handled automatically by the async select component
+    // through defaultOptions and oldData props, so no manual useEffect is needed
 
     // Enhanced options with filtered data
     const enhancedOptions = useMemo(() => ({
         ...options,
         entity_id: filteredEntities,
-        branch_id: filteredBranches,
-        nationality_id: enhancedNationalities
-    }), [options, filteredEntities, filteredBranches, enhancedNationalities]);
+        branch_id: filteredBranches
+    }), [options, filteredEntities, filteredBranches]);
 
     // Get the selected entity to check for existing manager
     const selectedEntity = useMemo(() => {
@@ -270,11 +241,6 @@ export default function FormEntityManager({
 
     // Helper function to get the correct options for a field
     const getFieldOptions = (fieldName) => {
-        // For nationality_id, use enhanced options (includes selected nationality from oldData)
-        if (fieldName === 'nationality_id') {
-            return generateOptions(enhancedOptions[fieldName] || options[fieldName]);
-        }
-        
         // For fields that shouldn't be filtered, always use original options
         if (['main_program_id', 'academic_qualification_id', 'major_id', 'city_id', 'gender', 'status'].includes(fieldName)) {
             const generatedOptions = generateOptions(options[fieldName]);
@@ -432,6 +398,7 @@ export default function FormEntityManager({
                                         label={field.label}
                                         name={field.name}
                                         options={getFieldOptions(field.name)}
+                                        oldData={oldData}
                                         defaultValue={(() => {
                                             // For nationality_id, ensure we get it from nationality object if available
                                             if (field.name === 'nationality_id') {

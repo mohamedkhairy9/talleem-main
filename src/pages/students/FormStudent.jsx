@@ -574,6 +574,7 @@ export default function FormStudent({
                                         defaultValue={defaultValues[field.name] || field.defaultValue}
                                         required={true}
                                         loading={entitiesLoading}
+                                        oldData={oldData}
                                     />
                                 </div>
                             );
@@ -662,6 +663,7 @@ export default function FormStudent({
                                         min={field.min}
                                         max={field.max}
                                         required={isConditionallyRequired(field)}
+                                        oldData={oldData}
                                     />
                                 )}
                             </div>
