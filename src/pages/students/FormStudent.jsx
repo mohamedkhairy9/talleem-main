@@ -126,43 +126,6 @@ export default function FormStudent({
     const entityId = watch('entity_id');
     const dateOfBirth = watch('date_of_birth');
 
-    // Get selected branch data to extract city
-    const selectedBranch = useMemo(() => {
-        if (!branchId || !options?.branch_id) return null;
-        return options.branch_id.find(branch => branch.id === branchId);
-    }, [branchId, options?.branch_id]);
-
-    // Get city from selected branch
-    const branchCity = useMemo(() => {
-        return selectedBranch?.city || null;
-    }, [selectedBranch]);
-
-    // Create cities array with only the branch's city
-    // In edit/view mode, include the city from oldData if it exists
-    const filteredCities = useMemo(() => {
-        const cities = [];
-        
-        // Add branch's city if available
-        if (branchCity) {
-            cities.push({
-                id: branchCity.id,
-                name: branchCity.name,
-                ...branchCity
-            });
-        }
-        
-        // In view/edit mode, include selected city from oldData if not already in list
-        if ((viewMode || editMode) && oldData?.city_id && options?.city_id) {
-            const selectedCity = options.city_id.find(
-                c => c.id === oldData.city_id
-            );
-            if (selectedCity && !cities.some(c => c.id === selectedCity.id)) {
-                cities.push(selectedCity);
-            }
-        }
-        
-        return cities;
-    }, [branchCity, viewMode, editMode, oldData?.city_id, options?.city_id]);
 
     // Calculate age
     // Calculate age
@@ -282,26 +245,6 @@ export default function FormStudent({
         }
     }, [mainProgramId, oldData?.main_program_id]);
 
-    // Initialize city from branch in edit/view mode
-    useEffect(() => {
-        if ((editMode || viewMode) && oldData?.branch_id && !city && selectedBranch?.city?.id) {
-            setValue('city_id', selectedBranch.city.id, { shouldValidate: false });
-        }
-    }, [editMode, viewMode, oldData?.branch_id, city, selectedBranch, setValue]);
-
-    // Auto-set city_id from selected branch's city when branch changes
-    useEffect(() => {
-        if (branchId && selectedBranch?.city?.id) {
-            const branchCityId = selectedBranch.city.id;
-            // Set city_id to branch's city (will override any existing value when branch changes)
-            if (city !== branchCityId) {
-                setValue('city_id', branchCityId, { shouldValidate: false });
-            }
-        } else if (!branchId && !viewMode && !editMode) {
-            // Reset city when branch is cleared (only in create mode)
-            setValue('city_id', '');
-        }
-    }, [branchId, selectedBranch, city, viewMode, editMode, setValue]);
 
     // Reset entity when branch changes
     useEffect(() => {
@@ -317,10 +260,8 @@ export default function FormStudent({
     // Enhanced options with filtered/dynamic data
     const enhancedOptions = useMemo(() => ({
         ...options,
-        entity_id: entities,
-        branch_id: options.branch_id, // Using all branches instead of filteredBranches
-        city_id: filteredCities // Use branch's city instead of all cities
-    }), [options, entities, filteredCities]);
+        entity_id: entities
+    }), [options, entities]);
 
     // Get display value for category (educational_entity_classification)
     const categoryDisplayValue = useMemo(() => {
@@ -526,12 +467,8 @@ export default function FormStudent({
                             );
                         }
 
-                        // Special handling for branch field - disabled until city is selected
-                        // COMMENTED OUT: Branch disabled logic based on city removed - branches are no longer filtered by city
+                        // Special handling for branch field
                         if (field.name === 'branch_id') {
-                            // const isBranchDisabled = !city || viewMode;
-                            const isBranchDisabled = viewMode; // Only disabled in view mode
-
                             return (
                                 <div key={field.name}>
                                     <InputRFH
@@ -541,7 +478,7 @@ export default function FormStudent({
                                         error={getNestedError(errors, field.name)}
                                         type={field.type}
                                         placeholder={field.placeholder}
-                                        disabled={isBranchDisabled}
+                                        disabled={viewMode}
                                         label={field.label}
                                         name={field.name}
                                         info={field.info}
@@ -650,7 +587,7 @@ export default function FormStudent({
                                         error={getNestedError(errors, field.name)}
                                         type={field.type}
                                         placeholder={field.placeholder}
-                                        disabled={viewMode || field.name === 'city_id'}
+                                        disabled={viewMode}
                                         label={field.label}
                                         name={field.name}
                                         info={field.info}

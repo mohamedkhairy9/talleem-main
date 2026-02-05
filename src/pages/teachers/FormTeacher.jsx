@@ -162,43 +162,6 @@ export default function FormTeacher({
     const educationClassification = watch('education_program_entity_type_classification');
     const entityCategory = watch('entity_category_id');
 
-    // Get selected branch data to extract city
-    const selectedBranch = useMemo(() => {
-        if (!branchId || !options?.branch_id) return null;
-        return options.branch_id.find(branch => branch.id === branchId);
-    }, [branchId, options?.branch_id]);
-
-    // Get city from selected branch
-    const branchCity = useMemo(() => {
-        return selectedBranch?.city || null;
-    }, [selectedBranch]);
-
-    // Create cities array with only the branch's city
-    // In edit/view mode, include the city from oldData if it exists
-    const filteredCities = useMemo(() => {
-        const cities = [];
-        
-        // Add branch's city if available
-        if (branchCity) {
-            cities.push({
-                id: branchCity.id,
-                name: branchCity.name,
-                ...branchCity
-            });
-        }
-        
-        // In view/edit mode, include selected city from oldData if not already in list
-        if ((viewMode || editMode) && oldData?.city_id && options?.city_id) {
-            const selectedCity = options.city_id.find(
-                c => c.id === oldData.city_id
-            );
-            if (selectedCity && !cities.some(c => c.id === selectedCity.id)) {
-                cities.push(selectedCity);
-            }
-        }
-        
-        return cities;
-    }, [branchCity, viewMode, editMode, oldData?.city_id, options?.city_id]);
 
     // Get the selected entity's education_program_entity_type
     const selectedEntityEducationType = useMemo(() => {
@@ -324,26 +287,6 @@ export default function FormTeacher({
         }
     }, [entryType, viewMode, setValue]);
 
-    // Initialize city from branch in edit/view mode
-    useEffect(() => {
-        if ((editMode || viewMode) && oldData?.branch_id && !cityId && selectedBranch?.city?.id) {
-            setValue('city_id', selectedBranch.city.id, { shouldValidate: false });
-        }
-    }, [editMode, viewMode, oldData?.branch_id, cityId, selectedBranch, setValue]);
-
-    // Auto-set city_id from selected branch's city when branch changes
-    useEffect(() => {
-        if (branchId && selectedBranch?.city?.id) {
-            const branchCityId = selectedBranch.city.id;
-            // Set city_id to branch's city (will override any existing value when branch changes)
-            if (cityId !== branchCityId) {
-                setValue('city_id', branchCityId, { shouldValidate: false });
-            }
-        } else if (!branchId && !viewMode && !editMode) {
-            // Reset city when branch is cleared (only in create mode)
-            setValue('city_id', '');
-        }
-    }, [branchId, selectedBranch, cityId, viewMode, editMode, setValue]);
 
     // Reset entity when branch changes
     useEffect(() => {
@@ -358,10 +301,8 @@ export default function FormTeacher({
     // Enhanced options with filtered data
     const enhancedOptions = useMemo(() => ({
         ...options,
-        entity_id: filteredEntities,
-        branch_id: options.branch_id, // Using all branches instead of filteredBranches
-        city_id: filteredCities // Use branch's city instead of all cities
-    }), [options, filteredEntities, filteredCities]);
+        entity_id: filteredEntities
+    }), [options, filteredEntities]);
 
     // Get display value for category
     const categoryDisplayValue = useMemo(() => {
@@ -490,11 +431,6 @@ export default function FormTeacher({
     const isFieldDisabled = (fieldName) => {
         if (viewMode) return true;
 
-        // City field is always disabled (auto-filled from branch)
-        if (fieldName === 'city_id') {
-            return true;
-        }
-
         // Entity field disabled until branch is selected
         if (fieldName === 'entity_id' && !branchId) {
             return true;
@@ -589,12 +525,8 @@ export default function FormTeacher({
                         );
                     }
 
-                    // Special handling for branch field - disabled until city is selected
-                    // COMMENTED OUT: Branch disabled logic based on city removed - branches are no longer filtered by city
+                    // Special handling for branch field
                     if (field.name === 'branch_id') {
-                        // const isBranchDisabled = !cityId || viewMode;
-                        const isBranchDisabled = viewMode; // Only disabled in view mode
-
                         return (
                             <div key={field.name}>
                                 <InputRFH
@@ -604,7 +536,7 @@ export default function FormTeacher({
                                     error={getNestedError(errors, field.name)}
                                     type={field.type}
                                     placeholder={field.placeholder}
-                                    disabled={isBranchDisabled}
+                                    disabled={viewMode}
                                     label={field.label}
                                     name={field.name}
                                     info={field.info}

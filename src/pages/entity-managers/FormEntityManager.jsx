@@ -53,17 +53,6 @@ export default function FormEntityManager({
     const mainProgramId = watch('main_program_id');
     const entityId = watch('entity_id');
 
-    // Filter branches based on selected city
-    const filteredBranches = useMemo(() => {        
-        if (!cityId || !options.branch_id) {
-            return [];
-        }
-        
-        const branches = options.branch_id;
-        const filtered = branches.filter(branch => branch.city?.id === Number(cityId));
-        return filtered;
-    }, [cityId, options.branch_id]);
-
     // Query entities dynamically based on main_program_id and branch_id
     const entitiesQueryParams = useMemo(() => {
         // In edit/view mode, use oldData values if current values are not set
@@ -102,20 +91,12 @@ export default function FormEntityManager({
         return entities;
     }, [entitiesData, viewMode, editMode, oldData?.entity_id, options?.entity_id]);
 
-    // Reset branch and entity when city changes (only in create mode)
+    // Reset entity when branch changes (only in create mode)
     useEffect(() => {
-        if (!editMode && !viewMode && cityId && cityId !== oldData?.city_id) {
-            setValue('branch_id', '');
+        if (!editMode && !viewMode && branchId && branchId !== oldData?.branch_id) {
             setValue('entity_id', '');
         }
-    }, [cityId, oldData?.city_id, setValue, editMode, viewMode]);
-
-    // Reset entity when branch changes (only in create mode and if city hasn't changed)
-    useEffect(() => {
-        if (!editMode && !viewMode && branchId && branchId !== oldData?.branch_id && cityId === oldData?.city_id) {
-            setValue('entity_id', '');
-        }
-    }, [branchId, cityId, oldData?.branch_id, oldData?.city_id, setValue, editMode, viewMode]);
+    }, [branchId, oldData?.branch_id, setValue, editMode, viewMode]);
 
     // Reset entity when main program changes (only in create mode)
     useEffect(() => {
@@ -130,9 +111,8 @@ export default function FormEntityManager({
     // Enhanced options with filtered data
     const enhancedOptions = useMemo(() => ({
         ...options,
-        entity_id: filteredEntities,
-        branch_id: filteredBranches
-    }), [options, filteredEntities, filteredBranches]);
+        entity_id: filteredEntities
+    }), [options, filteredEntities]);
 
     // Get the selected entity to check for existing manager
     const selectedEntity = useMemo(() => {
@@ -226,11 +206,6 @@ export default function FormEntityManager({
     const isFieldDisabled = (fieldName) => {
         if (viewMode) return true;
 
-        // Branch field disabled until city is selected
-        if (fieldName === 'branch_id' && !cityId) {
-            return true;
-        }
-
         // Entity field disabled until branch is selected
         if (fieldName === 'entity_id' && !branchId) {
             return true;
@@ -284,10 +259,8 @@ export default function FormEntityManager({
                             (!editMode && !viewMode)
                     )
                     .map(field => {
-                        // Special handling for branch field - disabled until city is selected
+                        // Special handling for branch field
                         if (field.name === 'branch_id') {
-                            const isBranchDisabled = !cityId || viewMode;
-                            
                             return (
                                 <div key={field.name}>
                                     <InputRFH
@@ -297,7 +270,7 @@ export default function FormEntityManager({
                                         error={getNestedError(errors, field.name)}
                                         type={field.type}
                                         placeholder={field.placeholder}
-                                        disabled={isBranchDisabled}
+                                        disabled={viewMode}
                                         label={field.label}
                                         name={field.name}
                                         info={field.info}
