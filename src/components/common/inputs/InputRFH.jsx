@@ -35,10 +35,19 @@ export default function InputRFH({
 
     // Auto-detect if field should use async select (if not explicitly set and field is API-backed)
     const asyncConfig = useMemo(() => {
-        // If explicitly set, use that
-        if (isAsync !== false || loadOptions !== null) {
+        // If explicitly set to false, respect that and don't auto-detect
+        if (isAsync === false) {
             return {
-                isAsync: isAsync || !!loadOptions,
+                isAsync: false,
+                loadOptions: null,
+                defaultOptions: false
+            };
+        }
+        
+        // If explicitly set to true or loadOptions provided, use that
+        if (isAsync === true || loadOptions !== null) {
+            return {
+                isAsync: true,
                 loadOptions,
                 defaultOptions
             };

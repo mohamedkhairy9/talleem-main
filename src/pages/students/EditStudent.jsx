@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import FormStudent from './FormStudent';
 import Modal from '@/components/common/form/Modal';
 import ModalHeader from '@/components/common/form/ModalHeader';
@@ -58,6 +58,39 @@ export default function EditStudent({ onClose, oldData }) {
     const { data: academicQualificationsData, isLoading: academicQualificationsLoading } =
         useAcademicQualificationsQuery(allData);
 
+    // Memoize options to prevent re-renders when form values change
+    // MUST be called before any early returns (Rules of Hooks)
+    const options = useMemo(() => ({
+        branch_id: branchesData?.data,
+        main_program_id: mainProgramsData?.data,
+        education_program_entity_type_id:
+            educationProgramEntityTypesData?.data,
+        city_id: citiesData?.data,
+        kinship_id: kinshipsData?.data,
+        academic_level_id: academicLevelsData?.data,
+        academic_qualification_id: academicQualificationsData?.data,
+        nationality_id: nationalitiesData?.data,
+        specification_id: specificationsData?.data,
+        major_id: majorsData?.data,
+        status: enabledDisabledOptions,
+        gender: genderOptions,
+        has_medical_issues: yesNoOptions,
+        has_high_school: yesNoOptions,
+        has_bachelors_degree: yesNoOptions,
+        has_memorized_quran_5_parts: yesNoOptions
+    }), [
+        branchesData?.data,
+        mainProgramsData?.data,
+        educationProgramEntityTypesData?.data,
+        citiesData?.data,
+        kinshipsData?.data,
+        academicLevelsData?.data,
+        academicQualificationsData?.data,
+        nationalitiesData?.data,
+        specificationsData?.data,
+        majorsData?.data
+    ]);
+
     const isLoading =
         branchesLoading ||
         mainProgramsLoading ||
@@ -81,25 +114,7 @@ export default function EditStudent({ onClose, oldData }) {
                 editMode={true}
                 mutate={mutate}
                 isPending={isPending}
-                options={{
-                    branch_id: branchesData?.data,
-                    main_program_id: mainProgramsData?.data,
-                    education_program_entity_type_id:
-                        educationProgramEntityTypesData?.data,
-                    city_id: citiesData?.data,
-                    kinship_id: kinshipsData?.data,
-                    academic_level_id: academicLevelsData?.data,
-                    academic_qualification_id: academicQualificationsData?.data,
-                    nationality_id: nationalitiesData?.data,
-                    specification_id: specificationsData?.data,
-                    major_id: majorsData?.data,
-                    status: enabledDisabledOptions,
-                    gender: genderOptions,
-                    has_medical_issues: yesNoOptions,
-                    has_high_school: yesNoOptions,
-                    has_bachelors_degree: yesNoOptions,
-                    has_memorized_quran_5_parts: yesNoOptions
-                }}
+                options={options}
             />
         </Modal>
     );
