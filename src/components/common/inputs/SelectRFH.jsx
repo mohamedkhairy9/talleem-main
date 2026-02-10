@@ -258,10 +258,7 @@ export default function SelectRFH({
                                 styles={sharedStyles}
                                 onChange={(selected) => handleChange(selected, field, true)}
                                 loadOptions={loadOptions}
-                                defaultOptions={defaultOptions === true ? true : (Array.isArray(defaultOptions) ? defaultOptions : true)}
-                                additional={{
-                                    page: 1
-                                }}
+                                defaultOptions={defaultOptions === false ? false : (defaultOptions === true ? true : (Array.isArray(defaultOptions) ? defaultOptions : true))}
                             />
                         );
                     }

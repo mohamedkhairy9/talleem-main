@@ -84,14 +84,6 @@ export const studentsFields = [
         viewMode: true
     },
     {
-        name: 'city_id',
-        label: 'validation.city_id.label',
-        type: 'select',
-        placeholder: 'validation.city_id.placeholder',
-        editMode: true,
-        viewMode: true
-    },
-    {
         name: 'branch_id',
         label: 'validation.branch_id.label',
         type: 'select',
@@ -179,6 +171,14 @@ export const studentsFields = [
         viewMode: true,
         conditional: true,
         showWhen: { main_program_id: 2 }
+    },
+    {
+        name: 'city_id',
+        label: 'validation.city_id.label',
+        type: 'select',
+        placeholder: 'validation.city_id.placeholder',
+        editMode: true,
+        viewMode: true
     },
     {
         name: 'address',
