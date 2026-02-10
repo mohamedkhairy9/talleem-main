@@ -79,6 +79,11 @@ export default function FormStudent({
             }
         }
 
+        // Convert status from 1/0 to true/false for form compatibility
+        if (baseValues.status !== undefined) {
+            baseValues.status = baseValues.status === 1 || baseValues.status === true;
+        }
+
         defaultValuesRef.current = baseValues;
         oldDataIdRef.current = oldData?.id;
     }

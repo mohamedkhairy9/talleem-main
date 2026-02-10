@@ -22,10 +22,11 @@ export function createAsyncLoadOptions(apiService, additionalParams = {}, transf
         
         try {
             // Build search params
+            // Note: per_page must be set AFTER spreading additionalParams to avoid being overridden
             const params = {
+                ...additionalParams,
                 page: currentPage,
-                per_page: perPage,
-                ...additionalParams
+                per_page: perPage
             };
 
             // Add search query if provided

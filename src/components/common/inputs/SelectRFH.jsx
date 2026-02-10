@@ -259,9 +259,6 @@ export default function SelectRFH({
                                 onChange={(selected) => handleChange(selected, field, true)}
                                 loadOptions={loadOptions}
                                 defaultOptions={defaultOptions === false ? false : (defaultOptions === true ? true : (Array.isArray(defaultOptions) ? defaultOptions : true))}
-                                additional={{
-                                    page: 1
-                                }}
                             />
                         );
                     }

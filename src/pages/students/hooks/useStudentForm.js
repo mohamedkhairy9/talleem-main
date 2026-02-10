@@ -209,7 +209,7 @@ export function useStudentForm({ oldData, editMode, viewMode, watch, setValue })
     }, [branchId, mainProgramId, editMode, viewMode, oldData?.branch_id, oldData?.main_program_id]);
 
     // Create loadOptions function for entity field with dynamic branch_id and main_program_id
-    const entityLoadOptions = useCallback((searchQuery, loadedOptions, { page } = {}) => {
+    const entityLoadOptions = useCallback((searchQuery, loadedOptions, additional = {}) => {
         const currentBranchId = branchId || (editMode ? oldData?.branch_id : null);
         const currentMainProgramId = mainProgramId || (editMode ? oldData?.main_program_id : null);
         
@@ -238,7 +238,8 @@ export function useStudentForm({ oldData, editMode, viewMode, watch, setValue })
             includeOption
         );
 
-        return loadOptionsFn(searchQuery, loadedOptions, { page });
+        // Pass the full additional object to preserve pagination state
+        return loadOptionsFn(searchQuery, loadedOptions, additional);
     }, [branchId, mainProgramId, editMode, viewMode, oldData?.branch_id, oldData?.main_program_id, oldData?.entity_id, oldData?.entity, hasBranchOrProgramChanged]);
 
     // Get default options for entity field (for edit/view mode)
