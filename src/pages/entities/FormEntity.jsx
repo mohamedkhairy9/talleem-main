@@ -97,6 +97,13 @@ export default function FormEntity({
             delete submitData.license_image;
         }
 
+        // If entry_type is 'new_with_approval', remove all license-related fields from payload
+        if (submitData.entry_type === 'new_with_approval') {
+            delete submitData.license_number;
+            delete submitData.license_image;
+            delete submitData.license_issue_date;
+        }
+
         mutate(
             {
                 ...submitData,
@@ -320,11 +327,11 @@ export default function FormEntity({
     // Auto-set status based on entry_type
     useEffect(() => {
         if (entryType && !viewMode) {
-            if (entryType === 'active_with_license') {
-                setValue('status', 'active', { shouldValidate: false });
-            } else if (entryType === 'new_with_approval') {
-                setValue('status', 'inactive', { shouldValidate: false });
+            if (entryType === 'new_with_approval') {
+                // Set status to 'unauthorized' and it will be disabled
+                setValue('status', 'unauthorized', { shouldValidate: false });
             }
+            // For 'active_with_license', don't auto-set - let user choose
         }
     }, [entryType, viewMode, setValue]);
 
@@ -521,8 +528,9 @@ export default function FormEntity({
         const isCityFieldDisabled = fieldName === 'city_id';
         // Disable neighborhood_id field if city_id is not selected
         const isNeighborhoodFieldDisabled = fieldName === 'neighborhood_id' && !cityId;
-        // Disable status field when entry_type is selected (status is auto-set based on entry_type)
-        const isStatusFieldDisabled = fieldName === 'status' && entryType;
+        // Disable status field only when entry_type is 'new_with_approval' (status is set to 'unauthorized' and locked)
+        // For 'active_with_license', allow user to choose any status
+        const isStatusFieldDisabled = fieldName === 'status' && entryType === 'new_with_approval';
         // Check if field has disabled property
         const isFieldDisabled = field.disabled || viewMode || isActivityFieldDisabled || isCityFieldDisabled || isNeighborhoodFieldDisabled || isStatusFieldDisabled;
 
