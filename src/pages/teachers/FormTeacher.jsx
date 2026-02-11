@@ -278,12 +278,11 @@ export default function FormTeacher({
     // Auto-set status based on entry_type
     useEffect(() => {
         if (entryType && !viewMode) {
-            if (entryType === 'active_with_license') {
-                setValue('status', 'active', { shouldValidate: false });
-            } else if (entryType === 'new_with_approval') {
-                // For teachers, use 'cancelled' as the inactive status
-                setValue('status', 'cancelled', { shouldValidate: false });
+            if (entryType === 'new_with_approval') {
+                // Set status to 'unauthorized' and it will be disabled
+                setValue('status', 'unauthorized', { shouldValidate: false });
             }
+            // For 'active_with_license', don't auto-set - let user choose
         }
     }, [entryType, viewMode, setValue]);
 
@@ -385,6 +384,13 @@ export default function FormTeacher({
             delete submitData.license_image;
         }
 
+        // If entry_type is 'new_with_approval', remove all license-related fields from payload
+        if (submitData.entry_type === 'new_with_approval') {
+            delete submitData.licence_number;
+            delete submitData.license_image;
+            delete submitData.license_issue_date;
+        }
+
         // In edit mode, filter out file fields that are links (not File objects)
         // The API only accepts actual File objects, not URLs/links
         if (editMode && submitData.files) {
@@ -436,8 +442,9 @@ export default function FormTeacher({
             return true;
         }
 
-        // Disable status field when entry_type is selected (status is auto-set based on entry_type)
-        if (fieldName === 'status' && entryType) {
+        // Disable status field only when entry_type is 'new_with_approval' (status is set to 'unauthorized' and locked)
+        // For 'active_with_license', allow user to choose any status
+        if (fieldName === 'status' && entryType === 'new_with_approval') {
             return true;
         }
 
