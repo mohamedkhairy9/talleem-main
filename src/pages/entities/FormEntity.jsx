@@ -528,9 +528,8 @@ export default function FormEntity({
         const isCityFieldDisabled = fieldName === 'city_id';
         // Disable neighborhood_id field if city_id is not selected
         const isNeighborhoodFieldDisabled = fieldName === 'neighborhood_id' && !cityId;
-        // Disable status field only when entry_type is 'new_with_approval' (status is set to 'unauthorized' and locked)
-        // For 'active_with_license', allow user to choose any status
-        const isStatusFieldDisabled = fieldName === 'status' && entryType === 'new_with_approval';
+        // Disable status in edit mode; also when entry_type is 'new_with_approval' (status locked to 'unauthorized')
+        const isStatusFieldDisabled = fieldName === 'status' && (editMode || entryType === 'new_with_approval');
         // Check if field has disabled property
         const isFieldDisabled = field.disabled || viewMode || isActivityFieldDisabled || isCityFieldDisabled || isNeighborhoodFieldDisabled || isStatusFieldDisabled;
 
@@ -550,6 +549,7 @@ export default function FormEntity({
                 }
                 defaultValue={defaultValue}
                 required={isFieldRequired(adjustedSchema, fieldName)}
+                oldData={oldData}
             />
         );
     };

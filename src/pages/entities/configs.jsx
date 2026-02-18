@@ -73,8 +73,8 @@ export const entitiesFields = [
         label: 'validation.entry_type.label',
         type: 'select',
         placeholder: 'validation.entry_type.placeholder',
-        editMode: true,
-        viewMode: true
+        editMode: false,
+        viewMode: false
     },
     {
         name: 'license_number',

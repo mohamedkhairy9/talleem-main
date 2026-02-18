@@ -51,14 +51,18 @@ export default function Teachers() {
             user_id: item.user?.id,
             branch_id: item.branch?.id,
             main_program_id: item.main_program?.id,
-            entity_id: item.entity?.id,
+            entity_id: item.entity != null ? Number(item.entity.id) : undefined,
+            entity: item.entity ?? undefined,
             major_id: item.major?.id,
-            nationality_id: item.nationality?.id,
+            nationality_id: item.nationality != null ? Number(item.nationality.id) : undefined,
+            nationality: item.nationality ?? undefined,
             academic_qualification_id: item.academic_qualification?.id,
             specification_id: item.specification?.id,
             city_id: item.city?.id,
             gender: genderValue,
             education_program_entity_type_classification: null, // Will be set in FormTeacher based on entity_category_id
+            education_program_entity_type_id: item.education_program_entity_type ?? null,
+            memorization_program_entity_type_id: item.memorization_program_entity_type ?? null,
             entity_category_id:
                 item.main_program?.id == 1
                     ? item.education_program_entity_type?.id

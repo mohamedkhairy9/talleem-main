@@ -234,24 +234,32 @@ export function createLoadOptionsForField(fieldName, additionalParams = {}, incl
  * @param {string} language - Current language
  * @returns {Array|boolean} Default options array or true for load on open
  */
+/** Get a nested value from obj by path e.g. 'manager.nationality_id'. Exported for use in InputRFH. */
+export function getNestedValue(obj, path) {
+    if (!obj || !path) return undefined;
+    return path.split('.').reduce((acc, key) => acc?.[key], obj);
+}
+
 export function getDefaultOptionsForField(fieldName, oldData, language = 'en') {
-    // Try to get the selected value from oldData
-    const fieldValue = oldData?.[fieldName];
+    // Try to get the selected value from oldData (supports nested paths e.g. manager.nationality_id)
+    const fieldValue = getNestedValue(oldData, fieldName) ?? oldData?.[fieldName];
     
     if (!fieldValue) {
         return true; // Load options on open
     }
     
-    // Try to find the full object (some fields store the full object)
-    const fieldObject = oldData?.[fieldName.replace('_id', '')] || 
+    // Try to find the full object (e.g. nationality from nationality_id, or manager.nationality from manager.nationality_id)
+    const objectPath = fieldName.replace(/_id$/, '');
+    const fieldObject = getNestedValue(oldData, objectPath) ||
+                       oldData?.[fieldName.replace('_id', '')] ||
                        oldData?.[fieldName] ||
                        null;
     
-    if (fieldObject && typeof fieldObject === 'object' && fieldObject.id) {
-        const name = fieldObject.name?.[language] || 
-                    fieldObject.name?.en || 
-                    fieldObject.name?.ar || 
-                    fieldObject.name || 
+    if (fieldObject && typeof fieldObject === 'object' && fieldObject.id != null) {
+        const name = fieldObject.name?.[language] ||
+                    fieldObject.name?.en ||
+                    fieldObject.name?.ar ||
+                    fieldObject.name ||
                     '';
         
         return [{

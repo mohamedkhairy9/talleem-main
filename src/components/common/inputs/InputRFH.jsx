@@ -1,6 +1,6 @@
 import useLocale from '@/utils/hooks/global/useLocale';
 import SelectRFH from './SelectRFH';
-import { shouldUseAsyncSelect, createLoadOptionsForField, getDefaultOptionsForField } from '@/utils/helpers/asyncSelectFieldMapper';
+import { shouldUseAsyncSelect, createLoadOptionsForField, getDefaultOptionsForField, getNestedValue } from '@/utils/helpers/asyncSelectFieldMapper';
 import { useMemo } from 'react';
 import i18next from 'i18next';
 
@@ -56,17 +56,17 @@ export default function InputRFH({
         // Auto-detect for select fields that are API-backed
         // Always use async for API-backed fields to enable pagination (ignore options prop)
         if (type === 'select' && shouldUseAsyncSelect(name)) {
-            // Get the option object from oldData if available
-            const fieldValue = oldData?.[name];
+            // Get the option object from oldData if available (supports nested paths e.g. manager.nationality_id)
+            const fieldValue = getNestedValue(oldData, name) ?? oldData?.[name];
             let includeOption = null;
             
-            // Try to get the full object
-            const fieldObjectName = name.replace('_id', '');
-            const fieldObject = oldData?.[fieldObjectName] || null;
+            // Try to get the full object (e.g. nationality or manager.nationality)
+            const fieldObjectPath = name.replace(/_id$/, '');
+            const fieldObject = getNestedValue(oldData, fieldObjectPath) ?? oldData?.[fieldObjectPath] ?? null;
             
-            if (fieldObject && typeof fieldObject === 'object' && fieldObject.id) {
+            if (fieldObject && typeof fieldObject === 'object' && fieldObject.id != null) {
                 includeOption = fieldObject;
-            } else if (fieldValue && typeof fieldValue === 'object' && fieldValue.id) {
+            } else if (fieldValue && typeof fieldValue === 'object' && fieldValue.id != null) {
                 includeOption = fieldValue;
             }
             

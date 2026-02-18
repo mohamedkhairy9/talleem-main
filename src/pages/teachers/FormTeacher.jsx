@@ -1,5 +1,5 @@
 import useRFH from '@/utils/hooks/global/useRFH';
-import { teachersSchema as schema } from '@/utils/yup/teachers.schemas';
+import { teachersSchema, teachersSchemaEdit } from '@/utils/yup/teachers.schemas';
 import React, { useEffect, useMemo, useState } from 'react';
 import { teachersFields } from './configs';
 import InputRFH from '@/components/common/inputs/InputRFH';
@@ -13,14 +13,17 @@ import i18next from 'i18next';
 import ModalContent from '@/components/common/form/ModalContent';
 import ModalFooter from '@/components/common/form/ModalFooter';
 import { isFieldRequired } from '@/utils/helpers/schemaHelpers';
+import { errorHandler } from '@/api/handler';
+import ValidationErrorsSummary from '@/pages/students/components/ValidationErrorsSummary';
 
 // Helper to extract education entity type data from oldData
 const extractEducationEntityTypeData = (oldData) => {
-    if (!oldData?.education_program_entity_type_id) {
+    const educationEntityType =
+        oldData?.education_program_entity_type_id ??
+        oldData?.education_program_entity_type;
+    if (!educationEntityType) {
         return { id: null, classification: null, name: null };
     }
-
-    const educationEntityType = oldData.education_program_entity_type_id;
 
     // Check if it's an object (nested data from backend)
     if (typeof educationEntityType === 'object' && educationEntityType !== null) {
@@ -40,11 +43,12 @@ const extractEducationEntityTypeData = (oldData) => {
 
 // Helper to extract memorization entity type data from oldData
 const extractMemorizationEntityTypeData = (oldData) => {
-    if (!oldData?.memorization_program_entity_type_id) {
+    const memorizationEntityType =
+        oldData?.memorization_program_entity_type_id ??
+        oldData?.memorization_program_entity_type;
+    if (!memorizationEntityType) {
         return { id: null, name: null };
     }
-
-    const memorizationEntityType = oldData.memorization_program_entity_type_id;
 
     if (typeof memorizationEntityType === 'object' && memorizationEntityType !== null) {
         return {
@@ -148,7 +152,8 @@ export default function FormTeacher({
         return baseValues;
     }, [oldData, educationEntityTypeInfo, memorizationEntityTypeInfo, editMode, viewMode, lang]);
 
-    const { register, errors, handleSubmit, control, setValue, watch } = useRFH({
+    const schema = editMode ? teachersSchemaEdit : teachersSchema;
+    const { register, errors, handleSubmit, control, setValue, watch, isSubmitting } = useRFH({
         schema,
         defaultValues
     });
@@ -222,9 +227,19 @@ export default function FormTeacher({
             return matchesProgram && matchesBranch;
         });
 
+        // In view/edit mode, ensure the teacher's current entity is in the list so the select displays it
+        if ((editMode || viewMode) && oldData?.entity && oldData?.entity_id != null) {
+            const hasCurrentEntity = filtered.some(
+                e => Number(e.id) === Number(oldData.entity_id)
+            );
+            if (!hasCurrentEntity) {
+                return [...filtered, oldData.entity];
+            }
+        }
+
         console.log('Final filtered entities:', filtered.length);
         return filtered;
-    }, [mainProgramId, branchId, options.entity_id, lang]);
+    }, [mainProgramId, branchId, options.entity_id, lang, editMode, viewMode, oldData]);
 
     // Filter branches based on selected city
     // COMMENTED OUT: Branch filtering by city removed - may revert if needed
@@ -429,6 +444,9 @@ export default function FormTeacher({
         mutate(finalData, {
             onSuccess: () => {
                 onClose();
+            },
+            onError: (err) => {
+                errorHandler(err);
             }
         });
     }
@@ -442,9 +460,8 @@ export default function FormTeacher({
             return true;
         }
 
-        // Disable status field only when entry_type is 'new_with_approval' (status is set to 'unauthorized' and locked)
-        // For 'active_with_license', allow user to choose any status
-        if (fieldName === 'status' && entryType === 'new_with_approval') {
+        // Disable status in edit mode; also when entry_type is 'new_with_approval' (status locked to 'unauthorized')
+        if (fieldName === 'status' && (editMode || entryType === 'new_with_approval')) {
             return true;
         }
 
@@ -484,6 +501,7 @@ export default function FormTeacher({
     return (
         <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col h-full">
             <ModalContent>
+            {!viewMode && <ValidationErrorsSummary errors={errors} />}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {filteredTeacherFields.map(field => {
                     // Special handling for classification field (read-only, auto-filled)
@@ -550,6 +568,7 @@ export default function FormTeacher({
                                     options={generateOptions(enhancedOptions[field.name] || [])}
                                     defaultValue={defaultValues[field.name] || field.defaultValue}
                                     required={isFieldRequired(schema, field.name)}
+                                    oldData={oldData}
                                 />
                             </div>
                         );
@@ -722,6 +741,7 @@ export default function FormTeacher({
                                     min={field.min}
                                     max={field.max}
                                     required={isFieldRequired(schema, field.name)}
+                                    oldData={oldData}
                                 />
                             )}
                         </div>
@@ -732,7 +752,7 @@ export default function FormTeacher({
             {!viewMode && (
                 <ModalFooter>
                     <Btn
-                        loading={isPending}
+                        loading={isPending || isSubmitting}
                         className="py-[10px] w-full"
                         type="submit"
                         label="common.submit"

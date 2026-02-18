@@ -244,3 +244,12 @@ export const teachersSchema = yup.object({
 
     profile_image: yup.mixed().nullable().optional()
 });
+
+// Edit mode: entry_type is hidden and not required
+export const teachersSchemaEdit = teachersSchema.shape({
+    entry_type: yup
+        .string()
+        .nullable()
+        .optional()
+        .oneOf(['new_with_approval', 'active_with_license'], t('validation.required'))
+});
