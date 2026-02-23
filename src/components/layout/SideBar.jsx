@@ -5,7 +5,7 @@ import Logo from '../common/Logo';
 import { sideMenuTabs, normalizeRole } from '../../utils/constants/configs';
 import useLanguageStore from '../../utils/stores/language.store';
 import useLocale from '../../utils/hooks/global/useLocale';
-import useUserStore from '../../utils/stores/user.store';
+import {useUserStore} from '../../utils/stores/user.store';
 
 export default function SideBar() {
     const [isOpen, setIsOpen] = useState(true);
