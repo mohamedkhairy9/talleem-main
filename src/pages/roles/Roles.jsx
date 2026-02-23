@@ -7,11 +7,13 @@ import useFiltering from '@/utils/hooks/global/useFiltering';
 import CreateRole from './CreateRole';
 import EditRole from './EditRole';
 import DeleteRole from './DeleteRole';
+import ViewRole from './ViewRole';
+import AssignPermissionsModal from './AssignPermissionsModal';
+import Filters from './Filters';
 import useLocale from '@/utils/hooks/global/useLocale';
 import i18next from 'i18next';
 import { getOriginalObject } from '@/utils/helpers/global.fns';
-import ViewRole from './ViewRole';
-import Filters from './Filters';
+import { MdSecurity } from 'react-icons/md';
 
 export default function Roles() {
     const { isOpen, toggle } = useIsOpen();
@@ -19,8 +21,6 @@ export default function Roles() {
         useFiltering(filtersDefaultValues);
     const { data, isLoading, refresh } = useRolesQuery(filters);
     const { t } = useLocale();
-
-    console.log('data', data);
 
     const tableData = data?.data?.map(item => ({
         ...item,
@@ -32,6 +32,20 @@ export default function Roles() {
         description: item.description,
         id: item.id
     }));
+
+    const RolesTableActions = ({ row, toggleModals }) => (
+        <button
+            type="button"
+            onClick={e => {
+                e.stopPropagation();
+                toggleModals?.assignPermission?.(row);
+            }}
+            className="p-1 text-indigo-600 hover:text-indigo-800 hover:bg-indigo-50 rounded transition-colors"
+            title={t('roles.assign_permission')}
+        >
+            <MdSecurity className="w-4 h-4" />
+        </button>
+    );
 
     return (
         <div>
@@ -46,6 +60,7 @@ export default function Roles() {
                 toggleModals={toggle}
                 pagination={pagination}
                 setPagination={setter('pagination')}
+                Actions={RolesTableActions}
                 Filters={
                     <Filters filters={filters} handleFilter={handleFilter} />
                 }
@@ -67,6 +82,12 @@ export default function Roles() {
             )}
             {isOpen.delete && (
                 <DeleteRole onClose={toggle.delete} id={isOpen.delete?.id} />
+            )}
+            {isOpen.assignPermission && (
+                <AssignPermissionsModal
+                    role={isOpen.assignPermission}
+                    onClose={() => toggle.assignPermission(false)}
+                />
             )}
         </div>
     );

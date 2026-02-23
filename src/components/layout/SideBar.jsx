@@ -1,10 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { HiMenuAlt3, HiX, HiChevronDown } from 'react-icons/hi';
 import Logo from '../common/Logo';
-import { sideMenuTabs } from '../../utils/constants/configs';
+import { sideMenuTabs, normalizeRole } from '../../utils/constants/configs';
 import useLanguageStore from '../../utils/stores/language.store';
 import useLocale from '../../utils/hooks/global/useLocale';
+import useUserStore from '../../utils/stores/user.store';
 
 export default function SideBar() {
     const [isOpen, setIsOpen] = useState(true);
@@ -16,6 +17,18 @@ export default function SideBar() {
     const navigate = useNavigate();
     const { isRTL } = useLanguageStore();
     const { t } = useLocale();
+    const userRoles = useUserStore(state => state.user?.roles) || [];
+
+    const visibleMenuTabs = useMemo(() => {
+        const normalizedUserRoles = userRoles.map(normalizeRole).filter(Boolean);
+        return sideMenuTabs.filter(tab => {
+            const allowed = tab.allowedRoles;
+            if (!allowed || allowed.length === 0) return true;
+            return allowed.some(allowedRole =>
+                normalizedUserRoles.includes(normalizeRole(allowedRole))
+            );
+        });
+    }, [userRoles]);
 
     useEffect(() => {
         const handleResize = () => {
@@ -35,7 +48,7 @@ export default function SideBar() {
 
     useEffect(() => {
         const newExpandedMenus = {};
-        sideMenuTabs.forEach((tab, index) => {
+        visibleMenuTabs.forEach((tab, index) => {
             if (tab.subMenu && tab.subMenu.length > 0) {
                 const hasActiveSubmenuItem = tab.subMenu.some(item =>
                     isActive(item.path)
@@ -46,7 +59,7 @@ export default function SideBar() {
             }
         });
         setExpandedMenus(prev => ({ ...prev, ...newExpandedMenus }));
-    }, [location.pathname]);
+    }, [location.pathname, visibleMenuTabs]);
 
     useEffect(() => {
         const handleClickOutside = event => {
@@ -293,7 +306,7 @@ export default function SideBar() {
                     className="flex-1 p-3 space-y-1 overflow-y-auto custom-scrollbar"
                     tabIndex={0}
                 >
-                    {sideMenuTabs.map((tab, index) => {
+                    {visibleMenuTabs.map((tab, index) => {
                         const Icon = tab.icon;
                         const title = t(tab.titleKey);
                         const hasSubmenu =

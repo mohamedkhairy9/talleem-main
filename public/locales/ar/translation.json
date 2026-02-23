@@ -992,6 +992,8 @@
         "add": "إضافة",
         "back": "رجوع",
         "wait": "انتظر",
+        "refresh": "تحديث",
+        "actions": "إجراءات",
         "enabled": "مفعل",
         "disabled": "غير مفعل",
         "are_you_sure_you_want_to_delete_this_item": "هل أنت متأكد أنك تريد حذف هذا العنصر؟",
@@ -1042,6 +1044,17 @@
         "update": "تحديث الدور",
         "view": "عرض الدور",
         "assign_permission": "تعيين صلاحيات"
+    },
+    "roles_permissions": {
+        "title": "الأدوار والصلاحيات",
+        "add_role": "إضافة دور",
+        "assign_permissions": "تعيين الصلاحيات",
+        "assign_for_role": "تعيين الصلاحيات للدور",
+        "permissions_count": "الصلاحيات",
+        "no_roles": "لا توجد أدوار.",
+        "search_permissions_placeholder": "البحث عن صلاحية بالاسم...",
+        "no_permissions_match": "لا توجد صلاحيات تطابق البحث.",
+        "search_to_find": "اكتب للبحث عن الصلاحيات."
     },
     "academic_qualifications": {
         "create": "إنشاء مؤهل أكاديمي",
@@ -1274,6 +1287,7 @@
         "majors": "التخصصات",
         "security_system": "نظام الحماية",
         "system_settings": "الإعدادات العامة",
+        "roles_and_permissions": "الأدوار والصلاحيات",
         "main_education_programs": "البرامج الرئيسية",
         "policies_and_banners": "السياسات واللافتات",
         "memorization_program_settings": "برنامج التحفيظ",
