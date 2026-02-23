@@ -5,7 +5,8 @@ import Logo from '../common/Logo';
 import { sideMenuTabs, normalizeRole } from '../../utils/constants/configs';
 import useLanguageStore from '../../utils/stores/language.store';
 import useLocale from '../../utils/hooks/global/useLocale';
-import {useUserStore} from '../../utils/stores/user.store';
+import { useShallow } from 'zustand/react/shallow';
+import { useUserStore } from '../../utils/stores/user.store';
 
 export default function SideBar() {
     const [isOpen, setIsOpen] = useState(true);
@@ -17,14 +18,17 @@ export default function SideBar() {
     const navigate = useNavigate();
     const { isRTL } = useLanguageStore();
     const { t } = useLocale();
-    // API may send user_type (e.g. "super-admin") instead of roles array
-    const userRoles = useUserStore(state => {
-        const u = state.user;
-        if (!u) return [];
-        if (u.roles?.length) return u.roles;
-        if (u.user_type) return [u.user_type];
-        return [];
-    });
+    // API may send user_type (e.g. "super-admin") instead of roles array.
+    // useShallow prevents infinite re-renders: selector returns new []/[u.user_type] refs each time.
+    const userRoles = useUserStore(
+        useShallow(state => {
+            const u = state.user;
+            if (!u) return [];
+            if (u.roles?.length) return u.roles;
+            if (u.user_type) return [u.user_type];
+            return [];
+        })
+    );
 
     const visibleMenuTabs = useMemo(() => {
         const normalizedUserRoles = userRoles.map(normalizeRole).filter(Boolean);

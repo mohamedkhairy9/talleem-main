@@ -1,5 +1,6 @@
 import React from 'react';
 import { Outlet, useLocation, Navigate } from 'react-router-dom';
+import { useShallow } from 'zustand/react/shallow';
 import Navbar from './Navbar';
 import SideBar from './SideBar';
 import { useUserStore } from '@/utils/stores/user.store';
@@ -22,14 +23,17 @@ function isPathAllowedForBranchAdmin(pathname) {
 
 export default function Layout() {
     const location = useLocation();
-    // API may send user_type (e.g. "super-admin") instead of roles array
-    const userRoles = useUserStore(state => {
-        const u = state.user;
-        if (!u) return [];
-        if (u.roles?.length) return u.roles;
-        if (u.user_type) return [u.user_type];
-        return [];
-    });
+    // API may send user_type (e.g. "super-admin") instead of roles array.
+    // useShallow prevents infinite re-renders: selector returns new []/[u.user_type] refs each time.
+    const userRoles = useUserStore(
+        useShallow(state => {
+            const u = state.user;
+            if (!u) return [];
+            if (u.roles?.length) return u.roles;
+            if (u.user_type) return [u.user_type];
+            return [];
+        })
+    );
     const branchAdminOnly = isBranchAdminOnly(userRoles);
     const pathAllowed = isPathAllowedForBranchAdmin(location.pathname);
 
