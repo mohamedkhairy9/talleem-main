@@ -62,7 +62,8 @@ export const useDeleteRoleMutation = () => {
 export const useAssignPermissionMutation = () => {
     const queryClient = useQueryClient();
     return useCustomMutation({
-        mutationFn: data => rolesService.assignPermission(data.roleId, data),
+        mutationFn: ({ roleId, permission_ids }) =>
+            rolesService.assignPermission(roleId, { permission_ids }),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: [API_KEYS.ROLES] });
         },

@@ -981,6 +981,8 @@
         "add": "Add",
         "back": "Back",
         "wait": "Wait",
+        "refresh": "Refresh",
+        "actions": "Actions",
         "enabled": "Enabled",
         "disabled": "Disabled",
         "are_you_sure_you_want_to_delete_this_item": "Are you sure you want to delete this item?",
@@ -1031,6 +1033,17 @@
         "update": "Update Role",
         "view": "View Role",
         "assign_permission": "Assign Permissions"
+    },
+    "roles_permissions": {
+        "title": "Roles & Permissions",
+        "add_role": "Add Role",
+        "assign_permissions": "Assign Permissions",
+        "assign_for_role": "Assign permissions for role",
+        "permissions_count": "Permissions",
+        "no_roles": "No roles found.",
+        "search_permissions_placeholder": "Search permissions by name...",
+        "no_permissions_match": "No permissions match your search.",
+        "search_to_find": "Type to search for permissions."
     },
     "session_modes": {
         "create": "Create Session Mode",
@@ -1306,6 +1319,7 @@
         "majors": "Majors",
         "security_system": "Security System",
         "system_settings": "System Settings",
+        "roles_and_permissions": "Roles & Permissions",
         "main_education_programs": "Main Programs",
         "policies_and_banners": "Policies & Banners",
         "memorization_program_settings": "Memorization Program",
