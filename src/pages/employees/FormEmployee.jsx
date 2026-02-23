@@ -33,7 +33,10 @@ export default function FormEmployee({
         defaultValues: {
             ...oldData,
             name: oldData?.name || { en: '', ar: '' },
-            date_of_birth: onlyDate(oldData?.date_of_birth)
+            date_of_birth: onlyDate(oldData?.date_of_birth),
+            roles: Array.isArray(oldData?.roles)
+                ? oldData.roles.map(r => (typeof r === 'object' && r?.id != null ? r.id : r))
+                : oldData?.role_ids ?? []
         }
     });
 
@@ -92,7 +95,14 @@ export default function FormEmployee({
             data.profile_picture = data.profile_picture[0];
         }
 
-        mutate({...data, status: data.status ? 1 : 0}, {
+        // Send role names (not ids) as roles[] in form data
+        const roleNames = (data.roles || []).map(id => {
+            const role = (options?.roles || []).find(r => r.id == id);
+            return role?.name ?? String(id);
+        });
+        const payload = { ...data, roles: roleNames, status: data.status ? 1 : 0 };
+
+        mutate(payload, {
             onSuccess: () => {
                 onClose();
             }
@@ -102,8 +112,12 @@ export default function FormEmployee({
     const renderField = field => {
         const fieldName = field.name;
         const error = getNestedError(errors, fieldName);
-        const defaultValue =
-            oldData?.[fieldName] || field.defaultValue;
+        let defaultValue = oldData?.[fieldName] ?? field.defaultValue;
+        if (fieldName === 'roles' && Array.isArray(oldData?.roles)) {
+            defaultValue = oldData.roles.map(r =>
+                typeof r === 'object' && r?.name != null ? r.name : r
+            );
+        }
 
         if (field.type === 'file') {
             if (field.name === 'profile_picture') {

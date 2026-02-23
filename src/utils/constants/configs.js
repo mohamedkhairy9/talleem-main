@@ -16,7 +16,7 @@ import { IoGrid } from 'react-icons/io5';
 
 // Roles that can see the full sidebar (super admin). Branch admin sees only home + registration_requests.
 export const ROLE_SUPER_ADMIN = 'super-admin';
-export const ROLE_BRANCH_ADMIN = 'branch-admin';
+export const ROLE_BRANCH_ADMIN = 'branch manager';
 
 /** Normalize role string for comparison (e.g. "Branch Admin", "branch_admin" -> "branch-admin"). Accepts string or object with .name */
 export const normalizeRole = (role) => {

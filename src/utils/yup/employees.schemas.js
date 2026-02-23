@@ -62,6 +62,7 @@ export const employeesSchema = yup.object({
             return value.length >= 5;
         }),
     status: yup.boolean().required(t('validation.required')),
+    roles: yup.array().of(yup.number().integer()).nullable().optional(),
     profile_picture: yup.mixed().optional().nullable(),
     files: yup.array().of(yup.mixed()).nullable().optional()
 });
