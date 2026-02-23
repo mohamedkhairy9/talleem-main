@@ -31,7 +31,9 @@ export const useUserStore = create(
 
             hasRole: role => {
                 const { user } = get();
-                return user?.roles?.includes(role) || false;
+                if (!user) return false;
+                const effectiveRoles = user.roles?.length ? user.roles : (user.user_type ? [user.user_type] : []);
+                return effectiveRoles.includes(role) || false;
             },
             hasPermission: permission => {
                 const { user } = get();

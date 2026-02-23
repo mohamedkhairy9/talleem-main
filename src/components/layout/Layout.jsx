@@ -22,7 +22,14 @@ function isPathAllowedForBranchAdmin(pathname) {
 
 export default function Layout() {
     const location = useLocation();
-    const userRoles = useUserStore(state => state.user?.roles) || [];
+    // API may send user_type (e.g. "super-admin") instead of roles array
+    const userRoles = useUserStore(state => {
+        const u = state.user;
+        if (!u) return [];
+        if (u.roles?.length) return u.roles;
+        if (u.user_type) return [u.user_type];
+        return [];
+    });
     const branchAdminOnly = isBranchAdminOnly(userRoles);
     const pathAllowed = isPathAllowedForBranchAdmin(location.pathname);
 
