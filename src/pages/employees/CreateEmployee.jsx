@@ -11,6 +11,7 @@ import { useAcademicQualificationsQuery } from '@/api/hooks/useAcademicQualifica
 import { useCitiesQuery } from '@/api/hooks/useCities';
 import { useNationalitiesQuery } from '@/api/hooks/useNationalities';
 import { useMajorsQuery } from '@/api/hooks/useMajors';
+import { useRolesQuery } from '@/api/hooks/useRoles';
 import Loader from '@/components/common/Loader';
 import { allData } from '@/utils/constants/global.constants';
 import { enabledDisabledOptions } from '@/utils/constants/options';
@@ -20,6 +21,7 @@ export default function CreateEmployee({ onClose }) {
 
     // Fetch all available options
     const { data: jobsData, isLoading: jobsLoading } = useJobsQuery(allData);
+    const { data: rolesData, isLoading: rolesLoading } = useRolesQuery(allData);
     const { data: branchesData, isLoading: branchesLoading } =
         useBranchesQuery(allData);
     const {
@@ -42,7 +44,8 @@ export default function CreateEmployee({ onClose }) {
         // specificationsLoading ||
         citiesLoading ||
         nationalitiesLoading ||
-        majorsLoading;
+        majorsLoading ||
+        rolesLoading;
 
     if (isLoading) return <Loader />;
 
@@ -62,6 +65,7 @@ export default function CreateEmployee({ onClose }) {
                     // specification_id: specificationsData?.data,
                     city_id: citiesData?.data,
                     major_id: majorsData?.data,
+                    roles: rolesData?.data,
                     status: enabledDisabledOptions
                 }}
             />

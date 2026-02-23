@@ -30,10 +30,25 @@ export const prepareFormData = data => {
                     }
                 });
             } else {
-                // For other arrays, use indexed notation
-                value.forEach((item, idx) => {
-                    appendToFormData(`${key}[${idx}]`, item);
-                });
+                // For arrays of primitives (e.g. roles), use key[] so backend receives roles[]=v1&roles[]=v2
+                const isPrimitiveArray = value.every(
+                    item =>
+                        item == null ||
+                        typeof item === 'string' ||
+                        typeof item === 'number' ||
+                        typeof item === 'boolean'
+                );
+                if (isPrimitiveArray) {
+                    value.forEach(item => {
+                        if (item !== null && item !== undefined) {
+                            formData.append(`${key}[]`, item);
+                        }
+                    });
+                } else {
+                    value.forEach((item, idx) => {
+                        appendToFormData(`${key}[${idx}]`, item);
+                    });
+                }
             }
         }
         // Handle nested objects (but not File or FileList)

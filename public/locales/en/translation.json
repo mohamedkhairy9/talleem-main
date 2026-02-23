@@ -544,6 +544,10 @@
             "integer": "Job must be selected",
             "min": "Please select a valid job"
         },
+        "roles": {
+            "label": "Roles",
+            "placeholder": "Select roles"
+        },
         "branch_id": {
             "label": "Branch",
             "placeholder": "Select branch",

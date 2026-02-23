@@ -132,6 +132,15 @@ export const employeesFields = [
         viewMode: true
     },
     {
+        name: 'roles',
+        label: 'validation.roles.label',
+        type: 'select',
+        placeholder: 'validation.roles.placeholder',
+        editMode: true,
+        viewMode: true,
+        isMulti: true
+    },
+    {
         name: 'academic_qualification_id',
         label: 'validation.academic_qualification_id.label',
         type: 'select',
