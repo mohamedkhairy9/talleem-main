@@ -2,7 +2,7 @@ import React from 'react';
 import { Outlet, useLocation, Navigate } from 'react-router-dom';
 import Navbar from './Navbar';
 import SideBar from './SideBar';
-import useUserStore from '@/utils/stores/user.store';
+import { useUserStore } from '@/utils/stores/user.store';
 import { ROLE_SUPER_ADMIN, ROLE_BRANCH_ADMIN, normalizeRole } from '@/utils/constants/configs';
 
 const BRANCH_ADMIN_ALLOWED_PATHS = ['/', '/request-types', '/phases', '/join-request-forms', '/join-requests'];
