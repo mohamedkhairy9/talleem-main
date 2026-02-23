@@ -1,9 +1,35 @@
 import React from 'react';
-import { Outlet } from 'react-router-dom';
+import { Outlet, useLocation, Navigate } from 'react-router-dom';
 import Navbar from './Navbar';
 import SideBar from './SideBar';
+import useUserStore from '@/utils/stores/user.store';
+import { ROLE_SUPER_ADMIN, ROLE_BRANCH_ADMIN, normalizeRole } from '@/utils/constants/configs';
+
+const BRANCH_ADMIN_ALLOWED_PATHS = ['/', '/request-types', '/phases', '/join-request-forms', '/join-requests'];
+
+function isBranchAdminOnly(userRoles) {
+    if (!userRoles?.length) return false;
+    const normalized = userRoles.map(normalizeRole);
+    const isSuperAdmin = normalized.includes(normalizeRole(ROLE_SUPER_ADMIN));
+    const isBranchAdmin = normalized.includes(normalizeRole(ROLE_BRANCH_ADMIN));
+    return isBranchAdmin && !isSuperAdmin;
+}
+
+function isPathAllowedForBranchAdmin(pathname) {
+    if (pathname === '/') return true;
+    return BRANCH_ADMIN_ALLOWED_PATHS.some(p => p !== '/' && pathname.startsWith(p));
+}
 
 export default function Layout() {
+    const location = useLocation();
+    const userRoles = useUserStore(state => state.user?.roles) || [];
+    const branchAdminOnly = isBranchAdminOnly(userRoles);
+    const pathAllowed = isPathAllowedForBranchAdmin(location.pathname);
+
+    if (branchAdminOnly && !pathAllowed) {
+        return <Navigate to="/" replace />;
+    }
+
     return (
         <div className="bg-gray-100">
             <div className="flex-1 flex">

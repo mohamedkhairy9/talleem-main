@@ -33,13 +33,24 @@ import {
 import { VscDebugBreakpointLog } from 'react-icons/vsc';
 import { IoGrid } from 'react-icons/io5';
 
+// Roles that can see the full sidebar (super admin). Branch admin sees only home + registration_requests.
+export const ROLE_SUPER_ADMIN = 'super-admin';
+export const ROLE_BRANCH_ADMIN = 'branch-admin';
+
+/** Normalize role string for comparison (e.g. "Branch Admin", "branch_admin" -> "branch-admin"). Accepts string or object with .name */
+export const normalizeRole = (role) => {
+    const str = typeof role === 'string' ? role : role?.name ?? role?.display_name ?? '';
+    return typeof str === 'string' ? str.toLowerCase().replace(/\s+/g, '-').replace(/_/g, '-') : '';
+};
+
 export const sideMenuTabs = [
-    { titleKey: 'sidebar.home', path: '/', icon: HiHome },
+    { titleKey: 'sidebar.home', path: '/', icon: HiHome, allowedRoles: [ROLE_SUPER_ADMIN, ROLE_BRANCH_ADMIN] },
 
     // نظام الحماية
     {
         titleKey: 'sidebar.security_system',
         icon: HiShieldCheck,
+        allowedRoles: [ROLE_SUPER_ADMIN],
         subMenu: [
             {
                 titleKey: 'sidebar.roles',
@@ -73,6 +84,7 @@ export const sideMenuTabs = [
     {
         titleKey: 'sidebar.system_settings',
         icon: HiCog,
+        allowedRoles: [ROLE_SUPER_ADMIN],
         subMenu: [
             {
                 titleKey: 'sidebar.lookups',
@@ -225,6 +237,7 @@ export const sideMenuTabs = [
     {
         titleKey: 'sidebar.profile_management',
         icon: HiUser,
+        allowedRoles: [ROLE_SUPER_ADMIN],
         subMenu: [
             {
                 titleKey: 'sidebar.entities',
@@ -253,6 +266,7 @@ export const sideMenuTabs = [
     {
         titleKey: 'sidebar.notifications_system',
         icon: HiBell,
+        allowedRoles: [ROLE_SUPER_ADMIN],
         subMenu: [
             {
                 titleKey: 'sidebar.notification_templates',
@@ -270,6 +284,7 @@ export const sideMenuTabs = [
     {
         titleKey: 'sidebar.registration_requests',
         icon: HiDocumentAdd,
+        allowedRoles: [ROLE_SUPER_ADMIN, ROLE_BRANCH_ADMIN],
         subMenu: [
             {
                 titleKey: 'sidebar.request_types',
@@ -297,6 +312,7 @@ export const sideMenuTabs = [
     {
         titleKey: 'sidebar.memorization_program_settings',
         icon: HiBookOpen,
+        allowedRoles: [ROLE_SUPER_ADMIN],
         subMenu: [
             {
                 titleKey: 'sidebar.session_periods',
@@ -347,6 +363,7 @@ export const sideMenuTabs = [
     {
         titleKey: 'sidebar.education_program_settings',
         icon: HiAcademicCap,
+        allowedRoles: [ROLE_SUPER_ADMIN],
         subMenu: [
             {
                 titleKey: 'sidebar.specifications',
@@ -363,6 +380,7 @@ export const sideMenuTabs = [
     {
         titleKey: 'sidebar.educational_supervision',
         icon: HiAcademicCap,
+        allowedRoles: [ROLE_SUPER_ADMIN],
         subMenu: [
             {
                 titleKey: 'sidebar.inspector-assignments',
@@ -396,6 +414,7 @@ export const sideMenuTabs = [
     {
         titleKey: 'sidebar.parents',
         path: '/parents',
-        icon: HiUserGroup
+        icon: HiUserGroup,
+        allowedRoles: [ROLE_SUPER_ADMIN]
     }
 ];
