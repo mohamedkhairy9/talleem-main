@@ -17,7 +17,14 @@ export default function SideBar() {
     const navigate = useNavigate();
     const { isRTL } = useLanguageStore();
     const { t } = useLocale();
-    const userRoles = useUserStore(state => state.user?.roles) || [];
+    // API may send user_type (e.g. "super-admin") instead of roles array
+    const userRoles = useUserStore(state => {
+        const u = state.user;
+        if (!u) return [];
+        if (u.roles?.length) return u.roles;
+        if (u.user_type) return [u.user_type];
+        return [];
+    });
 
     const visibleMenuTabs = useMemo(() => {
         const normalizedUserRoles = userRoles.map(normalizeRole).filter(Boolean);
