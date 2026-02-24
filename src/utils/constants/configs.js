@@ -262,10 +262,11 @@ export const sideMenuTabs = [
         ]
     },
 
+    // Full registration module: super admin only. Branch manager sees only "Join requests" (separate item below).
     {
         titleKey: 'sidebar.registration_requests',
         icon: HiDocumentAdd,
-        allowedRoles: [ROLE_SUPER_ADMIN, ROLE_BRANCH_ADMIN],
+        allowedRoles: [ROLE_SUPER_ADMIN],
         subMenu: [
             {
                 titleKey: 'sidebar.request_types',
@@ -288,6 +289,13 @@ export const sideMenuTabs = [
                 icon: VscDebugBreakpointLog
             }
         ]
+    },
+    // Branch manager only: single link to Join requests (no access to request types, phases, or join request forms).
+    {
+        titleKey: 'sidebar.join_requests',
+        path: '/join-requests',
+        icon: HiDocumentAdd,
+        allowedRoles: [ROLE_BRANCH_ADMIN]
     },
 
     {

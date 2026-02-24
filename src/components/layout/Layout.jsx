@@ -6,7 +6,8 @@ import SideBar from './SideBar';
 import { useUserStore } from '@/utils/stores/user.store';
 import { ROLE_SUPER_ADMIN, ROLE_BRANCH_ADMIN, normalizeRole } from '@/utils/constants/configs';
 
-const BRANCH_ADMIN_ALLOWED_PATHS = ['/', '/request-types', '/phases', '/join-request-forms', '/join-requests'];
+// Branch manager can only access home and join requests (not request-types, phases, or join-request-forms).
+const BRANCH_ADMIN_ALLOWED_PATHS = ['/', '/join-requests'];
 
 function isBranchAdminOnly(userRoles) {
     if (!userRoles?.length) return false;
