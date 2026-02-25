@@ -244,16 +244,35 @@ export default function EditConfigurationModal({ config, onClose }) {
                 return { type: 'checkbox', options: [], isMulti: false };
             case 'number':
                 return { type: 'number', options: [], isMulti: false };
-            case 'select':
-                // Parse comma-separated values as options
-                // eslint-disable-next-line no-case-declarations
-                const options = config.value.split(',').map(opt => ({
-                    value: opt.trim(),
-                    label: opt.trim(),
-                    id: opt.trim(),
-                    name: opt.trim()
-                }));
+            case 'select': {
+                // Options for select fields come from the response config.options (e.g. JSON string array)
+                let options = [];
+                const responseOptions = config.options;
+                if (responseOptions != null && responseOptions !== '') {
+                    try {
+                        const raw = typeof responseOptions === 'string' ? JSON.parse(responseOptions) : responseOptions;
+                        const arr = Array.isArray(raw) ? raw : [raw];
+                        options = arr.map(opt => {
+                            const val = typeof opt === 'string' ? opt : (opt?.value ?? opt?.label ?? String(opt));
+                            return {
+                                value: val,
+                                label: val,
+                                id: val,
+                                name: val
+                            };
+                        });
+                    } catch {
+                        options = [];
+                    }
+                }
+                if (options.length === 0 && config.value) {
+                    options = config.value.split(',').map(opt => {
+                        const v = opt.trim();
+                        return { value: v, label: v, id: v, name: v };
+                    }).filter(opt => opt.value);
+                }
                 return { type: 'select', options, isMulti: false };
+            }
             default:
                 return { type: 'text', options: [], isMulti: false };
         }
