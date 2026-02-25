@@ -2,6 +2,7 @@ import React from 'react';
 import Modal from '@/components/common/form/Modal';
 import ModalHeader from '@/components/common/form/ModalHeader';
 import useLocale from '@/utils/hooks/global/useLocale';
+import { formatDateForDisplay } from '@/utils/helpers/dateObjectHelpers';
 
 export default function ViewNotification({ onClose, notification }) {
     const { t, currentLocale } = useLocale();
@@ -272,29 +273,11 @@ export default function ViewNotification({ onClose, notification }) {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                         {renderField(
                             t('table_headers.created_at'),
-                            new Date(notification?.created_at).toLocaleString(
-                                currentLocale === 'ar' ? 'ar-EG' : 'en-US',
-                                {
-                                    year: 'numeric',
-                                    month: 'long',
-                                    day: 'numeric',
-                                    hour: '2-digit',
-                                    minute: '2-digit'
-                                }
-                            )
+                            formatDateForDisplay(notification?.created_at)
                         )}
                         {renderField(
                             t('table_headers.updated_at'),
-                            new Date(notification?.updated_at).toLocaleString(
-                                currentLocale === 'ar' ? 'ar-EG' : 'en-US',
-                                {
-                                    year: 'numeric',
-                                    month: 'long',
-                                    day: 'numeric',
-                                    hour: '2-digit',
-                                    minute: '2-digit'
-                                }
-                            )
+                            formatDateForDisplay(notification?.updated_at)
                         )}
                     </div>
                 </div>

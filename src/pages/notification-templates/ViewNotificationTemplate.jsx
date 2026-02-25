@@ -2,6 +2,7 @@ import React from 'react';
 import Modal from '@/components/common/form/Modal';
 import ModalHeader from '@/components/common/form/ModalHeader';
 import useLocale from '@/utils/hooks/global/useLocale';
+import { formatDateForDisplay } from '@/utils/helpers/dateObjectHelpers';
 
 export default function ViewNotificationTemplate({ onClose, template }) {
     const { t } = useLocale();
@@ -166,11 +167,11 @@ export default function ViewNotificationTemplate({ onClose, template }) {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                         {renderField(
                             t('table_headers.created_at'),
-                            new Date(template?.created_at).toLocaleString()
+                            formatDateForDisplay(template?.created_at)
                         )}
                         {renderField(
                             t('table_headers.updated_at'),
-                            new Date(template?.updated_at).toLocaleString()
+                            formatDateForDisplay(template?.updated_at)
                         )}
                     </div>
                 </div>

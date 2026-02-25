@@ -9,6 +9,7 @@ import {
 import { useUserStore } from '@/utils/stores/user.store';
 import { useLogoutMutation } from '@/api/hooks/useAuth';
 import LanguageSwitcher from '@/components/common/LanguageSwitcher';
+import DateFormatSwitcher from '@/components/common/DateFormatSwitcher';
 import useLocale from '@/utils/hooks/global/useLocale';
 
 export default function Navbar() {
@@ -31,6 +32,7 @@ export default function Navbar() {
         <div className="w-full bg-white border-b border-gray-200 px-6 py-4">
             <div className="flex items-center justify-end">
                 <div className="flex gap-4 items-center">
+                    <DateFormatSwitcher />
                     <LanguageSwitcher />
 
                     <div className="relative">

@@ -2,6 +2,7 @@ import React from 'react';
 import Modal from '@/components/common/form/Modal';
 import ModalHeader from '@/components/common/form/ModalHeader';
 import useLocale from '@/utils/hooks/global/useLocale';
+import { formatDateForDisplay } from '@/utils/helpers/dateObjectHelpers';
 
 export default function ViewImportErrorModal({ onClose, importError }) {
     const { t } = useLocale();
@@ -81,7 +82,7 @@ export default function ViewImportErrorModal({ onClose, importError }) {
                                 {t('import_errors.created_at')}
                             </label>
                             <p className="text-gray-900 bg-gray-50 p-3 rounded-md">
-                                {new Date(importError.created_at).toLocaleString()}
+                                {formatDateForDisplay(importError.created_at)}
                             </p>
                         </div>
                     </div>

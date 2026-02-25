@@ -2,6 +2,7 @@ import React from 'react';
 import Modal from '@/components/common/form/Modal';
 import ModalHeader from '@/components/common/form/ModalHeader';
 import useLocale from '@/utils/hooks/global/useLocale';
+import { formatDateForDisplay } from '@/utils/helpers/dateObjectHelpers';
 
 export default function ViewActivityLogModal({ onClose, activityLog }) {
     const { t } = useLocale();
@@ -109,9 +110,7 @@ export default function ViewActivityLogModal({ onClose, activityLog }) {
                                 {t('activity_logs.created_at')}
                             </label>
                             <p className="text-gray-900">
-                                {new Date(
-                                    activityLog.created_at
-                                ).toLocaleString()}
+                                {formatDateForDisplay(activityLog.created_at)}
                             </p>
                         </div>
                     </div>

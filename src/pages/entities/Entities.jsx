@@ -13,7 +13,7 @@ import DeleteEntity from './DeleteEntity';
 import ViewEntity from './ViewEntity';
 import ImportEntity from './ImportEntity';
 import useLocale from '@/utils/hooks/global/useLocale';
-import { getOriginalObject } from '@/utils/helpers/global.fns';
+import { getOriginalObject, onlyDate } from '@/utils/helpers/global.fns';
 import Filters from './Filters';
 import useExportExample from '@/utils/hooks/global/useExportExample';
 import i18next from 'i18next';
@@ -34,7 +34,6 @@ export default function Entities() {
         main_program: item.main_program?.name?.[i18next.language]
     }));
 
-    console.log(data?.data?.[0])
     const formData = data?.data?.map(item => ({
         id: item.id,
         name: {
@@ -85,7 +84,7 @@ export default function Entities() {
             city_id: item.manager?.city?.id,
             academic_qualification_id: item.manager?.academic_qualification_id,
             specification_id: item.manager?.specification_id,
-            date_of_birth: item.manager?.date_of_birth?.split('T')[0],
+            date_of_birth: onlyDate(item.manager?.date_of_birth),
             address: item.manager?.address,
             memorization_amount: item.manager?.memorization_amount,
             years_of_experience: item.manager?.years_of_experience,

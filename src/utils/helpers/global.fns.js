@@ -1,4 +1,5 @@
 import i18next from 'i18next';
+import { onlyDate as onlyDateFromHelper } from './dateObjectHelpers';
 
 export const prepareFormData = data => {
     const formData = new FormData();
@@ -178,8 +179,9 @@ export const getOriginalObject = (identfier, arr = []) => {
     return arr.find(el => el.id == (identfier?.id || identfier));
 };
 
+/** Handles both string and { gregorian, hijri, hijri_indic } date objects. Re-exported for backward compatibility. */
 export function onlyDate(date) {
-    return date ? date.split('T')[0] : null;
+    return onlyDateFromHelper(date);
 }
 
 export function spreadData(oldData, options) {

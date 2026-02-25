@@ -1,9 +1,29 @@
 import useLanguageStore from '@/utils/stores/language.store';
+import useDateFormatStore from '@/utils/stores/dateFormat.store';
 import React from 'react';
+import { toDate, isDateObject, getDateString } from '@/utils/helpers/dateObjectHelpers';
 
 export default function DateCell({ value, fullDate = false }) {
     const isRTL = useLanguageStore(state => state.isRTL);
-    const dateObj = new Date(value);
+    const dateFormat = useDateFormatStore(state => state.dateFormat);
+    const dateObj = toDate(value);
+
+    // When user chose Hijri and API sent date object, show the hijri string
+    if ((dateFormat === 'hijri' || dateFormat === 'hijri_indic') && isDateObject(value)) {
+        const displayStr = getDateString(value, dateFormat);
+        if (displayStr) {
+            return (
+                <div className="flex items-center space-x-3">
+                    <div className="w-3 h-3 rounded-full bg-gray-500 shrink-0" />
+                    <div className="font-medium text-gray-900 text-sm">{displayStr}</div>
+                </div>
+            );
+        }
+    }
+
+    if (!dateObj || Number.isNaN(dateObj.getTime())) {
+        return <span className="text-gray-400">—</span>;
+    }
 
     const formatDate = (date, isFullDate) => {
         if (isFullDate) {

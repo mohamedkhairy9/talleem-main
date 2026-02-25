@@ -9,6 +9,7 @@ import InputRFH from '@/components/common/inputs/InputRFH';
 import FileInputRFH from '@/components/common/inputs/FileInputRFH';
 import useLocale from '@/utils/hooks/global/useLocale';
 import { generateOptions } from '@/utils/helpers/global.fns';
+import { formatDateForDisplay } from '@/utils/helpers/dateObjectHelpers';
 import { getNestedError } from '@/utils/helpers/getNestedError';
 import * as yup from 'yup';
 import { t } from 'i18next';
@@ -248,7 +249,7 @@ export default function ViewJoinRequest({ onClose, oldData }) {
                                     {t('table_headers.created_at')}
                                 </label>
                                 <div className="text-sm text-gray-900">
-                                    {oldData?.created_at || '-'}
+                                    {formatDateForDisplay(oldData?.created_at)}
                                 </div>
                             </div>
                         </div>
