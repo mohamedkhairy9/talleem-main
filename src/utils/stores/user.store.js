@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
+import { normalizeRole } from '../constants/configs';
 
 export const useUserStore = create(
     persist(
@@ -31,9 +32,10 @@ export const useUserStore = create(
 
             hasRole: role => {
                 const { user } = get();
-                if (!user) return false;
-                const effectiveRoles = user.roles?.length ? user.roles : (user.user_type ? [user.user_type] : []);
-                return effectiveRoles.includes(role) || false;
+                if (!user?.roles?.length) return false;
+                const needle = normalizeRole(role);
+                if (!needle) return false;
+                return user.roles.some(ro => normalizeRole(ro) === needle) || user.roles.includes(role) || false;
             },
             hasPermission: permission => {
                 const { user } = get();

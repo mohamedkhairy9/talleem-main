@@ -24,15 +24,11 @@ function isPathAllowedForBranchAdmin(pathname) {
 
 export default function Layout() {
     const location = useLocation();
-    // API may send user_type (e.g. "super-admin") instead of roles array.
-    // useShallow prevents infinite re-renders: selector returns new []/[u.user_type] refs each time.
+    // Sidebar/layout: we only use user.roles (not user_type).
     const userRoles = useUserStore(
         useShallow(state => {
             const u = state.user;
-            if (!u) return [];
-            if (u.roles?.length) return u.roles;
-            if (u.user_type) return [u.user_type];
-            return [];
+            return u?.roles ?? [];
         })
     );
     const branchAdminOnly = isBranchAdminOnly(userRoles);

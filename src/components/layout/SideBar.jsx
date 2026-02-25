@@ -18,15 +18,11 @@ export default function SideBar() {
     const navigate = useNavigate();
     const { isRTL } = useLanguageStore();
     const { t } = useLocale();
-    // API may send user_type (e.g. "super-admin") instead of roles array.
-    // useShallow prevents infinite re-renders: selector returns new []/[u.user_type] refs each time.
+    // We only use user.roles for menu visibility (not user_type).
     const userRoles = useUserStore(
         useShallow(state => {
             const u = state.user;
-            if (!u) return [];
-            if (u.roles?.length) return u.roles;
-            if (u.user_type) return [u.user_type];
-            return [];
+            return u?.roles ?? [];
         })
     );
 

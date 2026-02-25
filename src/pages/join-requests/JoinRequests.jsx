@@ -1,6 +1,7 @@
 import React, { useMemo, useEffect } from 'react';
 import { useJoinRequestsQuery } from '@/api/hooks/useJoinRequests';
 import { useRequestTypesQuery } from '@/api/hooks/useRequestTypes';
+import { isBranchManagerOnly } from '@/api/axiosInstance';
 import useLocale from '@/utils/hooks/global/useLocale';
 import i18next from 'i18next';
 import Loader from '@/components/common/Loader';
@@ -14,11 +15,16 @@ import ViewJoinRequest from './ViewJoinRequest';
 import { getOriginalObject } from '@/utils/helpers/global.fns';
 
 export default function JoinRequests() {
+    const branchManagerOnly = isBranchManagerOnly();
     const { isOpen, toggle } = useIsOpen();
     const [searchParams, setSearchParams] = useSearchParams();
     const { pagination, handleFilter, filters, setter, setFilters } =
         useFiltering(filtersDefaultValues);
-    const { data: requestTypesData, isLoading: isLoadingRequestTypes } = useRequestTypesQuery();
+    // Branch manager: do not call dashboard request-types API (403). Use front join-requests only.
+    const { data: requestTypesData, isLoading: isLoadingRequestTypes } = useRequestTypesQuery(
+        {},
+        { enabled: !branchManagerOnly }
+    );
     const { t } = useLocale();
 
     // Get request types for tabs
@@ -49,9 +55,16 @@ export default function JoinRequests() {
     // Track if filters have been initialized with request_type_id
     const [filtersInitialized, setFiltersInitialized] = React.useState(false);
 
-    // Initialize URL and filters when request types are loaded
+    // Branch manager: no request-types from dashboard; mark ready so we can fetch join requests from front
     useEffect(() => {
-        if (requestTypes.length > 0 && selectedRequestTypeId && !filtersInitialized) {
+        if (branchManagerOnly && !filtersInitialized) {
+            setFiltersInitialized(true);
+        }
+    }, [branchManagerOnly, filtersInitialized]);
+
+    // Initialize URL and filters when request types are loaded (super admin only)
+    useEffect(() => {
+        if (!branchManagerOnly && requestTypes.length > 0 && selectedRequestTypeId && !filtersInitialized) {
             const urlParam = searchParams.get('request_type_id');
             const urlRequestTypeId = urlParam ? parseInt(urlParam) : null;
             
@@ -62,10 +75,12 @@ export default function JoinRequests() {
             setFilters(prev => ({ ...prev, request_type_id: selectedRequestTypeId }));
             setFiltersInitialized(true);
         }
-    }, [requestTypes.length, selectedRequestTypeId, filtersInitialized, setSearchParams, setFilters]);
+    }, [branchManagerOnly, requestTypes.length, selectedRequestTypeId, filtersInitialized, setSearchParams, setFilters]);
 
-    // Only call join requests API when request types are loaded, filters are initialized, and request_type_id is set
-    const shouldFetchJoinRequests = !isLoadingRequestTypes && filtersInitialized && selectedRequestTypeId !== null && filters.request_type_id === selectedRequestTypeId;
+    // Only call join requests API when ready. Branch manager: no request_type_id needed (front API). Others: need request type.
+    const shouldFetchJoinRequests = branchManagerOnly
+        ? filtersInitialized
+        : !isLoadingRequestTypes && filtersInitialized && selectedRequestTypeId !== null && filters.request_type_id === selectedRequestTypeId;
     const { data, isLoading, refresh } = useJoinRequestsQuery(filters, { enabled: shouldFetchJoinRequests });
 
     // Create a map of request type IDs to names
@@ -83,8 +98,8 @@ export default function JoinRequests() {
         setFilters(prev => ({ ...prev, request_type_id: requestTypeId }));
     };
 
-    // Show loader while request types are loading or filters are being initialized
-    if (isLoadingRequestTypes || !filtersInitialized) return <Loader />;
+    // Show loader: branch manager = until filters initialized; others = until request types loaded and filters initialized
+    if (!filtersInitialized || (!branchManagerOnly && isLoadingRequestTypes)) return <Loader />;
 
     const columns = joinRequestsColumns(requestTypesMap);
 

@@ -1,10 +1,15 @@
 import axios from 'axios';
 import { useUserStore } from '../utils/stores/user.store';
 import i18n from '../i18n';
+import { ROLE_SUPER_ADMIN, ROLE_BRANCH_ADMIN, normalizeRole } from '../utils/constants/configs';
 
 const baseURL =
     import.meta.env.VITE_API_BASE_URL ||
     'https://api-tallam.vocus-dev2.com/api/dashboard';
+
+const baseURLFront =
+    import.meta.env.VITE_API_BASE_URL_FRONT ||
+    'https://api-tallam.vocus-dev2.com/api/front';
 
 export const axiosInstance = axios.create({
     baseURL,
@@ -13,60 +18,64 @@ export const axiosInstance = axios.create({
     }
 });
 
-// Attach token automatically from Zustand and set Accept-Language header
-axiosInstance.interceptors.request.use(
-    config => {
-        const token = useUserStore.getState().access_token;
-        if (token) {
-            config.headers.Authorization = `Bearer ${token}`;
-        }
+/** True if user has only branch manager role (no super admin). We check only user.roles (not user_type). */
+export function isBranchManagerOnly() {
+    const user = useUserStore.getState().user;
+    if (!user?.roles?.length) return false;
+    const normalized = user.roles.map(normalizeRole).filter(Boolean);
+    const hasSuperAdmin = normalized.includes(normalizeRole(ROLE_SUPER_ADMIN));
+    const hasBranchAdmin = normalized.includes(normalizeRole(ROLE_BRANCH_ADMIN));
+    return hasBranchAdmin && !hasSuperAdmin;
+}
 
-        // Set Accept-Language header based on current i18n language
-        const currentLanguage = i18n.language || 'en';
-        config.headers['Accept-Language'] = currentLanguage;
-
-        // حذف الـ parameters الفاضية من الـ GET requests
-        if (config.params) {
-            const cleanedParams = {};
-            
-            Object.keys(config.params).forEach(key => {
-                const value = config.params[key];
-                
-                // إضافة القيمة فقط إذا كانت:
-                // - ليست null
-                // - ليست undefined
-                // - ليست string فاضي
-                // - ليست array فاضي
-                if (
-                    value !== null && 
-                    value !== undefined && 
-                    value !== '' &&
-                    !(Array.isArray(value) && value.length === 0)
-                ) {
-                    cleanedParams[key] = value;
-                }
-            });
-            
-            config.params = cleanedParams;
-        }
-
-        return config;
-    },
-    error => Promise.reject(error)
-);
-
-axiosInstance.interceptors.response.use(
-    response => response.data,
-    error => {
-        const normalizedError = {
-            status: error.response?.status,
-            message: error.response?.data?.message || error.response?.data?.error || error.message,
-            data: error.response?.data
-        };
-
-        if (error.response?.status === 401) {
-            useUserStore.getState().clearUser();
-        }
-        return Promise.reject(normalizedError);
+/** Axios instance for front API (used by branch manager for join-requests). Same auth/language as main. */
+export const axiosInstanceFront = axios.create({
+    baseURL: baseURLFront,
+    headers: {
+        'Content-Type': 'application/json'
     }
-);
+});
+
+const requestInterceptor = config => {
+    const token = useUserStore.getState().access_token;
+    if (token) {
+        config.headers.Authorization = `Bearer ${token}`;
+    }
+    const currentLanguage = i18n.language || 'en';
+    config.headers['Accept-Language'] = currentLanguage;
+    if (config.params) {
+        const cleanedParams = {};
+        Object.keys(config.params).forEach(key => {
+            const value = config.params[key];
+            if (
+                value !== null &&
+                value !== undefined &&
+                value !== '' &&
+                !(Array.isArray(value) && value.length === 0)
+            ) {
+                cleanedParams[key] = value;
+            }
+        });
+        config.params = cleanedParams;
+    }
+    return config;
+};
+
+const responseInterceptor = response => response.data;
+const responseErrorInterceptor = error => {
+    const normalizedError = {
+        status: error.response?.status,
+        message: error.response?.data?.message || error.response?.data?.error || error.message,
+        data: error.response?.data
+    };
+    if (error.response?.status === 401) {
+        useUserStore.getState().clearUser();
+    }
+    return Promise.reject(normalizedError);
+};
+
+axiosInstance.interceptors.request.use(requestInterceptor, error => Promise.reject(error));
+axiosInstance.interceptors.response.use(responseInterceptor, responseErrorInterceptor);
+
+axiosInstanceFront.interceptors.request.use(requestInterceptor, error => Promise.reject(error));
+axiosInstanceFront.interceptors.response.use(responseInterceptor, responseErrorInterceptor);

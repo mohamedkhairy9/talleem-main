@@ -14,11 +14,11 @@ import {
 import { VscDebugBreakpointLog } from 'react-icons/vsc';
 import { IoGrid } from 'react-icons/io5';
 
-// Roles that can see the full sidebar (super admin). Branch admin sees only home + registration_requests.
+// Roles: API returns user.roles as string array, e.g. ["entity", "branch manager"].
 export const ROLE_SUPER_ADMIN = 'super-admin';
 export const ROLE_BRANCH_ADMIN = 'branch manager';
 
-/** Normalize role string for comparison (e.g. "Branch Admin", "branch_admin" -> "branch-admin"). Accepts string or object with .name */
+/** Normalize role for comparison (e.g. "branch manager", "Branch Manager" -> "branch-manager"). Accepts string or object with .name */
 export const normalizeRole = (role) => {
     const str = typeof role === 'string' ? role : role?.name ?? role?.display_name ?? '';
     return typeof str === 'string' ? str.toLowerCase().replace(/\s+/g, '-').replace(/_/g, '-') : '';
