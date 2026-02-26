@@ -48,14 +48,6 @@ export const stepsFields = [
         viewMode: true
     },
     {
-        name: 'join_request_form_id',
-        label: 'validation.join_request_form_id.label',
-        type: 'select',
-        placeholder: 'validation.join_request_form_id.placeholder',
-        editMode: true,
-        viewMode: true
-    },
-    {
         name: 'status',
         label: 'validation.status.label',
         type: 'select',
@@ -64,40 +56,41 @@ export const stepsFields = [
         editMode: true,
         viewMode: true
     },
-    {
-        name: 'config.required_files',
-        label: 'validation.config.required_files.label',
-        type: 'select',
-        placeholder: 'validation.config.required_files.placeholder',
-        isMulti: true,
-        editMode: true,
-        viewMode: true
-    },
-    {
-        name: 'config.auto_approve_after_hours',
-        label: 'validation.config.auto_approve_after_hours.label',
-        type: 'number',
-        placeholder: 'validation.config.auto_approve_after_hours.placeholder',
-        editMode: true,
-        viewMode: true
-    },
-    {
-        name: 'config.rules.max_upload_size_mb',
-        label: 'validation.config.rules.max_upload_size_mb.label',
-        type: 'number',
-        placeholder: 'validation.config.rules.max_upload_size_mb.placeholder',
-        editMode: true,
-        viewMode: true
-    },
-    {
-        name: 'config.custom_file_name.en',
-        label: 'validation.config.custom_file_name.label.en',
-        type: 'text',
-        placeholder: 'validation.config.custom_file_name.placeholder.en',
-        editMode: true,
-        viewMode: true,
-        conditional: true,
-        showWhen: { hasOtherDocument: true }
-    },
+    // --- config fields (commented out for now) ---
+    // {
+    //     name: 'config.required_files',
+    //     label: 'validation.config.required_files.label',
+    //     type: 'select',
+    //     placeholder: 'validation.config.required_files.placeholder',
+    //     isMulti: true,
+    //     editMode: true,
+    //     viewMode: true
+    // },
+    // {
+    //     name: 'config.auto_approve_after_hours',
+    //     label: 'validation.config.auto_approve_after_hours.label',
+    //     type: 'number',
+    //     placeholder: 'validation.config.auto_approve_after_hours.placeholder',
+    //     editMode: true,
+    //     viewMode: true
+    // },
+    // {
+    //     name: 'config.rules.max_upload_size_mb',
+    //     label: 'validation.config.rules.max_upload_size_mb.label',
+    //     type: 'number',
+    //     placeholder: 'validation.config.rules.max_upload_size_mb.placeholder',
+    //     editMode: true,
+    //     viewMode: true
+    // },
+    // {
+    //     name: 'config.custom_file_name.en',
+    //     label: 'validation.config.custom_file_name.label.en',
+    //     type: 'text',
+    //     placeholder: 'validation.config.custom_file_name.placeholder.en',
+    //     editMode: true,
+    //     viewMode: true,
+    //     conditional: true,
+    //     showWhen: { hasOtherDocument: true }
+    // },
 ];
 

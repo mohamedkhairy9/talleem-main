@@ -1,4 +1,5 @@
 import React, { useState, useMemo, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { MdDragIndicator } from 'react-icons/md';
 import { FaEye } from 'react-icons/fa';
 import { MdAdd, MdEdit, MdDelete } from 'react-icons/md';
@@ -25,14 +26,6 @@ export default function StepsList({ steps, phaseId, requestTypeId, onReorderComp
     // Use optimistic steps if available, otherwise use original steps
     const displaySteps = optimisticSteps || steps || [];
 
-    // Create a map of original steps by ID for efficient lookup
-    const originalStepsMap = useMemo(() => {
-        const map = new Map();
-        (steps || []).forEach(step => {
-            map.set(step.id, step);
-        });
-        return map;
-    }, [steps]);
 
     // Clear optimistic data when new steps arrive from server
     useEffect(() => {
@@ -126,13 +119,15 @@ export default function StepsList({ steps, phaseId, requestTypeId, onReorderComp
     return (
         <div className="ml-8 py-4">
             <div className="flex items-center justify-between mb-3">
-                <h4 className="text-sm font-semibold text-gray-700">
-                    {t('phases.steps')}
-                </h4>
+                <div className="flex items-center gap-3">
+                    <h4 className="text-sm font-semibold text-gray-700">
+                        {t('phases.steps')}
+                    </h4>
+                </div>
                 <div className="flex items-center gap-2">
                     <button
                         onClick={() => setShowCreateStep(true)}
-                        className="px-3 py-1 text-xs bg-primary-600 text-white rounded hover:bg-primary-700 flex items-center gap-1"
+                        className="px-4 py-2 text-sm bg-primary-600 text-white rounded hover:bg-primary-700 flex items-center gap-1"
                     >
                         <MdAdd className="w-4 h-4" />
                         {t('common.add')}

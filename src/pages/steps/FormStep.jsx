@@ -11,7 +11,6 @@ import ModalContent from '@/components/common/form/ModalContent';
 import ModalFooter from '@/components/common/form/ModalFooter';
 import { useUsersQuery } from '@/api/hooks/useUsers';
 import { useRolesQuery } from '@/api/hooks/useRoles';
-import { useJoinRequestFormsQuery } from '@/api/hooks/useJoinRequestForms';
 
 export default function FormStep({
     onClose,
@@ -33,33 +32,24 @@ export default function FormStep({
             status: oldData.status === 1 || oldData.status === true ? true : false
         };
         
-        // Handle custom file names in required_files
-        if (oldData.config?.required_files) {
-            const requiredFiles = Array.isArray(oldData.config.required_files) 
-                ? oldData.config.required_files 
-                : [oldData.config.required_files];
-            
-            const predefinedOptions = ['national_id_front', 'national_id_back', 'passport', 'certificate', 'photo', 'medical_report', 'other_document'];
-            
-            // Check if there's a custom file name (not in predefined options)
-            const customFile = requiredFiles.find(file => !predefinedOptions.includes(file));
-            
-            if (customFile) {
-                // Replace custom file with "other_document" in the array for the select
-                normalized.config = {
-                    ...(normalized.config || {}),
-                    required_files: requiredFiles.map(f => f === customFile ? 'other_document' : f),
-                    custom_file_name: {
-                        en: customFile,
-                        ar: customFile
-                    }
-                };
-            } else if (normalized.config) {
-                // Ensure config object exists even if no custom file
-                normalized.config = { ...normalized.config };
-            }
-        }
-        
+        // --- config: custom file names in required_files (commented out) ---
+        // if (oldData.config?.required_files) {
+        //     const requiredFiles = Array.isArray(oldData.config.required_files)
+        //         ? oldData.config.required_files
+        //         : [oldData.config.required_files];
+        //     const predefinedOptions = ['national_id_front', 'national_id_back', 'passport', 'certificate', 'photo', 'medical_report', 'other_document'];
+        //     const customFile = requiredFiles.find(file => !predefinedOptions.includes(file));
+        //     if (customFile) {
+        //         normalized.config = {
+        //             ...(normalized.config || {}),
+        //             required_files: requiredFiles.map(f => f === customFile ? 'other_document' : f),
+        //             custom_file_name: { en: customFile, ar: customFile }
+        //         };
+        //     } else if (normalized.config) {
+        //         normalized.config = { ...normalized.config };
+        //     }
+        // }
+
         return normalized;
     }, [oldData]);
 
@@ -71,11 +61,12 @@ export default function FormStep({
     // Watch assigned_to_type to determine which API to call
     const assignedToType = watch('assigned_to_type') || oldData?.assigned_to_type;
     
-    // Watch required_files to check if "other_document" is selected
-    const requiredFiles = watch('config.required_files') || normalizedOldData?.config?.required_files || [];
-    const hasOtherDocument = Array.isArray(requiredFiles) 
-        ? requiredFiles.includes('other_document') 
-        : requiredFiles === 'other_document';
+    // --- config: watch required_files for conditional custom_file_name (commented out) ---
+    // const requiredFiles = watch('config.required_files') || normalizedOldData?.config?.required_files || [];
+    // const hasOtherDocument = Array.isArray(requiredFiles)
+    //     ? requiredFiles.includes('other_document')
+    //     : requiredFiles === 'other_document';
+    const hasOtherDocument = false;
 
     // Fetch users when assigned_to_type is "user" (or in view/edit mode to show selected value)
     const shouldFetchUsers = assignedToType === 'user' || (viewMode || editMode) && oldData?.assigned_to_type === 'user';
@@ -89,12 +80,6 @@ export default function FormStep({
     const { data: rolesData } = useRolesQuery(
         { status: true },
         { enabled: shouldFetchRoles }
-    );
-
-    // Fetch join request forms for the select dropdown
-    const { data: joinRequestFormsData } = useJoinRequestFormsQuery(
-        { status: true },
-        { enabled: true }
     );
 
     // Reset assigned_to_id when assigned_to_type changes (only in create/edit mode, not view mode)
@@ -150,13 +135,19 @@ export default function FormStep({
                 };
             });
         } else if (currentAssignedToType === 'role') {
-            const roles = rolesData?.data || [];
+            // Only these roles are shown in Assigned To ID when type is "role" (exact match on role.name)
+            const ALLOWED_ROLE_NAMES = new Set(['super_admin', 'entity manager', 'branch manager']);
+            const allRoles = rolesData?.data || [];
+            const roles = allRoles.filter(r =>
+                r?.name != null && ALLOWED_ROLE_NAMES.has(String(r.name).trim())
+            );
             // In view/edit mode, ensure the selected role is included even if not in the list
             if ((viewMode || editMode) && oldData?.assigned_to_id) {
                 const selectedRole = roles.find(r => r.id === oldData.assigned_to_id);
                 if (!selectedRole) {
-                    // Add the selected role if not found in the list
-                    roles.unshift({ id: oldData.assigned_to_id, display_name: { en: `Role ${oldData.assigned_to_id}`, ar: `Role ${oldData.assigned_to_id}` } });
+                    const fullRole = allRoles.find(r => r.id === oldData.assigned_to_id);
+                    if (fullRole) roles.unshift(fullRole);
+                    else roles.unshift({ id: oldData.assigned_to_id, display_name: { en: `Role ${oldData.assigned_to_id}`, ar: `Role ${oldData.assigned_to_id}` } });
                 }
             }
             return roles.map(role => {
@@ -194,46 +185,6 @@ export default function FormStep({
         return [];
     }, [assignedToType, usersData, rolesData, oldData, viewMode, editMode]);
 
-    // Generate options for join_request_form_id from API
-    const joinRequestFormOptions = useMemo(() => {
-        const forms = joinRequestFormsData?.data || [];
-        // In view/edit mode, ensure the selected form is included even if not in the list
-        if ((viewMode || editMode) && oldData?.join_request_form_id) {
-            const selectedForm = forms.find(f => f.id === oldData.join_request_form_id);
-            if (!selectedForm) {
-                // Add the selected form if not found in the list
-                forms.unshift({ 
-                    id: oldData.join_request_form_id, 
-                    name: { en: `Form ${oldData.join_request_form_id}`, ar: `Form ${oldData.join_request_form_id}` }
-                });
-            }
-        }
-        return forms.map(form => {
-            // Safely extract label from name object
-            let label = `Form ${form.id}`; // Default fallback
-            
-            if (form.name) {
-                if (typeof form.name === 'object' && form.name !== null) {
-                    // Handle multilingual object {en: "...", ar: "..."}
-                    label = form.name.en || form.name.ar || label;
-                } else if (typeof form.name === 'string') {
-                    // Handle string name
-                    label = form.name;
-                }
-            }
-            
-            // Ensure label is always a string (safety check)
-            if (typeof label !== 'string') {
-                label = String(label) || `Form ${form.id}`;
-            }
-            
-            return {
-                label: label,
-                value: form.id
-            };
-        });
-    }, [joinRequestFormsData, oldData, viewMode, editMode]);
-
     function onSubmit(data) {
         // Convert status from boolean to number (1/0) for API
         const submissionData = {
@@ -241,56 +192,37 @@ export default function FormStep({
             status: data.status ? 1 : 0
         };
         
-        // React-hook-form with dot notation creates nested objects
-        // Access nested config values
-        const configRequiredFiles = data.config?.required_files;
-        const configAutoApprove = data.config?.auto_approve_after_hours;
-        const configMaxUpload = data.config?.rules?.max_upload_size_mb;
-        const customFileName = data.config?.custom_file_name;
-        
-        // Build config object only if at least one config field has a value
-        if (configRequiredFiles || configAutoApprove !== undefined || configMaxUpload !== undefined || customFileName) {
-            submissionData.config = {};
-            
-            // Handle required_files array
-            if (configRequiredFiles) {
-                let filesArray = Array.isArray(configRequiredFiles) 
-                    ? [...configRequiredFiles] 
-                    : [configRequiredFiles].filter(Boolean);
-                
-                // If "other_document" is selected and custom name is provided, replace it with the custom name
-                if (filesArray.includes('other_document') && customFileName) {
-                    const customNameEn = customFileName.en?.trim();
-                    const customNameAr = customFileName.ar?.trim();
-                    
-                    if (customNameEn || customNameAr) {
-                        // Remove "other_document" and add custom name
-                        filesArray = filesArray.filter(f => f !== 'other_document');
-                        // Use English name if available, otherwise Arabic, otherwise keep other_document
-                        const customName = customNameEn || customNameAr || 'other_document';
-                        filesArray.push(customName);
-                    }
-                }
-                
-                submissionData.config.required_files = filesArray;
-            }
-            
-            // Handle auto_approve_after_hours
-            if (configAutoApprove !== undefined && configAutoApprove !== null && configAutoApprove !== '') {
-                submissionData.config.auto_approve_after_hours = Number(configAutoApprove);
-            }
-            
-            // Handle rules.max_upload_size_mb
-            if (configMaxUpload !== undefined && configMaxUpload !== null && configMaxUpload !== '') {
-                submissionData.config.rules = {
-                    max_upload_size_mb: Number(configMaxUpload)
-                };
-            }
-        } else {
-            // Remove config if it's empty
-            delete submissionData.config;
-        }
-        
+        // --- config: build config object for submission (commented out) ---
+        // const configRequiredFiles = data.config?.required_files;
+        // const configAutoApprove = data.config?.auto_approve_after_hours;
+        // const configMaxUpload = data.config?.rules?.max_upload_size_mb;
+        // const customFileName = data.config?.custom_file_name;
+        // if (configRequiredFiles || configAutoApprove !== undefined || configMaxUpload !== undefined || customFileName) {
+        //     submissionData.config = {};
+        //     if (configRequiredFiles) {
+        //         let filesArray = Array.isArray(configRequiredFiles) ? [...configRequiredFiles] : [configRequiredFiles].filter(Boolean);
+        //         if (filesArray.includes('other_document') && customFileName) {
+        //             const customNameEn = customFileName.en?.trim();
+        //             const customNameAr = customFileName.ar?.trim();
+        //             if (customNameEn || customNameAr) {
+        //                 filesArray = filesArray.filter(f => f !== 'other_document');
+        //                 const customName = customNameEn || customNameAr || 'other_document';
+        //                 filesArray.push(customName);
+        //             }
+        //         }
+        //         submissionData.config.required_files = filesArray;
+        //     }
+        //     if (configAutoApprove !== undefined && configAutoApprove !== null && configAutoApprove !== '') {
+        //         submissionData.config.auto_approve_after_hours = Number(configAutoApprove);
+        //     }
+        //     if (configMaxUpload !== undefined && configMaxUpload !== null && configMaxUpload !== '') {
+        //         submissionData.config.rules = { max_upload_size_mb: Number(configMaxUpload) };
+        //     }
+        // } else {
+        //     delete submissionData.config;
+        // }
+        if (data.config) delete submissionData.config;
+
         if (editMode && oldData?.id) {
             submissionData.id = oldData.id;
         }
@@ -306,28 +238,25 @@ export default function FormStep({
         });
     }
 
-    // Options for required_files field
-    const requiredFilesOptions = useMemo(() => [
-        { label: 'National ID Front', value: 'national_id_front' },
-        { label: 'National ID Back', value: 'national_id_back' },
-        { label: 'Passport', value: 'passport' },
-        { label: 'Certificate', value: 'certificate' },
-        { label: 'Photo', value: 'photo' },
-        { label: 'Medical Report', value: 'medical_report' },
-        { label: 'Other Document', value: 'other_document' }
-    ], []);
+    // --- config: options for required_files (commented out) ---
+    // const requiredFilesOptions = useMemo(() => [
+    //     { label: 'National ID Front', value: 'national_id_front' },
+    //     { label: 'National ID Back', value: 'national_id_back' },
+    //     { label: 'Passport', value: 'passport' },
+    //     { label: 'Certificate', value: 'certificate' },
+    //     { label: 'Photo', value: 'photo' },
+    //     { label: 'Medical Report', value: 'medical_report' },
+    //     { label: 'Other Document', value: 'other_document' }
+    // ], []);
 
     // Helper to get options for a field
     const getFieldOptions = (fieldName) => {
         if (fieldName === 'assigned_to_id') {
             return generateOptions(assignedToIdOptions);
         }
-        if (fieldName === 'join_request_form_id') {
-            return generateOptions(joinRequestFormOptions);
-        }
-        if (fieldName === 'config.required_files') {
-            return generateOptions(requiredFilesOptions);
-        }
+        // if (fieldName === 'config.required_files') {
+        //     return generateOptions(requiredFilesOptions);
+        // }
         return generateOptions(options?.[fieldName]);
     };
 

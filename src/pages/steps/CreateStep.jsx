@@ -42,7 +42,6 @@ export default function CreateStep({ onClose, phaseId, requestTypeId, currentSte
                 onStepCreated={onStepCreated}
                 oldData={{ 
                     phase_id: phaseId,
-                    join_request_form_id: requestTypeId, // Automatically set from current tab
                     status: true,
                     order: getNextOrder()
                 }}

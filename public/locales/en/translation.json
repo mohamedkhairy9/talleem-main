@@ -994,7 +994,10 @@
         "remove": "Remove",
         "click_to_select_file": "Click to select Excel file",
         "supported_formats": "Supported: .xlsx, .xls, .csv",
-        "upload": "Upload"
+        "upload": "Upload",
+        "view_page": "View full page",
+        "invalid_phase": "Invalid phase.",
+        "phase_not_found": "Phase not found."
     },
     "activity_logs": {
         "view_title": "Activity Log Details",
@@ -1612,6 +1615,7 @@
         "update": "Update Phase",
         "view": "View Phase",
         "steps": "Steps",
+        "view_steps": "View steps",
         "step_type": "Step Type",
         "assigned_to": "Assigned To",
         "no_steps": "No steps available"

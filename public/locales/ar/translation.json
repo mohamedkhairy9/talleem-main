@@ -1005,7 +1005,10 @@
         "remove": "حذف",
         "click_to_select_file": "انقر لاختيار ملف Excel",
         "supported_formats": "المدعومة: .xlsx و .xls و .csv",
-        "upload": "رفع"
+        "upload": "رفع",
+        "view_page": "عرض الصفحة الكاملة",
+        "invalid_phase": "مرحلة غير صالحة.",
+        "phase_not_found": "المرحلة غير موجودة."
     },
     "activity_logs": {
         "view_title": "تفاصيل سجل النشاط",
@@ -1740,8 +1743,9 @@
     "phases": {
         "create": "إنشاء مرحلة",
         "update": "تعديل المرحلة",
-        "view": "عرض المرحلة",  
+        "view": "عرض المرحلة",
         "steps": "الخطوات",
+        "view_steps": "عرض الخطوات",
         "step_type": "نوع الخطوة",
         "assigned_to": "مخصص ل",
         "no_steps": "لا توجد خطوات متاحة"
