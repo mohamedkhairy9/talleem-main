@@ -1,16 +1,47 @@
 import useLanguageStore from '@/utils/stores/language.store';
 import useDateFormatStore from '@/utils/stores/dateFormat.store';
 import React from 'react';
-import { toDate, isDateObject, getDateString } from '@/utils/helpers/dateObjectHelpers';
+import { toDate, isDateObject, getDateStringWithGregorianTime } from '@/utils/helpers/dateObjectHelpers';
 
 export default function DateCell({ value, fullDate = false }) {
     const isRTL = useLanguageStore(state => state.isRTL);
     const dateFormat = useDateFormatStore(state => state.dateFormat);
     const dateObj = toDate(value);
 
-    // When user chose Hijri and API sent date object, show the hijri string
+    // When user chose Hijri and API sent date object, show like Gregorian: date line + time line (12h) when fullDate
     if ((dateFormat === 'hijri' || dateFormat === 'hijri_indic') && isDateObject(value)) {
-        const displayStr = getDateString(value, dateFormat);
+        const displayStr = getDateStringWithGregorianTime(value, dateFormat);
+        if (displayStr && dateObj && !Number.isNaN(dateObj.getTime())) {
+            const hijriDatePart = displayStr.replace(/\s\d{2}:\d{2}(?::\d{2})?$/, '').trim() || displayStr;
+            const timeFormatted = dateObj.toLocaleTimeString(isRTL ? 'ar-EG' : 'en-US', {
+                hour: '2-digit',
+                minute: '2-digit',
+                hour12: true,
+            });
+            const now = new Date();
+            const diffInDays = Math.floor((now - dateObj) / (1000 * 60 * 60 * 24));
+            const getTimeIndicator = daysDiff => {
+                if (daysDiff < 0) return { color: 'bg-blue-500', label: 'Future' };
+                if (daysDiff === 0) return { color: 'bg-green-500', label: 'Today' };
+                if (daysDiff === 1) return { color: 'bg-yellow-500', label: 'Yesterday' };
+                if (daysDiff < 7) return { color: 'bg-orange-500', label: 'This week' };
+                return { color: 'bg-gray-500', label: 'Older' };
+            };
+            const timeIndicator = getTimeIndicator(diffInDays);
+            return (
+                <div className="flex items-center space-x-3">
+                    <div className={`w-3 h-3 rounded-full shrink-0 ${timeIndicator.color}`} />
+                    <div className="flex flex-col">
+                        <div className="font-medium text-gray-900 text-sm">{hijriDatePart}</div>
+                        {fullDate ? (
+                            <div className="text-xs text-gray-500">{timeFormatted}</div>
+                        ) : (
+                            <div className="text-xs text-gray-400">{timeIndicator.label}</div>
+                        )}
+                    </div>
+                </div>
+            );
+        }
         if (displayStr) {
             return (
                 <div className="flex items-center space-x-3">
