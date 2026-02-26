@@ -11,6 +11,8 @@ import ModalContent from '@/components/common/form/ModalContent';
 import ModalFooter from '@/components/common/form/ModalFooter';
 import { useUsersQuery } from '@/api/hooks/useUsers';
 import { useRolesQuery } from '@/api/hooks/useRoles';
+import { useJoinRequestFormsQuery } from '@/api/hooks/useJoinRequestForms';
+import i18next from 'i18next';
 
 export default function FormStep({
     onClose,
@@ -60,7 +62,8 @@ export default function FormStep({
 
     // Watch assigned_to_type to determine which API to call
     const assignedToType = watch('assigned_to_type') || oldData?.assigned_to_type;
-    
+    const stepType = watch('step_type') || oldData?.step_type;
+
     // --- config: watch required_files for conditional custom_file_name (commented out) ---
     // const requiredFiles = watch('config.required_files') || normalizedOldData?.config?.required_files || [];
     // const hasOtherDocument = Array.isArray(requiredFiles)
@@ -82,12 +85,26 @@ export default function FormStep({
         { enabled: shouldFetchRoles }
     );
 
+    // Fetch join request forms when step_type is "upload" (for Join Request Form select)
+    const shouldFetchJoinRequestForms = stepType === 'upload' || (viewMode || editMode) && oldData?.step_type === 'upload';
+    const { data: joinRequestFormsData } = useJoinRequestFormsQuery(
+        { status: true, page: 1, per_page: 10 },
+        { enabled: shouldFetchJoinRequestForms }
+    );
+
     // Reset assigned_to_id when assigned_to_type changes (only in create/edit mode, not view mode)
     useEffect(() => {
         if (!viewMode && assignedToType && assignedToType !== oldData?.assigned_to_type) {
             setValue('assigned_to_id', '');
         }
     }, [assignedToType, oldData?.assigned_to_type, setValue, viewMode]);
+
+    // Reset join_request_form_id when step_type changes away from "upload"
+    useEffect(() => {
+        if (!viewMode && stepType && stepType !== 'upload') {
+            setValue('join_request_form_id', null);
+        }
+    }, [stepType, setValue, viewMode]);
 
     // Generate options for assigned_to_id based on assigned_to_type
     const assignedToIdOptions = useMemo(() => {
@@ -185,6 +202,28 @@ export default function FormStep({
         return [];
     }, [assignedToType, usersData, rolesData, oldData, viewMode, editMode]);
 
+    // Join Request Form options (only when step_type is "upload"); API returns name as { ar, en } or string
+    const joinRequestFormOptions = useMemo(() => {
+        const forms = joinRequestFormsData?.data || [];
+        const lang = i18next.language || 'en';
+        if ((viewMode || editMode) && oldData?.join_request_form_id) {
+            const selected = forms.find(f => f.id === oldData.join_request_form_id);
+            if (!selected) {
+                forms.unshift({
+                    id: oldData.join_request_form_id,
+                    name: { en: `Form ${oldData.join_request_form_id}`, ar: `Form ${oldData.join_request_form_id}` }
+                });
+            }
+        }
+        return forms.map(form => {
+            const name = form.name;
+            const label = typeof name === 'string'
+                ? name
+                : (name?.[lang] || name?.en || name?.ar || `Form ${form.id}`);
+            return { label, value: form.id };
+        });
+    }, [joinRequestFormsData, oldData, viewMode, editMode]);
+
     function onSubmit(data) {
         // Convert status from boolean to number (1/0) for API
         const submissionData = {
@@ -223,6 +262,11 @@ export default function FormStep({
         // }
         if (data.config) delete submissionData.config;
 
+        // Only send join_request_form_id when step_type is "upload"
+        if (submissionData.step_type !== 'upload') {
+            submissionData.join_request_form_id = null;
+        }
+
         if (editMode && oldData?.id) {
             submissionData.id = oldData.id;
         }
@@ -254,9 +298,9 @@ export default function FormStep({
         if (fieldName === 'assigned_to_id') {
             return generateOptions(assignedToIdOptions);
         }
-        // if (fieldName === 'config.required_files') {
-        //     return generateOptions(requiredFilesOptions);
-        // }
+        if (fieldName === 'join_request_form_id') {
+            return generateOptions(joinRequestFormOptions);
+        }
         return generateOptions(options?.[fieldName]);
     };
 
@@ -264,6 +308,9 @@ export default function FormStep({
     const isFieldDisabled = (fieldName) => {
         if (viewMode) return true;
         if (fieldName === 'assigned_to_id' && !assignedToType) {
+            return true;
+        }
+        if (fieldName === 'join_request_form_id' && stepType !== 'upload') {
             return true;
         }
         return false;
@@ -283,6 +330,9 @@ export default function FormStep({
         if (field.conditional && field.showWhen) {
             if (field.showWhen.hasOtherDocument !== undefined) {
                 return hasOtherDocument === field.showWhen.hasOtherDocument;
+            }
+            if (field.showWhen.stepType !== undefined) {
+                return stepType === field.showWhen.stepType;
             }
         }
 

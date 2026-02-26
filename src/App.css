@@ -524,3 +524,26 @@ input:disabled {
   scrollbar-width: thin;
   scrollbar-color: #d1d5db transparent;
 }
+
+/* Horizontal scrollbar (e.g. phases request-type tabs) */
+.custom-scrollbar-horizontal {
+  scrollbar-width: thin;
+  scrollbar-color: #c4cdd4 transparent;
+}
+.custom-scrollbar-horizontal::-webkit-scrollbar {
+  height: 8px;
+}
+.custom-scrollbar-horizontal::-webkit-scrollbar-track {
+  background: transparent;
+  margin: 0 4px;
+}
+.custom-scrollbar-horizontal::-webkit-scrollbar-thumb {
+  background: #c4cdd4;
+  border-radius: 4px;
+}
+.custom-scrollbar-horizontal::-webkit-scrollbar-thumb:hover {
+  background: #9ca3af;
+}
+.custom-scrollbar-horizontal::-webkit-scrollbar-thumb:active {
+  background: #6b7280;
+}

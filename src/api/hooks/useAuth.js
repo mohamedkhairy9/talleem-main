@@ -1,3 +1,4 @@
+import { useQueryClient } from '@tanstack/react-query';
 import { authService } from '../services/auth.service';
 import { useUserStore } from '../../utils/stores/user.store';
 import useLanguageStore from '../../utils/stores/language.store';
@@ -45,17 +46,19 @@ export const useLoginMutation = () => {
 };
 
 export const useLogoutMutation = () => {
+    const queryClient = useQueryClient();
     const clearUser = useUserStore(state => state.clearUser);
-    
+
+    const clearSession = () => {
+        clearUser();
+        useLanguageStore.getState().clearLanguage();
+        // Clear all React Query cache so the next user does not see previous user's data
+        queryClient.clear();
+    };
+
     return useCustomMutation({
         mutationFn: () => authService.logout(),
-        onSuccess: () => {
-            clearUser();
-            useLanguageStore.getState().clearLanguage();
-        },
-        onError: () => {
-            clearUser();
-            useLanguageStore.getState().clearLanguage();
-        }
+        onSuccess: clearSession,
+        onError: clearSession
     });
 };

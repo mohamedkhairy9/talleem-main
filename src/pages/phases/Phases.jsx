@@ -176,17 +176,17 @@ export default function Phases() {
 
     return (
         <div>
-            {/* Request Type Tabs */}
+            {/* Request Type Tabs: parent width, horizontal scroll only */}
             {requestTypes.length > 0 && (
-                <div className="mb-6">
-                    <div className="border-b border-gray-200">
-                        <nav className="-mb-px flex space-x-8" aria-label="Tabs">
+                <div className="mb-6 min-w-0 w-full">
+                    <div className="border-b border-gray-200 overflow-x-auto overflow-y-hidden custom-scrollbar-horizontal">
+                        <nav className="-mb-px flex space-x-8 min-w-max pb-px" aria-label="Tabs">
                             {requestTypes.map((requestType) => (
                                 <button
                                     key={requestType.id}
                                     onClick={() => handleTabChange(requestType.id)}
                                     className={`
-                                        whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors
+                                        whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors flex-shrink-0
                                         ${selectedRequestTypeId === requestType.id
                                             ? 'border-primary-500 text-primary-600'
                                             : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
