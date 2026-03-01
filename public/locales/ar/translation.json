@@ -1000,6 +1000,8 @@
         "actions": "إجراءات",
         "enabled": "مفعل",
         "disabled": "غير مفعل",
+        "active": "نشط",
+        "inactive": "غير نشط",
         "are_you_sure_you_want_to_delete_this_item": "هل أنت متأكد أنك تريد حذف هذا العنصر؟",
         "select_file": "اختر ملف",
         "remove": "حذف",

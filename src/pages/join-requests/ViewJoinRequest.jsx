@@ -23,8 +23,8 @@ const statusOptions = [
 
 // Group submitted_data keys into logical sections for review
 const SECTION_KEYS = {
-    entity_info: ['name', 'registration_date', 'license_number', 'phone', 'email', 'address', 'area', 'status'],
-    location: ['branch', 'city', 'neighborhood', 'location_type', 'latitude', 'longitude'],
+    entity_info: ['name', 'registration_date', 'license_number', 'phone', 'email', 'address', 'area', 'status', 'activities'],
+    location: ['branch', 'city', 'neighborhood', 'location_type'],
     program: ['main_program', 'memorization_program_entity_type', 'education_program_entity_type', 'session_mode', 'min_acceptance_age', 'activity_ids'],
     manager: ['manager'],
     facilities: ['class_count', 'management_rooms_count', 'lecture_halls_count']
@@ -33,16 +33,20 @@ const SECTION_KEYS = {
 // Keys we never show (not user-readable)
 const HIDDEN_KEYS = new Set(['id', 'created_at', 'updated_at', 'code']);
 
-// True if value looks like a relation object (has localized name); show only name, not full object with id
+// Keys that indicate the object is "data" (e.g. manager), not a simple relation – do not collapse to name only
+const DATA_OBJECT_KEYS = new Set([
+    'years_of_experience', 'memorization_amount', 'date_of_birth', 'manager_phone', 'manager_email',
+    'national_id', 'gender'
+]);
+
+// True if value looks like a simple relation object (has localized name, no manager-like data keys); show only name
 function isRelationObject(value) {
-    return (
-        typeof value === 'object' &&
-        value !== null &&
-        !Array.isArray(value) &&
-        typeof value?.name === 'object' &&
-        value.name !== null &&
-        (value.name.en !== undefined || value.name.ar !== undefined)
-    );
+    if (typeof value !== 'object' || value === null || Array.isArray(value)) return false;
+    const nameObj = value?.name;
+    if (typeof nameObj !== 'object' || nameObj === null || (nameObj.en === undefined && nameObj.ar === undefined)) return false;
+    const keys = Object.keys(value);
+    const hasDataKeys = keys.some(k => DATA_OBJECT_KEYS.has(k));
+    return !hasDataKeys;
 }
 
 const processStepSchema = yup.object({
@@ -59,6 +63,31 @@ function DataField({ label, value, valueRender }) {
             <span className="text-sm text-gray-900 break-words min-h-[1.25rem]">
                 {valueRender != null ? valueRender : (value ?? '-')}
             </span>
+        </div>
+    );
+}
+
+// Small map for lat/long (OpenStreetMap embed, no API key); kept small and low z-index so it stays under sticky headers
+function LocationMap({ latitude, longitude }) {
+    const lat = Number(latitude);
+    const lon = Number(longitude);
+    if (Number.isNaN(lat) || Number.isNaN(lon) || lat < -90 || lat > 90 || lon < -180 || lon > 180) {
+        return null;
+    }
+    const delta = 0.01;
+    const bbox = [lon - delta, lat - delta, lon + delta, lat + delta].join(',');
+    const embedUrl = `https://www.openstreetmap.org/export/embed.html?bbox=${bbox}&layer=mapnik&marker=${lat}%2C${lon}`;
+    return (
+        <div className="w-full md:col-span-2 rounded-lg overflow-hidden border border-gray-200 bg-gray-50 relative z-0">
+            <div className="relative w-full aspect-[2/1] max-h-[180px]">
+                <iframe
+                    title="Location map"
+                    src={embedUrl}
+                    className="absolute inset-0 w-full h-full border-0"
+                    loading="lazy"
+                    referrerPolicy="no-referrer-when-downgrade"
+                />
+            </div>
         </div>
     );
 }
@@ -128,6 +157,7 @@ export default function ViewJoinRequest({ onClose, oldData }) {
     };
 
     const getFieldLabel = (key) => {
+        if (key === 'activity_ids') return t('table_headers.activities');
         const i18nKey = `table_headers.${key}`;
         const translated = t(i18nKey);
         return translated !== i18nKey ? translated : formatKey(key);
@@ -145,13 +175,13 @@ export default function ViewJoinRequest({ onClose, oldData }) {
         if (value == null) return '-';
         if (typeof value === 'string') return value === '[object Object]' ? '-' : value;
         if (typeof value !== 'object' || Array.isArray(value)) return '-';
-        // Prefer current locale, then en, then ar; use nullish so empty string still falls through
         const pick = (obj) => {
             if (!obj || typeof obj !== 'object') return '';
-            const s = obj[currentLocale] ?? obj.en ?? obj.ar ?? '';
-            return typeof s === 'string' ? s.trim() : '';
+            const raw = obj[currentLocale] ?? obj.en ?? obj.ar ?? obj.En ?? obj.Ar ?? '';
+            const s = typeof raw === 'string' ? raw.trim() : String(raw || '').trim();
+            return s;
         };
-        if (value.en !== undefined || value.ar !== undefined) {
+        if (value.en !== undefined || value.ar !== undefined || value.En !== undefined || value.Ar !== undefined) {
             const text = pick(value);
             if (text) return text;
         }
@@ -162,6 +192,39 @@ export default function ViewJoinRequest({ onClose, oldData }) {
         return '-';
     };
 
+    const getNameDisplay = (value) => {
+        const d = getDisplayName(value);
+        if (d !== '-') return d;
+        return renderValue(value);
+    };
+
+    // Render activities array as a list of names (each item can have name: { en, ar })
+    const getActivitiesDisplay = (value) => {
+        if (!Array.isArray(value) || value.length === 0) return '-';
+        const names = value.map(item => {
+            if (!item || typeof item !== 'object') return '';
+            const n = item.name;
+            if (!n || typeof n !== 'object') return '';
+            const s = n[currentLocale] ?? n.en ?? n.ar ?? '';
+            return typeof s === 'string' ? s.trim() : String(s || '').trim();
+        }).filter(Boolean);
+        return names.length ? names.join(', ') : '-';
+    };
+
+    // Resolve activity_ids to names using the activities array from submitted_data
+    const getActivityIdsDisplay = (activityIds, activitiesArray) => {
+        if (!Array.isArray(activityIds) || activityIds.length === 0) return '-';
+        if (!Array.isArray(activitiesArray) || activitiesArray.length === 0) return renderValue(activityIds, 'activity_ids');
+        const names = activityIds.map(id => {
+            const idNorm = typeof id === 'string' ? id.trim() : String(id);
+            const activity = activitiesArray.find(a => a != null && (String(a.id) === idNorm || Number(a.id) === Number(id)));
+            if (!activity?.name || typeof activity.name !== 'object') return '';
+            const s = activity.name[currentLocale] ?? activity.name.en ?? activity.name.ar ?? '';
+            return typeof s === 'string' ? s.trim() : String(s || '').trim();
+        }).filter(Boolean);
+        return names.length ? names.join(', ') : '-';
+    };
+
     const isNestedObject = (value) => {
         return typeof value === 'object' &&
                value !== null &&
@@ -170,13 +233,25 @@ export default function ViewJoinRequest({ onClose, oldData }) {
                Object.keys(value).length > 0;
     };
 
-    const renderValue = (value) => {
+    // 1 / "1" / true => Active, 0 / "0" / false => Inactive
+    const getStatusDisplay = (value) => {
         if (value === null || value === undefined) return '-';
+        const v = value === true || value === 1 || value === '1';
+        const i = value === false || value === 0 || value === '0';
+        if (v) return t('common.active');
+        if (i) return t('common.inactive');
+        return String(value);
+    };
+
+    const renderValue = (value, key) => {
+        if (value === null || value === undefined) return '-';
+        if (key === 'status') return getStatusDisplay(value);
         if (typeof value === 'string' && value === '[object Object]') return '-';
         if (isDateObject(value)) return formatDateForDisplay(value);
         if (isMultilingual(value)) {
-            const text = value[currentLocale] || value.en || value.ar || '';
-            return (text && String(text).trim()) ? text : '-';
+            const text = value[currentLocale] ?? value.en ?? value.ar ?? value.En ?? value.Ar ?? '';
+            const s = typeof text === 'string' ? text.trim() : String(text || '').trim();
+            return s || '-';
         }
         if (Array.isArray(value)) {
             if (value.length === 0) return '-';
@@ -210,13 +285,11 @@ export default function ViewJoinRequest({ onClose, oldData }) {
         return false;
     };
 
+    // Renders all keys of a nested object (e.g. manager). Dynamic data: show every key we get.
+    // Only hide internal keys (id, created_at, etc.) and *_id when the relation object is present.
     const renderNestedSection = (data, level = 0) => {
         if (!data || typeof data !== 'object') return null;
-        const entries = Object.entries(data).filter(([key, value]) => {
-            if (value == null || (Array.isArray(value) && value.length === 0)) return false;
-            if (shouldHideKey(key, data)) return false;
-            return true;
-        });
+        const entries = Object.entries(data).filter(([key]) => !shouldHideKey(key, data));
         if (entries.length === 0) return null;
         const gridClass = level > 0
             ? 'grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-3 p-4 bg-gray-50/80 rounded-lg border border-gray-100'
@@ -244,7 +317,7 @@ export default function ViewJoinRequest({ onClose, oldData }) {
                         <DataField
                             key={key}
                             label={getFieldLabel(key)}
-                            valueRender={key === 'name' ? getDisplayName(value) : renderValue(value)}
+                            valueRender={key === 'name' ? getNameDisplay(value) : renderValue(value, key)}
                         />
                     );
                 })}
@@ -273,7 +346,7 @@ export default function ViewJoinRequest({ onClose, oldData }) {
         });
 
         const otherEntries = allKeys
-            .filter(k => !usedKeys.has(k) && !shouldHideKey(k, data))
+            .filter(k => !usedKeys.has(k) && !shouldHideKey(k, data) && k !== 'latitude' && k !== 'longitude')
             .map(k => [k, data[k]])
             .filter(([, v]) => v != null && !(Array.isArray(v) && v.length === 0));
         if (otherEntries.length > 0) {
@@ -289,32 +362,43 @@ export default function ViewJoinRequest({ onClose, oldData }) {
                         title={t(titleKey)}
                         defaultOpen={id === 'entity_info'}
                     >
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4">
-                            {entries.map(([key, value]) => {
-                                if (isRelationObject(value)) {
-                                    const name = value.name?.[currentLocale] || value.name?.en || value.name?.ar || '-';
+                        <div className="space-y-4">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4">
+                                {entries.map(([key, value]) => {
+                                    if (isRelationObject(value)) {
+                                        const name = value.name?.[currentLocale] || value.name?.en || value.name?.ar || '-';
+                                        return (
+                                            <DataField key={key} label={getFieldLabel(key)} valueRender={name} />
+                                        );
+                                    }
+                                    if (isNestedObject(value)) {
+                                        const nested = renderNestedSection(value);
+                                        if (!nested) return null;
+                                        return (
+                                            <div key={key} className="md:col-span-2">
+                                                <h4 className="text-sm font-semibold text-gray-700 mb-2">{getFieldLabel(key)}</h4>
+                                                {nested}
+                                            </div>
+                                        );
+                                    }
                                     return (
-                                        <DataField key={key} label={getFieldLabel(key)} valueRender={name} />
+                                        <DataField
+                                            key={key}
+                                            label={getFieldLabel(key)}
+                                            valueRender={
+                                                key === 'activities' && Array.isArray(value)
+                                                    ? getActivitiesDisplay(value)
+                                                    : key === 'activity_ids'
+                                                    ? getActivityIdsDisplay(value, data.activities)
+                                                    : renderValue(value, key)
+                                            }
+                                        />
                                     );
-                                }
-                                if (isNestedObject(value)) {
-                                    const nested = renderNestedSection(value);
-                                    if (!nested) return null;
-                                    return (
-                                        <div key={key} className="md:col-span-2">
-                                            <h4 className="text-sm font-semibold text-gray-700 mb-2">{getFieldLabel(key)}</h4>
-                                            {nested}
-                                        </div>
-                                    );
-                                }
-                                return (
-                                    <DataField
-                                        key={key}
-                                        label={getFieldLabel(key)}
-                                        valueRender={renderValue(value)}
-                                    />
-                                );
-                            })}
+                                })}
+                            </div>
+                            {id === 'location' && data.latitude != null && data.longitude != null && (
+                                <LocationMap key={`${data.latitude}-${data.longitude}`} latitude={data.latitude} longitude={data.longitude} />
+                            )}
                         </div>
                     </AccordionSection>
                 ))}
@@ -340,7 +424,7 @@ export default function ViewJoinRequest({ onClose, oldData }) {
             <ModalHeader onClose={onClose} header="join_requests.view" />
             <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col h-full min-h-0">
                 <ModalContent className="min-h-0 flex flex-col">
-                    <div className="flex-1 min-h-0 overflow-y-auto space-y-6 pr-1">
+                    <div className="flex-1 min-h-0 overflow-y-auto space-y-6 pr-1 modal-scroll">
                         {/* Request info – accordion */}
                         <AccordionSection
                             id="request_info"
@@ -359,7 +443,7 @@ export default function ViewJoinRequest({ onClose, oldData }) {
                         {/* Submitted data – grouped sections */}
                         {oldData?.submitted_data && (
                             <>
-                                <h3 className="text-base font-semibold text-gray-800 sticky top-0 bg-gray-50/95 py-1 -mx-1 px-1 rounded">
+                                <h3 className="text-base font-semibold text-gray-800 sticky top-0 z-10 bg-gray-50 py-2 -mx-1 px-1 rounded shadow-[0_1px_3px_0_rgba(0,0,0,0.06)]">
                                     {t('join_requests.submitted_data')}
                                 </h3>
                                 {renderSubmittedDataSections(oldData.submitted_data)}

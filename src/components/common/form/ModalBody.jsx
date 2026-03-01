@@ -28,7 +28,7 @@ export default function ModalBody({ children }) {
 
     // Otherwise, wrap in scrollable container for old forms
     return (
-        <div className="flex-1 overflow-y-auto overflow-x-hidden">
+        <div className="flex-1 overflow-y-auto overflow-x-hidden modal-scroll">
             {children}
         </div>
     );

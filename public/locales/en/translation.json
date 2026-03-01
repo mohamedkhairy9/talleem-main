@@ -989,6 +989,8 @@
         "actions": "Actions",
         "enabled": "Enabled",
         "disabled": "Disabled",
+        "active": "Active",
+        "inactive": "Inactive",
         "are_you_sure_you_want_to_delete_this_item": "Are you sure you want to delete this item?",
         "select_file": "Select File",
         "remove": "Remove",
