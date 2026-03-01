@@ -207,7 +207,10 @@ export default function ViewJoinRequest({ onClose, oldData }) {
                                     {t('table_headers.request_type')}
                                 </label>
                                 <div className="text-sm text-gray-900">
-                                    {oldData?.request_type?.name || '-'}
+                                    {oldData?.request_type?.name?.[currentLocale] ||
+                                     oldData?.request_type?.name?.en ||
+                                     oldData?.request_type?.name?.ar ||
+                                     '-'}
                                 </div>
                             </div>
 
