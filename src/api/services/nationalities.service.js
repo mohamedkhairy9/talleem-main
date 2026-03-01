@@ -3,13 +3,7 @@ import { API_URLS } from '../endpoints';
 
 export const nationalitiesService = {
     getNationalities: async params => {
-        const response = await axiosInstance.get(API_URLS.NATIONALITIES.LIST, { params });
-        // Handle case where API returns array with one object containing data and meta
-        // The axios interceptor already extracts response.data, so response is the array
-        if (Array.isArray(response) && response.length > 0 && response[0]?.data) {
-            return response[0];
-        }
-        return response;
+        return await axiosInstance.get(API_URLS.NATIONALITIES.LIST, { params });
     },
 
     getNationality: async id => {

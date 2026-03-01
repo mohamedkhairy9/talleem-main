@@ -15,6 +15,7 @@ import ModalFooter from '@/components/common/form/ModalFooter';
 import { isFieldRequired } from '@/utils/helpers/schemaHelpers';
 import WarningModal from '@/components/common/form/WarningModal';
 import { useEntitiesQuery } from '@/api/hooks/useEntities';
+import { ASYNC_SELECT_PAGE_SIZE } from '@/utils/helpers/asyncSelectHelpers';
 
 export default function FormEntityManager({
     onClose,
@@ -53,18 +54,19 @@ export default function FormEntityManager({
     const mainProgramId = watch('main_program_id');
     const entityId = watch('entity_id');
 
-    // Query entities dynamically based on main_program_id and branch_id
+    // Query entities dynamically based on main_program_id and branch_id (with pagination)
     const entitiesQueryParams = useMemo(() => {
-        // In edit/view mode, use oldData values if current values are not set
         const programId = mainProgramId || oldData?.main_program_id;
         const branch = branchId || oldData?.branch_id;
-        
+
         if (!programId || !branch) {
             return null;
         }
         return {
             main_program_id: programId,
-            branch_id: branch
+            branch_id: branch,
+            page: 1,
+            per_page: ASYNC_SELECT_PAGE_SIZE
         };
     }, [mainProgramId, branchId, oldData?.main_program_id, oldData?.branch_id]);
 
@@ -219,13 +221,6 @@ export default function FormEntityManager({
         // For fields that shouldn't be filtered, always use original options
         if (['main_program_id', 'academic_qualification_id', 'major_id', 'city_id', 'gender', 'status'].includes(fieldName)) {
             const generatedOptions = generateOptions(options[fieldName]);
-            // Debug log for academic_qualification_id
-            if (fieldName === 'academic_qualification_id') {
-                console.log('FormEntityManager - getFieldOptions for academic_qualification_id:');
-                console.log('  - Raw options:', options[fieldName]);
-                console.log('  - Generated options:', generatedOptions);
-                console.log('  - oldData value:', oldData?.[fieldName]);
-            }
             return generatedOptions;
         }
         
@@ -282,10 +277,10 @@ export default function FormEntityManager({
                             );
                         }
 
-                        // Special handling for entity field - disabled until branch and main program are selected
+                        // Entity field: async paginated select filtered by branch + main program (page & per_page always sent)
                         if (field.name === 'entity_id') {
                             const isEntityDisabled = !branchId || !mainProgramId || viewMode || entitiesLoading;
-                            
+
                             return (
                                 <div key={field.name}>
                                     <InputRFH
@@ -294,6 +289,7 @@ export default function FormEntityManager({
                                         register={register}
                                         error={getNestedError(errors, field.name)}
                                         type={field.type}
+                                        
                                         placeholder={field.placeholder}
                                         disabled={isEntityDisabled}
                                         label={field.label}
@@ -302,6 +298,13 @@ export default function FormEntityManager({
                                         options={getFieldOptions(field.name)}
                                         defaultValue={oldData?.[field.name] || field.defaultValue}
                                         required={isFieldRequired(schema, field.name)}
+                                        oldData={oldData}
+                                        fieldParams={{
+                                            entity_id: {
+                                                branch_id: branchId ?? oldData?.branch_id,
+                                                main_program_id: mainProgramId ?? oldData?.main_program_id
+                                            }
+                                        }}
                                     />
                                 </div>
                             );
@@ -378,14 +381,6 @@ export default function FormEntityManager({
                                                 return oldData?.nationality_id || oldData?.nationality?.id || field.defaultValue;
                                             }
                                             const defaultValue = oldData?.[field.name] || field.defaultValue;
-                                            // Debug log for academic_qualification_id
-                                            if (field.name === 'academic_qualification_id') {
-                                                console.log('FormEntityManager - InputRFH for academic_qualification_id:');
-                                                console.log('  - Field name:', field.name);
-                                                console.log('  - oldData:', oldData);
-                                                console.log('  - defaultValue:', defaultValue);
-                                                console.log('  - Options:', getFieldOptions(field.name));
-                                            }
                                             return defaultValue;
                                         })()}
                                         info={field.info}

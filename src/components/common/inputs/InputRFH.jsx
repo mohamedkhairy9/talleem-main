@@ -1,6 +1,6 @@
 import useLocale from '@/utils/hooks/global/useLocale';
 import SelectRFH from './SelectRFH';
-import { shouldUseAsyncSelect, createLoadOptionsForField, getDefaultOptionsForField, getNestedValue } from '@/utils/helpers/asyncSelectFieldMapper';
+import { shouldUseAsyncSelect, createLoadOptionsForField, getDefaultOptionsForField, createGetOptionByValueForField, getNestedValue } from '@/utils/helpers/asyncSelectFieldMapper';
 import { useMemo } from 'react';
 import i18next from 'i18next';
 
@@ -24,7 +24,7 @@ export default function InputRFH({
     max,
     required = false,
     loading = false,
-    isAsync = false,
+    isAsync = undefined,
     loadOptions = null,
     defaultOptions = false,
     cacheOptions = true,
@@ -44,12 +44,13 @@ export default function InputRFH({
             };
         }
         
-        // If explicitly set to true or loadOptions provided, use that
+        // If explicitly set to true or loadOptions provided, use that (still allow resolve-by-id if field is mapped)
         if (isAsync === true || loadOptions !== null) {
             return {
                 isAsync: true,
                 loadOptions,
-                defaultOptions
+                defaultOptions,
+                getOptionByValue: shouldUseAsyncSelect(name) ? createGetOptionByValueForField(name) : null
             };
         }
         
@@ -85,14 +86,16 @@ export default function InputRFH({
             return {
                 isAsync: true,
                 loadOptions: asyncLoadOptions,
-                defaultOptions: asyncDefaultOptions
+                defaultOptions: asyncDefaultOptions,
+                getOptionByValue: createGetOptionByValueForField(name)
             };
         }
-        
+
         return {
             isAsync: false,
             loadOptions: null,
-            defaultOptions: false
+            defaultOptions: false,
+            getOptionByValue: null
         };
     }, [type, name, isAsync, loadOptions, defaultOptions, oldData, fieldParams]);
 
@@ -100,7 +103,7 @@ export default function InputRFH({
     if (type === 'select') {
         // Build props - completely separate async and regular props
         if (asyncConfig.isAsync && asyncConfig.loadOptions) {
-            // ASYNC SELECT - No options prop at all
+            // ASYNC SELECT - Paginated; no options prop
             return (
                 <SelectRFH
                     info={info}
@@ -119,6 +122,7 @@ export default function InputRFH({
                     loadOptions={asyncConfig.loadOptions}
                     defaultOptions={asyncConfig.defaultOptions}
                     cacheOptions={cacheOptions}
+                    getOptionByValue={asyncConfig.getOptionByValue}
                 />
             );
         }

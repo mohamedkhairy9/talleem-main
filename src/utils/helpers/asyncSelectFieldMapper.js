@@ -1,3 +1,4 @@
+import i18next from 'i18next';
 import { createAsyncLoadOptionsWithIncluded } from './asyncSelectHelpers';
 import { nationalitiesService } from '@/api/services/nationalities.service';
 import { citiesService } from '@/api/services/cities.service';
@@ -27,163 +28,138 @@ import { jobsService } from '@/api/services/jobs.service';
 import { kinshipsService } from '@/api/services/kinships.service';
 
 /**
- * Maps field names to their corresponding API service methods
- * This allows automatic async select configuration for API-backed fields
+ * Maps field names to their corresponding API service methods.
+ * getById is used to resolve a single option by value (ID) for paginated async select display.
  */
 export const FIELD_TO_SERVICE_MAP = {
-    // Nationalities
     nationality_id: {
         service: nationalitiesService.getNationalities,
+        getById: nationalitiesService.getNationality,
         serviceName: 'nationalitiesService.getNationalities'
     },
-    
-    // Cities
     city_id: {
         service: citiesService.getCities,
+        getById: citiesService.getCity,
         serviceName: 'citiesService.getCities'
     },
-    
-    // Branches
     branch_id: {
         service: branchesService.getBranches,
+        getById: branchesService.getBranch,
         serviceName: 'branchesService.getBranches'
     },
-    
-    // Entities
     entity_id: {
         service: entitiesService.getEntities,
+        getById: entitiesService.getEntity,
         serviceName: 'entitiesService.getEntities'
     },
-    
-    // Main Programs
     main_program_id: {
         service: mainProgramsService.getMainPrograms,
+        getById: mainProgramsService.getMainProgram,
         serviceName: 'mainProgramsService.getMainPrograms'
     },
-    
-    // Academic Qualifications
     academic_qualification_id: {
         service: academicQualificationsService.getAcademicQualifications,
+        getById: academicQualificationsService.getAcademicQualification,
         serviceName: 'academicQualificationsService.getAcademicQualifications'
     },
-    
-    // Majors
     major_id: {
         service: majorsService.getMajors,
+        getById: majorsService.getMajor,
         serviceName: 'majorsService.getMajors'
     },
-    
-    // Academic Levels
     academic_level_id: {
         service: academicLevelsService.getAcademicLevels,
+        getById: academicLevelsService.getAcademicLevel,
         serviceName: 'academicLevelsService.getAcademicLevels'
     },
-    
-    // Specifications
     specification_id: {
         service: specificationsService.getSpecifications,
+        getById: specificationsService.getSpecification,
         serviceName: 'specificationsService.getSpecifications'
     },
-    
-    // Neighborhoods
     neighborhood_id: {
         service: neighborhoodsService.getNeighborhoods,
+        getById: neighborhoodsService.getNeighborhood,
         serviceName: 'neighborhoodsService.getNeighborhoods'
     },
-    
-    // Location Types
     location_type_id: {
         service: locationTypesService.getLocationTypes,
+        getById: locationTypesService.getLocationType,
         serviceName: 'locationTypesService.getLocationTypes'
     },
-    
-    // Session Modes
     session_mode_id: {
         service: sessionModesService.getSessionModes,
+        getById: sessionModesService.getSessionMode,
         serviceName: 'sessionModesService.getSessionModes'
     },
-    
-    // Education Program Entity Types
     education_program_entity_type_id: {
         service: educationProgramEntityTypesService.getEducationProgramEntityTypes,
+        getById: educationProgramEntityTypesService.getEducationProgramEntityType,
         serviceName: 'educationProgramEntityTypesService.getEducationProgramEntityTypes'
     },
-    
-    // Memorization Program Entity Types
     memorization_program_entity_type_id: {
         service: memorizationProgramEntityTypesService.getMemorizationProgramEntityTypes,
+        getById: memorizationProgramEntityTypesService.getMemorizationProgramEntityType,
         serviceName: 'memorizationProgramEntityTypesService.getMemorizationProgramEntityTypes'
     },
-    
-    // Entity Categories
     entity_category_id: {
         service: entityCategoriesService.getEntityCategories,
+        getById: entityCategoriesService.getEntityCategory,
         serviceName: 'entityCategoriesService.getEntityCategories'
     },
-    
-    // Activities
     activity_ids: {
         service: activitiesService.getActivities,
+        getById: activitiesService.getActivity,
         serviceName: 'activitiesService.getActivities'
     },
-    
-    // Users
     user_id: {
         service: usersService.getUsers,
+        getById: usersService.getUser,
         serviceName: 'usersService.getUsers'
     },
-    
-    // Students
     student_id: {
         service: studentsService.getStudents,
+        getById: studentsService.getStudent,
         serviceName: 'studentsService.getStudents'
     },
-    
-    // Teachers
     teacher_id: {
         service: teachersService.getTeachers,
+        getById: teachersService.getTeacher,
         serviceName: 'teachersService.getTeachers'
     },
-    
-    // Employees
     employee_id: {
         service: employeesService.getEmployees,
+        getById: employeesService.getEmployee,
         serviceName: 'employeesService.getEmployees'
     },
-    
-    // Roles
     role_id: {
         service: rolesService.getRoles,
+        getById: rolesService.getRole,
         serviceName: 'rolesService.getRoles'
     },
-    
-    // Warning Reasons
     warning_reason_id: {
         service: warningReasonsService.getWarningReasons,
+        getById: warningReasonsService.getWarningReason,
         serviceName: 'warningReasonsService.getWarningReasons'
     },
-    
-    // Join Request Forms
     join_request_form_id: {
         service: joinRequestFormsService.getJoinRequestForms,
+        getById: joinRequestFormsService.getJoinRequestForm,
         serviceName: 'joinRequestFormsService.getJoinRequestForms'
     },
-    
-    // Countries
     country_id: {
         service: countriesService.getCountries,
+        getById: countriesService.getCountry,
         serviceName: 'countriesService.getCountries'
     },
-    
-    // Jobs
     job_id: {
         service: jobsService.getJobs,
+        getById: jobsService.getJob,
         serviceName: 'jobsService.getJobs'
     },
-    
-    // Kinships
     kinship_id: {
         service: kinshipsService.getKinships,
+        getById: kinshipsService.getKinship,
         serviceName: 'kinshipsService.getKinships'
     }
 };
@@ -207,7 +183,7 @@ export function shouldUseAsyncSelect(fieldName) {
 }
 
 /**
- * Creates async loadOptions for a field
+ * Creates async loadOptions for a field (paginated; compatible with react-select-async-paginate).
  * @param {string} fieldName - The field name
  * @param {Object} additionalParams - Additional params to pass to API
  * @param {Object} includeOption - Option to always include (e.g., from oldData)
@@ -215,16 +191,48 @@ export function shouldUseAsyncSelect(fieldName) {
  */
 export function createLoadOptionsForField(fieldName, additionalParams = {}, includeOption = null) {
     const fieldService = getServiceForField(fieldName);
-    
+
     if (!fieldService || !fieldService.service) {
         return null;
     }
-    
+
     return createAsyncLoadOptionsWithIncluded(
         fieldService.service,
         additionalParams,
         includeOption
     );
+}
+
+/**
+ * Creates getOptionByValue(value) => Promise<option> for a field.
+ * Used to resolve the selected option by ID when it's not in the current page (paginated async select).
+ * @param {string} fieldName - The field name
+ * @returns {((value: number|string) => Promise<{ label: string, value: any, id: any }|null>)|null}
+ */
+export function createGetOptionByValueForField(fieldName) {
+    const fieldService = getServiceForField(fieldName);
+    if (!fieldService?.getById) return null;
+
+    const getById = fieldService.getById;
+    const lang = () => i18next.language;
+
+    return async (value) => {
+        if (value === undefined || value === null) return null;
+        try {
+            const item = await getById(value);
+            const data = item?.data ?? item;
+            if (!data) return null;
+            const name = data.name?.[lang()] || data.name?.en || data.name?.ar || data.name || data.label || '';
+            return {
+                label: name,
+                value: data.id !== undefined ? data.id : data.value,
+                id: data.id,
+                name: data.name
+            };
+        } catch {
+            return null;
+        }
+    };
 }
 
 /**

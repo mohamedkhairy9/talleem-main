@@ -1,136 +1,88 @@
 import i18next from 'i18next';
 
 /**
- * Creates a loadOptions function for react-select AsyncSelect with pagination support
- * @param {Function} apiService - The API service function that accepts params and returns Promise
- * @param {Object} additionalParams - Additional params to pass to the API (e.g., filters)
- * @param {Function} transformOption - Optional function to transform API response items to select options
- * @returns {Function} loadOptions function compatible with react-select AsyncSelect
+ * All APIs return: { data: [...], meta: { current_page, per_page, total, last_page } }
+ * The axios interceptor returns response.data so we receive this object directly.
  */
+
+export const ASYNC_SELECT_PAGE_SIZE = 15;
+
+function toOption(item, lang) {
+    const label =
+        item.name?.[lang] || item.name?.en || item.name?.ar ||
+        (typeof item.name === 'string' ? item.name : '') ||
+        item.label || '';
+    return { label, value: item.id, id: item.id };
+}
+
 /**
- * Creates a loadOptions function for react-select-async-paginate with proper pagination support
- * @param {Function} apiService - The API service function that accepts params and returns Promise
- * @param {Object} additionalParams - Additional params to pass to the API (e.g., filters)
- * @param {Function} transformOption - Optional function to transform API response items to select options
- * @returns {Function} loadOptions function compatible with react-select-async-paginate
+ * loadOptions for <AsyncPaginate>.
+ * Contract: (search, loadedOptions, additional) => { options, hasMore, additional }
+ * - Pass additional={{ page: 1 }} to <AsyncPaginate> as initial state.
+ * - Library passes back whatever `additional` we return last time as next `additional`.
  */
-export function createAsyncLoadOptions(apiService, additionalParams = {}, transformOption = null) {
-    return async (searchQuery, loadedOptions, { page } = {}) => {
+export function createAsyncLoadOptions(apiService, extraParams = {}, transformFn = null) {
+    return async (search, _loadedOptions, additional) => {
         const lang = i18next.language;
-        const perPage = 10; // Items per page
-        const currentPage = page || 1;
-        
+        const page = additional?.page ?? 1;
+
         try {
-            // Build search params
-            // Note: per_page must be set AFTER spreading additionalParams to avoid being overridden
-            const params = {
-                ...additionalParams,
-                page: currentPage,
-                per_page: perPage
-            };
-
-            // Add search query if provided
-            if (searchQuery && searchQuery.trim()) {
-                params.search = searchQuery.trim();
-            }
-
-            // Call API
-            const response = await apiService(params);
-            
-            // Handle different response structures
-            let items = [];
-            let hasMore = false;
-            let totalPages = 1;
-
-            if (response?.data && Array.isArray(response.data)) {
-                items = response.data;
-                if (response.meta) {
-                    hasMore = response.meta.current_page < response.meta.last_page;
-                    totalPages = response.meta.last_page || 1;
-                } else {
-                    hasMore = items.length >= perPage;
-                }
-            } else if (Array.isArray(response)) {
-                items = response;
-                hasMore = items.length >= perPage;
-            }
-
-            // Transform items to select options
-            const options = items.map(item => {
-                if (transformOption) {
-                    return transformOption(item);
-                }
-                
-                // Default transformation
-                const name = item.name?.[lang] || item.name?.en || item.name?.ar || item.name || item.label || '';
-                return {
-                    label: name,
-                    value: item.id !== undefined ? item.id : item.value,
-                    id: item.id,
-                    name: item.name
-                };
+            const response = await apiService({
+                ...extraParams,
+                page,
+                per_page: ASYNC_SELECT_PAGE_SIZE,
+                ...(search?.trim() ? { search: search.trim() } : {})
             });
 
-            return {
-                options,
+
+            const data  = Array.isArray(response?.data) ? response.data : [];
+            const meta  = response?.meta ?? null;
+            const hasMore = meta ? meta.current_page < meta.last_page : false;
+
+
+            const result = {
+                options: data.map(item => transformFn ? transformFn(item) : toOption(item, lang)),
                 hasMore,
-                additional: {
-                    page: currentPage + 1
-                }
+                additional: { page: hasMore ? page + 1 : page }
             };
-        } catch (error) {
-            console.error('Error loading options:', error);
-            return {
-                options: [],
-                hasMore: false
-            };
+
+
+            return result;
+        } catch (err) {
+            return { options: [], hasMore: false, additional: { page: 1 } };
         }
     };
 }
 
 /**
- * Creates a loadOptions function that also includes a specific option (e.g., selected value from oldData)
- * @param {Function} apiService - The API service function
- * @param {Object} additionalParams - Additional params
- * @param {Object} includeOption - Option object to always include (e.g., {id: 1, name: {en: 'Test', ar: 'اختبار'}})
- * @param {Function} transformOption - Optional transform function
- * @returns {Function} loadOptions function compatible with react-select-async-paginate
+ * Like createAsyncLoadOptions, but prepends the currently-selected option on page 1
+ * so edit-mode shows the right label immediately.
  */
-export function createAsyncLoadOptionsWithIncluded(apiService, additionalParams = {}, includeOption = null, transformOption = null) {
-    const baseLoadOptions = createAsyncLoadOptions(apiService, additionalParams, transformOption);
-    
-    return async (searchQuery, loadedOptions, additional) => {
-        const result = await baseLoadOptions(searchQuery, loadedOptions, additional);
-        
-        // If we have an option to include and it's not already in the results
-        // Only include on first page load (when searchQuery is empty or page is 1)
-        if (includeOption && result.options && (!searchQuery || (additional?.page === 1 || !additional?.page))) {
-            const lang = i18next.language;
-            const includeId = includeOption.id || includeOption.value;
-            const alreadyIncluded = result.options.some(opt => 
-                opt.value === includeId || opt.id === includeId
-            );
-            
-            if (!alreadyIncluded) {
-                const includeName = includeOption.name?.[lang] || 
-                    includeOption.name?.en || 
-                    includeOption.name?.ar || 
-                    includeOption.name || 
-                    includeOption.label || '';
-                
-                const includeOptionFormatted = {
-                    label: includeName,
-                    value: includeId,
-                    id: includeId,
-                    name: includeOption.name
-                };
-                
-                // Add at the beginning
-                result.options = [includeOptionFormatted, ...result.options];
+export function createAsyncLoadOptionsWithIncluded(
+    apiService,
+    extraParams = {},
+    selectedItem = null,
+    transformFn = null
+) {
+    const base = createAsyncLoadOptions(apiService, extraParams, transformFn);
+
+    return async (search, loadedOptions, additional) => {
+        const result   = await base(search, loadedOptions, additional);
+        const isPage1  = !additional?.page || additional.page === 1;
+
+        if (selectedItem && !search?.trim() && isPage1) {
+            const lang  = i18next.language;
+            const id    = selectedItem.id ?? selectedItem.value;
+            const label =
+                selectedItem.name?.[lang] || selectedItem.name?.en ||
+                selectedItem.name?.ar    || selectedItem.name   ||
+                selectedItem.label       || '';
+
+            if (!result.options.some(o => o.value === id || o.id === id)) {
+                result.options = [{ label, value: id, id }, ...result.options];
             }
         }
-        
+
         return result;
     };
 }
-

@@ -6,178 +6,152 @@ import useLocale from '@/utils/hooks/global/useLocale';
 import { FaInfoCircle } from 'react-icons/fa';
 import Modal from '../form/Modal';
 
+// ─── Shared styles ────────────────────────────────────────────────────────────
+
+function buildStyles(error, isRTL) {
+    return {
+        control: (base, state) => ({
+            ...base,
+            padding: isRTL ? '6px 16px 6px 0px' : '6px 0px 6px 16px',
+            minHeight: '44px',
+            borderRadius: '8px',
+            borderColor: error ? '#ef4444' : '#d1d5db',
+            boxShadow: state.isFocused ? '0 0 0 3px rgba(59,130,246,0.1)' : 'none',
+            '&:hover': { borderColor: '' }
+        }),
+        valueContainer: base => ({ ...base, padding: '0' }),
+        input:          base => ({ ...base, margin: '0', padding: '0' }),
+        placeholder:    base => ({ ...base, margin: '0', color: '#9ca3af' }),
+        menuPortal:     base => ({ ...base, zIndex: 9999 }),
+        singleValue:    (base, state) => ({
+            ...base,
+            color: state.isDisabled ? '#000000' : base.color
+        })
+    };
+}
+
+// ─── Async inner component (hooks at top level, not inside render prop) ───────
+
+function AsyncSelect({
+    field,
+    loadOptions,
+    isMulti,
+    disabled,
+    loading,
+    placeholder,
+    t,
+    styles,
+    defaultValue,
+    getOptionByValue
+}) {
+    const [selected, setSelected] = useState(null);
+
+    // Resolve the displayed option when the stored value (an ID) changes
+    useEffect(() => {
+        const id = field.value ?? defaultValue;
+        if (id == null || id === '') {
+            setSelected(null);
+            return;
+        }
+        // If already showing the correct option, skip
+        if (selected?.value === id || selected?.id === id) return;
+
+        if (getOptionByValue) {
+            getOptionByValue(id).then(opt => { if (opt) setSelected(opt); }).catch(() => {});
+        } else {
+            // Fetch page 1 and look for the id
+            loadOptions('', [], { page: 1 })
+                .then(res => {
+                    const found = res?.options?.find(o => o.value === id || o.id === id);
+                    if (found) setSelected(found);
+                })
+                .catch(() => {});
+        }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [field.value, defaultValue]);
+
+    function handleChange(opt) {
+        const value = isMulti
+            ? (opt ?? []).map(o => o.value ?? o.id)
+            : (opt?.value ?? opt?.id ?? null);
+        field.onChange(value);
+        setSelected(opt ?? null);
+    }
+
+    return (
+        <AsyncPaginate
+            /*
+             * defaultOptions={true}  ← CRITICAL:
+             *   Tells the library to call loadOptions on first open.
+             *   Never pass an array here — doing so pre-fills the internal cache
+             *   and the library never calls loadOptions, so scroll pagination never fires.
+             *
+             * additional={{ page: 1 }}  ← initial pagination state.
+             *   The library passes this as the 3rd arg on first call,
+             *   then passes back whatever `additional` we returned last time.
+             */
+            value={selected}
+            isMulti={isMulti}
+            isDisabled={disabled}
+            isLoading={loading}
+            placeholder={loading ? t('common.loading') : t(placeholder)}
+            loadOptions={loadOptions}
+            additional={{ page: 1 }}
+            defaultOptions={true}
+            menuPortalTarget={document.body}
+            menuPosition="fixed"
+            styles={styles}
+            classNamePrefix="react-select"
+            onChange={handleChange}
+        />
+    );
+}
+
+// ─── Regular (static) select ──────────────────────────────────────────────────
+
+function normalizeValue(raw, optionsList, isMulti) {
+    const list = Array.isArray(optionsList) ? optionsList : [];
+    if (raw == null) return isMulti ? [] : null;
+
+    const toOpt = item => item
+        ? { value: item.value ?? item.id, label: item.label || item.name }
+        : null;
+
+    if (isMulti) {
+        const ids = (Array.isArray(raw) ? raw : [raw]).map(v => v?.id ?? v?.value ?? v);
+        return list.filter(o => ids.includes(o.id ?? o.value)).map(toOpt);
+    }
+
+    const id = Array.isArray(raw) ? raw[0] : raw;
+    const found = list.find(o => (o.id ?? o.value) === (id?.id ?? id?.value ?? id));
+    return toOpt(found);
+}
+
+// ─── Public component ─────────────────────────────────────────────────────────
+
 export default function SelectRFH({
     label,
     name,
     control,
     error,
     options,
-    isMulti = false,
-    disabled = false,
+    isMulti      = false,
+    disabled     = false,
     width,
     defaultValue,
     classes,
-    placeholder = 'Please select ..',
-    info = '',
-    required = false,
-    loading = false,
-    // Async props
-    isAsync = false,
-    loadOptions = null,
-    defaultOptions = false,
-    cacheOptions = true
+    placeholder  = 'Please select ..',
+    info         = '',
+    required     = false,
+    loading      = false,
+    isAsync      = false,
+    loadOptions  = null,
+    getOptionByValue = null
 }) {
-    // For async selects, ensure options is completely ignored
-    // If isAsync is true, options should not be used at all
-    const safeOptions = isAsync ? undefined : (Array.isArray(options) ? options : []);
-    
-    // Debug: Log if options is being passed to async select (should not happen)
-    if (isAsync && options !== undefined && process.env.NODE_ENV === 'development') {
-        console.warn(`SelectRFH: options prop passed to async select for field "${name}". This should not happen.`);
-    }
     const { t, isRTL } = useLocale();
     const [showInfo, setShowInfo] = useState(false);
-    const [asyncSelectedOption, setAsyncSelectedOption] = useState(null);
-
-    // Load selected option for async selects
-    useEffect(() => {
-        if (isAsync && loadOptions && defaultValue !== undefined && defaultValue !== null) {
-            if (Array.isArray(defaultOptions)) {
-                const found = defaultOptions.find(opt => 
-                    (opt.value !== undefined && opt.value === defaultValue) ||
-                    (opt.id !== undefined && opt.id === defaultValue)
-                );
-                if (found) {
-                    setAsyncSelectedOption(found);
-                }
-            } else if (defaultOptions === true && loadOptions) {
-                // Load first page to find the selected value
-                loadOptions('', []).then(result => {
-                    const found = result?.options?.find(opt => 
-                        (opt.value !== undefined && opt.value === defaultValue) ||
-                        (opt.id !== undefined && opt.id === defaultValue)
-                    );
-                    if (found) {
-                        setAsyncSelectedOption(found);
-                    }
-                }).catch(() => {
-                    // Ignore errors
-                });
-            }
-        }
-    }, [isAsync, defaultValue, loadOptions, defaultOptions]);
-
-    const getValue = (valueToTransform, optionsList) => {
-        const availableOptions = Array.isArray(optionsList) ? optionsList : [];
-        
-        if (valueToTransform !== undefined && valueToTransform !== null) {
-            if (isMulti) {
-                const valueArray = Array.isArray(valueToTransform) 
-                    ? valueToTransform 
-                    : [valueToTransform];
-                
-                const normalizedValues = valueArray.map(el => {
-                    return el?.id !== undefined ? el.id : el?.value !== undefined ? el.value : el;
-                });
-                
-                return availableOptions
-                    .filter(item => {
-                        const itemId = item.id !== undefined ? item.id : null;
-                        const itemValue = item.value !== undefined ? item.value : null;
-                        return normalizedValues.some(normalizedVal => {
-                            return normalizedVal === itemId || normalizedVal === itemValue;
-                        });
-                    })
-                    .map(option => ({
-                        value: option.value !== undefined ? option.value : option.id,
-                        label: option.label || option.name
-                    }));
-            } else {
-                const singleValue = Array.isArray(valueToTransform) 
-                    ? valueToTransform[0] 
-                    : valueToTransform;
-                
-                const found = availableOptions.find(el => {
-                    const elId = el.id !== undefined ? el.id : null;
-                    const elValue = el.value !== undefined ? el.value : null;
-                    return (
-                        (elId !== null && elId === singleValue) ||
-                        (elValue !== null && elValue === singleValue)
-                    );
-                });
-                
-                return found
-                    ? {
-                          label: found.label || found.name,
-                          value: found.value !== undefined ? found.value : found.id
-                      }
-                    : null;
-            }
-        }
-        return null;
-    };
-
-    const sharedStyles = {
-        control: (provided, state) => ({
-            ...provided,
-            padding: !isRTL
-                ? '6px 0px 6px 16px'
-                : '6px 16px 6px 0px',
-            minHeight: '44px',
-            borderRadius: '8px',
-            boxShadow: state.isFocused
-                ? '0 0 0 3px rgba(59, 130, 246, 0.1)'
-                : 'none',
-            '&:hover': {
-                borderColor: ''
-            },
-            borderColor: error ? '#ef4444' : '#d1d5db'
-        }),
-        valueContainer: provided => ({
-            ...provided,
-            padding: '0'
-        }),
-        input: provided => ({
-            ...provided,
-            margin: '0',
-            padding: '0'
-        }),
-        placeholder: provided => ({
-            ...provided,
-            margin: '0',
-            color: '#9ca3af'
-        }),
-        menuPortal: provided => ({
-            ...provided,
-            zIndex: 9999
-        }),
-        singleValue: (provided, state) => ({
-            ...provided,
-            color: state.isDisabled
-                ? '#000000'
-                : provided.color
-        })
-    };
-
-    const handleChange = (selected, field, isAsyncSelect = false) => {
-        const newValue = isMulti
-            ? selected.map(option =>
-                  option.value !== undefined
-                      ? option.value
-                      : option.id
-              )
-            : selected?.value !== undefined
-            ? selected?.value
-            : selected?.id;
-
-        field.onChange(newValue);
-        
-        // For async selects, immediately update the selected option state
-        // so the field displays the selected value
-        if (isAsyncSelect) {
-            setAsyncSelectedOption(selected);
-        }
-    };
+    const styles   = buildStyles(error, isRTL);
+    const safeOpts = Array.isArray(options) ? options : [];
 
     return (
         <div className="flex flex-col gap-px">
@@ -190,119 +164,74 @@ export default function SelectRFH({
                         {t(label)}
                         {required && <span className="text-red-500 ml-1">*</span>}
                     </span>
-
                     {info && (
                         <FaInfoCircle
-                            className="text-blue-500 cursor-pointer text-xl "
+                            className="text-blue-500 cursor-pointer text-xl"
                             onClick={() => setShowInfo(true)}
                         />
                     )}
                 </label>
             )}
+
             <Controller
                 name={name}
                 control={control}
                 defaultValue={defaultValue}
                 render={({ field }) => {
-                    // Update async selected option when field value changes (e.g., from form reset or external update)
-                    useEffect(() => {
-                        if (isAsync && field.value !== undefined && field.value !== null) {
-                            // Check if current asyncSelectedOption matches the field value
-                            const currentValue = asyncSelectedOption?.value !== undefined ? asyncSelectedOption.value : asyncSelectedOption?.id;
-                            if (currentValue !== field.value) {
-                                // Value changed, try to find it in defaultOptions
-                                if (Array.isArray(defaultOptions)) {
-                                    const found = defaultOptions.find(opt => 
-                                        (opt.value !== undefined && opt.value === field.value) ||
-                                        (opt.id !== undefined && opt.id === field.value)
-                                    );
-                                    if (found) {
-                                        setAsyncSelectedOption(found);
-                                    } else if (loadOptions) {
-                                        // If not found in defaultOptions, try loading it via loadOptions
-                                        loadOptions('', [], { page: 1 }).then(result => {
-                                            const found = result?.options?.find(opt => 
-                                                (opt.value !== undefined && opt.value === field.value) ||
-                                                (opt.id !== undefined && opt.id === field.value)
-                                            );
-                                            if (found) {
-                                                setAsyncSelectedOption(found);
-                                            }
-                                        }).catch(() => {
-                                            // Ignore errors
-                                        });
-                                    }
-                                }
-                            }
-                        } else if (isAsync && (field.value === undefined || field.value === null)) {
-                            // Clear selection when value is cleared
-                            setAsyncSelectedOption(null);
-                        }
-                    }, [field.value, isAsync, defaultOptions, loadOptions, asyncSelectedOption]);
-
-                    // ASYNC SELECT - Using AsyncPaginate for proper pagination support
                     if (isAsync && loadOptions) {
                         return (
-                            <AsyncPaginate
-                                value={asyncSelectedOption || null}
-                                isMulti={isMulti}
-                                className={`react-select ${
-                                    width ? width : 'w-full min-w-[300px]'
-                                } ${classes || ''}`}
-                                classNamePrefix="react-select"
-                                isDisabled={disabled}
-                                isLoading={loading}
-                                placeholder={loading ? t('common.loading') : t(placeholder)}
-                                menuPortalTarget={document.body}
-                                menuPosition="fixed"
-                                styles={sharedStyles}
-                                onChange={(selected) => handleChange(selected, field, true)}
+                            <AsyncSelect
+                                field={field}
                                 loadOptions={loadOptions}
-                                defaultOptions={defaultOptions === false ? false : (defaultOptions === true ? true : (Array.isArray(defaultOptions) ? defaultOptions : true))}
+                                isMulti={isMulti}
+                                disabled={disabled}
+                                loading={loading}
+                                placeholder={placeholder}
+                                t={t}
+                                styles={styles}
+                                defaultValue={defaultValue}
+                                getOptionByValue={getOptionByValue}
                             />
                         );
                     }
 
-                    // REGULAR SELECT - Use options prop
-                    const selectedValue = getValue(field.value, safeOptions);
-                    
+                    // Static select
                     return (
                         <Select
-                            value={selectedValue}
+                            value={normalizeValue(field.value, safeOpts, isMulti)}
                             isMulti={isMulti}
-                            className={`react-select ${
-                                width ? width : 'w-full min-w-[300px]'
-                            } ${classes || ''}`}
+                            className={`react-select ${width || 'w-full min-w-[300px]'} ${classes || ''}`}
                             classNamePrefix="react-select"
                             isDisabled={disabled}
                             isLoading={loading}
                             placeholder={loading ? t('common.loading') : t(placeholder)}
                             menuPortalTarget={document.body}
                             menuPosition="fixed"
-                            styles={sharedStyles}
-                            onChange={(selected) => handleChange(selected, field)}
-                            options={safeOptions || []}
+                            styles={styles}
+                            options={safeOpts}
+                            onChange={opt => {
+                                const value = isMulti
+                                    ? (opt ?? []).map(o => o.value ?? o.id)
+                                    : (opt?.value ?? opt?.id ?? null);
+                                field.onChange(value);
+                            }}
                         />
                     );
                 }}
             />
-            <p
-                className="mt-1 h-4 text-xs text-red-600 font-montserrat"
-                role="alert"
-            >
+
+            <p className="mt-1 h-4 text-xs text-red-600 font-montserrat" role="alert">
                 {t(error) || ''}
             </p>
+
             {showInfo && (
                 <Modal onClose={() => setShowInfo(false)}>
                     <div className="p-4 flex flex-col gap-4 items-center justify-center bg-white rounded-lg">
-                        <FaInfoCircle className="text-blue-500 text-5xl " />
-                        <h3 className="text-lg font-semibold text-gray-800">
-                            {t(info)}
-                        </h3>
+                        <FaInfoCircle className="text-blue-500 text-5xl" />
+                        <h3 className="text-lg font-semibold text-gray-800">{t(info)}</h3>
                     </div>
                 </Modal>
             )}
         </div>
     );
 }
-
