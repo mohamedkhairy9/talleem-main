@@ -1774,7 +1774,14 @@
         "request_details": "تفاصيل الطلب",
         "submitted_data": "البيانات المقدمة",
         "parent_info": "معلومات الوالد",
-        "qualification": "المؤهلات"
+        "qualification": "المؤهلات",
+        "section_entity_info": "معلومات الجهة",
+        "section_location": "الموقع",
+        "section_program": "البرنامج والجلسة",
+        "section_manager": "معلومات المدير",
+        "section_facilities": "المرافق",
+        "section_other": "تفاصيل أخرى",
+        "take_action": "اتخاذ الإجراء"
     },
     "warnings": {
         "create": "إضافة إنذار",

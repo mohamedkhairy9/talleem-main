@@ -1644,7 +1644,14 @@
         "request_details": "Request Details",
         "submitted_data": "Submitted Data",
         "parent_info": "Parent Information",
-        "qualification": "Qualification"
+        "qualification": "Qualification",
+        "section_entity_info": "Entity Information",
+        "section_location": "Location",
+        "section_program": "Program & Session",
+        "section_manager": "Manager Information",
+        "section_facilities": "Facilities",
+        "section_other": "Other Details",
+        "take_action": "Take Action"
     },
     "warnings": {
         "create": "Add Warning",
