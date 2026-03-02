@@ -4,7 +4,6 @@ import Modal from '@/components/common/form/Modal';
 import ModalHeader from '@/components/common/form/ModalHeader';
 import { useBranchesQuery } from '@/api/hooks/useBranches';
 import { useMainProgramsQuery } from '@/api/hooks/useMainPrograms';
-import { useEntityCategoriesQuery } from '@/api/hooks/useEntityCategories';
 import { useEducationProgramEntityTypesQuery } from '@/api/hooks/useEducationProgramEntityTypes';
 import { useCitiesQuery } from '@/api/hooks/useCities';
 import { useKinshipsQuery } from '@/api/hooks/useKinships';
@@ -33,8 +32,6 @@ export default function ViewStudent({ onClose, oldData }) {
         useBranchesQuery(allData);
     const { data: mainProgramsData, isLoading: mainProgramsLoading } =
         useMainProgramsQuery(allData);
-    const { data: entityCategoriesData, isLoading: entityCategoriesLoading } =
-        useEntityCategoriesQuery(allData);
     const {
         data: educationProgramEntityTypesData,
         isLoading: educationProgramEntityTypesLoading
@@ -57,7 +54,6 @@ export default function ViewStudent({ onClose, oldData }) {
     const isLoading =
         branchesLoading ||
         mainProgramsLoading ||
-        entityCategoriesLoading ||
         educationProgramEntityTypesLoading ||
         citiesLoading ||
         kinshipsLoading ||

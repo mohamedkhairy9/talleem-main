@@ -7,6 +7,9 @@ export const activitiesService = {
     },
 
     getActivity: async id => {
+        if (id == null || id === '' || (typeof id === 'number' && Number.isNaN(id)) || (Array.isArray(id))) {
+            return { data: null };
+        }
         return await axiosInstance.get(API_URLS.ACTIVITIES.DETAILS(id));
     },
 

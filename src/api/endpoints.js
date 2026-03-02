@@ -185,13 +185,6 @@ export const API_URLS = {
         UPDATE: id => `/activities/${id}`,
         DELETE: id => `/activities/${id}`
     },
-    ENTITY_CATEGORIES: {
-        CREATE: '/entity-categories',
-        LIST: '/entity-categories',
-        DETAILS: id => `/entity-categories/${id}`,
-        UPDATE: id => `/entity-categories/${id}`,
-        DELETE: id => `/entity-categories/${id}`
-    },
     SESSION_PERIODS: {
         CREATE: '/session-periods',
         LIST: '/session-periods',
@@ -451,7 +444,6 @@ export const API_KEYS = {
     LOCATION_TYPES: 'location-types',
     SPECIFICATIONS: 'specifications',
     ACTIVITIES: 'activities',
-    ENTITY_CATEGORIES: 'entity-categories',
     SESSION_PERIODS: 'session-periods',
     ABOUT_US: 'about-us',
     TERMS_AND_CONDITIONS: 'term-and-condition',

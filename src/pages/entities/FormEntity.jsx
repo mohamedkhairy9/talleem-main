@@ -6,11 +6,7 @@ import InputRFH from '@/components/common/inputs/InputRFH';
 import FileInputRFH from '@/components/common/inputs/FileInputRFH';
 import Btn from '@/components/common/buttons/Btn';
 import { getNestedError } from '@/utils/helpers/getNestedError';
-import {
-    generateOptions,
-    getUniqueOptionsByName,
-    generateOptionsWithCustomLabel
-} from '@/utils/helpers/global.fns';
+import { generateOptions } from '@/utils/helpers/global.fns';
 import useLocale from '@/utils/hooks/global/useLocale';
 import MapPicker from '@/components/common/maps/MapPicker';
 import Accordion from '@/components/common/UIs/Accordion';
@@ -208,61 +204,36 @@ export default function FormEntity({
         return neighborhoods;
     }, [neighborhoodsData, viewMode, editMode, oldData?.neighborhood_id, options?.neighborhood_id]);
 
-    // Get unique options by name for education program entity types (for mainProgramId === 1)
-    const uniqueEducationClassifications = useMemo(() => getUniqueOptionsByName(
-        options.education_program_entity_type_id || []
-    ), [options.education_program_entity_type_id]);
+    // Education: selected type for displaying educational_entity_classification (disabled Entity Category)
+    const selectedEducationType = useMemo(() => {
+        if (mainProgramId !== 1 || !educationClassification) return null;
+        const list = options.education_program_entity_type_id || [];
+        const id = Number(educationClassification);
+        return list.find(opt => opt.id === id) || null;
+    }, [mainProgramId, educationClassification, options.education_program_entity_type_id]);
 
-    // Filter entity categories based on selected classification (for mainProgramId === 1)
-    const filteredEntityCategories =
-        mainProgramId === 1 && educationClassification
-            ? (() => {
-                  const lang = i18next.language;
-                  const selectedClassification =
-                      uniqueEducationClassifications.find(
-                          u =>
-                              u.id === educationClassification ||
-                              u.value === educationClassification
-                      );
-
-                  if (!selectedClassification) return [];
-
-                  const selectedName =
-                      selectedClassification.name?.[lang] ||
-                      selectedClassification.name?.en ||
-                      selectedClassification.name?.ar ||
-                      selectedClassification.name;
-
-                  return (
-                      options.education_program_entity_type_id || []
-                  ).filter(opt => {
-                      const optName =
-                          opt.name?.[lang] ||
-                          opt.name?.en ||
-                          opt.name?.ar ||
-                          opt.name;
-                      return optName === selectedName;
-                  });
-              })()
-            : [];
+    // When user selects Education Entity Type Classification, set entity_category_id to that id
+    useEffect(() => {
+        if (mainProgramId === 1 && educationClassification) {
+            setValue('entity_category_id', educationClassification, { shouldValidate: true });
+        }
+    }, [mainProgramId, educationClassification, setValue]);
 
     const enhancedOptions = {
         ...options,
         city_id: filteredCities,
         neighborhood_id: filteredNeighborhoods,
+        // Education: options are full list with name as label, id as value
         education_program_entity_type_classification:
-            uniqueEducationClassifications,
-        entity_category_id:
             mainProgramId === 1
-                ? generateOptionsWithCustomLabel(
-                      filteredEntityCategories,
-                      'educational_entity_classification'
-                  )
-                : mainProgramId === 2
+                ? (options.education_program_entity_type_id || [])
+                : [],
+        // Memorization: entity category = memorization types; Education: options not used (field is disabled)
+        entity_category_id:
+            mainProgramId === 2
                 ? options.memorization_program_entity_type_id || []
                 : [],
         // Only use dynamic activities data when mainProgramId is selected
-        // Otherwise use empty array (field will be disabled)
         activity_ids: mainProgramId ? (dynamicActivitiesData?.data || []) : []
     };
 
@@ -277,50 +248,22 @@ export default function FormEntity({
         }
     }, [mainProgramId, oldData?.main_program_id, setValue]);
 
-    // Set the classification value when editing (based on entity_category_id's name)
+    // When editing education entity, set classification dropdown to entity_category_id (same id)
     useEffect(() => {
         if (
             mainProgramId === 1 &&
             oldData?.entity_category_id &&
-            !oldData?.education_program_entity_type_classification
+            !educationClassification
         ) {
-            // Find the entity type that matches entity_category_id
-            const selectedEntityType = (
-                options.education_program_entity_type_id || []
-            ).find(opt => opt.id === oldData.entity_category_id);
-
-            if (selectedEntityType) {
-                // Find the unique classification that matches this entity type's name
-                const lang = i18next.language;
-                const selectedName =
-                    selectedEntityType.name?.[lang] ||
-                    selectedEntityType.name?.en ||
-                    selectedEntityType.name?.ar ||
-                    selectedEntityType.name;
-                const matchingUniqueClassification =
-                    uniqueEducationClassifications.find(u => {
-                        const uName =
-                            u.name?.[lang] ||
-                            u.name?.en ||
-                            u.name?.ar ||
-                            u.name;
-                        return uName === selectedName;
-                    });
-
-                if (matchingUniqueClassification) {
-                    setValue(
-                        'education_program_entity_type_classification',
-                        matchingUniqueClassification.id ||
-                            matchingUniqueClassification.value
-                    );
-                }
-            }
+            setValue(
+                'education_program_entity_type_classification',
+                oldData.entity_category_id
+            );
         }
     }, [
         mainProgramId,
-        oldData,
-        options.education_program_entity_type_id,
-        uniqueEducationClassifications,
+        oldData?.entity_category_id,
+        educationClassification,
         setValue
     ]);
 
@@ -512,15 +455,38 @@ export default function FormEntity({
             );
         }
 
-        // For entity_category_id when mainProgramId === 1, use the already processed options directly
-        // (they're processed with generateOptionsWithCustomLabel to show educational_entity_classification)
-        const shouldUseProcessedOptions =
-            fieldName === 'entity_category_id' && mainProgramId === 1;
-
         const fieldOptionsValue =
             fieldOptions ||
             enhancedOptions?.[fieldName] ||
             managerOptions[fieldName];
+
+        // Education: Entity Category is read-only, showing educational_entity_classification of selected type
+        if (fieldName === 'entity_category_id' && mainProgramId === 1) {
+            const classificationLabel = selectedEducationType?.educational_entity_classification
+                ? (selectedEducationType.educational_entity_classification[i18next.language] ||
+                   selectedEducationType.educational_entity_classification?.en ||
+                   selectedEducationType.educational_entity_classification?.ar ||
+                   '')
+                : '';
+            return (
+                <div className="space-y-1">
+                    <input type="hidden" {...register('entity_category_id')} />
+                    <label className="block text-sm font-medium text-gray-700">
+                        {t(field.label)}
+                    </label>
+                    <input
+                        type="text"
+                        readOnly
+                        disabled
+                        value={classificationLabel}
+                        className="px-3 py-3 w-full border border-gray-300 rounded-md bg-gray-100 text-gray-700 cursor-not-allowed"
+                    />
+                    {error && (
+                        <p className="text-xs text-red-600 font-montserrat">{t(error.message)}</p>
+                    )}
+                </div>
+            );
+        }
 
         // Disable activity_ids field if main_program_id is not selected
         const isActivityFieldDisabled = fieldName === 'activity_ids' && !mainProgramId;
@@ -533,6 +499,9 @@ export default function FormEntity({
         // Check if field has disabled property
         const isFieldDisabled = field.disabled || viewMode || isActivityFieldDisabled || isCityFieldDisabled || isNeighborhoodFieldDisabled || isStatusFieldDisabled;
 
+        // activity_ids: use static options from our useQuery (with main_program_id), never async /activities list
+        const forceSyncActivityIds = fieldName === 'activity_ids';
+
         return (
             <InputRFH
                 p="px-3 py-3"
@@ -542,14 +511,11 @@ export default function FormEntity({
                 disabled={isFieldDisabled}
                 {...field}
                 name={fieldName}
-                options={
-                    shouldUseProcessedOptions
-                        ? fieldOptionsValue
-                        : generateOptions(fieldOptionsValue)
-                }
+                options={generateOptions(fieldOptionsValue)}
                 defaultValue={defaultValue}
                 required={isFieldRequired(adjustedSchema, fieldName)}
                 oldData={oldData}
+                isAsync={forceSyncActivityIds ? false : field.isAsync}
             />
         );
     };

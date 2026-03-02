@@ -14,7 +14,6 @@ import { locationTypesService } from '@/api/services/locationTypes.service';
 import { sessionModesService } from '@/api/services/essionModes.service';
 import { educationProgramEntityTypesService } from '@/api/services/educationProgramEntityTypes.service';
 import { memorizationProgramEntityTypesService } from '@/api/services/memorizationProgramEntityTypes.service';
-import { entityCategoriesService } from '@/api/services/entityCategories.service';
 import { activitiesService } from '@/api/services/activities.service';
 import { usersService } from '@/api/services/users.service';
 import { studentsService } from '@/api/services/students.service';
@@ -101,11 +100,6 @@ export const FIELD_TO_SERVICE_MAP = {
         service: memorizationProgramEntityTypesService.getMemorizationProgramEntityTypes,
         getById: memorizationProgramEntityTypesService.getMemorizationProgramEntityType,
         serviceName: 'memorizationProgramEntityTypesService.getMemorizationProgramEntityTypes'
-    },
-    entity_category_id: {
-        service: entityCategoriesService.getEntityCategories,
-        getById: entityCategoriesService.getEntityCategory,
-        serviceName: 'entityCategoriesService.getEntityCategories'
     },
     activity_ids: {
         service: activitiesService.getActivities,
@@ -217,7 +211,11 @@ export function createGetOptionByValueForField(fieldName) {
     const lang = () => i18next.language;
 
     return async (value) => {
-        if (value === undefined || value === null) return null;
+        // Reject empty/invalid ids to avoid bad API calls (e.g. GET /activities/ when id is [] or '')
+        if (value === undefined || value === null || value === '' ||
+            (Array.isArray(value) && value.length === 0)) return null;
+        // For multi-select fields, value is an array; getById expects a single id - don't call with array
+        if (Array.isArray(value)) return null;
         try {
             const item = await getById(value);
             const data = item?.data ?? item;

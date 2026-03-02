@@ -24,7 +24,6 @@ import AcademicLevels from '@/pages/academic-levels/AcademicLevels';
 import LocationTypes from '@/pages/location-types/LocationTypes';
 import Specifications from '@/pages/specifications/Specifications';
 import Activities from '@/pages/activities/Activities';
-import EntityCategories from '@/pages/entity-categories/EntityCategories';
 import SessionPeriods from '@/pages/session-periods/SessionPeriods';
 import AboutUs from '@/pages/about-us/AboutUs';
 import TermsAndConditions from '@/pages/terms-and-conditions/TermsAndConditions';

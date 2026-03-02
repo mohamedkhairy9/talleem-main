@@ -5,7 +5,6 @@ import ModalHeader from '@/components/common/form/ModalHeader';
 import { useUpdateStudentMutation } from '@/api/hooks/useStudents';
 import { useBranchesQuery } from '@/api/hooks/useBranches';
 import { useMainProgramsQuery } from '@/api/hooks/useMainPrograms';
-import { useEntityCategoriesQuery } from '@/api/hooks/useEntityCategories';
 import { useEducationProgramEntityTypesQuery } from '@/api/hooks/useEducationProgramEntityTypes';
 import { useCitiesQuery } from '@/api/hooks/useCities';
 import { useKinshipsQuery } from '@/api/hooks/useKinships';

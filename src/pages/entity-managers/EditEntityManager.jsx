@@ -4,7 +4,6 @@ import Modal from '@/components/common/form/Modal';
 import ModalHeader from '@/components/common/form/ModalHeader';
 import { useUpdateEntityManagerMutation } from '@/api/hooks/useEntityManagers';
 import { useBranchesQuery } from '@/api/hooks/useBranches';
-import { useEntityCategoriesQuery } from '@/api/hooks/useEntityCategories';
 import { useAcademicLevelsQuery } from '@/api/hooks/useAcademicLevels';
 import { useAcademicQualificationsQuery } from '@/api/hooks/useAcademicQualifications';
 import { useSpecificationsQuery } from '@/api/hooks/useSpecifications';

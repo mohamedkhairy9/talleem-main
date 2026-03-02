@@ -51,7 +51,7 @@ export default function useApiCalls({ apiCalls = [], mainProgramId } = {}) {
                 memorizationProgramEntityTypesService.getMemorizationProgramEntityTypes(
                     allData
                 ),
-            enabled: isEnabled(API_KEYS.EDUCATION_PROGRAM_ENTITY_TYPES)
+            enabled: isEnabled(API_KEYS.MEMORIZATION_PROGRAM_ENTITY_TYPES)
         },
         {
             queryKey: [API_KEYS.CITIES, allData],
