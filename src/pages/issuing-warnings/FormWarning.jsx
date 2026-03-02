@@ -46,22 +46,20 @@ export default function FormWarning({
     const selectedProgramId = watch('program_id');
     const selectedBranchId = watch('branch_id');
 
-    // Get program and branch IDs from oldData for edit/view mode
-    const programIdForQuery = selectedProgramId || oldData?.program_id || oldData?.program?.id;
-    const branchIdForQuery = selectedBranchId || oldData?.branch_id || oldData?.branch?.id;
+    // Only use selected values for queries (edit/view: oldData used to prefill form, but we still depend on selected branch/program for fetching)
+    const programIdForQuery = selectedProgramId || (editMode || viewMode ? (oldData?.program_id || oldData?.program?.id) : null);
+    const branchIdForQuery = selectedBranchId || (editMode || viewMode ? (oldData?.branch_id || oldData?.branch?.id) : null);
 
-    // Fetch entities dynamically based on selected program and branch
+    // Fetch entities only when both program and branch are selected; revalidates when either changes
     const entitiesQueryParams = useMemo(() => {
-        if (!programIdForQuery || !branchIdForQuery) {
-            return null;
-        }
+        if (!programIdForQuery || !branchIdForQuery) return null;
         return {
             main_program_id: programIdForQuery,
             branch_id: branchIdForQuery
         };
     }, [programIdForQuery, branchIdForQuery]);
 
-    const { data: entitiesData } = useEntitiesQuery(entitiesQueryParams || {}, {
+    const { data: entitiesData } = useEntitiesQuery(entitiesQueryParams ?? {}, {
         enabled: !!entitiesQueryParams
     });
 
@@ -97,9 +95,9 @@ export default function FormWarning({
         enabled: !!selectedEntityId && warningType === 'teacher'
     });
 
-    // Fetch warning reasons dynamically based on selected program
+    // Fetch warning reasons only when program is selected; revalidates when program changes
     const { data: warningReasonsData } = useWarningReasonsQuery(
-        { main_program_id: programIdForQuery },
+        programIdForQuery ? { main_program_id: programIdForQuery } : {},
         { enabled: !!programIdForQuery }
     );
 
@@ -235,6 +233,9 @@ export default function FormWarning({
                                 fieldOptions = warningReasonsOptions;
                             }
 
+                            // Use static options only for these fields to avoid duplicate API calls (branches/main-programs from parent; entities/warning-reasons from dependent queries)
+                            const useStaticOptionsOnly = ['branch_id', 'program_id', 'entity_id', 'warning_reason_id'].includes(field.name);
+
                             return (
                                 <InputRFH
                                     key={field.name}
@@ -254,6 +255,7 @@ export default function FormWarning({
                                     label={field.label}
                                     name={field.name}
                                     options={generateOptions(fieldOptions)}
+                                    isAsync={useStaticOptionsOnly ? false : undefined}
                                     defaultValue={
                                         oldData?.[field.name] || field.defaultValue
                                     }
