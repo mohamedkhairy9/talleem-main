@@ -25,6 +25,7 @@ import { joinRequestFormsService } from '@/api/services/joinRequestForms.service
 import { countriesService } from '@/api/services/countries.service';
 import { jobsService } from '@/api/services/jobs.service';
 import { kinshipsService } from '@/api/services/kinships.service';
+import { certificateNamesService } from '@/api/services/certificateNames.service';
 
 /**
  * Maps field names to their corresponding API service methods.
@@ -155,6 +156,11 @@ export const FIELD_TO_SERVICE_MAP = {
         service: kinshipsService.getKinships,
         getById: kinshipsService.getKinship,
         serviceName: 'kinshipsService.getKinships'
+    },
+    certificate_name_id: {
+        service: certificateNamesService.getCertificateNames,
+        getById: certificateNamesService.getCertificateName,
+        serviceName: 'certificateNamesService.getCertificateNames'
     }
 };
 

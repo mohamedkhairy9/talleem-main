@@ -10,7 +10,6 @@ export default function ViewCertificate({ onClose, oldData }) {
     const {
         mainProgramsData,
         branchesData,
-        certificateNamesData,
         isLoading
     } = useApiCalls({ apiCalls });
 
@@ -27,8 +26,7 @@ export default function ViewCertificate({ onClose, oldData }) {
                 isPending={false}
                 options={{
                     main_program_id: mainProgramsData?.data,
-                    branch_id: branchesData?.data,
-                    certificate_name_id: certificateNamesData?.data
+                    branch_id: branchesData?.data
                 }}
             />
         </Modal>

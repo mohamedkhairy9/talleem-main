@@ -6,8 +6,6 @@ import InputRFH from '@/components/common/inputs/InputRFH';
 import Btn from '@/components/common/buttons/Btn';
 import { getNestedError } from '@/utils/helpers/getNestedError';
 import { generateOptions, onlyDate } from '@/utils/helpers/global.fns';
-import { useEntitiesQuery } from '@/api/hooks/useEntities';
-import { useStudentsQuery } from '@/api/hooks/useStudents';
 import { enabledDisabledOptions } from '@/utils/constants/options';
 import ModalContent from '@/components/common/form/ModalContent';
 import ModalFooter from '@/components/common/form/ModalFooter';
@@ -41,53 +39,24 @@ export default function FormCertificate({
     const branchId = watch('branch_id');
     const entityId = watch('entity_id');
 
-    // Resolve ids for queries (selected or from oldData in edit/view)
-    const programIdForQuery = mainProgramId || (editMode || viewMode ? (oldData?.main_program_id || oldData?.main_program?.id) : null);
-    const branchIdForQuery = branchId || (editMode || viewMode ? (oldData?.branch_id || oldData?.branch?.id) : null);
-
-    // Entities: only when program + branch selected; revalidates when either changes
-    const entitiesQueryParams = useMemo(() => {
-        if (!programIdForQuery || !branchIdForQuery) return null;
-        return { main_program_id: programIdForQuery, branch_id: branchIdForQuery };
-    }, [programIdForQuery, branchIdForQuery]);
-
-    const { data: entitiesData } = useEntitiesQuery(entitiesQueryParams ?? {}, {
-        enabled: !!entitiesQueryParams
-    });
-
-    const entitiesOptions = useMemo(() => {
-        const list = entitiesData?.data ?? [];
-        if ((editMode || viewMode) && oldData?.entity) {
-            const selected = oldData.entity;
-            if (selected?.id && !list.some(e => e.id === selected.id)) {
-                return [selected, ...list];
-            }
-        }
-        return list;
-    }, [entitiesData, editMode, viewMode, oldData?.entity]);
-
-    // Students: only when entity selected; revalidates when entity (or program) changes
-    const studentsQueryParams = useMemo(() => {
-        if (!entityId || !mainProgramId) return null;
-        return { main_program_id: mainProgramId, entity_id: entityId, status: true };
-    }, [entityId, mainProgramId]);
-
-    const { data: studentsData, isLoading: studentsLoading } = useStudentsQuery(
-        studentsQueryParams ?? {},
-        { enabled: !!studentsQueryParams }
-    );
-
-    const studentsOptions = useMemo(() => {
-        if (!studentsQueryParams) return [];
-        const list = studentsData?.data ?? [];
-        if ((editMode || viewMode) && oldData?.student) {
-            const selected = oldData.student;
-            if (selected?.id && !list.some(s => s.id === selected.id)) {
-                return [selected, ...list];
-            }
-        }
-        return list;
-    }, [studentsQueryParams, studentsData, editMode, viewMode, oldData?.student]);
+    // Params for async paginated searchable selects – only include defined values so API receives real filters
+    const fieldParams = useMemo(() => {
+        const branch = branchId ?? oldData?.branch_id;
+        const program = mainProgramId ?? oldData?.main_program_id;
+        const entity = entityId ?? oldData?.entity_id;
+        return {
+            entity_id: {
+                ...(branch ? { branch_id: branch } : {}),
+                ...(program ? { main_program_id: program } : {})
+            },
+            student_id: {
+                ...(entity ? { entity_id: entity } : {}),
+                ...(program ? { main_program_id: program } : {}),
+                status: true
+            },
+            certificate_name_id: {} // no filters; paginated + search via async select
+        };
+    }, [branchId, mainProgramId, entityId, oldData?.branch_id, oldData?.main_program_id, oldData?.entity_id]);
 
     // Reset dependents when program or branch changes
     useEffect(() => {
@@ -114,10 +83,11 @@ export default function FormCertificate({
         ...options,
         issued_from: issuedFromOptions,
         branch_id: options.branch_id || [],
-        entity_id: entitiesOptions,
-        student_id: studentsOptions,
-        is_active: enabledDisabledOptions
-    }), [options, entitiesOptions, studentsOptions]);
+        is_active: enabledDisabledOptions,
+        // Empty when deps not met so we never call API without filters; async uses fieldParams when deps met
+        entity_id: branchId && mainProgramId ? undefined : [],
+        student_id: mainProgramId && entityId ? undefined : []
+    }), [options, branchId, mainProgramId, entityId]);
 
     function onSubmit(data) {
         // Remove filter-only fields from submission
@@ -163,9 +133,9 @@ export default function FormCertificate({
             return true;
         }
 
-        // Student disabled until entity selected (or while students are loading)
+        // Student disabled until program and entity are selected
         if (fieldName === 'student_id') {
-            return !entityId || studentsLoading;
+            return !mainProgramId || !entityId;
         }
 
         return false;
@@ -217,11 +187,20 @@ export default function FormCertificate({
                         );
                     }
 
-                    // Use static options only for these fields so APIs are called only via React Query (no async-select duplicate calls)
-                    const useStaticOptionsOnly = ['branch_id', 'main_program_id', 'entity_id', 'student_id'].includes(field.name);
+                    // branch_id, main_program_id: always static. entity_id / student_id: static (empty) until deps met, then async paginated+search
+                    const useStaticOptionsOnly =
+                        ['branch_id', 'main_program_id'].includes(field.name) ||
+                        (field.name === 'entity_id' && (!branchId || !mainProgramId)) ||
+                        (field.name === 'student_id' && (!mainProgramId || !entityId));
+
+                    // Remount when deps change so async select gets fresh loadOptions with correct filters
+                    const fieldKey =
+                        field.name === 'entity_id' ? `entity_id-${branchId ?? ''}-${mainProgramId ?? ''}` :
+                        field.name === 'student_id' ? `student_id-${mainProgramId ?? ''}-${entityId ?? ''}` :
+                        field.name;
 
                     return (
-                        <div key={field.name}>
+                        <div key={fieldKey}>
                             <InputRFH
                                 p="px-3 py-3"
                                 control={control}
@@ -237,6 +216,8 @@ export default function FormCertificate({
                                 defaultValue={defaultValues[field.name] || field.defaultValue}
                                 max={field.max}
                                 required={isFieldRequired(schema, field.name)}
+                                oldData={oldData}
+                                fieldParams={fieldParams}
                             />
                         </div>
                     );

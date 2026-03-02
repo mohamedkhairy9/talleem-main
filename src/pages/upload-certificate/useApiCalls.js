@@ -3,7 +3,6 @@ import { allData } from '@/utils/constants/global.constants';
 import useCustomQueries from '@/utils/hooks/global/useCustomQueries';
 import { mainProgramsService } from '@/api/services/mainPrograms.service';
 import { branchesService } from '@/api/services/branches.service';
-import { certificateNamesService } from '@/api/services/certificateNames.service';
 
 export default function useApiCalls({ apiCalls = [] } = {}) {
     const isEnabled = key => apiCalls.includes(key);
@@ -18,20 +17,14 @@ export default function useApiCalls({ apiCalls = [] } = {}) {
             queryKey: [API_KEYS.BRANCHES, allData],
             queryFn: () => branchesService.getBranches(allData),
             enabled: isEnabled(API_KEYS.BRANCHES)
-        },
-        {
-            queryKey: [API_KEYS.CERTIFICATE_NAMES, allData],
-            queryFn: () => certificateNamesService.getCertificateNames(allData),
-            enabled: isEnabled(API_KEYS.CERTIFICATE_NAMES)
         }
     ]);
 
-    const [mainProgramsQuery, branchesQuery, certificateNamesQuery] = queries;
+    const [mainProgramsQuery, branchesQuery] = queries;
 
     return {
         mainProgramsData: mainProgramsQuery?.data,
         branchesData: branchesQuery?.data,
-        certificateNamesData: certificateNamesQuery?.data,
         isLoading: isAnyLoading
     };
 }

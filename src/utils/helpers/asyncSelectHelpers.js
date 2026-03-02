@@ -21,6 +21,13 @@ function toOption(item, lang) {
  * - Pass additional={{ page: 1 }} to <AsyncPaginate> as initial state.
  * - Library passes back whatever `additional` we return last time as next `additional`.
  */
+/** Remove undefined/null so API receives only real filter values */
+function cleanParams(obj) {
+    return Object.fromEntries(
+        Object.entries(obj).filter(([, v]) => v !== undefined && v !== null && v !== '')
+    );
+}
+
 export function createAsyncLoadOptions(apiService, extraParams = {}, transformFn = null) {
     return async (search, _loadedOptions, additional) => {
         const lang = i18next.language;
@@ -28,7 +35,7 @@ export function createAsyncLoadOptions(apiService, extraParams = {}, transformFn
 
         try {
             const response = await apiService({
-                ...extraParams,
+                ...cleanParams(extraParams),
                 page,
                 per_page: ASYNC_SELECT_PAGE_SIZE,
                 ...(search?.trim() ? { search: search.trim() } : {})

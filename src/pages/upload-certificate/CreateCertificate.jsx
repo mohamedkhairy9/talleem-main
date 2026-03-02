@@ -13,7 +13,6 @@ export default function CreateCertificate({ onClose }) {
     const {
         mainProgramsData,
         branchesData,
-        certificateNamesData,
         isLoading
     } = useApiCalls({ apiCalls });
 
@@ -29,9 +28,7 @@ export default function CreateCertificate({ onClose }) {
                 isPending={isPending}
                 options={{
                     main_program_id: mainProgramsData?.data,
-                    branch_id: branchesData?.data,
-                    certificate_name_id: certificateNamesData?.data
-                    // entity_id and student_id are fetched in the form by branch/program/entity
+                    branch_id: branchesData?.data
                 }}
             />
         </Modal>
