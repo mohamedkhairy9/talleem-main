@@ -6,6 +6,7 @@ import InputRFH from '@/components/common/inputs/InputRFH';
 import Btn from '@/components/common/buttons/Btn';
 import { getNestedError } from '@/utils/helpers/getNestedError';
 import { generateOptions, onlyDate } from '@/utils/helpers/global.fns';
+import { useEntitiesQuery } from '@/api/hooks/useEntities';
 import { useStudentsQuery } from '@/api/hooks/useStudents';
 import { enabledDisabledOptions } from '@/utils/constants/options';
 import ModalContent from '@/components/common/form/ModalContent';
@@ -21,7 +22,6 @@ export default function FormCertificate({
     mutate,
     options
 }) {
-
     const [certificateImagePreview, setCertificateImagePreview] = useState(
         oldData?.file || null
     );
@@ -37,69 +37,87 @@ export default function FormCertificate({
         defaultValues
     });
 
-    // Watch values for filtering
     const mainProgramId = watch('main_program_id');
     const branchId = watch('branch_id');
     const entityId = watch('entity_id');
 
-    // Fetch students dynamically based on program and entity
-    const studentsParams = useMemo(() => {
-        if (!mainProgramId || !entityId) return null;
-        return {
-            main_program_id: mainProgramId,
-            entity_id: entityId,
-            status: true
-        };
-    }, [mainProgramId, entityId]);
+    // Resolve ids for queries (selected or from oldData in edit/view)
+    const programIdForQuery = mainProgramId || (editMode || viewMode ? (oldData?.main_program_id || oldData?.main_program?.id) : null);
+    const branchIdForQuery = branchId || (editMode || viewMode ? (oldData?.branch_id || oldData?.branch?.id) : null);
+
+    // Entities: only when program + branch selected; revalidates when either changes
+    const entitiesQueryParams = useMemo(() => {
+        if (!programIdForQuery || !branchIdForQuery) return null;
+        return { main_program_id: programIdForQuery, branch_id: branchIdForQuery };
+    }, [programIdForQuery, branchIdForQuery]);
+
+    const { data: entitiesData } = useEntitiesQuery(entitiesQueryParams ?? {}, {
+        enabled: !!entitiesQueryParams
+    });
+
+    const entitiesOptions = useMemo(() => {
+        const list = entitiesData?.data ?? [];
+        if ((editMode || viewMode) && oldData?.entity) {
+            const selected = oldData.entity;
+            if (selected?.id && !list.some(e => e.id === selected.id)) {
+                return [selected, ...list];
+            }
+        }
+        return list;
+    }, [entitiesData, editMode, viewMode, oldData?.entity]);
+
+    // Students: only when entity selected; revalidates when entity (or program) changes
+    const studentsQueryParams = useMemo(() => {
+        if (!entityId || !mainProgramId) return null;
+        return { main_program_id: mainProgramId, entity_id: entityId, status: true };
+    }, [entityId, mainProgramId]);
 
     const { data: studentsData, isLoading: studentsLoading } = useStudentsQuery(
-        studentsParams || {},
-        {
-            enabled: !!studentsParams
-        }
+        studentsQueryParams ?? {},
+        { enabled: !!studentsQueryParams }
     );
 
-    // Filter entities based on branch and main program
-    const filteredEntities = useMemo(() => {
-        if (!branchId || !mainProgramId || !options.entity_id) return [];
-        return options.entity_id.filter(entity => {
-            const matchesProgram = entity.main_program?.id === Number(mainProgramId);
-            const matchesBranch = entity.branch?.id === Number(branchId);
-            return matchesProgram && matchesBranch;
-        });
-    }, [branchId, mainProgramId, options.entity_id]);
+    const studentsOptions = useMemo(() => {
+        if (!studentsQueryParams) return [];
+        const list = studentsData?.data ?? [];
+        if ((editMode || viewMode) && oldData?.student) {
+            const selected = oldData.student;
+            if (selected?.id && !list.some(s => s.id === selected.id)) {
+                return [selected, ...list];
+            }
+        }
+        return list;
+    }, [studentsQueryParams, studentsData, editMode, viewMode, oldData?.student]);
 
-    // Reset dependent fields when main program changes
+    // Reset dependents when program or branch changes
     useEffect(() => {
-        if (mainProgramId && mainProgramId !== oldData?.main_program_id) {
+        if (mainProgramId && mainProgramId !== oldData?.main_program_id && !editMode && !viewMode) {
             setValue('entity_id', '');
             setValue('student_id', '');
         }
-    }, [mainProgramId, oldData?.main_program_id, setValue]);
+    }, [mainProgramId, oldData?.main_program_id, setValue, editMode, viewMode]);
 
-    // Reset dependent fields when branch changes
     useEffect(() => {
-        if (branchId && branchId !== oldData?.branch_id) {
+        if (branchId && branchId !== oldData?.branch_id && !editMode && !viewMode) {
             setValue('entity_id', '');
             setValue('student_id', '');
         }
-    }, [branchId, oldData?.branch_id, setValue]);
+    }, [branchId, oldData?.branch_id, setValue, editMode, viewMode]);
 
-    // Reset student when entity changes
     useEffect(() => {
-        if (entityId && entityId !== oldData?.entity_id) {
+        if (entityId && entityId !== oldData?.entity_id && !editMode && !viewMode) {
             setValue('student_id', '');
         }
-    }, [entityId, oldData?.entity_id, setValue]);
+    }, [entityId, oldData?.entity_id, setValue, editMode, viewMode]);
 
     const enhancedOptions = useMemo(() => ({
         ...options,
         issued_from: issuedFromOptions,
         branch_id: options.branch_id || [],
-        entity_id: filteredEntities,
-        student_id: studentsData?.data || [],
+        entity_id: entitiesOptions,
+        student_id: studentsOptions,
         is_active: enabledDisabledOptions
-    }), [options, filteredEntities, studentsData]);
+    }), [options, entitiesOptions, studentsOptions]);
 
     function onSubmit(data) {
         // Remove filter-only fields from submission
@@ -145,7 +163,7 @@ export default function FormCertificate({
             return true;
         }
 
-        // Student disabled until entity is selected OR students are loading
+        // Student disabled until entity selected (or while students are loading)
         if (fieldName === 'student_id') {
             return !entityId || studentsLoading;
         }
@@ -199,6 +217,9 @@ export default function FormCertificate({
                         );
                     }
 
+                    // Use static options only for these fields so APIs are called only via React Query (no async-select duplicate calls)
+                    const useStaticOptionsOnly = ['branch_id', 'main_program_id', 'entity_id', 'student_id'].includes(field.name);
+
                     return (
                         <div key={field.name}>
                             <InputRFH
@@ -212,6 +233,7 @@ export default function FormCertificate({
                                 label={field.label}
                                 name={field.name}
                                 options={generateOptions(enhancedOptions[field.name])}
+                                isAsync={useStaticOptionsOnly ? false : undefined}
                                 defaultValue={defaultValues[field.name] || field.defaultValue}
                                 max={field.max}
                                 required={isFieldRequired(schema, field.name)}

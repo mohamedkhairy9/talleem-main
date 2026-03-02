@@ -10,7 +10,6 @@ export default function ViewCertificate({ onClose, oldData }) {
     const {
         mainProgramsData,
         branchesData,
-        entitiesData,
         certificateNamesData,
         isLoading
     } = useApiCalls({ apiCalls });
@@ -29,9 +28,7 @@ export default function ViewCertificate({ onClose, oldData }) {
                 options={{
                     main_program_id: mainProgramsData?.data,
                     branch_id: branchesData?.data,
-                    entity_id: entitiesData?.data,
                     certificate_name_id: certificateNamesData?.data
-                    // student_id will be fetched dynamically in the form
                 }}
             />
         </Modal>

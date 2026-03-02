@@ -165,6 +165,5 @@ export const certificatesDefaultValues = {
 export const apiCalls = [
     API_KEYS.MAIN_PROGRAMS,
     API_KEYS.BRANCHES,
-    API_KEYS.ENTITIES,
     API_KEYS.CERTIFICATE_NAMES
 ];
