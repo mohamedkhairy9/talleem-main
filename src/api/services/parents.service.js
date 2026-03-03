@@ -31,11 +31,10 @@ export const parentsService = {
         );
     },
 
-    removeStudent: async (parentId, formData) => {
-        return await axiosInstance.post(
+    removeStudent: async (parentId, student_id) => {
+        return await axiosInstance.delete(
             API_URLS.PARENTS.REMOVE_STUDENT(parentId),
-            formData,
-            multipartFormData
+            { params: { student_id } }
         );
     }
 };

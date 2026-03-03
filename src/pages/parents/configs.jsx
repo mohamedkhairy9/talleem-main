@@ -4,8 +4,21 @@ import DateCell from '@/components/common/table/cells/DateCell';
 import NameCell from '@/components/common/table/cells/NameCell';
 import { createColumnHelper } from '@tanstack/react-table';
 import React from 'react';
+import i18next from 'i18next';
 
 const columnHelper = createColumnHelper();
+
+function studentsColumnDisplay(students) {
+    const list = students ?? [];
+    if (list.length === 0) return '-';
+    const first = list[0];
+    const firstName =
+        first && typeof first.student_name === 'object'
+            ? first.student_name[i18next.language] ?? first.student_name?.en ?? first.student_name?.ar
+            : first?.student_name;
+    const restCount = list.length - 1;
+    return restCount > 0 ? `${firstName ?? `#${first?.student_id}`} (+${restCount})` : (firstName ?? `#${first?.student_id}` ?? '-');
+}
 
 export const parentsColumns = [
     columnHelper.accessor('name', {
@@ -20,8 +33,8 @@ export const parentsColumns = [
         header: 'table_headers.phone_2',
         cell: info => <Cell value={info.getValue()} />
     }),
-    columnHelper.accessor(row => row.students?.length ?? 0, {
-        id: 'students_count',
+    columnHelper.accessor(row => studentsColumnDisplay(row.students), {
+        id: 'students',
         header: 'table_headers.students_count',
         cell: info => <Cell value={info.getValue()} />,
         enableColumnFilter: false

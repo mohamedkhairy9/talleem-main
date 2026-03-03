@@ -63,12 +63,6 @@ function buildAssignStudentFormData({ student_id, kinship_id }) {
     return formData;
 }
 
-function buildRemoveStudentFormData({ student_id }) {
-    const formData = new FormData();
-    if (student_id != null && student_id !== '') formData.append('student_id', student_id);
-    return formData;
-}
-
 export const useAssignStudentToParentMutation = () => {
     const queryClient = useQueryClient();
     return useCustomMutation({
@@ -86,7 +80,7 @@ export const useRemoveStudentFromParentMutation = () => {
     const queryClient = useQueryClient();
     return useCustomMutation({
         mutationFn: ({ parentId, student_id }) =>
-            parentsService.removeStudent(parentId, buildRemoveStudentFormData({ student_id })),
+            parentsService.removeStudent(parentId, student_id),
         onSuccess: () => {
             queryClient.invalidateQueries({
                 queryKey: [API_KEYS.PARENTS]
