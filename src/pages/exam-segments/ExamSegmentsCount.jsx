@@ -19,14 +19,27 @@ export default function ExamSegmentsCount() {
     const { data, isLoading, refresh } = useExamSegmentsCountQuery(filters);
     const { t } = useLocale();
 
-    const tableData = data?.data;
+    const tableData = data?.data?.map(item => {
+        const nameObj =
+            typeof item.name === 'string'
+                ? { en: item.name, ar: item.name }
+                : item.name || { en: '', ar: '' };
+        return { ...item, name: nameObj };
+    });
 
-    const formData = data?.data?.map(item => ({
-        id: item.id,
-        parts_count: item.parts_count,
-        segments_required: item.segments_required,
-        is_active: item.is_active
-    }));
+    const formData = data?.data?.map(item => {
+        const nameObj =
+            typeof item.name === 'string'
+                ? { en: item.name, ar: item.name }
+                : item.name || { en: '', ar: '' };
+        return {
+            id: item.id,
+            name: nameObj,
+            parts_count: item.parts_count,
+            segments_required: item.segments_required,
+            is_active: item.is_active
+        };
+    });
 
     return (
         <div>

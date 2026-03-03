@@ -1,12 +1,17 @@
 import ActiveCell from '@/components/common/table/cells/ActiveCell';
 import Cell from '@/components/common/table/cells/Cell';
 import DateCell from '@/components/common/table/cells/DateCell';
+import NameCell from '@/components/common/table/cells/NameCell';
 import { createColumnHelper } from '@tanstack/react-table';
 import React from 'react';
 
 const columnHelper = createColumnHelper();
 
 export const examSegmentsCountColumns = [
+    columnHelper.accessor('name', {
+        header: 'table_headers.name',
+        cell: info => <NameCell directValue={info.row.original.name} />
+    }),
     columnHelper.accessor('parts_count', {
         header: 'table_headers.parts_count',
         cell: info => <Cell value={info.getValue()} />
@@ -27,6 +32,22 @@ export const examSegmentsCountColumns = [
 ];
 
 export const examSegmentsCountFields = [
+    {
+        name: 'name.en',
+        label: 'validation.name.label.en',
+        type: 'text',
+        placeholder: 'validation.name.placeholder.en',
+        editMode: true,
+        viewMode: true
+    },
+    {
+        name: 'name.ar',
+        label: 'validation.name.label.ar',
+        type: 'text',
+        placeholder: 'validation.name.placeholder.ar',
+        editMode: true,
+        viewMode: true
+    },
     {
         name: 'parts_count',
         label: 'validation.parts_count.label',
@@ -78,6 +99,7 @@ export const filtersDefaultValues = {
 };
 
 export const examSegmentsCountDefaultValues = {
+    name: { en: '', ar: '' },
     parts_count: 1,
     segments_required: 1,
     is_active: true

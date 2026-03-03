@@ -2,6 +2,18 @@ import * as yup from 'yup';
 import { t } from 'i18next';
 
 export const examSegmentsCountSchema = yup.object({
+    name: yup
+        .object({
+            en: yup
+                .string()
+                .required(t('validation.required'))
+                .min(2, t('validation.name.en_min')),
+            ar: yup
+                .string()
+                .required(t('validation.required'))
+                .min(2, t('validation.name.ar_min'))
+        })
+        .required(t('validation.required')),
     parts_count: yup
         .number()
         .required(t('validation.required'))

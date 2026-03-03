@@ -19,7 +19,10 @@ export default function FormExamSegmentsCount({
 }) {
     const { register, errors, handleSubmit, control } = useRFH({
         schema,
-        defaultValues: oldData
+        defaultValues: {
+            ...oldData,
+            name: oldData?.name || { en: '', ar: '' }
+        }
     });
 
     function onSubmit(data) {
@@ -63,7 +66,11 @@ export default function FormExamSegmentsCount({
                             label={field.label}
                             name={field.name}
                             options={generateOptions(options?.[field.name])}
-                            defaultValue={oldData?.[field.name] || field.defaultValue}
+                            defaultValue={
+                                field.name.includes('.')
+                                    ? field.name.split('.').reduce((obj, key) => obj?.[key], oldData) || field.defaultValue
+                                    : oldData?.[field.name] || field.defaultValue
+                            }
                             min={field.min}
                             max={field.max}
                             required={isFieldRequired(schema, field.name)}
