@@ -8,10 +8,12 @@ import CreateParent from './CreateParent';
 import EditParent from './EditParent';
 import DeleteParent from './DeleteParent';
 import ViewParent from './ViewParent';
+import AssignStudentToParent from './AssignStudentToParent';
 import useLocale from '@/utils/hooks/global/useLocale';
 import i18next from 'i18next';
 import { getOriginalObject } from '@/utils/helpers/global.fns';
 import Filters from './Filters';
+import ParentsTableActions from './ParentsTableActions';
 
 export default function Parents() {
     const { isOpen, toggle } = useIsOpen();
@@ -31,8 +33,7 @@ export default function Parents() {
         <div>
             <Table
                 title={t('table_titles.parents')}
-                enableAdd={false}
-
+                enableAdd={true}
                 refresh={refresh}
                 loading={isLoading}
                 data={tableData}
@@ -47,8 +48,9 @@ export default function Parents() {
                 }
                 setFilters={setFilters}
                 filters={filters}
+                Actions={ParentsTableActions}
             />
-            {/* {isOpen.add && <CreateParent onClose={toggle.add} />} */}
+            {isOpen.add && <CreateParent onClose={toggle.add} />}
             {isOpen.edit && (
                 <EditParent
                     onClose={toggle.edit}
@@ -58,7 +60,13 @@ export default function Parents() {
             {isOpen.view && (
                 <ViewParent
                     onClose={toggle.view}
-                    oldData={getOriginalObject(isOpen.view, formData)}
+                    oldData={getOriginalObject(isOpen.view, data?.data ?? [])}
+                />
+            )}
+            {isOpen.assignStudent && (
+                <AssignStudentToParent
+                    onClose={() => toggle.assignStudent(false)}
+                    parentId={isOpen.assignStudent?.id}
                 />
             )}
             {isOpen.delete && (

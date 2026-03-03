@@ -8,6 +8,8 @@ export default function useIsOpen() {
         view: false,
         assignPermission: false,
         removePermission: false,
+        assignStudent: false,
+        removeStudent: false,
         trigger: false,
         schedule: false,
         import: false
@@ -28,6 +30,16 @@ export default function useIsOpen() {
             setIsOpen({
                 ...isOpen,
                 removePermission: value || !isOpen.removePermission
+            }),
+        assignStudent: value =>
+            setIsOpen({
+                ...isOpen,
+                assignStudent: value || !isOpen.assignStudent
+            }),
+        removeStudent: value =>
+            setIsOpen({
+                ...isOpen,
+                removeStudent: value || !isOpen.removeStudent
             }),
         trigger: value =>
             setIsOpen({ ...isOpen, trigger: value || !isOpen.trigger }),

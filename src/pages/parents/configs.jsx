@@ -20,6 +20,12 @@ export const parentsColumns = [
         header: 'table_headers.phone_2',
         cell: info => <Cell value={info.getValue()} />
     }),
+    columnHelper.accessor(row => row.students?.length ?? 0, {
+        id: 'students_count',
+        header: 'table_headers.students_count',
+        cell: info => <Cell value={info.getValue()} />,
+        enableColumnFilter: false
+    }),
     // columnHelper.accessor('status', {
     //     header: 'table_headers.status',
     //     cell: info => <ActiveCell info={info} />

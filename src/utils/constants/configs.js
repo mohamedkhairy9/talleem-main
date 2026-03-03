@@ -68,15 +68,19 @@ export const sideMenuTabs = [
         allowedRoles: [ROLE_SUPER_ADMIN],
         subMenu: [
             {
+                titleKey: 'sidebar.evaluation-parameters',
+                path: '/evaluation-parameters',
+                icon: VscDebugBreakpointLog
+            },
+            {
+                titleKey: 'sidebar.configurations',
+                path: '/configurations',
+                icon: HiDocumentText
+            },
+            {
                 titleKey: 'sidebar.lookups',
                 icon: IoGrid,
                 subMenu: [
-                    // config file
-                    {
-                        titleKey: 'sidebar.configurations',
-                        path: '/configurations',
-                        icon: HiDocumentText
-                    },
                     {
                         titleKey: 'sidebar.main_programs',
                         path: '/main-programs',
@@ -105,11 +109,6 @@ export const sideMenuTabs = [
                     {
                         titleKey: 'sidebar.jobs',
                         path: '/jobs',
-                        icon: VscDebugBreakpointLog
-                    },
-                    {
-                        titleKey: 'sidebar.employees',
-                        path: '/employees',
                         icon: VscDebugBreakpointLog
                     },
                     {
@@ -178,11 +177,6 @@ export const sideMenuTabs = [
                         titleKey: 'sidebar.majors',
                         path: '/majors',
                         icon: VscDebugBreakpointLog
-                    },
-                    {
-                        titleKey: 'sidebar.evaluation-parameters',
-                        path: '/evaluation-parameters',
-                        icon: VscDebugBreakpointLog
                     }
                 ]
             },
@@ -225,7 +219,6 @@ export const sideMenuTabs = [
                 path: '/entities',
                 icon: HiOfficeBuilding
             },
-            // مديري الجهات
             {
                 titleKey: 'sidebar.entity_managers',
                 path: '/entity-managers',
@@ -240,6 +233,16 @@ export const sideMenuTabs = [
                 titleKey: 'sidebar.students',
                 path: '/students',
                 icon: HiUserGroup
+            },
+            {
+                titleKey: 'sidebar.parents',
+                path: '/parents',
+                icon: HiUserGroup
+            },
+            {
+                titleKey: 'sidebar.employees',
+                path: '/employees',
+                icon: VscDebugBreakpointLog
             }
         ]
     },
@@ -313,11 +316,11 @@ export const sideMenuTabs = [
                 path: '/academic-levels',
                 icon: VscDebugBreakpointLog
             },
-            {
-                titleKey: 'sidebar.quoran_parts',
-                path: '/quoran-parts',
-                icon: VscDebugBreakpointLog
-            },
+            // {
+            //     titleKey: 'sidebar.quoran_parts',
+            //     path: '/quoran-parts',
+            //     icon: VscDebugBreakpointLog
+            // },
             {
                 titleKey: 'sidebar.memorization-program-entity-types',
                 path: '/memorization-program-entity-types',
@@ -399,11 +402,4 @@ export const sideMenuTabs = [
 
     // إدارات الفروع
 
-    // أولياء الأمور
-    {
-        titleKey: 'sidebar.parents',
-        path: '/parents',
-        icon: HiUserGroup,
-        allowedRoles: [ROLE_SUPER_ADMIN]
-    }
 ];

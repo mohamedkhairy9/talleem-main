@@ -55,3 +55,42 @@ export const useDeleteParentMutation = () => {
         }
     });
 };
+
+function buildAssignStudentFormData({ student_id, kinship_id }) {
+    const formData = new FormData();
+    if (student_id != null && student_id !== '') formData.append('student_id', student_id);
+    if (kinship_id != null && kinship_id !== '') formData.append('kinship_id', kinship_id);
+    return formData;
+}
+
+function buildRemoveStudentFormData({ student_id }) {
+    const formData = new FormData();
+    if (student_id != null && student_id !== '') formData.append('student_id', student_id);
+    return formData;
+}
+
+export const useAssignStudentToParentMutation = () => {
+    const queryClient = useQueryClient();
+    return useCustomMutation({
+        mutationFn: ({ parentId, student_id, kinship_id }) =>
+            parentsService.assignStudent(parentId, buildAssignStudentFormData({ student_id, kinship_id })),
+        onSuccess: () => {
+            queryClient.invalidateQueries({
+                queryKey: [API_KEYS.PARENTS]
+            });
+        }
+    });
+};
+
+export const useRemoveStudentFromParentMutation = () => {
+    const queryClient = useQueryClient();
+    return useCustomMutation({
+        mutationFn: ({ parentId, student_id }) =>
+            parentsService.removeStudent(parentId, buildRemoveStudentFormData({ student_id })),
+        onSuccess: () => {
+            queryClient.invalidateQueries({
+                queryKey: [API_KEYS.PARENTS]
+            });
+        }
+    });
+};

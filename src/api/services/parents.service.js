@@ -1,5 +1,6 @@
 import { axiosInstance } from '../axiosInstance';
 import { API_URLS } from '../endpoints';
+import { multipartFormData } from '@/utils/constants/global.constants';
 
 export const parentsService = {
     getParents: async params => {
@@ -20,5 +21,21 @@ export const parentsService = {
 
     deleteParent: async id => {
         return await axiosInstance.delete(API_URLS.PARENTS.DELETE(id));
+    },
+
+    assignStudent: async (parentId, formData) => {
+        return await axiosInstance.post(
+            API_URLS.PARENTS.ASSIGN_STUDENT(parentId),
+            formData,
+            multipartFormData
+        );
+    },
+
+    removeStudent: async (parentId, formData) => {
+        return await axiosInstance.post(
+            API_URLS.PARENTS.REMOVE_STUDENT(parentId),
+            formData,
+            multipartFormData
+        );
     }
 };

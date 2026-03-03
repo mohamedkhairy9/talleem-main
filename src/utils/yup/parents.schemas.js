@@ -26,3 +26,20 @@ export const parentsSchema = yup.object({
         .optional()
         .matches(/^\+?\d{10,15}$/, t('validation.phone_2.invalid'))
 });
+
+export const assignStudentToParentSchema = yup.object({
+    student_id: yup
+        .mixed()
+        .required(t('validation.required'))
+        .test('valid-id', t('validation.required'), function(value) {
+            const id = typeof value === 'object' && value?.id != null ? value.id : value;
+            return id != null && id !== '';
+        }),
+    kinship_id: yup
+        .mixed()
+        .required(t('validation.required'))
+        .test('valid-id', t('validation.required'), function(value) {
+            const id = typeof value === 'object' && value?.id != null ? value.id : value;
+            return id != null && id !== '';
+        })
+});

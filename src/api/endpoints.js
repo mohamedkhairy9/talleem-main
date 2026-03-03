@@ -329,7 +329,9 @@ export const API_URLS = {
         LIST: '/parents',
         DETAILS: id => `/parents/${id}`,
         UPDATE: id => `/parents/${id}`,
-        DELETE: id => `/parents/${id}`
+        DELETE: id => `/parents/${id}`,
+        ASSIGN_STUDENT: id => `/parents/${id}/assign-student`,
+        REMOVE_STUDENT: id => `/parents/${id}/remove-student`
     },
     ENTITY_ACTIVITIES: {
         CREATE: '/entity-activities',

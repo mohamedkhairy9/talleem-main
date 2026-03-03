@@ -1495,6 +1495,7 @@
         "phone": "الهاتف",
         "phone_1": "الهاتف الأول",
         "phone_2": "الهاتف الثاني",
+        "students_count": "عدد الطلاب",
         "address": "العنوان",
         "area": "المنطقة",
         "branch": "الفرع",
@@ -1713,7 +1714,9 @@
     "parents": {
         "create": "إضافة ولي أمر",
         "update": "تعديل ولي أمر",
-        "view": "عرض ولي أمر"
+        "view": "عرض ولي أمر",
+        "assign_student": "تعيين طالب",
+        "assigned_students": "الطلاب المعينة"
     },
     "entity_activities": {
         "create": "إضافة نشاط جهة",

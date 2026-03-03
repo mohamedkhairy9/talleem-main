@@ -27,8 +27,11 @@ export default function FormParent({
     });
 
     function onSubmit(data) {
-        console.log('data', data);
-        mutate(data, {
+        const payload =
+            editMode && oldData?.id
+                ? { id: oldData.id, name: data.name, phone_1: data.phone_1, phone_2: data.phone_2 }
+                : { name: data.name, phone_1: data.phone_1, phone_2: data.phone_2 };
+        mutate(payload, {
             onSuccess: () => {
                 onClose();
             }

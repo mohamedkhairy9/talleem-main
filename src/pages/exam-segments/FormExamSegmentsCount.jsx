@@ -33,7 +33,7 @@ export default function FormExamSegmentsCount({
         };
 
         const finalData = editMode 
-            ? { ...submissionData, id: oldData.id } 
+            ? { ...submissionData, id: oldData.id }
             : submissionData;
 
         mutate(finalData, {
