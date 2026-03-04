@@ -305,5 +305,9 @@ export const routes = [
     {
         path: '/join-requests',
         element: <JoinRequests />
+    },
+    {
+        path: '/join-requests/:category',
+        element: <JoinRequests />
     }
 ];

@@ -1358,7 +1358,10 @@
         "request_types": "Request Types",
         "phases": "Phases",
         "join_request_forms": "Join Request Forms",
-        "join_requests": "Join Requests"
+        "join_requests": "Join Requests",
+        "join_requests_entities": "Entity Requests",
+        "join_requests_teachers": "Teacher Requests",
+        "join_requests_supervisors": "Supervisor Requests"
     },
     "table_titles": {
         "notification_templates": "Notification Templates",

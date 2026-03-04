@@ -288,17 +288,49 @@ export const sideMenuTabs = [
             },
             {
                 titleKey: 'sidebar.join_requests',
-                path: '/join-requests',
-                icon: VscDebugBreakpointLog
+                icon: VscDebugBreakpointLog,
+                subMenu: [
+                    {
+                        titleKey: 'sidebar.join_requests_entities',
+                        path: '/join-requests/entities',
+                        icon: VscDebugBreakpointLog
+                    },
+                    {
+                        titleKey: 'sidebar.join_requests_teachers',
+                        path: '/join-requests/teachers',
+                        icon: VscDebugBreakpointLog
+                    },
+                    {
+                        titleKey: 'sidebar.join_requests_supervisors',
+                        path: '/join-requests/supervisors',
+                        icon: VscDebugBreakpointLog
+                    }
+                ]
             }
         ]
     },
-    // Branch manager only: single link to Join requests (no access to request types, phases, or join request forms).
+    // Branch manager only: Join requests with same 3 sublinks.
     {
         titleKey: 'sidebar.join_requests',
-        path: '/join-requests',
         icon: HiDocumentAdd,
-        allowedRoles: [ROLE_BRANCH_ADMIN]
+        allowedRoles: [ROLE_BRANCH_ADMIN],
+        subMenu: [
+            {
+                titleKey: 'sidebar.join_requests_entities',
+                path: '/join-requests/entities',
+                icon: VscDebugBreakpointLog
+            },
+            {
+                titleKey: 'sidebar.join_requests_teachers',
+                path: '/join-requests/teachers',
+                icon: VscDebugBreakpointLog
+            },
+            {
+                titleKey: 'sidebar.join_requests_supervisors',
+                path: '/join-requests/supervisors',
+                icon: VscDebugBreakpointLog
+            }
+        ]
     },
 
     {

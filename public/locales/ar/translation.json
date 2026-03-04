@@ -1322,11 +1322,14 @@
         "memorization-program-entity-types": "فئة الجهة",
         "lookups": "ملفات الرموز",
         "remotely_attendance_platforms": "منصات الحضور عن بعد",
-        "registration_requests": "طلبات التسجيل",
+        "registration_requests": "طلبات الانضمام والانتقال",
         "request_types": "أنواع الطلبات",
         "phases": "المراحل",
         "join_request_forms": "نماذج طلبات الانضمام",
-        "join_requests": "طلبات الانضمام"
+        "join_requests": "اعتمادات الطلبات",
+        "join_requests_entities": "طلبات الجهات",
+        "join_requests_teachers": "طلبات المعلمين",
+        "join_requests_supervisors": "طلبات المشرفين"
     },
     "table_titles": {
         "notification_templates": "قوالب الإشعارات",

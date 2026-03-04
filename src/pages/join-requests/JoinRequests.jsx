@@ -1,4 +1,5 @@
 import React, { useMemo, useEffect } from 'react';
+import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
 import { useJoinRequestsQuery } from '@/api/hooks/useJoinRequests';
 import { useRequestTypesQuery } from '@/api/hooks/useRequestTypes';
 import { isBranchManagerOnly } from '@/api/axiosInstance';
@@ -9,110 +10,179 @@ import Table from '@/components/common/table/Table';
 import { joinRequestsColumns, filtersDefaultValues } from './configs';
 import useFiltering from '@/utils/hooks/global/useFiltering';
 import Filters from './Filters';
-import { useSearchParams } from 'react-router-dom';
 import useIsOpen from '@/utils/hooks/global/useIsOpen';
 import ViewJoinRequest from './ViewJoinRequest';
 import { getOriginalObject } from '@/utils/helpers/global.fns';
 
+const VALID_CATEGORIES = ['entities', 'teachers', 'supervisors'];
+
+/** Fallback IDs when request types API is not available (e.g. branch manager). From request types sample. */
+const FALLBACK_IDS = {
+    entities: [3, 9, 10, 11, 12],
+    teachers: [1, 6, 7, 8],
+    supervisors: [2, 4, 5]
+};
+
+/** Map request types to category by name.en: Entity*, Teacher*, Student* (as supervisors). */
+function getRequestTypeIdsByCategory(requestTypesData, category) {
+    if (!category) return [];
+    if (requestTypesData?.data?.length) {
+        const list = requestTypesData.data;
+        const enName = (t) => (typeof t?.name === 'object' ? t.name?.en : t?.name) || '';
+        if (category === 'entities') return list.filter((t) => /Entity/i.test(enName(t))).map((t) => t.id);
+        if (category === 'teachers') return list.filter((t) => /Teacher/i.test(enName(t))).map((t) => t.id);
+        if (category === 'supervisors') return list.filter((t) => /Student/i.test(enName(t))).map((t) => t.id);
+    }
+    return FALLBACK_IDS[category] || [];
+}
+
+/** Get request type objects for the current category only (for tabs). */
+function getRequestTypesForCategory(requestTypesData, category, requestTypeIds) {
+    if (!category || requestTypeIds.length === 0) return [];
+    if (requestTypesData?.data?.length) {
+        const idSet = new Set(requestTypeIds);
+        return requestTypesData.data
+            .filter((t) => idSet.has(t.id))
+            .map((type) => ({
+                id: type.id,
+                name:
+                    typeof type.name === 'string'
+                        ? type.name
+                        : type.name?.[i18next.language] || type.name?.en || type.name?.ar || `Request Type ${type.id}`
+            }));
+    }
+    return requestTypeIds.map((id) => ({ id, name: `Request Type ${id}` }));
+}
+
 export default function JoinRequests() {
     const branchManagerOnly = isBranchManagerOnly();
-    const { isOpen, toggle } = useIsOpen();
+    const { category: urlCategory } = useParams();
+    const navigate = useNavigate();
     const [searchParams, setSearchParams] = useSearchParams();
+    const { isOpen, toggle } = useIsOpen();
     const { pagination, handleFilter, filters, setter, setFilters } =
         useFiltering(filtersDefaultValues);
-    // Branch manager: do not call dashboard request-types API (403). Use front join-requests only.
     const { data: requestTypesData, isLoading: isLoadingRequestTypes } = useRequestTypesQuery(
         {},
         { enabled: !branchManagerOnly }
     );
     const { t } = useLocale();
 
-    // Get request types for tabs
-    const requestTypes = useMemo(() => {
-        if (!requestTypesData?.data) return [];
-        return requestTypesData.data.map(type => ({
-            id: type.id,
-            name: typeof type.name === 'string' 
-                ? type.name 
-                : type.name?.[i18next.language] || type.name?.en || type.name?.ar || `Request Type ${type.id}`
-        }));
-    }, [requestTypesData]);
+    const category = VALID_CATEGORIES.includes(urlCategory) ? urlCategory : null;
 
-    // Get selected request_type_id from URL or default to first request type
-    const selectedRequestTypeId = useMemo(() => {
-        if (requestTypes.length === 0) return null;
-        
-        const urlParam = searchParams.get('request_type_id');
-        if (urlParam) {
-            const id = parseInt(urlParam);
-            if (!isNaN(id) && requestTypes.some(rt => rt.id === id)) {
-                return id;
-            }
+    useEffect(() => {
+        if (urlCategory && !VALID_CATEGORIES.includes(urlCategory)) {
+            navigate('/join-requests/entities', { replace: true });
+            return;
         }
-        return requestTypes.length > 0 ? requestTypes[0].id : null;
-    }, [searchParams, requestTypes]);
+        if (!urlCategory) {
+            navigate('/join-requests/entities', { replace: true });
+        }
+    }, [urlCategory, navigate]);
 
-    // Track if filters have been initialized with request_type_id
+    const requestTypeIds = useMemo(
+        () => getRequestTypeIdsByCategory(requestTypesData, category),
+        [requestTypesData, category]
+    );
+
+    const categoryRequestTypes = useMemo(
+        () => getRequestTypesForCategory(requestTypesData, category, requestTypeIds),
+        [requestTypesData, category, requestTypeIds]
+    );
+
     const [filtersInitialized, setFiltersInitialized] = React.useState(false);
 
-    // Branch manager: no request-types from dashboard; mark ready so we can fetch join requests from front
     useEffect(() => {
         if (branchManagerOnly && !filtersInitialized) {
             setFiltersInitialized(true);
         }
     }, [branchManagerOnly, filtersInitialized]);
 
-    // Initialize URL and filters when request types are loaded (super admin only)
     useEffect(() => {
-        if (!branchManagerOnly && requestTypes.length > 0 && selectedRequestTypeId && !filtersInitialized) {
-            const urlParam = searchParams.get('request_type_id');
-            const urlRequestTypeId = urlParam ? parseInt(urlParam) : null;
-            
-            if (selectedRequestTypeId !== urlRequestTypeId) {
-                setSearchParams({ request_type_id: selectedRequestTypeId.toString() }, { replace: true });
-            }
-            
-            setFilters(prev => ({ ...prev, request_type_id: selectedRequestTypeId }));
+        if (category) {
             setFiltersInitialized(true);
         }
-    }, [branchManagerOnly, requestTypes.length, selectedRequestTypeId, filtersInitialized, setSearchParams, setFilters]);
+    }, [category]);
 
-    // Only call join requests API when ready. Branch manager: no request_type_id needed (front API). Others: need request type.
-    const shouldFetchJoinRequests = branchManagerOnly
-        ? filtersInitialized
-        : !isLoadingRequestTypes && filtersInitialized && selectedRequestTypeId !== null && filters.request_type_id === selectedRequestTypeId;
-    const { data, isLoading, refresh } = useJoinRequestsQuery(filters, { enabled: shouldFetchJoinRequests });
+    const selectedRequestTypeId = useMemo(() => {
+        const urlId = searchParams.get('request_type_id');
+        if (urlId) {
+            const id = parseInt(urlId, 10);
+            if (!Number.isNaN(id) && requestTypeIds.includes(id)) return id;
+        }
+        return categoryRequestTypes.length > 0 ? categoryRequestTypes[0].id : null;
+    }, [searchParams, requestTypeIds, categoryRequestTypes]);
 
-    // Create a map of request type IDs to names
+    useEffect(() => {
+        if (categoryRequestTypes.length > 0 && selectedRequestTypeId !== null) {
+            const urlId = searchParams.get('request_type_id');
+            const currentId = urlId ? parseInt(urlId, 10) : null;
+            if (currentId !== selectedRequestTypeId) {
+                setSearchParams({ request_type_id: String(selectedRequestTypeId) }, { replace: true });
+            }
+            setFilters((prev) => ({ ...prev, request_type_id: selectedRequestTypeId }));
+        }
+    }, [categoryRequestTypes.length, selectedRequestTypeId]);
+
+    const effectiveFilters = useMemo(() => {
+        const base = { ...filters };
+        base.request_type_id = selectedRequestTypeId;
+        return base;
+    }, [filters, selectedRequestTypeId]);
+
+    const shouldFetchJoinRequests = Boolean(
+        filtersInitialized &&
+            category &&
+            (branchManagerOnly || !isLoadingRequestTypes) &&
+            selectedRequestTypeId !== null
+    );
+
+    const { data, isLoading, refresh } = useJoinRequestsQuery(effectiveFilters, {
+        enabled: shouldFetchJoinRequests
+    });
+
     const requestTypesMap = useMemo(() => {
         const map = {};
-        requestTypes.forEach(type => {
+        categoryRequestTypes.forEach((type) => {
             map[type.id] = type.name;
         });
+        requestTypesData?.data?.forEach((type) => {
+            const name =
+                typeof type.name === 'object'
+                    ? type.name?.[i18next.language] || type.name?.en || type.name?.ar
+                    : type.name;
+            if (name) map[type.id] = name;
+        });
         return map;
-    }, [requestTypes]);
+    }, [categoryRequestTypes, requestTypesData?.data]);
 
-    // Handle tab change
     const handleTabChange = (requestTypeId) => {
-        setSearchParams({ request_type_id: requestTypeId.toString() }, { replace: true });
-        setFilters(prev => ({ ...prev, request_type_id: requestTypeId }));
+        setSearchParams({ request_type_id: String(requestTypeId) }, { replace: true });
+        setFilters((prev) => ({ ...prev, request_type_id: requestTypeId }));
     };
 
-    // Show loader: branch manager = until filters initialized; others = until request types loaded and filters initialized
-    if (!filtersInitialized || (!branchManagerOnly && isLoadingRequestTypes)) return <Loader />;
+    if (!category || !filtersInitialized || (!branchManagerOnly && isLoadingRequestTypes)) {
+        return <Loader />;
+    }
 
     const columns = joinRequestsColumns(requestTypesMap);
+    const tableTitle =
+        category === 'entities'
+            ? t('sidebar.join_requests_entities')
+            : category === 'teachers'
+              ? t('sidebar.join_requests_teachers')
+              : t('sidebar.join_requests_supervisors');
 
     return (
         <div>
-            {/* Request Type Tabs: parent width, horizontal scroll only */}
-            {requestTypes.length > 0 && (
+            {categoryRequestTypes.length > 0 && (
                 <div className="mb-6 min-w-0 w-full">
                     <div className="border-b border-gray-200 overflow-x-auto overflow-y-hidden custom-scrollbar-horizontal">
                         <nav className="-mb-px flex space-x-8 min-w-max pb-px" aria-label="Tabs">
-                            {requestTypes.map((requestType) => (
+                            {categoryRequestTypes.map((requestType) => (
                                 <button
                                     key={requestType.id}
+                                    type="button"
                                     onClick={() => handleTabChange(requestType.id)}
                                     className={`
                                         whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors flex-shrink-0
@@ -131,7 +201,7 @@ export default function JoinRequests() {
             )}
 
             <Table
-                title={t('table_titles.join_requests')}
+                title={tableTitle}
                 refresh={refresh}
                 loading={isLoading}
                 data={data?.data || []}
@@ -140,9 +210,7 @@ export default function JoinRequests() {
                 columns={columns}
                 pagination={pagination}
                 setPagination={setter('pagination')}
-                Filters={
-                    <Filters filters={filters} handleFilter={handleFilter} />
-                }
+                Filters={<Filters filters={filters} handleFilter={handleFilter} />}
                 setFilters={setFilters}
                 filters={filters}
                 toggleModals={toggle}
@@ -158,4 +226,3 @@ export default function JoinRequests() {
         </div>
     );
 }
-
