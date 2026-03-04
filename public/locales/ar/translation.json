@@ -1325,11 +1325,12 @@
         "registration_requests": "طلبات الانضمام والانتقال",
         "request_types": "أنواع الطلبات",
         "phases": "المراحل",
-        "join_request_forms": "نماذج طلبات الانضمام",
+        "join_request_forms": "نماذج الطلبات",
         "join_requests": "اعتمادات الطلبات",
         "join_requests_entities": "طلبات الجهات",
         "join_requests_teachers": "طلبات المعلمين",
-        "join_requests_supervisors": "طلبات المشرفين"
+        "join_requests_supervisors": "طلبات المشرفين",
+        "join_requests_settings": "إعدادات الطلبات"
     },
     "table_titles": {
         "notification_templates": "قوالب الإشعارات",
@@ -1789,6 +1790,7 @@
         "section_manager": "معلومات المدير",
         "section_facilities": "المرافق",
         "section_other": "تفاصيل أخرى",
+        
         "take_action": "اتخاذ الإجراء"
     },
     "warnings": {

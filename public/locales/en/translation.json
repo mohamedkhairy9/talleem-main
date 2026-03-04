@@ -1361,7 +1361,8 @@
         "join_requests": "Join Requests",
         "join_requests_entities": "Entity Requests",
         "join_requests_teachers": "Teacher Requests",
-        "join_requests_supervisors": "Supervisor Requests"
+        "join_requests_supervisors": "Supervisor Requests",
+        "join_requests_settings": "Join Requests Settings"
     },
     "table_titles": {
         "notification_templates": "Notification Templates",

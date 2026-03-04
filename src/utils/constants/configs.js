@@ -272,19 +272,25 @@ export const sideMenuTabs = [
         allowedRoles: [ROLE_SUPER_ADMIN],
         subMenu: [
             {
-                titleKey: 'sidebar.request_types',
-                path: '/request-types',
-                icon: VscDebugBreakpointLog
-            },
-            {
-                titleKey: 'sidebar.phases',
-                path: '/phases',
-                icon: VscDebugBreakpointLog
-            },
-            {
-                titleKey: 'sidebar.join_request_forms',
-                path: '/join-request-forms',
-                icon: VscDebugBreakpointLog
+                titleKey: 'sidebar.join_requests_settings',
+                icon: HiCog,
+                subMenu: [
+                    {
+                        titleKey: 'sidebar.request_types',
+                        path: '/request-types',
+                        icon: VscDebugBreakpointLog
+                    },
+                    {
+                        titleKey: 'sidebar.phases',
+                        path: '/phases',
+                        icon: VscDebugBreakpointLog
+                    },
+                    {
+                        titleKey: 'sidebar.join_request_forms',
+                        path: '/join-request-forms',
+                        icon: VscDebugBreakpointLog
+                    },                            
+                ]
             },
             {
                 titleKey: 'sidebar.join_requests',
