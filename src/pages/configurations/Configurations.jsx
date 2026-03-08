@@ -79,17 +79,27 @@ export default function Configurations() {
             displayValue = (config.value === '1' || config.value === true) 
                 ? '✓ ' + t('common.yes') 
                 : '✗ ' + t('common.no');
-        } else if (config.key === 'platform') {
-            // Display platforms as chips
-            const platforms = config.value.split(',').map(p => p.trim());
+        } else if (config.type === 'multiselect' || config.key === 'platform') {
+            // Display multi-select values as chips (comma-separated or JSON array)
+            let parts = [];
+            if (typeof config.value === 'string' && config.value.trim().startsWith('[')) {
+                try {
+                    parts = JSON.parse(config.value);
+                    if (!Array.isArray(parts)) parts = [parts];
+                } catch {
+                    parts = config.value.split(',').map(p => p.trim());
+                }
+            } else if (config.value) {
+                parts = String(config.value).split(',').map(p => p.trim()).filter(Boolean);
+            }
             displayValue = (
                 <div className="flex flex-wrap gap-2 mt-1">
-                    {platforms.map((platform, idx) => (
+                    {parts.map((item, idx) => (
                         <span 
                             key={idx}
                             className="px-2 py-1 bg-blue-100 text-blue-700 rounded text-xs font-medium"
                         >
-                            {platform}
+                            {typeof item === 'object' ? (item?.label ?? item?.value ?? item?.name ?? '') : item}
                         </span>
                     ))}
                 </div>
@@ -119,6 +129,7 @@ export default function Configurations() {
                         </svg>
                     );
                 case 'select':
+                case 'multiselect':
                     return (
                         <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />

@@ -71,10 +71,80 @@ export default function EditConfigurationModal({ config, onClose }) {
         return options;
     }, [sessionModesData, currentLang]);
 
-    // Determine if field is multi-select for platform
-    const isMultiSelect = config.key === 'platform';
+    // Determine field config first so schema and UI always match (single vs multi)
+    const fieldConfig = useMemo(() => {
+        if (config.key === 'weekly_holiday') {
+            return {
+                type: 'select',
+                options: weekDaysOptions,
+                isMulti: config.type === 'multiselect'
+            };
+        }
+        if (config.key === 'teaching_method') {
+            return { type: 'select', options: sessionModeOptions, isMulti: false };
+        }
+        if (config.key === 'platform') {
+            return { type: 'select', options: platformOptions, isMulti: true };
+        }
+        switch (config.type) {
+            case 'checkbox':
+                return { type: 'checkbox', options: [], isMulti: false };
+            case 'number':
+                return { type: 'number', options: [], isMulti: false };
+            case 'multiselect': {
+                let options = [];
+                const responseOptions = config.options;
+                if (responseOptions != null && responseOptions !== '') {
+                    try {
+                        const raw = typeof responseOptions === 'string' ? JSON.parse(responseOptions) : responseOptions;
+                        const arr = Array.isArray(raw) ? raw : [raw];
+                        options = arr.map(opt => {
+                            const val = typeof opt === 'string' ? opt : (opt?.value ?? opt?.label ?? String(opt));
+                            return { value: val, label: val, id: val, name: val };
+                        });
+                    } catch {
+                        options = [];
+                    }
+                }
+                if (options.length === 0 && config.value) {
+                    const parts = typeof config.value === 'string'
+                        ? config.value.split(',').map(s => s.trim()).filter(Boolean)
+                        : Array.isArray(config.value) ? config.value : [];
+                    options = parts.map(v => ({ value: v, label: v, id: v, name: v }));
+                }
+                return { type: 'select', options, isMulti: true };
+            }
+            case 'select': {
+                let options = [];
+                const responseOptions = config.options;
+                if (responseOptions != null && responseOptions !== '') {
+                    try {
+                        const raw = typeof responseOptions === 'string' ? JSON.parse(responseOptions) : responseOptions;
+                        const arr = Array.isArray(raw) ? raw : [raw];
+                        options = arr.map(opt => {
+                            const val = typeof opt === 'string' ? opt : (opt?.value ?? opt?.label ?? String(opt));
+                            return { value: val, label: val, id: val, name: val };
+                        });
+                    } catch {
+                        options = [];
+                    }
+                }
+                if (options.length === 0 && config.value) {
+                    options = config.value.split(',').map(opt => {
+                        const v = opt.trim();
+                        return { value: v, label: v, id: v, name: v };
+                    }).filter(opt => opt.value);
+                }
+                return { type: 'select', options, isMulti: false };
+            }
+            default:
+                return { type: 'text', options: [], isMulti: false };
+        }
+    }, [config, platformOptions, sessionModeOptions]);
 
-    // Create validation schema based on field type
+    const isMultiSelect = fieldConfig.isMulti === true;
+
+    // Create validation schema based on field type (must match fieldConfig)
     const schema = yup.object().shape({
         value: config.type === 'number'
             ? yup.number().required(t('validation.required'))
@@ -85,6 +155,22 @@ export default function EditConfigurationModal({ config, onClose }) {
                     : yup.string().required(t('validation.required'))
     });
 
+    // Parse multiselect value (comma-separated or JSON array) into array of values
+    const parseMultiselectValue = (optionsArray) => {
+        if (!config.value) return [];
+        let raw = config.value;
+        if (typeof raw === 'string' && raw.trim().startsWith('[')) {
+            try {
+                raw = JSON.parse(raw);
+            } catch {
+                raw = raw.split(',').map(s => s.trim());
+            }
+        } else if (typeof raw === 'string') {
+            raw = raw.split(',').map(s => s.trim()).filter(Boolean);
+        }
+        return Array.isArray(raw) ? raw : [raw];
+    };
+
     // Prepare default value - convert platform names to IDs or use IDs directly
     const getDefaultValue = () => {
         if (config.type === 'checkbox') {
@@ -92,19 +178,20 @@ export default function EditConfigurationModal({ config, onClose }) {
         }
 
         // Handle platform field (multi-select) - convert names to IDs
-        if (isMultiSelect && config.value && platformOptions.length > 0) {
-            // Split comma-separated platform names
+        if (config.key === 'platform' && isMultiSelect && config.value && platformOptions.length > 0) {
             const platformNames = config.value.split(',').map(p => p.trim());
-
-            // Find matching platform IDs
             const platformIds = platformNames
                 .map(name => {
                     const platform = platformOptions.find(opt => opt.platformName === name);
                     return platform ? platform.value : null;
                 })
                 .filter(Boolean);
-
             return platformIds;
+        }
+
+        // Generic multiselect (only when fieldConfig.isMulti is true): value is array
+        if (isMultiSelect && config.value) {
+            return parseMultiselectValue();
         }
 
         // Handle teaching_method field - value might be an ID or a name
@@ -175,21 +262,22 @@ export default function EditConfigurationModal({ config, onClose }) {
     function onSubmit(data) {
         let valueToSend = data.value;
 
-        // Handle multi-select platforms - convert IDs back to names
-        if (isMultiSelect && Array.isArray(data.value)) {
+        // Handle platform (multi-select) - convert IDs back to names
+        if (config.key === 'platform' && isMultiSelect && Array.isArray(data.value)) {
             const platformNames = data.value
                 .map(id => {
                     const platform = platformOptions.find(opt => opt.value === id);
                     return platform ? platform.platformName : null;
                 })
                 .filter(Boolean);
-
             valueToSend = platformNames.join(', ');
+        } else if (config.type === 'multiselect' && Array.isArray(data.value)) {
+            // Generic multiselect: send as comma-separated string
+            valueToSend = data.value.join(', ');
         }
         
         // Handle teaching_method - send the ID directly (not convert to name)
         if (config.key === 'teaching_method') {
-            // data.value is already the session mode ID, send it as-is
             valueToSend = data.value;
         }
 
@@ -208,77 +296,6 @@ export default function EditConfigurationModal({ config, onClose }) {
             }
         );
     }
-
-    // Determine field type and options
-    const getFieldConfig = () => {
-        // Check if it's a weekly holiday field
-        if (config.key === 'weekly_holiday') {
-            return {
-                type: 'select',
-                options: weekDaysOptions,
-                isMulti: false
-            };
-        }
-
-        // Check if it's teaching method - use sessionModesData from API
-        if (config.key === 'teaching_method') {
-            return {
-                type: 'select',
-                options: sessionModeOptions,
-                isMulti: false
-            };
-        }
-
-        // Check if it's platform
-        if (config.key === 'platform') {
-            return {
-                type: 'select',
-                options: platformOptions,
-                isMulti: true // Allow multiple platform selection
-            };
-        }
-
-        // Default based on config type
-        switch (config.type) {
-            case 'checkbox':
-                return { type: 'checkbox', options: [], isMulti: false };
-            case 'number':
-                return { type: 'number', options: [], isMulti: false };
-            case 'select': {
-                // Options for select fields come from the response config.options (e.g. JSON string array)
-                let options = [];
-                const responseOptions = config.options;
-                if (responseOptions != null && responseOptions !== '') {
-                    try {
-                        const raw = typeof responseOptions === 'string' ? JSON.parse(responseOptions) : responseOptions;
-                        const arr = Array.isArray(raw) ? raw : [raw];
-                        options = arr.map(opt => {
-                            const val = typeof opt === 'string' ? opt : (opt?.value ?? opt?.label ?? String(opt));
-                            return {
-                                value: val,
-                                label: val,
-                                id: val,
-                                name: val
-                            };
-                        });
-                    } catch {
-                        options = [];
-                    }
-                }
-                if (options.length === 0 && config.value) {
-                    options = config.value.split(',').map(opt => {
-                        const v = opt.trim();
-                        return { value: v, label: v, id: v, name: v };
-                    }).filter(opt => opt.value);
-                }
-                return { type: 'select', options, isMulti: false };
-            }
-            default:
-                return { type: 'text', options: [], isMulti: false };
-        }
-    };
-
-    const fieldConfig = getFieldConfig();
 
     if (platformsLoading) {
         return (
@@ -319,27 +336,35 @@ export default function EditConfigurationModal({ config, onClose }) {
                                 ? t('configurations.select_method')
                                 : config.key === 'platform'
                                     ? t('configurations.select_platforms')
-                                    : t('configurations.enter_value')
+                                    : config.type === 'multiselect'
+                                        ? t('configurations.select_multiple')
+                                        : t('configurations.enter_value')
                     }
                 />
 
-                {/* Show selected platforms */}
-                {config.key === 'platform' && Array.isArray(currentValue) && currentValue.length > 0 && (
+                {/* Show selected values for multi-select fields */}
+                {isMultiSelect && Array.isArray(currentValue) && currentValue.length > 0 && (
                     <div className="p-3 bg-blue-50 rounded">
                         <p className="text-xs font-medium text-gray-700 mb-2">
-                            {t('configurations.selected_platforms')}:
+                            {config.key === 'platform' ? t('configurations.selected_platforms') : t('configurations.selected_values')}:
                         </p>
                         <div className="flex flex-wrap gap-2">
-                            {currentValue.map(id => {
-                                const platform = platformOptions.find(opt => opt.value === id);
-                                return platform ? (
-                                    <span
-                                        key={id}
-                                        className="px-2 py-1 bg-blue-100 text-blue-700 rounded text-xs font-medium"
-                                    >
-                                        {platform.platformName}
+                            {currentValue.map((id, idx) => {
+                                if (config.key === 'platform') {
+                                    const platform = platformOptions.find(opt => opt.value === id);
+                                    return platform ? (
+                                        <span key={id} className="px-2 py-1 bg-blue-100 text-blue-700 rounded text-xs font-medium">
+                                            {platform.platformName}
+                                        </span>
+                                    ) : null;
+                                }
+                                const opt = fieldConfig.options?.find(o => o.value === id || o.id === id);
+                                const label = opt?.label ?? opt?.name ?? id;
+                                return (
+                                    <span key={idx} className="px-2 py-1 bg-blue-100 text-blue-700 rounded text-xs font-medium">
+                                        {label}
                                     </span>
-                                ) : null;
+                                );
                             })}
                         </div>
                     </div>
