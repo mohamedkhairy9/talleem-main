@@ -13,6 +13,43 @@ import ModalFooter from '@/components/common/form/ModalFooter';
 import { isFieldRequired } from '@/utils/helpers/schemaHelpers';
 import { useEntitiesQuery } from '@/api/hooks/useEntities';
 import { allData } from '@/utils/constants/global.constants';
+import useLocale from '@/utils/hooks/global/useLocale';
+import i18next from 'i18next';
+
+const RELATION_FIELDS_VIEW = [
+    'nationality_id',
+    'city_id',
+    'branch_id',
+    'entity_id',
+    'job_id',
+    'academic_qualification_id',
+    'major_id',
+    'roles'
+];
+
+function getRelationDisplayName(oldData, fieldName, lang) {
+    if (fieldName === 'roles') {
+        const roles = oldData?.roles;
+        if (!Array.isArray(roles) || roles.length === 0) return '—';
+        const names = roles.map(r => {
+            if (typeof r === 'string') return r;
+            const n = r?.name;
+            return (n && (n[lang] || n.en || n.ar || (typeof n === 'string' ? n : ''))) || '';
+        }).filter(Boolean);
+        return names.length ? names.join(', ') : '—';
+    }
+    const obj =
+        fieldName === 'nationality_id' ? oldData?.nationality
+            : fieldName === 'city_id' ? oldData?.city
+                : fieldName === 'branch_id' ? oldData?.branch
+                    : fieldName === 'entity_id' ? oldData?.entity
+                        : fieldName === 'job_id' ? oldData?.job
+                            : fieldName === 'academic_qualification_id' ? oldData?.academic_qualification
+                                : fieldName === 'major_id' ? oldData?.major
+                                    : null;
+    if (!obj?.name) return '—';
+    return obj.name[lang] || obj.name.en || obj.name.ar || (typeof obj.name === 'string' ? obj.name : '—');
+}
 
 export default function FormEmployee({
     onClose,
@@ -23,6 +60,8 @@ export default function FormEmployee({
     mutate,
     options
 }) {
+    const { t } = useLocale();
+    const lang = i18next.language;
     const [profileImagePreview, setProfileImagePreview] = useState(
         oldData?.profile_picture || null
     );
@@ -116,6 +155,21 @@ export default function FormEmployee({
         if (fieldName === 'roles' && Array.isArray(oldData?.roles)) {
             defaultValue = oldData.roles.map(r =>
                 typeof r === 'object' && r?.name != null ? r.name : r
+            );
+        }
+
+        // View mode: render relation fields as styled name-only fields (from list row data)
+        if (viewMode && RELATION_FIELDS_VIEW.includes(fieldName)) {
+            const displayName = getRelationDisplayName(oldData, fieldName, lang);
+            return (
+                <div key={`view-${fieldName}`} className="flex flex-col gap-px">
+                    <label className="flex items-center gap-2 font-medium text-gray-700 font-montserrat mb-1">
+                        {t(field.label)}
+                    </label>
+                    <div className="min-h-[44px] rounded-lg border border-gray-300 bg-gray-50 px-3 py-3 flex items-center">
+                        <span className="text-gray-900 font-montserrat">{displayName}</span>
+                    </div>
+                </div>
             );
         }
 

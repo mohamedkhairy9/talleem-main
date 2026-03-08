@@ -83,7 +83,7 @@ export default function Employees() {
             {isOpen.view && (
                 <ViewEmployee
                     onClose={toggle.view}
-                    oldData={getOriginalObject(isOpen.view, formData)}
+                    oldData={getOriginalObject(isOpen.view, data?.data ?? [])}
                 />
             )}
             {isOpen.delete && (
