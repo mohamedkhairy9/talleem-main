@@ -28,8 +28,21 @@ function cleanParams(obj) {
     );
 }
 
-export function createAsyncLoadOptions(apiService, extraParams = {}, transformFn = null) {
+const EMPTY_PAGINATED = { options: [], hasMore: false, additional: { page: 1 } };
+
+/**
+ * @param {string[]} [requiredParamKeys] - If any key is missing/falsy in extraParams, return empty (don't call API)
+ */
+export function createAsyncLoadOptions(apiService, extraParams = {}, transformFn = null, requiredParamKeys = null) {
     return async (search, _loadedOptions, additional) => {
+        if (requiredParamKeys?.length) {
+            const missing = requiredParamKeys.some(key => {
+                const v = extraParams[key];
+                return v === undefined || v === null || v === '';
+            });
+            if (missing) return EMPTY_PAGINATED;
+        }
+
         const lang = i18next.language;
         const page = additional?.page ?? 1;
 
@@ -64,14 +77,16 @@ export function createAsyncLoadOptions(apiService, extraParams = {}, transformFn
 /**
  * Like createAsyncLoadOptions, but prepends the currently-selected option on page 1
  * so edit-mode shows the right label immediately.
+ * @param {string[]} [requiredParamKeys] - If any key is missing/falsy in extraParams, return empty (don't call API)
  */
 export function createAsyncLoadOptionsWithIncluded(
     apiService,
     extraParams = {},
     selectedItem = null,
-    transformFn = null
+    transformFn = null,
+    requiredParamKeys = null
 ) {
-    const base = createAsyncLoadOptions(apiService, extraParams, transformFn);
+    const base = createAsyncLoadOptions(apiService, extraParams, transformFn, requiredParamKeys);
 
     return async (search, loadedOptions, additional) => {
         const result   = await base(search, loadedOptions, additional);

@@ -182,6 +182,14 @@ export function shouldUseAsyncSelect(fieldName) {
     return !!FIELD_TO_SERVICE_MAP[fieldName];
 }
 
+/** Params that must be present before calling the list API (avoids loading "all" when filter is missing) */
+const REQUIRED_PARAM_KEYS_BY_FIELD = {
+    entity_id: ['main_program_id', 'branch_id'],
+    student_id: ['entity_id'],
+    teacher_id: ['entity_id'],
+    warning_reason_id: ['main_program_id']
+};
+
 /**
  * Creates async loadOptions for a field (paginated; compatible with react-select-async-paginate).
  * @param {string} fieldName - The field name
@@ -196,10 +204,14 @@ export function createLoadOptionsForField(fieldName, additionalParams = {}, incl
         return null;
     }
 
+    const requiredParamKeys = REQUIRED_PARAM_KEYS_BY_FIELD[fieldName] || null;
+
     return createAsyncLoadOptionsWithIncluded(
         fieldService.service,
         additionalParams,
-        includeOption
+        includeOption,
+        null,
+        requiredParamKeys
     );
 }
 

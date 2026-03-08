@@ -60,7 +60,7 @@ export default function IssuingWarnings() {
             {isOpen.view && (
                 <ViewWarning
                     onClose={toggle.view}
-                    oldData={getOriginalObject(isOpen.view, formData)}
+                    oldData={getOriginalObject(isOpen.view, data?.data ?? [])}
                 />
             )}
             {isOpen.delete && (

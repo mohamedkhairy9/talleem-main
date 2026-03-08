@@ -52,11 +52,6 @@ export const warningsColumns = [
     columnHelper.accessor('status', {
         header: 'table_headers.status',
         cell: info => <ActiveCell info={info} />
-    }),
-    columnHelper.accessor('created_at', {
-        header: 'table_headers.created_at',
-        cell: info => <DateCell fullDate value={info.getValue()} />,
-        enableColumnFilter: false
     })
 ];
 

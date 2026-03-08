@@ -6,15 +6,26 @@ import InputRFH from '@/components/common/inputs/InputRFH';
 import Btn from '@/components/common/buttons/Btn';
 import { getNestedError } from '@/utils/helpers/getNestedError';
 import { generateOptions } from '@/utils/helpers/global.fns';
-import { useQuery } from '@tanstack/react-query';
-import { studentsService } from '@/api/services/students.service';
-import { teachersService } from '@/api/services/teachers.service';
-import { API_KEYS } from '@/api/endpoints';
 import ModalContent from '@/components/common/form/ModalContent';
 import ModalFooter from '@/components/common/form/ModalFooter';
 import { isFieldRequired } from '@/utils/helpers/schemaHelpers';
-import { useWarningReasonsQuery } from '@/api/hooks/useWarningReasons';
-import { useEntitiesQuery } from '@/api/hooks/useEntities';
+import useLocale from '@/utils/hooks/global/useLocale';
+import i18next from 'i18next';
+
+const RELATION_FIELDS_VIEW = ['branch_id', 'program_id', 'entity_id', 'student_id', 'teacher_id', 'warning_reason_id'];
+
+function getRelationDisplayName(oldData, fieldName, lang) {
+    const obj =
+        fieldName === 'branch_id' ? oldData?.branch
+            : fieldName === 'program_id' ? oldData?.program
+                : fieldName === 'entity_id' ? oldData?.entity
+                    : fieldName === 'student_id' ? oldData?.student
+                        : fieldName === 'teacher_id' ? oldData?.teacher
+                            : fieldName === 'warning_reason_id' ? oldData?.warning_reason
+                                : null;
+    if (!obj?.name) return '—';
+    return obj.name[lang] || obj.name.en || obj.name.ar || (typeof obj.name === 'string' ? obj.name : '—');
+}
 
 export default function FormWarning({
     onClose,
@@ -25,6 +36,8 @@ export default function FormWarning({
     mutate,
     options
 }) {
+    const { t } = useLocale();
+    const lang = i18next.language;
     const { register, errors, handleSubmit, control, watch, setValue } = useRFH({
         schema,
         defaultValues: oldData || {
@@ -50,70 +63,15 @@ export default function FormWarning({
     const programIdForQuery = selectedProgramId || (editMode || viewMode ? (oldData?.program_id || oldData?.program?.id) : null);
     const branchIdForQuery = selectedBranchId || (editMode || viewMode ? (oldData?.branch_id || oldData?.branch?.id) : null);
 
-    // Fetch entities only when both program and branch are selected; revalidates when either changes
-    const entitiesQueryParams = useMemo(() => {
-        if (!programIdForQuery || !branchIdForQuery) return null;
-        return {
-            main_program_id: programIdForQuery,
-            branch_id: branchIdForQuery
-        };
-    }, [programIdForQuery, branchIdForQuery]);
+    // Create/Edit: entity_id, student_id, teacher_id, warning_reason_id use async selects (paginated) with fieldParams below
 
-    const { data: entitiesData } = useEntitiesQuery(entitiesQueryParams ?? {}, {
-        enabled: !!entitiesQueryParams
-    });
-
-    const entitiesOptions = useMemo(() => {
-        const allEntities = entitiesData?.data || [];
-
-        // In view/edit mode, include selected entity even if not in fetched results
-        if ((viewMode || editMode) && oldData?.entity) {
-            const selectedEntity = oldData.entity;
-            if (selectedEntity?.id && !allEntities.some(e => e.id === selectedEntity.id)) {
-                return [selectedEntity, ...allEntities];
-            }
-        }
-
-        return allEntities;
-    }, [entitiesData, viewMode, editMode, oldData?.entity]);
-
-    // جلب الطلاب بناءً على الـ entity المختارة
-    const { data: studentsData } = useQuery({
-        queryKey: [API_KEYS.STUDENTS, { entity_id: selectedEntityId }],
-        queryFn: () => studentsService.getStudents({ 
-            entity_id: selectedEntityId
-        }),
-        enabled: !!selectedEntityId && warningType === 'student'
-    });
-
-    // جلب المعلمين بناءً على الـ entity المختارة
-    const { data: teachersData } = useQuery({
-        queryKey: [API_KEYS.TEACHERS, { entity_id: selectedEntityId }],
-        queryFn: () => teachersService.getTeachers({ 
-            entity_id: selectedEntityId
-        }),
-        enabled: !!selectedEntityId && warningType === 'teacher'
-    });
-
-    // Fetch warning reasons only when program is selected; revalidates when program changes
-    const { data: warningReasonsData } = useWarningReasonsQuery(
-        programIdForQuery ? { main_program_id: programIdForQuery } : {},
-        { enabled: !!programIdForQuery }
-    );
-
-    const warningReasonsOptions = useMemo(() => {
-        const allReasons = warningReasonsData?.data || [];
-
-        // In view/edit mode, include selected warning reason even if not in fetched results
-        if ((viewMode || editMode) && oldData?.warning_reason) {
-            const selectedReason = oldData.warning_reason;
-            if (selectedReason?.id && !allReasons.some(r => r.id === selectedReason.id)) {
-                return [selectedReason, ...allReasons];
-            }
-        }
-
-        return allReasons;
-    }, [warningReasonsData, viewMode, editMode, oldData?.warning_reason]);
+    // Async select params: warning reasons filtered by main_program_id; students/teachers by selected entity_id
+    const fieldParams = useMemo(() => ({
+        entity_id: { main_program_id: programIdForQuery, branch_id: branchIdForQuery },
+        student_id: { entity_id: selectedEntityId, status: true },
+        teacher_id: { entity_id: selectedEntityId },
+        warning_reason_id: { main_program_id: programIdForQuery }
+    }), [programIdForQuery, branchIdForQuery, selectedEntityId]);
 
     // Reset warning_reason_id and entity_id when program changes (create mode only)
     React.useEffect(() => {
@@ -154,8 +112,6 @@ export default function FormWarning({
     }, [warningType, setValue]);
 
     function onSubmit(data) {
-        console.log('data', data);
-
         // تنظيف البيانات حسب نوع الإنذار
         const submissionData = { ...data };
 
@@ -211,34 +167,52 @@ export default function FormWarning({
                         )
                         .filter(shouldShowField)
                         .map(field => {
-                            let fieldOptions = options?.[field.name];
-
-                            // إذا كان الحقل entity_id، استخدم الـ entities المفلترة حسب الـ program
-                            if (field.name === 'entity_id') {
-                                fieldOptions = entitiesOptions;
+                            // View mode: render only names for relation fields (from list response)
+                            if (viewMode && RELATION_FIELDS_VIEW.includes(field.name)) {
+                                const displayName = getRelationDisplayName(oldData, field.name, lang);
+                                return (
+                                    <div key={`view-${field.name}`} className="flex flex-col gap-1 px-3 py-3">
+                                        <label className="font-medium text-gray-700 font-montserrat">
+                                            {t(field.label)}
+                                        </label>
+                                        <span className="text-gray-900">{displayName}</span>
+                                    </div>
+                                );
                             }
 
-                            // إذا كان الحقل student_id، استخدم الطلاب المفلترين حسب الـ entity
-                            if (field.name === 'student_id') {
-                                fieldOptions = studentsData?.data || [];
-                            }
+                            // View mode: other fields (warning_type, date, note, status) still use InputRFH
+                            const fieldOptions = options?.[field.name];
+                            const isBranchOrProgram = ['branch_id', 'program_id'].includes(field.name);
+                            const useAsyncSelect = !viewMode && !isBranchOrProgram && ['entity_id', 'student_id', 'teacher_id', 'warning_reason_id'].includes(field.name);
 
-                            // إذا كان الحقل teacher_id، استخدم المعلمين المفلترين حسب الـ entity
-                            if (field.name === 'teacher_id') {
-                                fieldOptions = teachersData?.data || [];
-                            }
+                            const idFieldFallback =
+                                field.name === 'entity_id'
+                                    ? oldData?.entity?.id
+                                    : field.name === 'warning_reason_id'
+                                      ? oldData?.warning_reason?.id
+                                      : field.name === 'student_id'
+                                        ? oldData?.student?.id
+                                        : field.name === 'teacher_id'
+                                          ? oldData?.teacher?.id
+                                          : undefined;
+                            const rawDefault =
+                                oldData?.[field.name] ?? idFieldFallback ?? field.defaultValue;
+                            const defaultValue =
+                                field.name.endsWith('_id') && rawDefault != null
+                                    ? Number(rawDefault)
+                                    : rawDefault;
 
-                            // إذا كان الحقل warning_reason_id، استخدم الأسباب المفلترة حسب الـ program
-                            if (field.name === 'warning_reason_id') {
-                                fieldOptions = warningReasonsOptions;
-                            }
-
-                            // Use static options only for these fields to avoid duplicate API calls (branches/main-programs from parent; entities/warning-reasons from dependent queries)
-                            const useStaticOptionsOnly = ['branch_id', 'program_id', 'entity_id', 'warning_reason_id'].includes(field.name);
-
+                            const asyncRemountKey =
+                                field.name === 'warning_reason_id'
+                                    ? programIdForQuery
+                                    : field.name === 'entity_id'
+                                      ? `${programIdForQuery ?? ''}-${branchIdForQuery ?? ''}`
+                                      : field.name === 'student_id' || field.name === 'teacher_id'
+                                        ? selectedEntityId
+                                        : '';
                             return (
                                 <InputRFH
-                                    key={field.name}
+                                    key={`${field.name}-${viewMode ? (oldData?.id ?? 'view') : 'form'}-${asyncRemountKey ?? ''}`}
                                     p="px-3 py-3"
                                     control={control}
                                     register={register}
@@ -255,10 +229,10 @@ export default function FormWarning({
                                     label={field.label}
                                     name={field.name}
                                     options={generateOptions(fieldOptions)}
-                                    isAsync={useStaticOptionsOnly ? false : undefined}
-                                    defaultValue={
-                                        oldData?.[field.name] || field.defaultValue
-                                    }
+                                    isAsync={useAsyncSelect ? undefined : false}
+                                    fieldParams={useAsyncSelect ? fieldParams : {}}
+                                    oldData={oldData}
+                                    defaultValue={defaultValue}
                                     min={field.minDate}
                                     required={isFieldRequired(schema, field.name)}
                                 />
