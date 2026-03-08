@@ -167,15 +167,17 @@ export default function FormWarning({
                         )
                         .filter(shouldShowField)
                         .map(field => {
-                            // View mode: render only names for relation fields (from list response)
+                            // View mode: render only names for relation fields (styled as form fields)
                             if (viewMode && RELATION_FIELDS_VIEW.includes(field.name)) {
                                 const displayName = getRelationDisplayName(oldData, field.name, lang);
                                 return (
-                                    <div key={`view-${field.name}`} className="flex flex-col gap-1 px-3 py-3">
-                                        <label className="font-medium text-gray-700 font-montserrat">
+                                    <div key={`view-${field.name}`} className="flex flex-col gap-px">
+                                        <label className="flex items-center gap-2 font-medium text-gray-700 font-montserrat mb-1">
                                             {t(field.label)}
                                         </label>
-                                        <span className="text-gray-900">{displayName}</span>
+                                        <div className="min-h-[44px] rounded-lg border border-gray-300 bg-gray-50 px-3 py-3 flex items-center">
+                                            <span className="text-gray-900 font-montserrat">{displayName}</span>
+                                        </div>
                                     </div>
                                 );
                             }
