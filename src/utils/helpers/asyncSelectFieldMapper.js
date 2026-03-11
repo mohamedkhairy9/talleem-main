@@ -165,21 +165,32 @@ export const FIELD_TO_SERVICE_MAP = {
 };
 
 /**
- * Gets the API service for a field name
+ * Resolves nested field names to the base field for service lookup (e.g. manager.nationality_id -> nationality_id).
+ * @param {string} fieldName - The field name (may be nested)
+ * @returns {string} Base field name for FIELD_TO_SERVICE_MAP lookup
+ */
+export function getBaseFieldName(fieldName) {
+    if (!fieldName || typeof fieldName !== 'string') return fieldName;
+    return fieldName.includes('.') ? fieldName.split('.').pop() : fieldName;
+}
+
+/**
+ * Gets the API service for a field name (supports nested names e.g. manager.nationality_id)
  * @param {string} fieldName - The field name
  * @returns {Object|null} Service object with service function and name, or null if not found
  */
 export function getServiceForField(fieldName) {
-    return FIELD_TO_SERVICE_MAP[fieldName] || null;
+    const base = getBaseFieldName(fieldName);
+    return FIELD_TO_SERVICE_MAP[base] || null;
 }
 
 /**
  * Checks if a field should use async select (has API service mapping)
- * @param {string} fieldName - The field name
+ * @param {string} fieldName - The field name (supports nested e.g. manager.nationality_id)
  * @returns {boolean} True if field should use async select
  */
 export function shouldUseAsyncSelect(fieldName) {
-    return !!FIELD_TO_SERVICE_MAP[fieldName];
+    return !!getServiceForField(fieldName);
 }
 
 /** Params that must be present before calling the list API (avoids loading "all" when filter is missing).
@@ -205,7 +216,8 @@ export function createLoadOptionsForField(fieldName, additionalParams = {}, incl
         return null;
     }
 
-    const requiredParamKeys = REQUIRED_PARAM_KEYS_BY_FIELD[fieldName] || null;
+    const baseFieldName = getBaseFieldName(fieldName);
+    const requiredParamKeys = REQUIRED_PARAM_KEYS_BY_FIELD[baseFieldName] || null;
 
     return createAsyncLoadOptionsWithIncluded(
         fieldService.service,
