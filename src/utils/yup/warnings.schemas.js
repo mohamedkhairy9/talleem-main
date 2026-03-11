@@ -81,7 +81,5 @@ export const warningsSchema = yup.object({
             return selectedDate <= today;
         }),
     
-    note: yup.string().nullable(),
-    
-    status: yup.boolean().required(t('validation.required'))
+    note: yup.string().nullable()
 });

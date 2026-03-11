@@ -41,7 +41,6 @@ export default function FormWarning({
     const { register, errors, handleSubmit, control, watch, setValue } = useRFH({
         schema,
         defaultValues: oldData || {
-            status: true,
             warning_type: '',
             program_id: '',
             branch_id: '',
@@ -127,6 +126,7 @@ export default function FormWarning({
         }
 
         const finalData = editMode ? { ...submissionData, id: oldData.id } : submissionData;
+        finalData.status = true;
 
         mutate(finalData, {
             onSuccess: () => {

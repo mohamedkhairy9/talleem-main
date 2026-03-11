@@ -42,26 +42,7 @@ export const certificatesSchema = yup.object({
             const date = new Date(value);
             return date <= new Date();
         }),
-    
-    is_active: yup
-        .mixed()
-        .required(t('validation.required'))
-        .transform((value) => {
-            // Transform boolean to number
-            if (typeof value === 'boolean') {
-                return value ? 1 : 0;
-            }
-            // If already a number, return it
-            if (typeof value === 'number') {
-                return value;
-            }
-            // If string, convert to number
-            return Number(value);
-        })
-        .test('is-valid-status', t('validation.required'), value => {
-            return value === 0 || value === 1;
-        }),
-    
+
     file: yup
         .mixed()
         .required(t('validation.required'))

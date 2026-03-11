@@ -6,7 +6,6 @@ import InputRFH from '@/components/common/inputs/InputRFH';
 import Btn from '@/components/common/buttons/Btn';
 import { getNestedError } from '@/utils/helpers/getNestedError';
 import { generateOptions, onlyDate } from '@/utils/helpers/global.fns';
-import { enabledDisabledOptions } from '@/utils/constants/options';
 import ModalContent from '@/components/common/form/ModalContent';
 import ModalFooter from '@/components/common/form/ModalFooter';
 import { isFieldRequired } from '@/utils/helpers/schemaHelpers';
@@ -83,7 +82,6 @@ export default function FormCertificate({
         ...options,
         issued_from: issuedFromOptions,
         branch_id: options.branch_id || [],
-        is_active: enabledDisabledOptions,
         // Empty when deps not met so we never call API without filters; async uses fieldParams when deps met
         entity_id: branchId && mainProgramId ? undefined : [],
         student_id: mainProgramId && entityId ? undefined : []
@@ -92,12 +90,9 @@ export default function FormCertificate({
     function onSubmit(data) {
         // Remove filter-only fields from submission
         const { main_program_id, branch_id, entity_id, ...submissionData } = data;
-    
-        // Convert is_active to number
-        if (typeof submissionData.is_active === 'boolean') {
-            submissionData.is_active = submissionData.is_active ? 1 : 0;
-        }
-    
+
+        submissionData.is_active = 1;
+
         // Handle file - make sure it's a single file, not an array
         if (submissionData.file) {
             // If it's a FileList or array, get the first file

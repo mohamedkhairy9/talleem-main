@@ -104,15 +104,6 @@ export const certificatesFields = [
         max: new Date().toISOString().split('T')[0]
     },
     {
-        name: 'is_active',
-        label: 'validation.is_active.label',
-        type: 'select',
-        placeholder: 'validation.is_active.placeholder',
-        defaultValue: 1,
-        editMode: true,
-        viewMode: true
-    },
-    {
         name: 'file',
         label: 'validation.file.label',
         type: 'file',
@@ -158,7 +149,6 @@ export const certificatesDefaultValues = {
     student_id: '',
     certificate_name_id: '',
     issued_date: '',
-    is_active: 1,
     file: null
 };
 

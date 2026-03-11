@@ -130,15 +130,6 @@ export const warningsFields = [
         placeholder: 'validation.note.placeholder',
         editMode: true,
         viewMode: true
-    },
-    {
-        name: 'status',
-        label: 'validation.status.label',
-        type: 'select',
-        placeholder: 'validation.status.placeholder',
-        defaultValue: true,
-        editMode: true,
-        viewMode: true
     }
 ];
 
@@ -177,7 +168,6 @@ export const filtersDefaultValues = {
 };
 
 export const warningsDefaultValues = {
-    status: true,
     warning_type: '',
     program_id: '',
     branch_id: '',
