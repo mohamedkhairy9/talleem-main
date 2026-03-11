@@ -12,20 +12,30 @@ import Btn from '@/components/common/buttons/Btn';
 import Loader from '@/components/common/Loader';
 
 const currentLang = () => i18next.language || 'en';
+const PER_PAGE = 15;
 
 export default function AssignPermissionsModal({ role, onClose }) {
     const { t } = useLocale();
     const [permissionSearch, setPermissionSearch] = useState('');
-    const debouncedSearch = useDebounce(permissionSearch, 300);
+    const debouncedSearch = useDebounce(permissionSearch, 350);
+    const [page, setPage] = useState(1);
     const [selectedPermissionIds, setSelectedPermissionIds] = useState([]);
 
     const { data: permissionsData, isLoading: permissionsLoading } = usePermissionsQuery(
-        { search: debouncedSearch, per_page: 50 },
+        { search: debouncedSearch, per_page: PER_PAGE, page },
         { enabled: !!role?.id }
     );
     const assignMutation = useAssignPermissionMutation();
 
     const permissions = permissionsData?.data ?? [];
+    const meta = permissionsData?.meta ?? {};
+    const total = meta.total ?? 0;
+    const lastPage = meta.last_page ?? 1;
+    const currentPage = meta.current_page ?? 1;
+
+    useEffect(() => {
+        setPage(1);
+    }, [debouncedSearch]);
 
     useEffect(() => {
         if (role?.permissions) {
@@ -119,6 +129,32 @@ export default function AssignPermissionsModal({ role, onClose }) {
                         </div>
                     )}
                 </div>
+                {!permissionsLoading && permissions.length > 0 && lastPage > 1 && (
+                    <div className="mt-3 flex items-center justify-between gap-2 flex-wrap">
+                        <p className="text-sm text-gray-600">
+                            {t('table.page')} {currentPage} / {lastPage}
+                            {typeof total === 'number' && total > 0 && ` (${total} ${t('table.total')})`}
+                        </p>
+                        <div className="flex items-center gap-2">
+                            <button
+                                type="button"
+                                onClick={() => setPage((p) => Math.max(1, p - 1))}
+                                disabled={currentPage <= 1}
+                                className="px-3 py-1.5 text-sm border border-gray-300 rounded hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                            >
+                                {t('table.previous_page')}
+                            </button>
+                            <button
+                                type="button"
+                                onClick={() => setPage((p) => Math.min(lastPage, p + 1))}
+                                disabled={currentPage >= lastPage}
+                                className="px-3 py-1.5 text-sm border border-gray-300 rounded hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                            >
+                                {t('table.next_page')}
+                            </button>
+                        </div>
+                    </div>
+                )}
             </ModalContent>
             <ModalFooter>
                 <button type="button" onClick={onClose} className="btn btn-secondary min-w-fit p-2 py-3 me-3">
