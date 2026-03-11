@@ -1,16 +1,20 @@
 import React from 'react';
 
-export default function Accordion({ title, open = false, onToggle, children }) {
+export default function Accordion({ title, headerRight, open = false, onToggle, children }) {
+    const isTitleString = typeof title === 'string';
     return (
         <div className="border border-gray-200 rounded-lg overflow-hidden">
             <button
                 type="button"
                 onClick={onToggle}
-                className="w-full px-4 py-3 bg-gray-50 hover:bg-gray-100 flex items-center justify-between transition-colors"
+                className="w-full px-4 py-3 bg-gray-50 hover:bg-gray-100 flex items-center justify-between gap-2 transition-colors text-left"
             >
-                <h3 className="text-lg font-semibold text-gray-800">{title}</h3>
+                <span className={`flex-1 min-w-0 ${isTitleString ? 'text-lg font-semibold text-gray-800' : ''}`}>
+                    {title}
+                </span>
+                {headerRight && <span className="flex-shrink-0" onClick={e => e.stopPropagation()}>{headerRight}</span>}
                 <svg
-                    className={`w-5 h-5 text-gray-600 transform transition-transform ${
+                    className={`w-5 h-5 text-gray-600 flex-shrink-0 transform transition-transform ${
                         open ? 'rotate-180' : ''
                     }`}
                     fill="none"

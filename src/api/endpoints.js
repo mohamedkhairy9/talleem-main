@@ -397,7 +397,8 @@ export const API_URLS = {
         LIST: '/join-request-forms',
         DETAILS: id => `/join-request-forms/${id}`,
         UPDATE: id => `/join-request-forms/${id}`,
-        DELETE: id => `/join-request-forms/${id}`
+        DELETE: id => `/join-request-forms/${id}`,
+        REORDER_FIELDS: id => `/join-request-forms/${id}/fields/reorder`
     },
     JOIN_REQUESTS: {
         LIST: '/join-requests',

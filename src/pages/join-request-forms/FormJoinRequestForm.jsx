@@ -1,6 +1,7 @@
 import useRFH from '@/utils/hooks/global/useRFH';
 import { createJoinRequestFormSchema as schema } from '@/utils/yup/joinRequestForms.schemas';
-import React, { useMemo, useEffect, useCallback, useRef } from 'react';
+import React, { useMemo, useEffect, useCallback, useState } from 'react';
+import Accordion from '@/components/common/UIs/Accordion';
 import { Controller } from 'react-hook-form';
 import { joinRequestFormsFields } from './configs';
 import InputRFH from '@/components/common/inputs/InputRFH';
@@ -11,8 +12,9 @@ import ModalContent from '@/components/common/form/ModalContent';
 import ModalFooter from '@/components/common/form/ModalFooter';
 import { fieldTypes } from './configs';
 import { generateOptions } from '@/utils/helpers/global.fns';
-import { MdAdd, MdDelete } from 'react-icons/md';
+import { MdAdd, MdDelete, MdDragIndicator } from 'react-icons/md';
 import useLocale from '@/utils/hooks/global/useLocale';
+import { useReorderJoinRequestFormFieldsMutation } from '@/api/hooks/useJoinRequestForms';
 
 export default function FormJoinRequestForm({
     onClose,
@@ -36,6 +38,51 @@ export default function FormJoinRequestForm({
 
     // Watch the fields array
     const fields = watch('data.fields') || [];
+
+    const formId = editMode && oldData?.id ? oldData.id : null;
+    const canReorder = !!formId && !viewMode;
+    const { mutate: reorderFields, isPending: isReorderPending } = useReorderJoinRequestFormFieldsMutation();
+
+    const [draggedIndex, setDraggedIndex] = useState(null);
+    const [dragOverIndex, setDragOverIndex] = useState(null);
+    const [draggedNested, setDraggedNested] = useState(null);
+    const [dragOverNested, setDragOverNested] = useState(null);
+    const [fieldsSectionOpen, setFieldsSectionOpen] = useState(true);
+    const [openedFieldIndices, setOpenedFieldIndices] = useState(() => new Set());
+
+    const toggleFieldAccordion = useCallback((originalIndex) => {
+        setOpenedFieldIndices(prev => {
+            const next = new Set(prev);
+            if (next.has(originalIndex)) next.delete(originalIndex);
+            else next.add(originalIndex);
+            return next;
+        });
+    }, []);
+
+    // Sync form fields when oldData changes (e.g. after reorder refetch)
+    const fieldsOrderKey = useMemo(
+        () => JSON.stringify((oldData?.data?.fields || []).map(f => ({ key: f.key, order: f.order }))),
+        [oldData?.data?.fields]
+    );
+    useEffect(() => {
+        if (formId && oldData?.data?.fields && Array.isArray(oldData.data.fields)) {
+            setValue('data.fields', oldData.data.fields);
+        }
+    }, [formId, fieldsOrderKey, setValue]);
+
+    // Sorted top-level fields for display (by order), with original index for form paths
+    const sortedTopLevelFields = useMemo(() => {
+        return fields
+            .map((field, originalIndex) => ({ field, originalIndex }))
+            .sort((a, b) => (a.field.order ?? 999) - (b.field.order ?? 999));
+    }, [fields]);
+
+    const getFieldLabel = useCallback((field) => {
+        const label = field?.label;
+        if (!label) return field?.key || '';
+        if (typeof label === 'string') return label;
+        return label.en || label.ar || field?.key || '';
+    }, []);
 
     // Helper function to transform field key - memoized with useCallback
     const transformFieldKey = useCallback((value) => {
@@ -63,6 +110,96 @@ export default function FormJoinRequestForm({
     const removeField = (index) => {
         const newFields = fields.filter((_, i) => i !== index);
         setValue('data.fields', newFields);
+    };
+
+    // --- Reorder: top-level
+    const handleDragStart = (e, index) => {
+        setDraggedIndex(index);
+        setDraggedNested(null);
+        e.dataTransfer.effectAllowed = 'move';
+        e.dataTransfer.setData('text/plain', index.toString());
+        e.currentTarget.style.opacity = '0.5';
+    };
+    const handleDragOver = (e, index) => {
+        e.preventDefault();
+        e.dataTransfer.dropEffect = 'move';
+        if (draggedIndex !== null && draggedIndex !== index) setDragOverIndex(index);
+    };
+    const handleDragLeave = () => setDragOverIndex(null);
+    const handleDrop = (e, dropDisplayIndex) => {
+        e.preventDefault();
+        if (draggedIndex === null || draggedIndex === dropDisplayIndex) {
+            setDraggedIndex(null);
+            setDragOverIndex(null);
+            return;
+        }
+        const draggedItem = sortedTopLevelFields[draggedIndex];
+        if (!draggedItem?.field?.key) {
+            setDraggedIndex(null);
+            setDragOverIndex(null);
+            return;
+        }
+        const newOrder = dropDisplayIndex + 1;
+        setDraggedIndex(null);
+        setDragOverIndex(null);
+        reorderFields(
+            { id: formId, payload: { field_key: draggedItem.field.key, new_order: newOrder } },
+            { onError: () => {} }
+        );
+    };
+    const handleDragEnd = (e) => {
+        e.currentTarget.style.opacity = '1';
+    };
+
+    // --- Reorder: nested (group) fields
+    const nestedDragStart = (e, parentKey, nestedIndex) => {
+        setDraggedNested({ parentKey, nestedIndex });
+        setDraggedIndex(null);
+        e.dataTransfer.effectAllowed = 'move';
+        e.dataTransfer.setData('text/plain', `${parentKey}-${nestedIndex}`);
+        e.currentTarget.style.opacity = '0.5';
+    };
+    const nestedDragOver = (e, parentKey, nestedIndex) => {
+        e.preventDefault();
+        e.dataTransfer.dropEffect = 'move';
+        if (draggedNested && (draggedNested.parentKey !== parentKey || draggedNested.nestedIndex !== nestedIndex)) {
+            setDragOverNested({ parentKey, nestedIndex });
+        }
+    };
+    const nestedDragLeave = () => setDragOverNested(null);
+    const nestedDrop = (e, parentKey, dropNestedIndex) => {
+        e.preventDefault();
+        if (!draggedNested || draggedNested.parentKey !== parentKey) {
+            setDraggedNested(null);
+            setDragOverNested(null);
+            return;
+        }
+        if (draggedNested.nestedIndex === dropNestedIndex) {
+            setDraggedNested(null);
+            setDragOverNested(null);
+            return;
+        }
+        const parentField = fields.find(f => f.key === parentKey);
+        const nestedList = [...(parentField?.fields || [])].sort((a, b) => (a.order ?? 999) - (b.order ?? 999));
+        const draggedNestedField = nestedList[draggedNested.nestedIndex];
+        if (!draggedNestedField?.key) {
+            setDraggedNested(null);
+            setDragOverNested(null);
+            return;
+        }
+        const newOrder = dropNestedIndex + 1;
+        setDraggedNested(null);
+        setDragOverNested(null);
+        reorderFields(
+            {
+                id: formId,
+                payload: { field_key: draggedNestedField.key, new_order: newOrder, parent_key: parentKey }
+            },
+            { onError: () => {} }
+        );
+    };
+    const nestedDragEnd = (e) => {
+        e.currentTarget.style.opacity = '1';
     };
 
     function onSubmit(data) {
@@ -153,47 +290,77 @@ export default function FormJoinRequestForm({
                         required={isFieldRequired(schema, 'status')}
                     />
 
-                    {/* Dynamic Fields Section */}
-                    <div className="space-y-3 border-t pt-4">
-                        <div className="flex justify-between items-center">
-                            <h3 className="text-lg font-semibold">{t('join_request_forms.form_fields')}</h3>
+                    {/* Dynamic Fields Section – accordion for easier drag & drop */}
+                    <Accordion
+                        title={t('join_request_forms.form_fields')}
+                        open={fieldsSectionOpen}
+                        onToggle={() => setFieldsSectionOpen(prev => !prev)}
+                    >
+                        <div className="space-y-3">
                             {!viewMode && (
-                                <button
-                                    type="button"
-                                    onClick={addField}
-                                    className="flex items-center gap-2 px-4 py-2 bg-primary-600 text-white rounded hover:bg-primary-700 text-sm"
-                                >
-                                    <MdAdd className="w-4 h-4" />
-                                    {t('join_request_forms.add_field')}
-                                </button>
+                                <div className="flex justify-end">
+                                    <button
+                                        type="button"
+                                        onClick={addField}
+                                        className="flex items-center gap-2 px-4 py-2 bg-primary-600 text-white rounded hover:bg-primary-700 text-sm"
+                                    >
+                                        <MdAdd className="w-4 h-4" />
+                                        {t('join_request_forms.add_field')}
+                                    </button>
+                                </div>
                             )}
-                        </div>
 
-                        {fields.length === 0 && !viewMode && (
-                            <p className="text-sm text-gray-500 italic">
-                                {t('join_request_forms.no_fields')}
-                            </p>
-                        )}
+                            {fields.length === 0 && !viewMode && (
+                                <p className="text-sm text-gray-500 italic">
+                                    {t('join_request_forms.no_fields')}
+                                </p>
+                            )}
 
-                        <div className="space-y-4">
-                            {fields.map((field, index) => (
-                                <div key={`field-${index}`} className="border rounded-lg p-4 space-y-3 bg-gray-50">
-                                    <div className="flex justify-between items-center mb-2">
-                                        <span className="font-medium text-gray-700">
-                                            {t('join_request_forms.field')} {index + 1}
+                            <div className="space-y-4">
+                            {sortedTopLevelFields.map(({ field, originalIndex }, displayIndex) => {
+                                const index = originalIndex;
+                                const isGroup = field?.type === 'group' && Array.isArray(field?.fields);
+                                const nestedFields = isGroup ? (field.fields || []).sort((a, b) => (a.order ?? 999) - (b.order ?? 999)) : [];
+                                const isDragged = canReorder && draggedIndex === displayIndex;
+                                const isDragOver = canReorder && dragOverIndex === displayIndex;
+                                const fieldTitle = `${t('join_request_forms.field')} ${(field.order ?? displayIndex + 1)} — ${getFieldLabel(field) || field.key || t('validation.field_key.label')}`;
+                                return (
+                                <div
+                                    key={`field-${index}`}
+                                    className={`flex items-stretch gap-0 ${isDragged ? 'opacity-50' : ''} ${isDragOver ? 'ring-2 ring-primary-500 ring-offset-1 rounded-lg' : ''}`}
+                                    {...(canReorder && {
+                                        draggable: true,
+                                        onDragStart: (e) => handleDragStart(e, displayIndex),
+                                        onDragOver: (e) => handleDragOver(e, displayIndex),
+                                        onDragLeave: handleDragLeave,
+                                        onDrop: (e) => handleDrop(e, displayIndex),
+                                        onDragEnd: handleDragEnd
+                                    })}
+                                >
+                                    {canReorder && (
+                                        <span
+                                            className="flex items-center px-2 bg-gray-100 border border-gray-200 border-r-0 rounded-l-lg cursor-move self-stretch"
+                                            title={t('common.drag_to_reorder')}
+                                        >
+                                            <MdDragIndicator className="w-5 h-5 text-gray-400" />
                                         </span>
-                                        {!viewMode && (
-                                            <button
-                                                type="button"
-                                                onClick={() => removeField(index)}
-                                                className="flex items-center gap-1 text-red-600 hover:text-red-800 font-semibold text-sm"
-                                            >
-                                                <MdDelete className="w-4 h-4" />
-                                                {t('common.remove')}
-                                            </button>
-                                        )}
-                                    </div>
-
+                                    )}
+                                    <div className="flex-1 min-w-0">
+                                        <Accordion
+                                            title={fieldTitle}
+                                            headerRight={!viewMode && (
+                                                <button
+                                                    type="button"
+                                                    onClick={(e) => { e.stopPropagation(); removeField(index); }}
+                                                    className="flex items-center gap-1 text-red-600 hover:text-red-800 font-semibold text-sm"
+                                                >
+                                                    <MdDelete className="w-4 h-4" />
+                                                    {t('common.remove')}
+                                                </button>
+                                            )}
+                                            open={openedFieldIndices.has(index)}
+                                            onToggle={() => toggleFieldAccordion(index)}
+                                        >
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                                         {/* Field Key */}
                                         <div>
@@ -308,10 +475,44 @@ export default function FormJoinRequestForm({
                                             disabled={viewMode}
                                         />
                                     </div>
+
+                                    {/* Nested (group) fields reorder */}
+                                    {isGroup && nestedFields.length > 0 && (
+                                        <div className="border-t pt-3 mt-3">
+                                            <p className="text-sm font-medium text-gray-600 mb-2">{t('join_request_forms.nested_fields_order')}</p>
+                                            <div className="space-y-2">
+                                                {nestedFields.map((nestedField, nestedIndex) => {
+                                                    const isNestedDragged = canReorder && draggedNested?.parentKey === field.key && draggedNested?.nestedIndex === nestedIndex;
+                                                    const isNestedDragOver = canReorder && dragOverNested?.parentKey === field.key && dragOverNested?.nestedIndex === nestedIndex;
+                                                    return (
+                                                        <div
+                                                            key={nestedField.key ?? nestedIndex}
+                                                            className={`flex items-center gap-2 py-2 px-3 rounded border bg-white ${isNestedDragged ? 'opacity-50' : ''} ${isNestedDragOver ? 'border-primary-500 bg-primary-50' : ''}`}
+                                                            {...(canReorder && {
+                                                                draggable: true,
+                                                                onDragStart: (e) => nestedDragStart(e, field.key, nestedIndex),
+                                                                onDragOver: (e) => nestedDragOver(e, field.key, nestedIndex),
+                                                                onDragLeave: nestedDragLeave,
+                                                                onDrop: (e) => nestedDrop(e, field.key, nestedIndex),
+                                                                onDragEnd: nestedDragEnd
+                                                            })}
+                                                        >
+                                                            {canReorder && <MdDragIndicator className="w-4 h-4 text-gray-400 flex-shrink-0 cursor-move" />}
+                                                            <span className="text-sm text-gray-700">{(nestedField.order ?? nestedIndex + 1)}. {getFieldLabel(nestedField) || nestedField.key}</span>
+                                                        </div>
+                                                    );
+                                                })}
+                                            </div>
+                                        </div>
+                                    )}
+                                        </Accordion>
+                                    </div>
                                 </div>
-                            ))}
+                                );
+                            })}
+                            </div>
                         </div>
-                    </div>
+                    </Accordion>
                 </div>
             </ModalContent>
             {!viewMode && (

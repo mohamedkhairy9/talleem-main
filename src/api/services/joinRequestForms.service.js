@@ -20,6 +20,10 @@ export const joinRequestFormsService = {
 
     deleteJoinRequestForm: async id => {
         return await axiosInstance.delete(API_URLS.JOIN_REQUEST_FORMS.DELETE(id));
+    },
+
+    reorderFields: async (id, payload) => {
+        return await axiosInstance.post(API_URLS.JOIN_REQUEST_FORMS.REORDER_FIELDS(id), payload);
     }
 };
 

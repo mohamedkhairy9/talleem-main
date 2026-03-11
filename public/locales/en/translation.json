@@ -999,7 +999,8 @@
         "upload": "Upload",
         "view_page": "View full page",
         "invalid_phase": "Invalid phase.",
-        "phase_not_found": "Phase not found."
+        "phase_not_found": "Phase not found.",
+        "drag_to_reorder": "Drag to reorder"
     },
     "activity_logs": {
         "view_title": "Activity Log Details",
@@ -1641,7 +1642,8 @@
         "form_fields": "Form Fields",
         "add_field": "Add Field",
         "field": "Field",
-        "no_fields": "No fields added yet. Click 'Add Field' to start building your form."
+        "no_fields": "No fields added yet. Click 'Add Field' to start building your form.",
+        "nested_fields_order": "Order of fields in this group"
     },
     "join_requests": {
         "view": "View Join Request",

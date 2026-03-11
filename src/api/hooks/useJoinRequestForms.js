@@ -45,3 +45,10 @@ export const useDeleteJoinRequestFormMutation = () => {
         // Query invalidation is handled automatically by useCustomMutation via queryKeys
     });
 };
+
+export const useReorderJoinRequestFormFieldsMutation = () => {
+    return useCustomMutation({
+        mutationFn: ({ id, payload }) => joinRequestFormsService.reorderFields(id, payload),
+        queryKeys: [API_KEYS.JOIN_REQUEST_FORMS]
+    });
+};
