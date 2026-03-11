@@ -68,18 +68,17 @@ export const warningsSchema = yup.object({
     date: yup
         .string()
         .required(t('validation.required'))
-        .test('is-today-or-future', t('validation.date_must_be_today_or_future'), function(value) {
+        .test('is-today-or-past', t('validation.date_must_be_today_or_past'), function(value) {
             if (!value) return false;
-            
+
             const selectedDate = new Date(value);
             const today = new Date();
-            
-            // تصفير الوقت للمقارنة بالتاريخ فقط
+
             today.setHours(0, 0, 0, 0);
             selectedDate.setHours(0, 0, 0, 0);
-            
-            // التاريخ يجب أن يكون اليوم أو في المستقبل
-            return selectedDate >= today;
+
+            // Allow only today or past; no future dates
+            return selectedDate <= today;
         }),
     
     note: yup.string().nullable(),

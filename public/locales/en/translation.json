@@ -302,6 +302,7 @@
             "placeholder": "Enter notes"
         },
         "date_must_be_today_or_future": "Date must be today or in the future",
+        "date_must_be_today_or_past": "Date must be today or in the past (no future dates)",
         "dashboards": {
             "label": "Dashboards",
             "placeholder": "Select dashboards",

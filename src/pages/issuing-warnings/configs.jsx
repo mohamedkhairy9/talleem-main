@@ -121,8 +121,7 @@ export const warningsFields = [
         type: 'date',
         placeholder: 'validation.warning_date.placeholder',
         editMode: true,
-        viewMode: true,
-        minDate: new Date().toISOString().split('T')[0] 
+        viewMode: true
     },
     {
         name: 'note',

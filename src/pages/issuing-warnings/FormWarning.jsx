@@ -212,6 +212,7 @@ export default function FormWarning({
                                       : field.name === 'student_id' || field.name === 'teacher_id'
                                         ? selectedEntityId
                                         : '';
+                            const dateMaxToday = field.name === 'date' ? new Date().toISOString().split('T')[0] : undefined;
                             return (
                                 <InputRFH
                                     key={`${field.name}-${viewMode ? (oldData?.id ?? 'view') : 'form'}-${asyncRemountKey ?? ''}`}
@@ -236,6 +237,7 @@ export default function FormWarning({
                                     oldData={oldData}
                                     defaultValue={defaultValue}
                                     min={field.minDate}
+                                    max={dateMaxToday}
                                     required={isFieldRequired(schema, field.name)}
                                 />
                             );

@@ -295,6 +295,7 @@
             "placeholder": "أدخل الملاحظات"
         },
         "date_must_be_today_or_future": "التاريخ يجب أن يكون اليوم أو في المستقبل",
+        "date_must_be_today_or_past": "التاريخ يجب أن يكون اليوم أو في الماضي (لا تواريخ مستقبلية)",
         "dashboards": {
             "label": "لوحات التحكم",
             "placeholder": "اختر لوحات التحكم",
