@@ -182,9 +182,10 @@ export function shouldUseAsyncSelect(fieldName) {
     return !!FIELD_TO_SERVICE_MAP[fieldName];
 }
 
-/** Params that must be present before calling the list API (avoids loading "all" when filter is missing) */
+/** Params that must be present before calling the list API (avoids loading "all" when filter is missing).
+ * entity_id: only branch_id required so employee form (branch-only) gets paginated list; teacher/entity-manager pass main_program_id too. */
 const REQUIRED_PARAM_KEYS_BY_FIELD = {
-    entity_id: ['main_program_id', 'branch_id'],
+    entity_id: ['branch_id'],
     student_id: ['entity_id'],
     teacher_id: ['entity_id'],
     warning_reason_id: ['main_program_id']

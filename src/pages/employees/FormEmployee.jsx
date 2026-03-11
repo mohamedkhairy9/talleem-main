@@ -11,8 +11,6 @@ import { onlyDate } from '@/utils/helpers/global.fns';
 import ModalContent from '@/components/common/form/ModalContent';
 import ModalFooter from '@/components/common/form/ModalFooter';
 import { isFieldRequired } from '@/utils/helpers/schemaHelpers';
-import { useEntitiesQuery } from '@/api/hooks/useEntities';
-import { allData } from '@/utils/constants/global.constants';
 import useLocale from '@/utils/hooks/global/useLocale';
 import i18next from 'i18next';
 
@@ -88,25 +86,10 @@ export default function FormEmployee({
         return options.branch_id.filter(branch => branch.city?.id === Number(cityId));
     }, [cityId, options.branch_id]);
 
-    // Fetch entities dynamically based on selected branch
-    const { data: entitiesData, isLoading: entitiesLoading } = useEntitiesQuery(
-        {
-            ...allData,
-            branch_id: branchId
-        },
-        {
-            enabled: !!branchId
-        }
-    );
-
-    // Get entities from the dynamic query
-    const entities = useMemo(() => entitiesData?.data || [], [entitiesData?.data]);
-
     const enhancedOptions = useMemo(() => ({
         ...options,
-        branch_id: filteredBranches,
-        entity_id: entities
-    }), [options, filteredBranches, entities]);
+        branch_id: filteredBranches
+    }), [options, filteredBranches]);
 
     useEffect(() => {
         if ((cityId && cityId != oldData?.city_id) || !oldData?.city_id) {
@@ -237,6 +220,7 @@ export default function FormEmployee({
 
         return (
             <InputRFH
+                key={fieldName === 'entity_id' ? `entity_id-${branchId ?? 'no-branch'}` : fieldName}
                 p="px-3 py-3"
                 control={control}
                 register={register}
@@ -247,7 +231,10 @@ export default function FormEmployee({
                 options={generateOptions(enhancedOptions?.[fieldName] || options?.[fieldName])}
                 defaultValue={defaultValue}
                 required={isFieldRequired(schema, fieldName)}
-                loading={fieldName === 'entity_id' ? entitiesLoading : false}
+                oldData={oldData}
+                fieldParams={{
+                    entity_id: { branch_id: branchId ?? oldData?.branch_id }
+                }}
             />
         );
     };

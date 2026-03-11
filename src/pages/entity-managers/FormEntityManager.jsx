@@ -278,11 +278,12 @@ export default function FormEntityManager({
                         }
 
                         // Entity field: async paginated select filtered by branch + main program (page & per_page always sent)
+                        // Key forces remount when branch/program change so async loadOptions gets fresh params and entity API is called
                         if (field.name === 'entity_id') {
                             const isEntityDisabled = !branchId || !mainProgramId || viewMode || entitiesLoading;
 
                             return (
-                                <div key={field.name}>
+                                <div key={`${field.name}-${branchId ?? ''}-${mainProgramId ?? ''}`}>
                                     <InputRFH
                                         p="px-3 py-3"
                                         control={control}

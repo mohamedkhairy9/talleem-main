@@ -455,8 +455,8 @@ export default function FormTeacher({
     const isFieldDisabled = (fieldName) => {
         if (viewMode) return true;
 
-        // Entity field disabled until branch is selected
-        if (fieldName === 'entity_id' && !branchId) {
+        // Entity field disabled until branch and program are selected
+        if (fieldName === 'entity_id' && (!branchId || !mainProgramId)) {
             return true;
         }
 
@@ -574,12 +574,12 @@ export default function FormTeacher({
                         );
                     }
 
-                    // Special handling for entity field - disabled until branch is selected
+                    // Special handling for entity field - disabled until branch and program are selected; pass fieldParams so async loadOptions calls entity API with branch_id + main_program_id
                     if (field.name === 'entity_id') {
-                        const isEntityDisabled = !branchId || viewMode;
+                        const isEntityDisabled = !branchId || !mainProgramId || viewMode;
 
                         return (
-                            <div key={field.name}>
+                            <div key={`${field.name}-${branchId ?? ''}-${mainProgramId ?? ''}`}>
                                 <InputRFH
                                     p="px-3 py-3"
                                     control={control}
@@ -594,6 +594,13 @@ export default function FormTeacher({
                                     options={generateOptions(enhancedOptions[field.name] || [])}
                                     defaultValue={defaultValues[field.name] || field.defaultValue}
                                     required={isFieldRequired(schema, field.name)}
+                                    oldData={oldData}
+                                    fieldParams={{
+                                        entity_id: {
+                                            branch_id: branchId ?? oldData?.branch_id,
+                                            main_program_id: mainProgramId ?? oldData?.main_program_id
+                                        }
+                                    }}
                                 />
                             </div>
                         );
