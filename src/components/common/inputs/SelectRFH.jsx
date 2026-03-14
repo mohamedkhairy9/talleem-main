@@ -46,29 +46,42 @@ function AsyncSelect({
 }) {
     const [selected, setSelected] = useState(null);
 
-    // Resolve the displayed option when the stored value (an ID) changes
+    // Resolve the displayed option when the stored value (an ID or array of IDs) changes
     useEffect(() => {
-        const id = field.value ?? defaultValue;
-        if (id == null || id === '') {
+        const raw = field.value ?? defaultValue;
+        if (raw == null || raw === '') {
             setSelected(null);
             return;
         }
-        // If already showing the correct option, skip
-        if (selected?.value === id || selected?.id === id) return;
+        const ids = Array.isArray(raw) ? raw : [raw];
+        if (ids.length === 0) {
+            setSelected(isMulti ? [] : null);
+            return;
+        }
+        // If already showing the correct option(s), skip
+        const currentIds = Array.isArray(selected)
+            ? selected.map(o => o?.value ?? o?.id).filter(Boolean)
+            : selected != null ? [selected?.value ?? selected?.id] : [];
+        if (ids.length === currentIds.length && ids.every((id, i) => String(currentIds[i]) === String(id))) return;
 
         if (getOptionByValue) {
-            getOptionByValue(id).then(opt => { if (opt) setSelected(opt); }).catch(() => {});
+            Promise.all(ids.map(id => getOptionByValue(id)))
+                .then(opts => {
+                    const resolved = opts.filter(Boolean);
+                    setSelected(isMulti ? resolved : resolved[0] ?? null);
+                })
+                .catch(() => {});
         } else {
-            // Fetch page 1 and look for the id
             loadOptions('', [], { page: 1 })
                 .then(res => {
-                    const found = res?.options?.find(o => o.value === id || o.id === id);
-                    if (found) setSelected(found);
+                    const options = res?.options ?? [];
+                    const resolved = ids.map(id => options.find(o => o.value === id || o.id === id)).filter(Boolean);
+                    setSelected(isMulti ? resolved : resolved[0] ?? null);
                 })
                 .catch(() => {});
         }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [field.value, defaultValue]);
+    }, [field.value, defaultValue, isMulti]);
 
     function handleChange(opt) {
         const value = isMulti

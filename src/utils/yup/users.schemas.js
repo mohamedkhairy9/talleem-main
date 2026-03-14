@@ -32,4 +32,5 @@ export const usersSchema = yup.object().shape({
         .string()
         .required(t('validation.required'))
         .oneOf(['student', 'teacher', 'entity', 'guest', 'employee', 'super-admin', 'parent'], t('validation.user_type.invalid')),
+    role_id: yup.number().integer().nullable(),
 });

@@ -39,7 +39,8 @@ export default function Users() {
         status: item.status,
         user_type: item.user_type,
         branch_id: item.branch?.id,
-        roles: item.roles // Include roles from the response
+        role_id: item.role_id ?? (Array.isArray(item.roles) ? item.roles[0] : undefined),
+        roles: item.roles
     }));
 
     return (
@@ -56,7 +57,7 @@ export default function Users() {
                 toggleModals={toggle}
                 pagination={pagination}
                 setPagination={setter('pagination')}
-                enableAdd={false}
+                enableAdd={true}
                 enableEdit={false}
                 Filters={
                     <Filters filters={filters} handleFilter={handleFilter} />

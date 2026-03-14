@@ -124,13 +124,12 @@ export const usersFields = [
         viewMode: true
     },
     {
-        name: 'roles',
-        label: 'validation.users.roles.label',
+        name: 'role_id',
+        label: 'validation.users.role_id.label',
         type: 'select',
-        placeholder: 'validation.users.roles.placeholder',
-        editMode: false,
-        viewMode: true,
-        isMulti: true
+        placeholder: 'validation.users.role_id.placeholder',
+        editMode: true,
+        viewMode: true
     }
 ];
 

@@ -132,6 +132,11 @@ export const FIELD_TO_SERVICE_MAP = {
         getById: rolesService.getRole,
         serviceName: 'rolesService.getRoles'
     },
+    roles: {
+        service: rolesService.getRoles,
+        getById: rolesService.getRole,
+        serviceName: 'rolesService.getRoles'
+    },
     warning_reason_id: {
         service: warningReasonsService.getWarningReasons,
         getById: warningReasonsService.getWarningReason,
@@ -251,7 +256,9 @@ export function createGetOptionByValueForField(fieldName) {
             const item = await getById(value);
             const data = item?.data ?? item;
             if (!data) return null;
-            const name = data.name?.[lang()] || data.name?.en || data.name?.ar || data.name || data.label || '';
+            const name = data.name?.[lang()] || data.name?.en || data.name?.ar || data.name
+                || data.display_name?.[lang()] || data.display_name?.en || data.display_name?.ar || (typeof data.display_name === 'string' ? data.display_name : '')
+                || data.label || '';
             return {
                 label: name,
                 value: data.id !== undefined ? data.id : data.value,

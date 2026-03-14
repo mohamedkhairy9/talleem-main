@@ -11,6 +11,8 @@ function toOption(item, lang) {
     const label =
         item.name?.[lang] || item.name?.en || item.name?.ar ||
         (typeof item.name === 'string' ? item.name : '') ||
+        item.display_name?.[lang] || item.display_name?.en || item.display_name?.ar ||
+        (typeof item.display_name === 'string' ? item.display_name : '') ||
         item.label || '';
     return { label, value: item.id, id: item.id };
 }
