@@ -1,40 +1,29 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Outlet, useLocation, Navigate } from 'react-router-dom';
-import { useShallow } from 'zustand/react/shallow';
+import { useUserStore } from '@/utils/stores/user.store';
 import Navbar from './Navbar';
 import SideBar from './SideBar';
-import { useUserStore } from '@/utils/stores/user.store';
-import { ROLE_SUPER_ADMIN, ROLE_BRANCH_ADMIN, normalizeRole } from '@/utils/constants/configs';
+import { getRequiredPermissionForPath } from '@/utils/constants/permissions';
 
-// Branch manager can only access home and join requests (not request-types, phases, or join-request-forms).
-const BRANCH_ADMIN_ALLOWED_PATHS = ['/', '/join-requests'];
-
-function isBranchAdminOnly(userRoles) {
-    if (!userRoles?.length) return false;
-    const normalized = userRoles.map(normalizeRole);
-    const isSuperAdmin = normalized.includes(normalizeRole(ROLE_SUPER_ADMIN));
-    const isBranchAdmin = normalized.includes(normalizeRole(ROLE_BRANCH_ADMIN));
-    return isBranchAdmin && !isSuperAdmin;
-}
-
-function isPathAllowedForBranchAdmin(pathname) {
-    if (pathname === '/') return true;
-    return BRANCH_ADMIN_ALLOWED_PATHS.some(p => p !== '/' && pathname.startsWith(p));
-}
+// Access is controlled only by permissions (and super_admin bypass). Branch managers can access any path they have permission for.
 
 export default function Layout() {
     const location = useLocation();
-    // Sidebar/layout: we only use user.roles (not user_type).
-    const userRoles = useUserStore(
-        useShallow(state => {
-            const u = state.user;
-            return u?.roles ?? [];
-        })
-    );
-    const branchAdminOnly = isBranchAdminOnly(userRoles);
-    const pathAllowed = isPathAllowedForBranchAdmin(location.pathname);
+    const user = useUserStore(state => state.user);
 
-    if (branchAdminOnly && !pathAllowed) {
+    // Defer permission check to useEffect so we never redirect on first paint (avoids flash when store is ready after rehydration or navigation)
+    const [permissionDenied, setPermissionDenied] = useState(false);
+    useEffect(() => {
+        const requiredPermission = getRequiredPermissionForPath(location.pathname);
+        if (!requiredPermission || user == null) {
+            setPermissionDenied(false);
+            return;
+        }
+        const hasAccess = useUserStore.getState().can(requiredPermission.resource, requiredPermission.action);
+        setPermissionDenied(!hasAccess);
+    }, [location.pathname, user]);
+
+    if (permissionDenied) {
         return <Navigate to="/" replace />;
     }
 

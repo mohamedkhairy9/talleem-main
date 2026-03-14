@@ -2,7 +2,7 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { HiMenuAlt3, HiX, HiChevronDown } from 'react-icons/hi';
 import Logo from '../common/Logo';
-import { sideMenuTabs, normalizeRole } from '../../utils/constants/configs';
+import { sideMenuTabs, normalizeRole, filterMenuByVisibility, ROLE_SUPER_ADMIN } from '../../utils/constants/configs';
 import useLanguageStore from '../../utils/stores/language.store';
 import useLocale from '../../utils/hooks/global/useLocale';
 import { useShallow } from 'zustand/react/shallow';
@@ -18,24 +18,15 @@ export default function SideBar() {
     const navigate = useNavigate();
     const { isRTL } = useLanguageStore();
     const { t } = useLocale();
-    // We only use user.roles for menu visibility (not user_type).
-    const userRoles = useUserStore(
-        useShallow(state => {
-            const u = state.user;
-            return u?.roles ?? [];
-        })
-    );
+    const userRoles = useUserStore(useShallow(state => state.user?.roles ?? []));
+    const can = useUserStore(state => state.can);
+    const hasRole = useUserStore(state => state.hasRole);
 
     const visibleMenuTabs = useMemo(() => {
+        if (hasRole(ROLE_SUPER_ADMIN)) return sideMenuTabs;
         const normalizedUserRoles = userRoles.map(normalizeRole).filter(Boolean);
-        return sideMenuTabs.filter(tab => {
-            const allowed = tab.allowedRoles;
-            if (!allowed || allowed.length === 0) return true;
-            return allowed.some(allowedRole =>
-                normalizedUserRoles.includes(normalizeRole(allowedRole))
-            );
-        });
-    }, [userRoles]);
+        return filterMenuByVisibility(sideMenuTabs, normalizedUserRoles, can);
+    }, [userRoles, can, hasRole]);
 
     useEffect(() => {
         const handleResize = () => {
@@ -326,11 +317,13 @@ export default function SideBar() {
                         return (
                             <div key={index} className="space-y-1 relative">
                                 <button
-                                    onClick={e =>
-                                        hasSubmenu
-                                            ? toggleSubmenu(index, e)
-                                            : handleNavigation(tab.path)
-                                    }
+                                    onClick={e => {
+                                        if (tab.path) {
+                                            handleNavigation(tab.path);
+                                        } else if (hasSubmenu) {
+                                            toggleSubmenu(index, e);
+                                        }
+                                    }}
                                     className={`
                                         w-full flex items-center gap-1 text-base px-3 py-2.5 rounded-lg transition-all duration-200
                                         group relative
