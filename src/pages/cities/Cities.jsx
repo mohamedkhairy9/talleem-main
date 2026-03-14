@@ -36,6 +36,7 @@ export default function Cities() {
     return (
         <div>
             <Table
+                resource="cities"
                 title={t('table_titles.cities')}
                 refresh={refresh}
                 loading={isLoading}

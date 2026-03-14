@@ -61,6 +61,7 @@ export default function ImportErrors() {
             </div>
 
             <Table
+                resource="import_errors"
                 title={t('table_titles.import_errors')}
                 refresh={refetch}
                 loading={isLoading}

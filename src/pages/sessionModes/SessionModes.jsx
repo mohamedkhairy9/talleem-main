@@ -34,6 +34,7 @@ export default function SessionModes() {
     return (
         <div>
             <Table
+                resource="session_modes"
                 title={t('table_titles.session_modes')}
                 refresh={refresh}
                 loading={isLoading}

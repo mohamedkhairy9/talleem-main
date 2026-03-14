@@ -32,6 +32,7 @@ export default function InspectorAssignments() {
     return (
         <div>
             <Table
+                resource="supervisor_assignments"
                 title={t('table_titles.inspector_assignments')}
                 refresh={refresh}
                 loading={isLoading}

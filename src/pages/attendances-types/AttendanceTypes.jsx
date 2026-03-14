@@ -36,6 +36,7 @@ export default function AttendanceTypes() {
     return (
         <div>
             <Table
+                resource="attendance_types"
                 title={t('table_titles.absences_types')}
                 refresh={refresh}
                 loading={isLoading}

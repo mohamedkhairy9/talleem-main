@@ -27,6 +27,7 @@ export default function QuranParts() {
     return (
         <div>
             <Table
+                resource="quoran_parts"
                 title={t('table_titles.quoran_parts')}
                 refresh={refresh}
                 loading={isLoading}

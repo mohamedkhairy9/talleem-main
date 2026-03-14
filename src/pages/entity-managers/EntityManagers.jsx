@@ -50,6 +50,7 @@ export default function EntityManagers() {
     return (
         <div>
             <Table
+                resource="entity-managers"
                 enableAdd={true}
                 enableDelete={true}
                 title={t('table_titles.entity_managers')}

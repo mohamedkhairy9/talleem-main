@@ -30,6 +30,7 @@ export default function MainPrograms() {
     return (
         <div>
             <Table
+                resource="main_programs"
                 title={t('table_titles.main_programs')}
                 refresh={refresh}
                 loading={isLoading}

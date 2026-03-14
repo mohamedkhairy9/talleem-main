@@ -30,6 +30,7 @@ export default function SessionPeriods() {
     return (
         <div>
             <Table
+                resource="session_periods"
                 title={t('table_titles.session_periods')}
                 refresh={refresh}
                 loading={isLoading}

@@ -202,6 +202,7 @@ export default function Phases() {
             )}
 
             <Table
+                resource="phases"
                 title={t('table_titles.phases')}
                 refresh={refresh}
                 loading={isLoading}

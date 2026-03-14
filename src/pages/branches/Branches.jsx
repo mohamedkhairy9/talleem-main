@@ -37,6 +37,7 @@ export default function Branches() {
     return (
         <div>
             <Table
+                resource="branches"
                 title={t('table_titles.branches')}
                 refresh={refresh}
                 loading={isLoading}

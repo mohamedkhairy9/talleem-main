@@ -45,6 +45,7 @@ export default function Users() {
     return (
         <div>
             <Table
+                resource="users"
                 title={t('table_titles.users')}
                 refresh={refresh}
                 loading={isLoading}

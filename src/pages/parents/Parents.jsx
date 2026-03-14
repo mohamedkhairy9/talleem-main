@@ -32,6 +32,7 @@ export default function Parents() {
     return (
         <div>
             <Table
+                resource="parents"
                 title={t('table_titles.parents')}
                 enableAdd={true}
                 refresh={refresh}

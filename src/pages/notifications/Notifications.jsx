@@ -25,6 +25,7 @@ export default function Notifications() {
     return (
         <div>
             <Table
+                resource="notifications"
                 title={t('table_titles.notifications')}
                 refresh={refresh}
                 loading={isLoading}

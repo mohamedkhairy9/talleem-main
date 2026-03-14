@@ -37,6 +37,7 @@ export default function Nationalities() {
     return (
         <div>
             <Table
+                resource="nationalities"
                 title={t('table_titles.nationalities')}
                 refresh={refresh}
                 loading={isLoading}

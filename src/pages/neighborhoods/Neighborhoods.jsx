@@ -36,6 +36,7 @@ export default function Neighborhoods() {
     return (
         <div>
             <Table
+                resource="neighborhoods"
                 title={t('table_titles.neighborhoods')}
                 refresh={refresh}
                 loading={isLoading}

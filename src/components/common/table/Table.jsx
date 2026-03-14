@@ -45,6 +45,7 @@ import { useTranslation } from 'react-i18next';
 import useLanguageStore from '@/utils/stores/language.store';
 import { FaEye } from 'react-icons/fa';
 import { getObjectName } from '@/utils/helpers/global.fns';
+import Can from '@/components/common/Can';
 
 const columnHelper = createColumnHelper();
 
@@ -85,7 +86,8 @@ const Table = ({
     onDragEnd = null,
     onSaveOrder = null,
     getRowId = null,
-    orderField = 'order'
+    orderField = 'order',
+    resource = null
 }) => {
     // Core state
     const { t } = useTranslation();
@@ -152,7 +154,20 @@ const Table = ({
         size: 120,
         cell: ({ row }) => (
             <div className="flex items-center space-x-1">
-                {enableView && (
+                {enableView && (resource ? (
+                    <Can resource={resource} action="r">
+                        <button
+                            onClick={e => {
+                                e.stopPropagation();
+                                toggleModals?.view(row.original);
+                            }}
+                            className="p-1 text-blue-600 hover:text-blue-800 hover:bg-blue-50 rounded transition-colors"
+                            title={t('table.view')}
+                        >
+                            <FaEye className="w-4 h-4" />
+                        </button>
+                    </Can>
+                ) : (
                     <button
                         onClick={e => {
                             e.stopPropagation();
@@ -163,8 +178,21 @@ const Table = ({
                     >
                         <FaEye className="w-4 h-4" />
                     </button>
-                )}
-                {enableEdit && (
+                ))}
+                {enableEdit && (resource ? (
+                    <Can resource={resource} action="u">
+                        <button
+                            onClick={e => {
+                                e.stopPropagation();
+                                toggleModals?.edit(row.original);
+                            }}
+                            className="p-1 text-primary-600 hover:text-primary-800 hover:bg-primary-50 rounded transition-colors"
+                            title={t('table.edit')}
+                        >
+                            <MdEdit className="w-4 h-4" />
+                        </button>
+                    </Can>
+                ) : (
                     <button
                         onClick={e => {
                             e.stopPropagation();
@@ -175,7 +203,7 @@ const Table = ({
                     >
                         <MdEdit className="w-4 h-4" />
                     </button>
-                )}
+                ))}
                 {enableCopy && (
                     <button
                         onClick={e => {
@@ -194,7 +222,20 @@ const Table = ({
                         <MdContentCopy className="w-4 h-4" />
                     </button>
                 )}
-                {enableDelete && (
+                {enableDelete && (resource ? (
+                    <Can resource={resource} action="d">
+                        <button
+                            onClick={e => {
+                                e.stopPropagation();
+                                toggleModals?.delete(row.original);
+                            }}
+                            className="p-1 text-red-600 hover:text-red-800 hover:bg-red-50 rounded transition-colors"
+                            title={t('table.delete')}
+                        >
+                            <MdDelete className="w-4 h-4" />
+                        </button>
+                    </Can>
+                ) : (
                     <button
                         onClick={e => {
                             e.stopPropagation();
@@ -205,7 +246,7 @@ const Table = ({
                     >
                         <MdDelete className="w-4 h-4" />
                     </button>
-                )}
+                ))}
                 {Actions && (
                     <Actions row={row.original} toggleModals={toggleModals} />
                 )}
@@ -1020,7 +1061,20 @@ const Table = ({
                             {/* Action Buttons */}
                             <div className="flex flex-wrap items-center gap-2">
                                 {/* Add Button */}
-                                {enableAdd && (
+                                {enableAdd && (resource ? (
+                                    <Can resource={resource} action="c">
+                                        <button
+                                            onClick={toggleModals?.add}
+                                            className="flex items-center space-x-1 sm:space-x-2 px-2 sm:px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary transition-colors"
+                                            title={t('table.add_new')}
+                                        >
+                                            <MdAdd className="w-4 h-4 flex-shrink-0" />
+                                            <span className="text-sm font-medium hidden sm:inline">
+                                                {t('table.add_new')}
+                                            </span>
+                                        </button>
+                                    </Can>
+                                ) : (
                                     <button
                                         onClick={toggleModals?.add}
                                         className="flex items-center space-x-1 sm:space-x-2 px-2 sm:px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary transition-colors"
@@ -1031,10 +1085,23 @@ const Table = ({
                                             {t('table.add_new')}
                                         </span>
                                     </button>
-                                )}
+                                ))}
 
                                 {/* Import Button */}
-                                {enableImport && onImport && (
+                                {enableImport && onImport && (resource ? (
+                                    <Can resource={resource} action="im">
+                                        <button
+                                            onClick={onImport}
+                                            className="flex items-center space-x-1 sm:space-x-2 px-2 sm:px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
+                                            title={t('table.import')}
+                                        >
+                                            <MdUpload className="w-4 h-4 flex-shrink-0" />
+                                            <span className="text-sm font-medium hidden sm:inline">
+                                                {t('table.import')}
+                                            </span>
+                                        </button>
+                                    </Can>
+                                ) : (
                                     <button
                                         onClick={onImport}
                                         className="flex items-center space-x-1 sm:space-x-2 px-2 sm:px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
@@ -1045,10 +1112,23 @@ const Table = ({
                                             {t('table.import')}
                                         </span>
                                     </button>
-                                )}
+                                ))}
 
                                 {/* Export Example Button */}
-                                {enableExportExample && onExportExample && (
+                                {enableExportExample && onExportExample && (resource ? (
+                                    <Can resource={resource} action="ex">
+                                        <button
+                                            onClick={onExportExample}
+                                            className="flex items-center space-x-1 sm:space-x-2 px-2 sm:px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                                            title={t('table.download_example')}
+                                        >
+                                            <MdFileDownload className="w-4 h-4 flex-shrink-0" />
+                                            <span className="text-sm font-medium hidden sm:inline">
+                                                {t('table.download_example')}
+                                            </span>
+                                        </button>
+                                    </Can>
+                                ) : (
                                     <button
                                         onClick={onExportExample}
                                         className="flex items-center space-x-1 sm:space-x-2 px-2 sm:px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
@@ -1059,7 +1139,7 @@ const Table = ({
                                             {t('table.download_example')}
                                         </span>
                                     </button>
-                                )}
+                                ))}
 
                                 {/* Column Settings */}
                                 <div className="relative column-settings">

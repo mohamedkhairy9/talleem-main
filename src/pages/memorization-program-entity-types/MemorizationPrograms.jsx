@@ -34,6 +34,7 @@ export default function MemorizationPrograms() {
     return (
         <div>
             <Table
+                resource="memorization_program_entity_types"
                 title={t('table_titles.memorization-program-entity-types')}
                 refresh={refresh}
                 loading={isLoading}

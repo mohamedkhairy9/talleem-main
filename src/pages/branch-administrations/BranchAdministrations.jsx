@@ -36,6 +36,7 @@ export default function BranchAdministrations() {
     return (
         <div>
             <Table
+                resource="branch_administrations"
                 title={t('table_titles.branch_administrations')}
                 refresh={refresh}
                 loading={isLoading}

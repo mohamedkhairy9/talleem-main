@@ -30,6 +30,7 @@ export default function LocationTypes() {
     return (
         <div>
             <Table
+                resource="location_types"
                 title={t('table_titles.location_types')}
                 refresh={refresh}
                 loading={isLoading}

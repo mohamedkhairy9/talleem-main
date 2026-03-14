@@ -31,6 +31,7 @@ export default function ActivityLogs() {
     return (
         <div>
             <Table
+                resource="activity_logs"
                 title={t('table_titles.activity_logs')}
                 refresh={refetch}
                 loading={isLoading}

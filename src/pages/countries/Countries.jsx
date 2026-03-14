@@ -39,6 +39,7 @@ export default function Countries() {
     return (
         <div>
             <Table
+                resource="countries"
                 title={t('table_titles.countries')}
                 refresh={refresh}
                 loading={isLoading}

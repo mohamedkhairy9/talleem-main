@@ -201,6 +201,7 @@ export default function JoinRequests() {
             )}
 
             <Table
+                resource="join_requests"
                 title={tableTitle}
                 refresh={refresh}
                 loading={isLoading}

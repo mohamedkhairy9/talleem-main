@@ -53,6 +53,7 @@ export default function Employees() {
     return (
         <div>
             <Table
+                resource="employees"
                 title={t('table_titles.employees')}
                 refresh={refresh}
                 loading={isLoading}

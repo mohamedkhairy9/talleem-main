@@ -40,6 +40,7 @@ export default function EducationPrograms() {
     return (
         <div>
             <Table
+                resource="education_program_entity_types"
                 title={t('table_titles.education-program-entity-types')}
                 refresh={refresh}
                 loading={isLoading}

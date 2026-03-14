@@ -53,6 +53,7 @@ export default function OnlineAttendances() {
     return (
         <div>
             <Table
+                resource="online-attendances"
                 title={t('table_titles.online_attendances')}
                 refresh={refresh}
                 loading={isLoading}

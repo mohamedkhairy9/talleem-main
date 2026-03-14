@@ -31,6 +31,7 @@ export default function Majors() {
     return (
         <div>
             <Table
+                resource="majors"
                 title={t('table_titles.majors')}
                 refresh={refresh}
                 loading={isLoading}

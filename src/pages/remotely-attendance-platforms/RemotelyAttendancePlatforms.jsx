@@ -30,6 +30,7 @@ export default function RemotelyAttendancePlatforms(){
     return (
         <div>
             <Table
+                resource="remote_attendance_platforms"
                 title={t('table_titles.remotely_attendance_platforms')}
                 refresh={refresh}
                 loading={isLoading}

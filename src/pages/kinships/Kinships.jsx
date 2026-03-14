@@ -31,6 +31,7 @@ export default function Kinships() {
     return (
         <div>
             <Table
+                resource="kinships"
                 title={t('table_titles.kinships')}
                 refresh={refresh}
                 loading={isLoading}

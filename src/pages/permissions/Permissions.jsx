@@ -21,6 +21,7 @@ export default function Permissions() {
     return (
         <div>
             <Table
+                resource="permissions"
                 title={t('table_titles.permissions')}
                 refresh={refresh}
                 loading={isLoading}

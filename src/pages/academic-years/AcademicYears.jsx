@@ -36,6 +36,7 @@ export default function AcademicYears() {
     return (
         <div>
             <Table
+                resource="academic_years"
                 title={t('table_titles.academic_years')}
                 refresh={refresh}
                 loading={isLoading}

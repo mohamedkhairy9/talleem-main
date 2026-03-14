@@ -34,6 +34,7 @@ export default function IssuingWarnings() {
     return (
         <div>
             <Table
+                resource="warnings"
                 title={t('table_titles.warnings')}
                 refresh={refresh}
                 loading={isLoading}

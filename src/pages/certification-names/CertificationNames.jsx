@@ -29,6 +29,7 @@ export default function CertificateNames() {
     return (
         <div>
             <Table
+                resource="certificate_names"
                 title={t('table_titles.certificate_names')}
                 refresh={refresh}
                 loading={isLoading}

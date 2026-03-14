@@ -44,6 +44,7 @@ export default function ExamSegmentsCount() {
     return (
         <div>
             <Table
+                resource="exam_segments"
                 title={t('table_titles.exam_segments_count')}
                 refresh={refresh}
                 loading={isLoading}

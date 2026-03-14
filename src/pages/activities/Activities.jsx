@@ -36,6 +36,7 @@ export default function Activities() {
     return (
         <div>
             <Table
+                resource="activities"
                 title={t('table_titles.activities')}
                 refresh={refresh}
                 loading={isLoading}

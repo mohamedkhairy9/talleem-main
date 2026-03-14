@@ -28,6 +28,7 @@ export default function Specifications() {
     return (
         <div>
             <Table
+                resource="specifications"
                 enableAdd={false}
                 enableEdit={false}
                 enableDelete={false}

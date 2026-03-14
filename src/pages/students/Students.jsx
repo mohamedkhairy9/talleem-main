@@ -82,6 +82,7 @@ export default function Students() {
     return (
         <div>
             <Table
+                resource="students"
                 title={t('table_titles.students')}
                 refresh={refresh}
                 loading={isLoading}

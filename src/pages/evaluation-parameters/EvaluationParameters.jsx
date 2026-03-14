@@ -59,6 +59,7 @@ export default function EvaluationParameters() {
     return (
         <div>
             <Table
+                resource="evaluation_parameters"
                 title={t('table_titles.evaluation_parameters')}
                 refresh={refresh}
                 loading={isLoading}

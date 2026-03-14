@@ -30,6 +30,7 @@ export default function EntityActivities() {
     return (
         <div>
             <Table
+                resource="entity_activities"
                 title={t('table_titles.entity_activities')}
                 refresh={refresh}
                 loading={isLoading}

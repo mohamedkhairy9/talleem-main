@@ -28,6 +28,7 @@ export default function GeneralBanners() {
     return (
         <div>
             <Table
+                resource="banners"
                 title={t('table_titles.general_banners')}
                 refresh={refresh}
                 loading={isLoading}

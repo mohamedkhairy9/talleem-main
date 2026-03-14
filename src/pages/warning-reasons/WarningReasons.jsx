@@ -36,6 +36,7 @@ export default function WarningReasons() {
     return (
         <div>
             <Table
+                resource="warning_reasons"
                 title={t('table_titles.warning_reasons')}
                 refresh={refresh}
                 loading={isLoading}

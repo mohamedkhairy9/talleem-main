@@ -36,6 +36,7 @@ export default function AcademicLevels() {
     return (
         <div>
             <Table
+                resource="academic_levels"
                 title={t('table_titles.academic_levels')}
                 refresh={refresh}
                 loading={isLoading}

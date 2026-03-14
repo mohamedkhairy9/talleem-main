@@ -38,6 +38,7 @@ export default function AcademicQualifications() {
     return (
         <div>
             <Table
+                resource="academic_qualifications"
                 enableAdd={false}
                 enableEdit={false}
                 enableDelete={false}

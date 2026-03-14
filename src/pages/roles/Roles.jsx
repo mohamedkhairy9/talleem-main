@@ -50,6 +50,7 @@ export default function Roles() {
     return (
         <div>
             <Table
+                resource="roles"
                 title={t('table_titles.roles')}
                 refresh={refresh}
                 loading={isLoading}

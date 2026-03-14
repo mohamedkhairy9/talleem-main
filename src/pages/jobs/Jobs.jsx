@@ -30,6 +30,7 @@ export default function Jobs() {
     return (
         <div>
             <Table
+                resource="jobs"
                 title={t('table_titles.jobs')}
                 refresh={refresh}
                 loading={isLoading}

@@ -96,6 +96,7 @@ export default function Entities() {
     return (
         <div>
             <Table
+                resource="entities"
                 title={t('table_titles.entities')}
                 refresh={refresh}
                 loading={isLoading}

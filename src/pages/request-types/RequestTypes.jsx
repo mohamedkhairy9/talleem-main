@@ -50,6 +50,7 @@ export default function RequestTypes() {
     return (
         <div>
             <Table
+                resource="request_types"
                 title={t('table_titles.request_types')}
                 refresh={refresh}
                 loading={isLoading}

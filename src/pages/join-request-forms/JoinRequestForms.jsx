@@ -69,6 +69,7 @@ export default function JoinRequestForms() {
     return (
         <div>
             <Table
+                resource="join_request_forms"
                 title={t('table_titles.join_request_forms')}
                 refresh={refresh}
                 loading={isLoading}
