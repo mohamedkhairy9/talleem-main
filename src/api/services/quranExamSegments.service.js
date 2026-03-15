@@ -13,7 +13,7 @@ const QuranExamSegmentsService = {
      */
     getExamSegmentsByJuz: async (juzNumber) => {
         try {
-            const response = await axiosInstance.get('/quran-exam-segments', {
+            const response = await axiosInstance.get('/suggested-exam-templates', {
                 params: { juz_number: juzNumber }
             });
             return response.data;
@@ -36,7 +36,7 @@ const QuranExamSegmentsService = {
      */
     createOrUpdateExamSegments: async (segmentData) => {
         try {
-            const response = await axiosInstance.post('/quran-exam-segments', segmentData);
+            const response = await axiosInstance.post('/suggested-exam-templates', segmentData);
             return response.data;
         } catch (error) {
             console.error('Error creating/updating exam segments:', error);
@@ -52,7 +52,7 @@ const QuranExamSegmentsService = {
      */
     updateExamSegments: async (segmentId, segmentData) => {
         try {
-            const response = await axiosInstance.put(`/quran-exam-segments/${segmentId}`, segmentData);
+            const response = await axiosInstance.put(`/suggested-exam-templates/${segmentId}`, segmentData);
             return response.data;
         } catch (error) {
             console.error('Error updating exam segments:', error);
@@ -67,7 +67,7 @@ const QuranExamSegmentsService = {
      */
     deleteExamSegments: async (segmentId) => {
         try {
-            const response = await axiosInstance.delete(`/quran-exam-segments/${segmentId}`);
+            const response = await axiosInstance.delete(`/suggested-exam-templates/${segmentId}`);
             return response.data;
         } catch (error) {
             console.error('Error deleting exam segments:', error);

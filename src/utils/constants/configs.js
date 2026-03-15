@@ -156,7 +156,6 @@ export const sideMenuTabs = [
     {
         titleKey: 'sidebar.registration_requests',
         icon: HiDocumentAdd,
-        path: '/join-requests',
         subMenu: [
             {
                 titleKey: 'sidebar.join_requests_settings',
@@ -182,7 +181,6 @@ export const sideMenuTabs = [
     {
         titleKey: 'sidebar.memorization_program_settings',
         icon: HiBookOpen,
-        path: '/session-periods',
         subMenu: [
             { titleKey: 'sidebar.session_periods', path: '/session-periods', icon: VscDebugBreakpointLog, requiredPermission: { resource: 'session_periods', action: 'r' } },
             { titleKey: 'sidebar.academic_levels', path: '/academic-levels', icon: VscDebugBreakpointLog, requiredPermission: { resource: 'academic_levels', action: 'r' } },
