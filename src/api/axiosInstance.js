@@ -11,11 +11,28 @@ const baseURLFront =
     import.meta.env.VITE_API_BASE_URL_FRONT ||
     'https://api-tallam.vocus-dev2.com/api/front';
 
+const paramsSerializer = params => {
+    const searchParams = new URLSearchParams();
+    Object.entries(params || {}).forEach(([key, value]) => {
+        if (Array.isArray(value)) {
+            value.forEach(v => {
+                if (v !== null && v !== undefined && v !== '') {
+                    searchParams.append(key, v);
+                }
+            });
+        } else if (value !== null && value !== undefined && value !== '') {
+            searchParams.append(key, value);
+        }
+    });
+    return searchParams.toString();
+};
+
 export const axiosInstance = axios.create({
     baseURL,
     headers: {
         'Content-Type': 'application/json'
-    }
+    },
+    paramsSerializer
 });
 
 /** True if user has only branch manager role (no super admin). We check only user.roles (not user_type). */
@@ -33,7 +50,8 @@ export const axiosInstanceFront = axios.create({
     baseURL: baseURLFront,
     headers: {
         'Content-Type': 'application/json'
-    }
+    },
+    paramsSerializer
 });
 
 const requestInterceptor = config => {

@@ -83,12 +83,17 @@ export default function FormEmployee({
 
     const [isRolesForced, setIsRolesForced] = useState(false);
     const [isCeoJob, setIsCeoJob] = useState(false);
+    const [isBranchManagerJob, setIsBranchManagerJob] = useState(false);
 
+    // When branch selection changes, clear entities if no branch is selected
     useEffect(() => {
-        if ((branchId && branchId != oldData?.branch_id) || !oldData?.branch_id) {
-            setValue('entity_id', '');
+        const hasBranchSelection = Array.isArray(branchId)
+            ? branchId.length > 0
+            : !!branchId;
+        if (!hasBranchSelection) {
+            setValue('entity_id', []);
         }
-    }, [branchId, oldData?.branch_id, setValue]);
+    }, [branchId, setValue]);
 
     // Auto-set roles based on job selection (supervisor / branch manager / CEO)
     useEffect(() => {
@@ -127,6 +132,7 @@ export default function FormEmployee({
         }
 
         setIsCeoJob(targetKey === 'ceo');
+        setIsBranchManagerJob(targetKey === 'branch_manager');
 
         if (!targetKey) {
             setIsRolesForced(false);
@@ -196,6 +202,11 @@ export default function FormEmployee({
             defaultValue = oldData.roles.map(r =>
                 typeof r === 'object' && r?.name != null ? r.name : r
             );
+        }
+
+        // Normalize default value for multi-select branch field when job is branch manager
+        if (fieldName === 'branch_id' && isBranchManagerJob && defaultValue && !Array.isArray(defaultValue)) {
+            defaultValue = [defaultValue];
         }
 
         // Normalize default value for multi-select entity field
@@ -276,14 +287,27 @@ export default function FormEmployee({
         }
 
         // Determine if field should be disabled based on dependencies
+        const hasBranchSelection = Array.isArray(branchId)
+            ? branchId.length > 0
+            : !!branchId;
         const isFieldDisabled =
             viewMode ||
-            (fieldName === 'entity_id' && !branchId) ||
+            (fieldName === 'entity_id' && !hasBranchSelection) ||
             (fieldName === 'roles' && isRolesForced);
 
         return (
             <InputRFH
-                key={fieldName === 'entity_id' ? `entity_id-${branchId ?? 'no-branch'}` : fieldName}
+                key={
+                    fieldName === 'entity_id'
+                        ? `entity_id-${
+                              hasBranchSelection
+                                  ? Array.isArray(branchId)
+                                      ? branchId.join(',')
+                                      : String(branchId ?? 'none')
+                                  : 'no-branch'
+                          }`
+                        : fieldName
+                }
                 p="px-3 py-3"
                 control={control}
                 register={register}
@@ -291,6 +315,7 @@ export default function FormEmployee({
                 disabled={isFieldDisabled}
                 {...field}
                 name={fieldName}
+                isMulti={fieldName === 'branch_id' ? isBranchManagerJob : field.isMulti}
                 options={generateOptions(options?.[fieldName])}
                 defaultValue={defaultValue}
                 required={
@@ -300,7 +325,15 @@ export default function FormEmployee({
                 }
                 oldData={oldData}
                 fieldParams={{
-                    entity_id: { branch_id: branchId ?? oldData?.branch_id }
+                    entity_id: Array.isArray(branchId)
+                        ? {
+                              // When branch is multi-select (branch manager), send all ids as branches_id[]
+                              branches_id: branchId
+                          }
+                        : {
+                              // Fallback for single-branch selection
+                              branch_id: branchId ?? oldData?.branch_id
+                          }
                 }}
             />
         );

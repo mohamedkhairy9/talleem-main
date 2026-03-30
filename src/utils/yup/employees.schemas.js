@@ -10,7 +10,11 @@ export const employeesSchema = yup.object({
         })
         .required(t('validation.required')),
     job_id: selectSchema,
-    branch_id: optionalSelectSchema,
+    // branch can be single (most jobs) or multi-select (branch manager); allow both shapes
+    branch_id: yup
+        .mixed()
+        .nullable()
+        .optional(),
     entity_id: optionalSelectSchema,
     nationality_id: selectSchema,
     academic_qualification_id: yup.number().nullable().optional().integer(),
