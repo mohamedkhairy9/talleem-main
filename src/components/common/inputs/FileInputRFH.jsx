@@ -13,7 +13,8 @@ export default function FileInputRFH({
     multiple = false,
     defaultValue = [],
     setValue,
-    required = false
+    required = false,
+    hint
 }) {
     const { t } = useLocale();
     const [files, setFiles] = useState([]);
@@ -220,6 +221,9 @@ export default function FileInputRFH({
                     {required && <span className="text-red-500 ml-1">*</span>}
                 </label>
             )}
+            {hint ? (
+                <p className="mb-2 text-xs text-gray-600 leading-relaxed">{hint}</p>
+            ) : null}
 
             <div className="space-y-3">
                 {/* File Input */}

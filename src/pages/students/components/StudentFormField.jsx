@@ -23,7 +23,8 @@ export default function StudentFormField({
     onProfileImageChange,
     isConditionallyRequired,
     oldData,
-    setValue
+    setValue,
+    filesSupportingHint
 }) {
     const { t } = useLocale();
     const lang = i18next.language;
@@ -191,6 +192,7 @@ export default function StudentFormField({
                         defaultValue={oldData?.files || []}
                         setValue={setValue}
                         required={isConditionallyRequired(field)}
+                        hint={field.name === 'files' ? filesSupportingHint : undefined}
                     />
                 )
             ) : (

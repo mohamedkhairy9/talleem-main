@@ -26,6 +26,15 @@ import { countriesService } from '@/api/services/countries.service';
 import { jobsService } from '@/api/services/jobs.service';
 import { kinshipsService } from '@/api/services/kinships.service';
 import { certificateNamesService } from '@/api/services/certificateNames.service';
+import { filterAssignableRoles } from '@/utils/helpers/assignableRoles';
+
+function wrapRolesListResponse(service) {
+    return async params => {
+        const response = await service(params);
+        if (!response?.data || !Array.isArray(response.data)) return response;
+        return { ...response, data: filterAssignableRoles(response.data) };
+    };
+}
 
 /**
  * Maps field names to their corresponding API service methods.
@@ -224,8 +233,13 @@ export function createLoadOptionsForField(fieldName, additionalParams = {}, incl
     const baseFieldName = getBaseFieldName(fieldName);
     const requiredParamKeys = REQUIRED_PARAM_KEYS_BY_FIELD[baseFieldName] || null;
 
+    let serviceFn = fieldService.service;
+    if (baseFieldName === 'role_id' || baseFieldName === 'roles') {
+        serviceFn = wrapRolesListResponse(serviceFn);
+    }
+
     return createAsyncLoadOptionsWithIncluded(
-        fieldService.service,
+        serviceFn,
         additionalParams,
         includeOption,
         null,

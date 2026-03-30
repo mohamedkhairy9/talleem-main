@@ -19,6 +19,7 @@ import {
     filterParentFields,
     prepareSubmissionData
 } from './utils/studentFormHelpers';
+import { useRequiredDocumentsHint } from '@/api/hooks/useRequiredDocumentsHint';
 
 // Helper to extract education entity type data from oldData
 const extractEducationEntityTypeData = (oldData) => {
@@ -123,6 +124,13 @@ export default function FormStudent({
         setValue
     });
 
+    const { data: requiredDocsData } = useRequiredDocumentsHint('student', mainProgramId);
+    const filesSupportingHint = useMemo(() => {
+        const docs = requiredDocsData?.documents;
+        if (!docs?.length) return undefined;
+        return docs.join('، ');
+    }, [requiredDocsData]);
+
     // Enhanced options with dynamic entities and loadOptions
     const enhancedOptions = useMemo(() => ({
         ...options,
@@ -201,6 +209,7 @@ export default function FormStudent({
                             isConditionallyRequired={isConditionallyRequired}
                             oldData={oldData}
                             setValue={setValue}
+                            filesSupportingHint={filesSupportingHint}
                         />
                     ))}
                 </div>

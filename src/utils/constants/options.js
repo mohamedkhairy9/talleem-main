@@ -9,9 +9,9 @@ export const enabledDisabledOptions = [
 ];
 
 export const userTypeOptions = [
-    { label: { ar: 'طالب', en: 'Student' }, value: 'student' },
-    { label: { ar: 'مدرس', en: 'Teacher' }, value: 'teacher' },
-    { label: { ar: 'جهة', en: 'Entity' }, value: 'entity' },
+    // { label: { ar: 'طالب', en: 'Student' }, value: 'student' },
+    // { label: { ar: 'مدرس', en: 'Teacher' }, value: 'teacher' },
+    // { label: { ar: 'جهة', en: 'Entity' }, value: 'entity' },
     { label: { ar: 'ضيف', en: 'Guest' }, value: 'guest' },
     { label: { ar: 'موظف', en: 'Employee' }, value: 'employee' },
     { label: { ar: 'مدير عام', en: 'Super Admin' }, value: 'super-admin' },

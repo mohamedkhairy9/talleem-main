@@ -16,6 +16,7 @@ import { isFieldRequired } from '@/utils/helpers/schemaHelpers';
 import WarningModal from '@/components/common/form/WarningModal';
 import { useEntitiesQuery } from '@/api/hooks/useEntities';
 import { ASYNC_SELECT_PAGE_SIZE } from '@/utils/helpers/asyncSelectHelpers';
+import { useRequiredDocumentsHint } from '@/api/hooks/useRequiredDocumentsHint';
 
 export default function FormEntityManager({
     onClose,
@@ -53,6 +54,13 @@ export default function FormEntityManager({
     const branchId = watch('branch_id');
     const mainProgramId = watch('main_program_id');
     const entityId = watch('entity_id');
+
+    const { data: requiredDocsData } = useRequiredDocumentsHint('entity', mainProgramId);
+    const filesSupportingHint = useMemo(() => {
+        const docs = requiredDocsData?.documents;
+        if (!docs?.length) return undefined;
+        return docs.join('، ');
+    }, [requiredDocsData]);
 
     // Query entities dynamically based on main_program_id and branch_id (with pagination)
     const entitiesQueryParams = useMemo(() => {
@@ -360,6 +368,7 @@ export default function FormEntityManager({
                                             multiple={field.multiple}
                                             defaultValue={oldData?.files || []}
                                             required={isFieldRequired(schema, field.name)}
+                                            hint={field.name === 'files' ? filesSupportingHint : undefined}
                                         />
                                     )
                                 ) : (

@@ -15,6 +15,7 @@ import ModalFooter from '@/components/common/form/ModalFooter';
 import { isFieldRequired } from '@/utils/helpers/schemaHelpers';
 import { errorHandler } from '@/api/handler';
 import ValidationErrorsSummary from '@/pages/students/components/ValidationErrorsSummary';
+import { useRequiredDocumentsHint } from '@/api/hooks/useRequiredDocumentsHint';
 
 // Helper to extract education entity type data from oldData
 const extractEducationEntityTypeData = (oldData) => {
@@ -167,6 +168,12 @@ export default function FormTeacher({
     const educationClassification = watch('education_program_entity_type_classification');
     const entityCategory = watch('entity_category_id');
 
+    const { data: requiredDocsData } = useRequiredDocumentsHint('teacher', mainProgramId);
+    const filesSupportingHint = useMemo(() => {
+        const docs = requiredDocsData?.documents;
+        if (!docs?.length) return undefined;
+        return docs.join('، ');
+    }, [requiredDocsData]);
 
     // Get the selected entity's education_program_entity_type
     const selectedEntityEducationType = useMemo(() => {
@@ -725,6 +732,7 @@ export default function FormTeacher({
                                     defaultValue={oldData?.[field.name] || []}
                                     setValue={setValue}
                                     required={isFieldRequired(schema, field.name)}
+                                    hint={field.name === 'files' ? filesSupportingHint : undefined}
                                 />
                             ) : (
                                 <InputRFH

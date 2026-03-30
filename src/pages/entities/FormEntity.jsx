@@ -20,6 +20,7 @@ import { useQuery } from '@tanstack/react-query';
 import { API_KEYS } from '@/api/endpoints';
 import { isFieldRequired } from '@/utils/helpers/schemaHelpers';
 import { useNeighborhoodsQuery } from '@/api/hooks/useNeighborhoods';
+import { useRequiredDocumentsHint } from '@/api/hooks/useRequiredDocumentsHint';
 
 export default function FormEntity({
     onClose,
@@ -131,6 +132,12 @@ export default function FormEntity({
     const branchId = watch('branch_id');
     const cityId = watch('city_id');
     const mainProgramId = watch('main_program_id');
+    const { data: requiredDocsData } = useRequiredDocumentsHint('entity', mainProgramId);
+    const filesSupportingHint = useMemo(() => {
+        const docs = requiredDocsData?.documents;
+        if (!docs?.length) return undefined;
+        return docs.join('، ');
+    }, [requiredDocsData]);
     const entryType = watch('entry_type');
     const educationClassification = watch(
         'education_program_entity_type_classification'
@@ -451,6 +458,11 @@ export default function FormEntity({
                     defaultValue={defaultValue || []}
                     setValue={setValue}
                     required={isFieldRequired(adjustedSchema, fieldName)}
+                    hint={
+                        fieldName === 'files' || fieldName === 'manager.files'
+                            ? filesSupportingHint
+                            : undefined
+                    }
                 />
             );
         }

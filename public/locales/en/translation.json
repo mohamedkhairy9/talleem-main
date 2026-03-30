@@ -642,6 +642,10 @@
                 "label": "Roles",
                 "placeholder": "Select roles"
             },
+            "role_id": {
+                "label": "Roles",
+                "placeholder": "Select roles"
+            },
             "email": {
                 "label": "Email",
                 "placeholder": "Enter email address"
