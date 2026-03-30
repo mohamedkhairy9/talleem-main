@@ -121,7 +121,8 @@ export const employeesFields = [
         type: 'select',
         placeholder: 'validation.entity_id.placeholder',
         editMode: true,
-        viewMode: true
+        viewMode: true,
+        isMulti: true
     },
     {
         name: 'job_id',

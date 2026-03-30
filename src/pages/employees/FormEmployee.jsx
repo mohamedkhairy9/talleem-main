@@ -1,18 +1,18 @@
 import useRFH from '@/utils/hooks/global/useRFH';
 import { employeesSchema as schema } from '@/utils/yup/employees.schemas';
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { employeesFields } from './configs';
 import InputRFH from '@/components/common/inputs/InputRFH';
 import FileInputRFH from '@/components/common/inputs/FileInputRFH';
 import Btn from '@/components/common/buttons/Btn';
 import { getNestedError } from '@/utils/helpers/getNestedError';
-import { generateOptions } from '@/utils/helpers/global.fns';
-import { onlyDate } from '@/utils/helpers/global.fns';
+import { generateOptions, onlyDate } from '@/utils/helpers/global.fns';
 import ModalContent from '@/components/common/form/ModalContent';
 import ModalFooter from '@/components/common/form/ModalFooter';
 import { isFieldRequired } from '@/utils/helpers/schemaHelpers';
 import useLocale from '@/utils/hooks/global/useLocale';
 import i18next from 'i18next';
+import { normalizeRoleName } from '@/utils/helpers/assignableRoles';
 
 const RELATION_FIELDS_VIEW = [
     'nationality_id',
@@ -79,30 +79,87 @@ export default function FormEmployee({
 
     const cityId = watch('city_id');
     const branchId = watch('branch_id');
+    const jobId = watch('job_id');
 
-    // Filter branches by selected city
-    const filteredBranches = useMemo(() => {
-        if (!cityId || !options.branch_id) return [];
-        return options.branch_id.filter(branch => branch.city?.id === Number(cityId));
-    }, [cityId, options.branch_id]);
-
-    const enhancedOptions = useMemo(() => ({
-        ...options,
-        branch_id: filteredBranches
-    }), [options, filteredBranches]);
-
-    useEffect(() => {
-        if ((cityId && cityId != oldData?.city_id) || !oldData?.city_id) {
-            setValue('branch_id', '');
-            setValue('entity_id', '');
-        }
-    }, [cityId, oldData?.city_id, setValue]);
+    const [isRolesForced, setIsRolesForced] = useState(false);
+    const [isCeoJob, setIsCeoJob] = useState(false);
 
     useEffect(() => {
         if ((branchId && branchId != oldData?.branch_id) || !oldData?.branch_id) {
             setValue('entity_id', '');
         }
     }, [branchId, oldData?.branch_id, setValue]);
+
+    // Auto-set roles based on job selection (supervisor / branch manager / CEO)
+    useEffect(() => {
+        const rolesList = options?.roles || [];
+        const jobsList = options?.job_id || [];
+
+        if (!jobId) {
+            setIsRolesForced(false);
+            return;
+        }
+
+        const job = jobsList.find(j => j.id == jobId);
+        if (!job) {
+            setIsRolesForced(false);
+            return;
+        }
+
+        const rawJobName =
+            job.name?.en ||
+            job.name?.ar ||
+            (typeof job.name === 'string' ? job.name : '') ||
+            job.label?.en ||
+            job.label?.ar ||
+            job.label ||
+            '';
+
+        const jobName = rawJobName.toString().toLowerCase();
+
+        let targetKey = null;
+        if (jobName.includes('supervisor')) {
+            targetKey = 'supervisor';
+        } else if (jobName.includes('branch') && jobName.includes('manager')) {
+            targetKey = 'branch_manager';
+        } else if (jobName.includes('ceo') || jobName.includes('general manager') || jobName.includes('director')) {
+            targetKey = 'ceo';
+        }
+
+        setIsCeoJob(targetKey === 'ceo');
+
+        if (!targetKey) {
+            setIsRolesForced(false);
+            return;
+        }
+
+        const matchRoles = () => {
+            const norm = (n) => normalizeRoleName(n);
+            if (targetKey === 'supervisor') {
+                return rolesList.filter(r => norm(r.name).includes('supervisor'));
+            }
+            if (targetKey === 'branch_manager') {
+                return rolesList.filter(r => {
+                    const n = norm(r.name);
+                    return n.includes('branch') && n.includes('manager');
+                });
+            }
+            if (targetKey === 'ceo') {
+                return rolesList.filter(r => norm(r.name) === 'ceo');
+            }
+            return [];
+        };
+
+        const matching = matchRoles();
+        if (!matching.length) {
+            setIsRolesForced(false);
+            return;
+        }
+
+        const roleIds = matching.map(r => r.id);
+        setValue('roles', roleIds);
+        setIsRolesForced(true);
+    }, [jobId, options?.job_id, options?.roles, setValue]);
 
     function onSubmit(data) {
         // Remove profile_picture if not changed in edit mode
@@ -139,6 +196,11 @@ export default function FormEmployee({
             defaultValue = oldData.roles.map(r =>
                 typeof r === 'object' && r?.name != null ? r.name : r
             );
+        }
+
+        // Normalize default value for multi-select entity field
+        if (fieldName === 'entity_id' && defaultValue && !Array.isArray(defaultValue)) {
+            defaultValue = [defaultValue];
         }
 
         // View mode: render relation fields as styled name-only fields (from list row data)
@@ -214,9 +276,10 @@ export default function FormEmployee({
         }
 
         // Determine if field should be disabled based on dependencies
-        const isFieldDisabled = viewMode || 
-            (fieldName === 'branch_id' && !cityId) ||
-            (fieldName === 'entity_id' && !branchId);
+        const isFieldDisabled =
+            viewMode ||
+            (fieldName === 'entity_id' && !branchId) ||
+            (fieldName === 'roles' && isRolesForced);
 
         return (
             <InputRFH
@@ -228,9 +291,13 @@ export default function FormEmployee({
                 disabled={isFieldDisabled}
                 {...field}
                 name={fieldName}
-                options={generateOptions(enhancedOptions?.[fieldName] || options?.[fieldName])}
+                options={generateOptions(options?.[fieldName])}
                 defaultValue={defaultValue}
-                required={isFieldRequired(schema, fieldName)}
+                required={
+                    fieldName === 'entity_id'
+                        ? !isCeoJob
+                        : isFieldRequired(schema, fieldName)
+                }
                 oldData={oldData}
                 fieldParams={{
                     entity_id: { branch_id: branchId ?? oldData?.branch_id }
