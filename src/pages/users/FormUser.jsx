@@ -23,7 +23,11 @@ const generateBilingualUserTypeOptions = (options = []) => {
 function useResolvedRoleId(oldData) {
     const { data: rolesData } = useRolesQuery({ per_page: 100 });
     const resolvedRoleId = React.useMemo(() => {
-        if (oldData?.role_id != null && oldData.role_id !== '') return Number(oldData.role_id);
+        // role_id may come as a number OR a role name (string). Only accept numeric.
+        if (oldData?.role_id != null && oldData.role_id !== '') {
+            if (typeof oldData.role_id === 'number') return Number(oldData.role_id);
+            if (typeof oldData.role_id === 'string' && /^\d+$/.test(oldData.role_id)) return Number(oldData.role_id);
+        }
         const first = oldData?.roles?.[0];
         if (first == null) return undefined;
         if (typeof first === 'number' || (typeof first === 'string' && /^\d+$/.test(first))) return Number(first);
@@ -35,6 +39,20 @@ function useResolvedRoleId(oldData) {
     }, [oldData?.role_id, oldData?.roles, rolesData?.data]);
     const rolesReady = rolesData !== undefined;
     return { resolvedRoleId, rolesReady };
+}
+
+function ensureCurrentUserTypeOption(options = [], currentValue) {
+    if (!currentValue) return options;
+    const exists = options.some(opt => opt?.value === currentValue);
+    if (exists) return options;
+    // Add current value as a display-only fallback so edit/view doesn't render empty
+    return [
+        ...options,
+        {
+            label: { en: String(currentValue), ar: String(currentValue) },
+            value: currentValue
+        }
+    ];
 }
 
 export default function FormUser({
@@ -57,6 +75,11 @@ export default function FormUser({
     // When roles API has loaded and we had role in oldData (role_id or roles[0]), set form value
     useEffect(() => {
         if (!rolesReady || roleSyncedRef.current) return;
+
+        // If we couldn't resolve yet (e.g. oldData.roles has a name and roles list not matched),
+        // don't overwrite the current value with null; wait for a resolvable id.
+        if (resolvedRoleId === undefined) return;
+
         setValue('role_id', resolvedRoleId ?? null);
         roleSyncedRef.current = true;
     }, [rolesReady, resolvedRoleId, setValue]);
@@ -69,6 +92,11 @@ export default function FormUser({
             current_app_locale: 'en',
             status: data.status ? 1 : 0
         };
+
+        // Edit mode: password is optional; don't send empty password
+        if (editMode && (!submitData.password || submitData.password.trim() === '')) {
+            delete submitData.password;
+        }
 
         mutate(submitData, {
             onSuccess: () => {
@@ -114,7 +142,9 @@ export default function FormUser({
                                     isMulti={field.isMulti}
                                     options={
                                         field.name === 'user_type'
-                                            ? generateBilingualUserTypeOptions(options?.[field.name])
+                                            ? generateBilingualUserTypeOptions(
+                                                  ensureCurrentUserTypeOption(options?.[field.name] ?? [], oldData?.user_type)
+                                              )
                                             : field.name === 'role_id'
                                             ? undefined
                                             : generateOptions(options?.[field.name])

@@ -266,6 +266,8 @@ export function createGetOptionByValueForField(fieldName) {
             (Array.isArray(value) && value.length === 0)) return null;
         // For multi-select fields, value is an array; getById expects a single id - don't call with array
         if (Array.isArray(value)) return null;
+        // Many endpoints (like roles) expect numeric IDs; avoid calling GET /resource/{name}
+        if (typeof value === 'string' && !/^\d+$/.test(value.trim())) return null;
         try {
             const item = await getById(value);
             const data = item?.data ?? item;

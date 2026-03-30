@@ -39,7 +39,12 @@ export default function Users() {
         status: item.status,
         user_type: item.user_type,
         branch_id: item.branch?.id,
-        role_id: item.role_id ?? (Array.isArray(item.roles) ? item.roles[0] : undefined),
+        // role_id must be numeric; if API sends role names in roles[], don't pass them as role_id
+        role_id:
+            item.role_id ??
+            (Array.isArray(item.roles) && typeof item.roles[0] === 'number'
+                ? item.roles[0]
+                : undefined),
         roles: item.roles
     }));
 
@@ -58,7 +63,7 @@ export default function Users() {
                 pagination={pagination}
                 setPagination={setter('pagination')}
                 enableAdd={true}
-                enableEdit={false}
+                enableEdit={true}
                 Filters={
                     <Filters filters={filters} handleFilter={handleFilter} />
                 }
