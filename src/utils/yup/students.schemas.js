@@ -123,7 +123,7 @@ export const studentsSchema = yup.object({
     national_id: yup
         .string()
         .required(t('validation.required'))
-        .matches(/^[0-9]{11}$/, t('validation.national_id.exact_11_digits')),
+        .matches(/^[0-9]+$/, t('validation.national_id.numeric')),
     
     nationality_id: yup
         .number()

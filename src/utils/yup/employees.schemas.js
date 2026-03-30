@@ -29,9 +29,7 @@ export const employeesSchema = yup.object({
     national_id: yup
         .string()
         .required(t('validation.required'))
-        .matches(/^[0-9]+$/, t('validation.national_id.numeric'))
-        .min(10, t('validation.national_id.min'))
-        .max(20, t('validation.national_id.max')),
+        .matches(/^[0-9]+$/, t('validation.national_id.numeric')),
     phone: yup
         .string()
         .required(t('validation.required'))
