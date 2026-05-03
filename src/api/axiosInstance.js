@@ -5,11 +5,11 @@ import { ROLE_SUPER_ADMIN, ROLE_BRANCH_ADMIN, normalizeRole } from '../utils/con
 
 const baseURL =
     import.meta.env.VITE_API_BASE_URL ||
-    'https://api-tallam.vocus-dev2.com/api/dashboard';
+    'https://api-tallam.vocus-dev2.com/api/v1/dashboard';
 
 const baseURLFront =
     import.meta.env.VITE_API_BASE_URL_FRONT ||
-    'https://api-tallam.vocus-dev2.com/api/front';
+    'https://api-tallam.vocus-dev2.com/api/v1/front';
 
 const paramsSerializer = params => {
     const searchParams = new URLSearchParams();
