@@ -739,7 +739,7 @@
             "integer": "يجب اختيار البرنامج الرئيسي",
             "min": "يرجى اختيار برنامج رئيسي صحيح"
         },
-        "licence_number": {
+        "license_number": {
             "label": "رقم الرخصة",
             "placeholder": "أدخل رقم الرخصة",
             "min": "يجب أن يكون رقم الرخصة على الأقل 3 أحرف",
@@ -1533,7 +1533,7 @@
         "national_id": "رقم الهوية",
         "years_of_experience": "سنوات الخبرة",
         "date_of_birth": "تاريخ الميلاد",
-        "licence_number": "رقم الرخصة",
+        "license_number": "رقم الرخصة",
         "gender": "الجنس",
         "entity": "الجهة",
         "nationality": "الجنسية",

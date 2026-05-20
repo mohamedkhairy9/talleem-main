@@ -1,7 +1,7 @@
 /**
  * Roles excluded from user/employee assignment pickers (by API `name`).
  */
-const EXCLUDED_ROLE_NAMES = new Set(['teacher', 'entity manager', 'student']);
+const EXCLUDED_ROLE_NAMES = new Set(['teacher', 'entity manager', 'student', 'parent']);
 
 export function normalizeRoleName(name) {
     return (name ?? '').toString().trim().toLowerCase();

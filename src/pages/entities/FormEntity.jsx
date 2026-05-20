@@ -511,8 +511,11 @@ export default function FormEntity({
         // Check if field has disabled property
         const isFieldDisabled = field.disabled || viewMode || isActivityFieldDisabled || isCityFieldDisabled || isNeighborhoodFieldDisabled || isStatusFieldDisabled;
 
-        // activity_ids: use static options from our useQuery (with main_program_id), never async /activities list
-        const forceSyncActivityIds = fieldName === 'activity_ids';
+        // Use sync selects when options are intentionally pre-filtered in this form.
+        const forceSyncField =
+            fieldName === 'activity_ids' ||
+            fieldName === 'city_id' ||
+            fieldName === 'neighborhood_id';
 
         return (
             <InputRFH
@@ -527,7 +530,7 @@ export default function FormEntity({
                 defaultValue={defaultValue}
                 required={isFieldRequired(adjustedSchema, fieldName)}
                 oldData={oldData}
-                isAsync={forceSyncActivityIds ? false : field.isAsync}
+                isAsync={forceSyncField ? false : field.isAsync}
             />
         );
     };

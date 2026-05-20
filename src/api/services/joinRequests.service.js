@@ -58,10 +58,18 @@ joinRequestsClient.interceptors.response.use(
 );
 
 export const joinRequestsService = {
-    getJoinRequests: params => {
+    getJoinRequests: (params, options = {}) => {
         const branchManager = isBranchManagerOnly();
+        const mode = options.mode || 'auto';
         const finalParams = branchManager ? stripEmptyParams(params) : params ?? {};
-        const listPath = branchManager ? `${API_URLS.JOIN_REQUESTS.LIST}/pending` : API_URLS.JOIN_REQUESTS.LIST;
+        const listPath =
+            mode === 'pending'
+                ? `${API_URLS.JOIN_REQUESTS.LIST}/pending`
+                : mode === 'all'
+                    ? API_URLS.JOIN_REQUESTS.LIST
+                    : branchManager
+                        ? `${API_URLS.JOIN_REQUESTS.LIST}/pending`
+                        : API_URLS.JOIN_REQUESTS.LIST;
         const client = branchManager ? joinRequestsClient : axiosInstance;
         return client.get(listPath, { params: finalParams });
     },

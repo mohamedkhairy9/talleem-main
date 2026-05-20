@@ -727,7 +727,7 @@
             "integer": "Main program must be selected",
             "min": "Please select a valid main program"
         },
-        "licence_number": {
+        "license_number": {
             "label": "Licence Number",
             "placeholder": "Enter licence number",
             "min": "Licence number must be at least 3 characters",
@@ -1562,7 +1562,7 @@
         "national_id": "National ID",
         "years_of_experience": "Years of Experience",
         "date_of_birth": "Date of Birth",
-        "licence_number": "Licence Number",
+        "license_number": "Licence Number",
         "main_program": "Main Program",
         "program": "Program",
         "gender": "Gender",

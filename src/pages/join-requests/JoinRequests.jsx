@@ -139,7 +139,23 @@ export default function JoinRequests() {
 
     const { data, isLoading, refresh } = useJoinRequestsQuery(effectiveFilters, {
         enabled: shouldFetchJoinRequests
+    }, {
+        mode: 'all'
     });
+    const pendingLookupFilters = useMemo(() => ({
+        search: effectiveFilters.search,
+        request_type_id: effectiveFilters.request_type_id,
+        per_page: 1000
+    }), [effectiveFilters.search, effectiveFilters.request_type_id]);
+    const { data: pendingData } = useJoinRequestsQuery(pendingLookupFilters, {
+        enabled: shouldFetchJoinRequests && branchManagerOnly
+    }, {
+        mode: 'pending'
+    });
+    const actionableRequestIds = useMemo(() => {
+        if (!branchManagerOnly) return null;
+        return new Set((pendingData?.data || []).map((item) => item.id));
+    }, [branchManagerOnly, pendingData?.data]);
 
     const requestTypesMap = useMemo(() => {
         const map = {};
@@ -222,6 +238,7 @@ export default function JoinRequests() {
                 <ViewJoinRequest
                     onClose={toggle.view}
                     oldData={getOriginalObject(isOpen.view, data?.data || [])}
+                    isReadOnly={branchManagerOnly && !actionableRequestIds?.has(isOpen.view?.id)}
                 />
             )}
         </div>

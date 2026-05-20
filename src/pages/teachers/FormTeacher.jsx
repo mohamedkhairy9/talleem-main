@@ -408,7 +408,7 @@ export default function FormTeacher({
 
         // If entry_type is 'new_with_approval', remove all license-related fields from payload
         if (submitData.entry_type === 'new_with_approval') {
-            delete submitData.licence_number;
+            delete submitData.license_number;
             delete submitData.license_image;
             delete submitData.license_issue_date;
         }

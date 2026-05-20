@@ -4,10 +4,10 @@ import { API_KEYS } from '../endpoints';
 import useCustomQuery from '../../utils/hooks/global/useCustomQuery';
 import useCustomMutation from '../../utils/hooks/global/useCustomMutation';
 
-export const useJoinRequestsQuery = (params = {}, options = {}) => {
+export const useJoinRequestsQuery = (params = {}, options = {}, requestOptions = {}) => {
     return useCustomQuery({
-        queryKey: [API_KEYS.JOIN_REQUESTS, params],
-        queryFn: () => joinRequestsService.getJoinRequests(params),
+        queryKey: [API_KEYS.JOIN_REQUESTS, params, requestOptions.mode || 'auto'],
+        queryFn: () => joinRequestsService.getJoinRequests(params, requestOptions),
         ...options
     });
 };

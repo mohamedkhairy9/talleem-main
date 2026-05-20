@@ -82,18 +82,44 @@ export default function FormEmployee({
     const jobId = watch('job_id');
 
     const [isRolesForced, setIsRolesForced] = useState(false);
+    const [isSupervisorJob, setIsSupervisorJob] = useState(false);
     const [isCeoJob, setIsCeoJob] = useState(false);
     const [isBranchManagerJob, setIsBranchManagerJob] = useState(false);
+    const isMultiBranchJob = isSupervisorJob || isBranchManagerJob;
+
+    const getSearchableName = value => {
+        if (!value) return '';
+        if (typeof value === 'string') return value.toLowerCase();
+        if (typeof value === 'object') {
+            return [
+                value.en,
+                value.ar,
+                value.name,
+                value.label,
+                value.display_name
+            ]
+                .flat()
+                .filter(part => typeof part === 'string' && part.trim())
+                .join(' ')
+                .toLowerCase();
+        }
+        return String(value).toLowerCase();
+    };
 
     // When branch selection changes, clear entities if no branch is selected
     useEffect(() => {
+        if (isCeoJob) {
+            setValue('entity_id', []);
+            return;
+        }
+
         const hasBranchSelection = Array.isArray(branchId)
             ? branchId.length > 0
             : !!branchId;
         if (!hasBranchSelection) {
             setValue('entity_id', []);
         }
-    }, [branchId, setValue]);
+    }, [branchId, isCeoJob, setValue]);
 
     // Auto-set roles based on job selection (supervisor / branch manager / CEO)
     useEffect(() => {
@@ -102,25 +128,28 @@ export default function FormEmployee({
 
         if (!jobId) {
             setIsRolesForced(false);
+            setIsSupervisorJob(false);
+            setIsCeoJob(false);
+            setIsBranchManagerJob(false);
             return;
         }
 
         const job = jobsList.find(j => j.id == jobId);
         if (!job) {
             setIsRolesForced(false);
+            setIsSupervisorJob(false);
+            setIsCeoJob(false);
+            setIsBranchManagerJob(false);
             return;
         }
 
-        const rawJobName =
-            job.name?.en ||
-            job.name?.ar ||
-            (typeof job.name === 'string' ? job.name : '') ||
-            job.label?.en ||
-            job.label?.ar ||
-            job.label ||
-            '';
-
-        const jobName = rawJobName.toString().toLowerCase();
+        const jobName = [
+            getSearchableName(job.name),
+            getSearchableName(job.label),
+            getSearchableName(job.display_name)
+        ]
+            .filter(Boolean)
+            .join(' ');
 
         let targetKey = null;
         if (jobName.includes('supervisor')) {
@@ -131,6 +160,7 @@ export default function FormEmployee({
             targetKey = 'ceo';
         }
 
+        setIsSupervisorJob(targetKey === 'supervisor');
         setIsCeoJob(targetKey === 'ceo');
         setIsBranchManagerJob(targetKey === 'branch_manager');
 
@@ -141,17 +171,28 @@ export default function FormEmployee({
 
         const matchRoles = () => {
             const norm = (n) => normalizeRoleName(n);
+            const getRoleSearchText = role =>
+                [
+                    norm(role.name),
+                    getSearchableName(role.display_name)
+                ]
+                    .filter(Boolean)
+                    .join(' ');
+
             if (targetKey === 'supervisor') {
-                return rolesList.filter(r => norm(r.name).includes('supervisor'));
+                return rolesList.filter(r => getRoleSearchText(r).includes('supervisor'));
             }
             if (targetKey === 'branch_manager') {
                 return rolesList.filter(r => {
-                    const n = norm(r.name);
+                    const n = getRoleSearchText(r);
                     return n.includes('branch') && n.includes('manager');
                 });
             }
             if (targetKey === 'ceo') {
-                return rolesList.filter(r => norm(r.name) === 'ceo');
+                return rolesList.filter(r => {
+                    const n = getRoleSearchText(r);
+                    return n === 'ceo' || n.includes('ceo') || n.includes('general manager') || n.includes('director');
+                });
             }
             return [];
         };
@@ -166,6 +207,34 @@ export default function FormEmployee({
         setValue('roles', roleIds);
         setIsRolesForced(true);
     }, [jobId, options?.job_id, options?.roles, setValue]);
+
+    // Enforce branch/entity restrictions based on job type.
+    useEffect(() => {
+        if (isCeoJob) {
+            setValue('branch_id', null);
+            setValue('entity_id', []);
+            return;
+        }
+
+        if (isMultiBranchJob) {
+            const normalizedBranches = Array.isArray(branchId)
+                ? branchId
+                : branchId
+                    ? [branchId]
+                    : [];
+            if (
+                !Array.isArray(branchId) ||
+                normalizedBranches.length !== branchId.length
+            ) {
+                setValue('branch_id', normalizedBranches);
+            }
+            return;
+        }
+
+        if (Array.isArray(branchId)) {
+            setValue('branch_id', branchId[0] ?? null);
+        }
+    }, [branchId, isCeoJob, isMultiBranchJob, setValue]);
 
     function onSubmit(data) {
         // Remove profile_picture if not changed in edit mode
@@ -205,7 +274,7 @@ export default function FormEmployee({
         }
 
         // Normalize default value for multi-select branch field when job is branch manager
-        if (fieldName === 'branch_id' && isBranchManagerJob && defaultValue && !Array.isArray(defaultValue)) {
+        if (fieldName === 'branch_id' && isMultiBranchJob && defaultValue && !Array.isArray(defaultValue)) {
             defaultValue = [defaultValue];
         }
 
@@ -292,7 +361,8 @@ export default function FormEmployee({
             : !!branchId;
         const isFieldDisabled =
             viewMode ||
-            (fieldName === 'entity_id' && !hasBranchSelection) ||
+            (fieldName === 'branch_id' && isCeoJob) ||
+            (fieldName === 'entity_id' && (isCeoJob || !hasBranchSelection)) ||
             (fieldName === 'roles' && isRolesForced);
 
         return (
@@ -315,7 +385,7 @@ export default function FormEmployee({
                 disabled={isFieldDisabled}
                 {...field}
                 name={fieldName}
-                isMulti={fieldName === 'branch_id' ? isBranchManagerJob : field.isMulti}
+                isMulti={fieldName === 'branch_id' ? isMultiBranchJob : field.isMulti}
                 options={generateOptions(options?.[fieldName])}
                 defaultValue={defaultValue}
                 required={

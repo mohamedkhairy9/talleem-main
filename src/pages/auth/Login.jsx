@@ -4,7 +4,6 @@ import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { HiEye } from 'react-icons/hi';
 import { HiEyeSlash } from 'react-icons/hi2';
-
 import { FaGoogle, FaApple, FaFacebook } from 'react-icons/fa';
 import { useTranslation } from 'react-i18next';
 import { useUserStore } from '../../utils/stores/user.store';
@@ -58,17 +57,14 @@ export default function Login() {
                 }}
             />
 
-            <div className="relative z-10 min-h-screen flex">
+            <div className="relative z-10  flex">
                 {/* Left Section - Login Form */}
-                <div className="flex-1 flex items-end justify-center px-8">
+                <div className="flex-1 flex items-end justify-center min-h-screen px-8">
                     <div
-                        className={`w-full max-w-md transition-all duration-1000 ease-out transform ${
-                            isVisible
-                                ? 'translate-y-0 opacity-100'
-                                : 'translate-y-full opacity-0'
-                        }`}
+                        className={`w-full max-w-md transition-all duration-1000 ease-out transform ${isVisible ? 'translate-y-0 opacity-100' : 'translate-y-full opacity-0'
+                            }`}
                     >
-                        <div className="bg-white rounded-2xl rounded-b-none shadow-2xl p-8">
+                        <div className="bg-white min-h-[82vh] rounded-t-2xl rounded-b-none shadow-2xl p-8 flex flex-col justify-start">
                             <div className="text-center mb-8">
                                 <h3 className="text-lg text-gray-500 mb-2 font-medium">
                                     {t('auth.start_journey')}
@@ -83,23 +79,47 @@ export default function Login() {
                                 onSubmit={handleSubmit(login)}
                                 className="space-y-6 !font-islamic"
                             >
-                                {loginFields.map(field => (
-                                    <InputRFH
-                                        key={field.name}
-                                        register={register}
-                                        error={errors[field.name]?.message}
-                                        {...field}
-                                    />
-                                ))}
+                                
+                                {loginFields.map(field =>
+                                    field.name === 'password' ? (
+                                        <div key={field.name} className="relative">
+                                            <input
+                                                {...register(field.name)}
+                                                type={showPassword ? 'text' : 'password'}
+                                                placeholder={field.placeholder}
+                                                className="w-full border rounded-lg px-4 py-3 "
+                                            />
 
+                                            <button
+                                                type="button"
+                                                onClick={() => setShowPassword(prev => !prev)}
+                                                className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"
+                                            >
+                                                {showPassword ? <HiEyeSlash size={20} /> : <HiEye size={20} />}
+                                            </button>
+
+                                            {errors[field.name]?.message && (
+                                                <p className="text-red-500 text-sm mt-1">
+                                                    {errors[field.name]?.message}
+                                                </p>
+                                            )}
+                                        </div>
+                                    ) : (
+                                        <InputRFH
+                                            key={field.name}
+                                            register={register}
+                                            error={errors[field.name]?.message}
+                                            {...field}
+                                        />
+                                    )
+                                )}
                                 <button
                                     type="submit"
                                     disabled={isPending}
-                                    className={`w-full py-3 mb-32 rounded-lg font-medium transition-colors duration-200 ${
-                                        isPending
-                                            ? 'bg-gray-400 cursor-not-allowed'
-                                            : 'bg-primary-600 hover:bg-primary-700'
-                                    } text-white`}
+                                    className={`w-full py-3 mb-32 rounded-lg font-medium transition-colors duration-200 ${isPending
+                                        ? 'bg-gray-400 cursor-not-allowed'
+                                        : 'bg-primary-600 hover:bg-primary-700'
+                                        } text-white`}
                                 >
                                     {isPending ? (
                                         <div className="flex items-center gap-4 justify-center">
@@ -118,11 +138,10 @@ export default function Login() {
                 {/* Right Section - Decorative Content */}
                 <div className="hidden lg:flex flex-1 justify-center px-8">
                     <div
-                        className={`text-center text-white transition-all duration-1000 ease-out transform ${
-                            isVisible
-                                ? 'translate-y-0 opacity-100'
-                                : '-translate-y-full opacity-0'
-                        }`}
+                        className={`text-center text-white transition-all duration-1000 ease-out transform ${isVisible
+                            ? 'translate-y-0 opacity-100'
+                            : '-translate-y-full opacity-0'
+                            }`}
                     >
                         {/* Logo */}
                         <div className="mb-8">

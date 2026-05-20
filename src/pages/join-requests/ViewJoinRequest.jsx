@@ -118,7 +118,7 @@ function AccordionSection({ id, title, defaultOpen, children, className = '', va
     );
 }
 
-export default function ViewJoinRequest({ onClose, oldData }) {
+export default function ViewJoinRequest({ onClose, oldData, isReadOnly = false }) {
     const { mutate: processStep, isPending } = useProcessJoinRequestStepMutation();
     const { t, currentLocale } = useLocale();
 
@@ -451,48 +451,65 @@ export default function ViewJoinRequest({ onClose, oldData }) {
                         )}
 
                         {/* Take action – accordion, default open */}
-                        <AccordionSection
-                            id="take_action"
-                            title={t('join_requests.take_action')}
-                            defaultOpen={true}
-                            variant="primary"
-                            className="border-2 border-primary-200 bg-primary-50/30"
-                        >
-                            <p className="text-xs text-primary-700 mb-4">{t('join_requests.process_step')}</p>
-                            <div className="space-y-4">
-                                <InputRFH
-                                    p="px-3 py-3"
-                                    control={control}
-                                    register={register}
-                                    error={getNestedError(errors, 'status')}
-                                    type="select"
-                                    placeholder="validation.process_step.status.placeholder"
-                                    label="validation.process_step.status.label"
-                                    name="status"
-                                    options={generateOptions(statusOptions)}
-                                    required={true}
-                                />
-                                <InputRFH
-                                    p="px-3 py-3"
-                                    control={control}
-                                    register={register}
-                                    error={getNestedError(errors, 'notes')}
-                                    type="textarea"
-                                    placeholder="validation.process_step.notes.placeholder"
-                                    label="validation.process_step.notes.label"
-                                    name="notes"
-                                />
-                                <FileInputRFH
-                                    error={getNestedError(errors, 'files')}
-                                    placeholder="validation.process_step.files.placeholder"
-                                    label="validation.process_step.files.label"
-                                    name="files"
-                                    register={register}
-                                    setValue={setValue}
-                                    multiple={true}
-                                />
-                            </div>
-                        </AccordionSection>
+                        {isReadOnly ? (
+                            <AccordionSection
+                                id="request_log"
+                                title={t('join_requests.take_action')}
+                                defaultOpen={true}
+                                variant="primary"
+                                className="border-2 border-primary-200 bg-primary-50/30"
+                            >
+                                <p className="text-sm text-primary-900">
+                                    {t(
+                                        'join_requests.read_only_log',
+                                        'This request has already moved past your approval queue and is now shown here as a read-only log record.'
+                                    )}
+                                </p>
+                            </AccordionSection>
+                        ) : (
+                            <AccordionSection
+                                id="take_action"
+                                title={t('join_requests.take_action')}
+                                defaultOpen={true}
+                                variant="primary"
+                                className="border-2 border-primary-200 bg-primary-50/30"
+                            >
+                                <p className="text-xs text-primary-700 mb-4">{t('join_requests.process_step')}</p>
+                                <div className="space-y-4">
+                                    <InputRFH
+                                        p="px-3 py-3"
+                                        control={control}
+                                        register={register}
+                                        error={getNestedError(errors, 'status')}
+                                        type="select"
+                                        placeholder="validation.process_step.status.placeholder"
+                                        label="validation.process_step.status.label"
+                                        name="status"
+                                        options={generateOptions(statusOptions)}
+                                        required={true}
+                                    />
+                                    <InputRFH
+                                        p="px-3 py-3"
+                                        control={control}
+                                        register={register}
+                                        error={getNestedError(errors, 'notes')}
+                                        type="textarea"
+                                        placeholder="validation.process_step.notes.placeholder"
+                                        label="validation.process_step.notes.label"
+                                        name="notes"
+                                    />
+                                    <FileInputRFH
+                                        error={getNestedError(errors, 'files')}
+                                        placeholder="validation.process_step.files.placeholder"
+                                        label="validation.process_step.files.label"
+                                        name="files"
+                                        register={register}
+                                        setValue={setValue}
+                                        multiple={true}
+                                    />
+                                </div>
+                            </AccordionSection>
+                        )}
                     </div>
                 </ModalContent>
 
@@ -504,13 +521,15 @@ export default function ViewJoinRequest({ onClose, oldData }) {
                     >
                         {t('common.cancel')}
                     </button>
-                    <button
-                        type="submit"
-                        disabled={isPending}
-                        className="px-4 py-2 bg-primary-600 text-white hover:bg-primary-700 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                    >
-                        {isPending ? t('common.saving') : t('join_requests.process')}
-                    </button>
+                    {!isReadOnly && (
+                        <button
+                            type="submit"
+                            disabled={isPending}
+                            className="px-4 py-2 bg-primary-600 text-white hover:bg-primary-700 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                            {isPending ? t('common.saving') : t('join_requests.process')}
+                        </button>
+                    )}
                 </ModalFooter>
             </form>
         </Modal>

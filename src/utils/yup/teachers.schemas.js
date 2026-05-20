@@ -99,15 +99,15 @@ export const teachersSchema = yup.object({
         .integer(t('validation.major_id.integer'))
         .min(1, t('validation.major_id.min')),
 
-    licence_number: yup
+    license_number: yup
         .string()
         .nullable()
         .when('entry_type', {
             is: 'active_with_license',
             then: schema => schema
         .required(t('validation.required'))
-        .min(3, t('validation.licence_number.min'))
-        .max(50, t('validation.licence_number.max')),
+        .min(3, t('validation.license_number.min'))
+        .max(50, t('validation.license_number.max')),
             otherwise: schema => schema.nullable().optional()
         }),
     license_image: yup

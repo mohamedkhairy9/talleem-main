@@ -25,8 +25,8 @@ export const teachersColumns = [
         header: 'table_headers.gender',
         cell: info => <Cell value={info.getValue()} />
     }),
-    columnHelper.accessor('licence_number', {
-        header: 'table_headers.licence_number',
+    columnHelper.accessor('license_number', {
+        header: 'table_headers.license_number',
         cell: info => <Cell value={info.getValue()} />
     }),
 
@@ -81,10 +81,10 @@ export const teachersFields = [
         viewMode: false
     },
     {
-        name: 'licence_number',
-        label: 'validation.licence_number.label',
+        name: 'license_number',
+        label: 'validation.license_number.label',
         type: 'text',
-        placeholder: 'validation.licence_number.placeholder',
+        placeholder: 'validation.license_number.placeholder',
         editMode: true,
         viewMode: true,
         conditional: true,

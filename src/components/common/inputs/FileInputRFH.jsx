@@ -93,18 +93,18 @@ export default function FileInputRFH({
         // If not multiple, replace all files. If multiple, add new ones that aren't already in the list
         const newFiles = multiple
             ? [
-                  ...files,
-                  ...selectedFiles.filter(
-                      newFile =>
-                          !files.some(
-                              existingFile =>
-                                  existingFile.name === newFile.name &&
-                                  existingFile.size === newFile.size &&
-                                  existingFile.lastModified ===
-                                      newFile.lastModified
-                          )
-                  )
-              ]
+                ...files,
+                ...selectedFiles.filter(
+                    newFile =>
+                        !files.some(
+                            existingFile =>
+                                existingFile.name === newFile.name &&
+                                existingFile.size === newFile.size &&
+                                existingFile.lastModified ===
+                                newFile.lastModified
+                        )
+                )
+            ]
             : selectedFiles;
         setFiles(newFiles);
 
@@ -232,15 +232,13 @@ export default function FileInputRFH({
                     className={`
                         w-full border-2 border-dashed rounded-lg p-6
                         cursor-pointer transition-all duration-200
-                        ${
-                            error
-                                ? 'border-red-300 bg-red-50'
-                                : 'border-gray-300 bg-gray-50'
+                        ${error
+                            ? 'border-red-300 bg-red-50'
+                            : 'border-gray-300 bg-gray-50'
                         }
-                        ${
-                            disabled
-                                ? 'opacity-50 cursor-not-allowed'
-                                : 'hover:border-accent hover:bg-gray-100'
+                        ${disabled
+                            ? 'opacity-50 cursor-not-allowed'
+                            : 'hover:border-accent hover:bg-gray-100'
                         }
                     `}
                 >
@@ -289,11 +287,11 @@ export default function FileInputRFH({
                                         {preview.size && (
                                             <p className="text-xs text-gray-400">
                                                 {typeof preview.size ===
-                                                'string'
+                                                    'string'
                                                     ? preview.size
                                                     : formatFileSize(
-                                                          preview.size
-                                                      )}
+                                                        preview.size
+                                                    )}
                                             </p>
                                         )}
                                     </div>
@@ -331,11 +329,11 @@ export default function FileInputRFH({
                                             {preview.size && (
                                                 <p className="text-xs text-gray-500">
                                                     {typeof preview.size ===
-                                                    'string'
+                                                        'string'
                                                         ? preview.size
                                                         : formatFileSize(
-                                                              preview.size
-                                                          )}
+                                                            preview.size
+                                                        )}
                                                 </p>
                                             )}
                                         </div>

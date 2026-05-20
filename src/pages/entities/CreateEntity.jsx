@@ -42,7 +42,7 @@ export default function CreateEntity({ onClose }) {
         nationalitiesData,
         academicLevelsData,
         specificationsData,
-        sessionModesData, 
+        sessionModesData,
         isLoading
     } = useApiCalls({ apiCalls });
 
@@ -70,7 +70,7 @@ export default function CreateEntity({ onClose }) {
                     education_program_entity_type_id:
                         educationProgramEntityTypesData?.data,
                     nationality_id: nationalitiesData?.data,
-                    session_mode_id: sessionModesData?.data, 
+                    session_mode_id: sessionModesData?.data,
                     academic_level_id: academicLevelsData?.data,
                     specification_id: specificationsData?.data,
                     gender: genderOptions,

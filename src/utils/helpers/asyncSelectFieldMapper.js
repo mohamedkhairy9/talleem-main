@@ -216,6 +216,24 @@ const REQUIRED_PARAM_KEYS_BY_FIELD = {
     warning_reason_id: ['main_program_id']
 };
 
+function hasRequiredParams(fieldName, params = {}) {
+    const requiredParamKeys = REQUIRED_PARAM_KEYS_BY_FIELD[fieldName] || null;
+
+    if (!requiredParamKeys?.length) return true;
+
+    // Employee form can load entities for one branch or many branches.
+    if (fieldName === 'entity_id') {
+        const hasSingleBranch = params.branch_id !== undefined && params.branch_id !== null && params.branch_id !== '';
+        const hasMultipleBranches = Array.isArray(params.branches_id) && params.branches_id.length > 0;
+        return hasSingleBranch || hasMultipleBranches;
+    }
+
+    return !requiredParamKeys.some(key => {
+        const value = params[key];
+        return value === undefined || value === null || value === '';
+    });
+}
+
 /**
  * Creates async loadOptions for a field (paginated; compatible with react-select-async-paginate).
  * @param {string} fieldName - The field name
@@ -231,7 +249,9 @@ export function createLoadOptionsForField(fieldName, additionalParams = {}, incl
     }
 
     const baseFieldName = getBaseFieldName(fieldName);
-    const requiredParamKeys = REQUIRED_PARAM_KEYS_BY_FIELD[baseFieldName] || null;
+    const requiredParamKeys = hasRequiredParams(baseFieldName, additionalParams)
+        ? null
+        : REQUIRED_PARAM_KEYS_BY_FIELD[baseFieldName] || null;
 
     let serviceFn = fieldService.service;
     if (baseFieldName === 'role_id' || baseFieldName === 'roles') {

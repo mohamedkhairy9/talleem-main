@@ -11,6 +11,15 @@ import ModalFooter from '@/components/common/form/ModalFooter';
 import { isFieldRequired } from '@/utils/helpers/schemaHelpers';
 import { useRolesQuery } from '@/api/hooks/useRoles';
 
+const FIXED_ROLE_USER_TYPES = new Set([
+    'teacher',
+    'student',
+    'parent',
+    'entity',
+    'entity-manager',
+    'entity_manager'
+]);
+
 // Helper to generate bilingual options (showing both en and ar)
 const generateBilingualUserTypeOptions = (options = []) => {
     return options.map(opt => ({
@@ -18,6 +27,14 @@ const generateBilingualUserTypeOptions = (options = []) => {
         value: opt.value
     }));
 };
+
+function normalizeUserType(value) {
+    return (value ?? '').toString().trim().toLowerCase().replace(/\s+/g, '-').replace(/_/g, '-');
+}
+
+function isFixedRoleUserType(value) {
+    return FIXED_ROLE_USER_TYPES.has(normalizeUserType(value));
+}
 
 // Resolve role to a single id for the async select (API may return role_id or roles array)
 function useResolvedRoleId(oldData) {
@@ -64,10 +81,14 @@ export default function FormUser({
     mutate,
     options
 }) {
-    const { register, errors, handleSubmit, control, setValue } = useRFH({
+    const { register, errors, handleSubmit, control, setValue, watch } = useRFH({
         schema,
         defaultValues: oldData
     });
+    const watchedUserType = watch('user_type');
+    const currentUserType = watchedUserType ?? oldData?.user_type;
+    const isFixedRoleProfile = isFixedRoleUserType(currentUserType);
+    const isLockedFixedRoleProfile = editMode && isFixedRoleUserType(oldData?.user_type);
 
     const { resolvedRoleId, rolesReady } = useResolvedRoleId(oldData);
     const roleSyncedRef = useRef(false);
@@ -98,6 +119,16 @@ export default function FormUser({
             delete submitData.password;
         }
 
+        // Fixed-profile accounts own their role assignment and should not be changed here.
+        if (isFixedRoleProfile) {
+            delete submitData.role_id;
+        }
+
+        // Existing fixed-profile accounts should also keep their original user type.
+        if (isLockedFixedRoleProfile) {
+            delete submitData.user_type;
+        }
+
         mutate(submitData, {
             onSuccess: () => {
                 onClose();
@@ -117,6 +148,11 @@ export default function FormUser({
                             (!editMode && !viewMode)
                     )
                     .map(field => {                        
+                        const isFieldDisabled =
+                            viewMode ||
+                            (field.name === 'role_id' && isFixedRoleProfile) ||
+                            (field.name === 'user_type' && isLockedFixedRoleProfile);
+
                         return (
                             <div
                                 key={field.name}
@@ -131,7 +167,7 @@ export default function FormUser({
                                     error={getNestedError(errors, field.name)}
                                     type={field.type}
                                     placeholder={field.placeholder}
-                                    disabled={viewMode}
+                                    disabled={isFieldDisabled}
                                     label={field.label}
                                     name={field.name}
                                     defaultValue={
