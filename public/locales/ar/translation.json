@@ -1809,7 +1809,8 @@
         "history_files": "الملفات",
         "history_status_unknown": "غير معروف",
         "history_empty": "لا توجد سجلات متاحة لهذا الطلب حالياً.",
-        "loading_latest_details": "جارٍ تحميل أحدث تفاصيل الطلب..."
+        "loading_latest_details": "جارٍ تحميل أحدث تفاصيل الطلب...",
+        "finalized_read_only_log": "تم إنهاء هذا الطلب نهائياً وهو متاح الآن كسجل للعرض فقط."
     },
     "warnings": {
         "create": "إضافة إنذار",

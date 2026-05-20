@@ -324,6 +324,22 @@ function parseHistoryDate(value) {
     return Number.isNaN(parsed.getTime()) ? null : parsed;
 }
 
+function isFinalizedJoinRequest(requestData) {
+    if (!requestData) return false;
+
+    if (requestData.status === 1 || requestData.status === 2) {
+        return true;
+    }
+
+    const statusText = String(requestData.status_text || '').toLowerCase();
+    return (
+        statusText.includes('approved') ||
+        statusText.includes('rejected') ||
+        statusText.includes('موافق') ||
+        statusText.includes('مرفوض')
+    );
+}
+
 function buildHistoryEntries(requestData, currentLocale = 'en', t) {
     if (!requestData) return [];
 
@@ -398,6 +414,11 @@ export default function ViewJoinRequest({ onClose, oldData, isReadOnly = false }
         () => buildHistoryEntries(requestData, currentLocale, t),
         [requestData, currentLocale, t]
     );
+    const isFinalizedRequest = useMemo(
+        () => isFinalizedJoinRequest(requestData),
+        [requestData]
+    );
+    const isLocked = isReadOnly || isFinalizedRequest;
 
     const { register, errors, handleSubmit, control, setValue } = useRFH({
         schema: processStepSchema,
@@ -409,6 +430,8 @@ export default function ViewJoinRequest({ onClose, oldData, isReadOnly = false }
     });
 
     const onSubmit = data => {
+        if (isLocked) return;
+
         processStep(
             {
                 id: requestData?.id,
@@ -731,7 +754,7 @@ export default function ViewJoinRequest({ onClose, oldData, isReadOnly = false }
                         )}
 
                         {/* Take action – accordion, default open */}
-                        {isReadOnly ? (
+                        {isLocked ? (
                             <AccordionSection
                                 id="request_log"
                                 title={t('join_requests.take_action')}
@@ -740,10 +763,15 @@ export default function ViewJoinRequest({ onClose, oldData, isReadOnly = false }
                                 className="border-2 border-primary-200 bg-primary-50/30"
                             >
                                 <p className="text-sm text-primary-900">
-                                    {t(
-                                        'join_requests.read_only_log',
-                                        'This request has already moved past your approval queue and is now shown here as a read-only log record.'
-                                    )}
+                                    {isFinalizedRequest
+                                        ? t(
+                                            'join_requests.finalized_read_only_log',
+                                            'This request has already been finalized and is now available as a read-only record.'
+                                        )
+                                        : t(
+                                            'join_requests.read_only_log',
+                                            'This request has already moved past your approval queue and is now shown here as a read-only log record.'
+                                        )}
                                 </p>
                             </AccordionSection>
                         ) : (
@@ -870,7 +898,7 @@ export default function ViewJoinRequest({ onClose, oldData, isReadOnly = false }
                     >
                         {t('common.cancel')}
                     </button>
-                    {!isReadOnly && (
+                    {!isLocked && (
                         <button
                             type="submit"
                             disabled={isPending}
