@@ -73,6 +73,10 @@ export const joinRequestsService = {
         const client = branchManager ? joinRequestsClient : axiosInstance;
         return client.get(listPath, { params: finalParams });
     },
+    getJoinRequestDetails: id => {
+        const client = isBranchManagerOnly() ? joinRequestsClient : axiosInstance;
+        return client.get(API_URLS.JOIN_REQUESTS.DETAILS(id));
+    },
     processStep: (id, data) => {
         const formData = prepareFormData(data);
         const opts = { headers: { 'Content-Type': 'multipart/form-data' } };

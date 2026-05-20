@@ -1797,8 +1797,19 @@
         "section_manager": "معلومات المدير",
         "section_facilities": "المرافق",
         "section_other": "تفاصيل أخرى",
-        
-        "take_action": "اتخاذ الإجراء"
+        "take_action": "اتخاذ الإجراء",
+        "history": "السجل",
+        "history_created": "تم إنشاء الطلب",
+        "history_created_status": "تم الإنشاء",
+        "history_action_fallback": "إجراء على الطلب",
+        "history_actor": "المنفذ",
+        "history_role": "الدور",
+        "history_action_date": "تاريخ الإجراء",
+        "history_comments": "التعليقات / السبب",
+        "history_files": "الملفات",
+        "history_status_unknown": "غير معروف",
+        "history_empty": "لا توجد سجلات متاحة لهذا الطلب حالياً.",
+        "loading_latest_details": "جارٍ تحميل أحدث تفاصيل الطلب..."
     },
     "warnings": {
         "create": "إضافة إنذار",

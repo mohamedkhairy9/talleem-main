@@ -1665,7 +1665,19 @@
         "section_manager": "Manager Information",
         "section_facilities": "Facilities",
         "section_other": "Other Details",
-        "take_action": "Take Action"
+        "take_action": "Take Action",
+        "history": "History",
+        "history_created": "Request Created",
+        "history_created_status": "Created",
+        "history_action_fallback": "Request Action",
+        "history_actor": "Actor",
+        "history_role": "Role",
+        "history_action_date": "Action Date",
+        "history_comments": "Comments / Reason",
+        "history_files": "Files",
+        "history_status_unknown": "Unknown",
+        "history_empty": "No history entries are available for this request yet.",
+        "loading_latest_details": "Loading latest request details..."
     },
     "warnings": {
         "create": "Add Warning",

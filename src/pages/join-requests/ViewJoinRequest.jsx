@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import Modal from '@/components/common/form/Modal';
 import ModalHeader from '@/components/common/form/ModalHeader';
 import ModalContent from '@/components/common/form/ModalContent';
 import ModalFooter from '@/components/common/form/ModalFooter';
-import { useProcessJoinRequestStepMutation } from '@/api/hooks/useJoinRequests';
+import { useJoinRequestDetailsQuery, useProcessJoinRequestStepMutation } from '@/api/hooks/useJoinRequests';
 import useRFH from '@/utils/hooks/global/useRFH';
 import InputRFH from '@/components/common/inputs/InputRFH';
 import FileInputRFH from '@/components/common/inputs/FileInputRFH';
@@ -118,9 +118,286 @@ function AccordionSection({ id, title, defaultOpen, children, className = '', va
     );
 }
 
+const HISTORY_ARRAY_KEYS = [
+    'submitted_logs',
+    'history',
+    'histories',
+    'logs',
+    'approval_history',
+    'approval_histories',
+    'audit_trail',
+    'audit_logs'
+];
+
+const HISTORY_DATE_KEYS = [
+    'action_at',
+    'acted_at',
+    'processed_at',
+    'approved_at',
+    'rejected_at',
+    'submitted_at',
+    'created_at',
+    'updated_at',
+    'date',
+    'datetime',
+    'timestamp'
+];
+
+const HISTORY_COMMENT_KEYS = ['comment', 'comments', 'notes', 'reason', 'message', 'description'];
+const HISTORY_ACTOR_KEYS = ['actor', 'user', 'approver', 'creator', 'created_by', 'performed_by', 'action_by', 'updated_by'];
+const HISTORY_ROLE_KEYS = ['role', 'role_name', 'user_role', 'approver_role', 'actor_role'];
+const STATUS_TEXT_MAP = {
+    0: { en: 'Pending', ar: 'قيد الانتظار' },
+    1: { en: 'Approved', ar: 'موافق' },
+    2: { en: 'Rejected', ar: 'مرفوض' },
+    3: { en: 'Need Review', ar: 'يحتاج مراجعة' },
+    4: { en: 'Need Upload', ar: 'يحتاج رفع' }
+};
+
+function getLocalizedValue(value, currentLocale = 'en') {
+    if (value == null) return '';
+    if (typeof value === 'string' || typeof value === 'number') return String(value).trim();
+    if (typeof value !== 'object' || Array.isArray(value)) return '';
+
+    const localized =
+        value[currentLocale] ??
+        value.en ??
+        value.ar ??
+        value.En ??
+        value.Ar ??
+        '';
+
+    return typeof localized === 'string' || typeof localized === 'number'
+        ? String(localized).trim()
+        : '';
+}
+
+function getValueByKeys(source, keys = []) {
+    if (!source || typeof source !== 'object') return null;
+    for (const key of keys) {
+        const value = source[key];
+        if (value !== null && value !== undefined && value !== '') {
+            return value;
+        }
+    }
+    return null;
+}
+
+function getDisplayPersonName(value, currentLocale = 'en') {
+    if (value == null) return '';
+    if (typeof value === 'string' || typeof value === 'number') return String(value).trim();
+    if (typeof value !== 'object' || Array.isArray(value)) return '';
+
+    const directName = getLocalizedValue(value.name, currentLocale);
+    if (directName) return directName;
+
+    const fullName = getLocalizedValue(value.full_name, currentLocale) || getLocalizedValue(value.display_name, currentLocale);
+    if (fullName) return fullName;
+
+    const firstName = getLocalizedValue(value.first_name, currentLocale);
+    const lastName = getLocalizedValue(value.last_name, currentLocale);
+    const combinedName = [firstName, lastName].filter(Boolean).join(' ').trim();
+    if (combinedName) return combinedName;
+
+    return getLocalizedValue(value, currentLocale);
+}
+
+function getDisplayRole(value, currentLocale = 'en') {
+    if (value == null) return '';
+    if (typeof value === 'string' || typeof value === 'number') return String(value).trim();
+    if (typeof value !== 'object' || Array.isArray(value)) return '';
+
+    const directRole =
+        getLocalizedValue(value.role, currentLocale) ||
+        getLocalizedValue(value.role_name, currentLocale) ||
+        getLocalizedValue(value.user_role, currentLocale);
+    if (directRole) return directRole;
+
+    if (Array.isArray(value.roles)) {
+        const roleNames = value.roles
+            .map(role => getDisplayRole(role, currentLocale) || getDisplayPersonName(role, currentLocale))
+            .filter(Boolean);
+        if (roleNames.length > 0) return roleNames.join(', ');
+    }
+
+    return getLocalizedValue(value, currentLocale);
+}
+
+function getHistoryActorName(entry, currentLocale = 'en') {
+    const actor = getValueByKeys(entry, HISTORY_ACTOR_KEYS);
+    if (actor) {
+        const actorName = getDisplayPersonName(actor, currentLocale);
+        if (actorName) return actorName;
+    }
+
+    return getDisplayPersonName(
+        getValueByKeys(entry, ['actor_name', 'user_name', 'approver_name', 'creator_name', 'created_by_name', 'performed_by_name']),
+        currentLocale
+    );
+}
+
+function getHistoryActorRole(entry, currentLocale = 'en') {
+    const actor = getValueByKeys(entry, HISTORY_ACTOR_KEYS);
+    if (actor) {
+        const actorRole = getDisplayRole(actor, currentLocale);
+        if (actorRole) return actorRole;
+    }
+
+    return getDisplayRole(getValueByKeys(entry, HISTORY_ROLE_KEYS), currentLocale);
+}
+
+function getHistoryStatusText(statusValue, currentLocale = 'en') {
+    if (statusValue == null) return '';
+    if (typeof statusValue === 'string') {
+        const trimmed = statusValue.trim();
+        if (!trimmed) return '';
+        if (/^\d+$/.test(trimmed) && STATUS_TEXT_MAP[Number(trimmed)]) {
+            return STATUS_TEXT_MAP[Number(trimmed)][currentLocale] || STATUS_TEXT_MAP[Number(trimmed)].en;
+        }
+        return trimmed;
+    }
+    if (typeof statusValue === 'number' && STATUS_TEXT_MAP[statusValue]) {
+        return STATUS_TEXT_MAP[statusValue][currentLocale] || STATUS_TEXT_MAP[statusValue].en;
+    }
+    return String(statusValue);
+}
+
+function normalizeHistoryFiles(value) {
+    if (!value) return [];
+    if (Array.isArray(value)) {
+        return value
+            .map((item, index) => {
+                if (typeof item === 'string') {
+                    const name = item.split(/[/\\]/).pop() || `File ${index + 1}`;
+                    return { url: item, name };
+                }
+                if (item && typeof item === 'object') {
+                    const url = item.url || item.path || item.file || item.download_url || null;
+                    const name = item.name || item.file_name || item.original_name || `File ${index + 1}`;
+                    return { url, name };
+                }
+                return null;
+            })
+            .filter(Boolean);
+    }
+
+    if (typeof value === 'string') {
+        return [{ url: value, name: value.split(/[/\\]/).pop() || 'File' }];
+    }
+
+    return [];
+}
+
+function getJoinRequestPayload(response) {
+    if (!response || typeof response !== 'object') return null;
+    if (response.data && typeof response.data === 'object' && !Array.isArray(response.data)) {
+        return response.data;
+    }
+    return response;
+}
+
+function mergeJoinRequestData(oldData, detailedData) {
+    if (!detailedData) return oldData;
+    return {
+        ...oldData,
+        ...detailedData,
+        request_type: detailedData.request_type ?? oldData?.request_type,
+        form: detailedData.form ?? oldData?.form,
+        current_phase: detailedData.current_phase ?? oldData?.current_phase,
+        submitted_data: detailedData.submitted_data ?? oldData?.submitted_data
+    };
+}
+
+function getHistoryBadgeClasses(statusText = '') {
+    const text = statusText.toLowerCase();
+    if (text.includes('approved') || text.includes('موافق')) return 'bg-green-100 text-green-800';
+    if (text.includes('rejected') || text.includes('مرفوض')) return 'bg-red-100 text-red-800';
+    if (text.includes('review') || text.includes('مراجعة')) return 'bg-blue-100 text-blue-800';
+    if (text.includes('upload') || text.includes('رفع')) return 'bg-purple-100 text-purple-800';
+    if (text.includes('pending') || text.includes('انتظار')) return 'bg-yellow-100 text-yellow-800';
+    return 'bg-gray-100 text-gray-700';
+}
+
+function parseHistoryDate(value) {
+    if (!value) return null;
+    const parsed = new Date(value);
+    return Number.isNaN(parsed.getTime()) ? null : parsed;
+}
+
+function buildHistoryEntries(requestData, currentLocale = 'en', t) {
+    if (!requestData) return [];
+
+    const historySourceKey = HISTORY_ARRAY_KEYS.find(key => Array.isArray(requestData[key]));
+    const rawEntries = historySourceKey ? requestData[historySourceKey] : [];
+    const normalizedEntries = rawEntries.map((entry, index) => {
+        const title =
+            getLocalizedValue(getValueByKeys(entry, ['step_name', 'phase_name', 'action_label', 'title', 'name']), currentLocale) ||
+            getHistoryStatusText(getValueByKeys(entry, ['status_text', 'status', 'action']), currentLocale) ||
+            t('join_requests.history_action_fallback', 'Request Action');
+
+        return {
+            id: entry.id || `${requestData.id || 'request'}-history-${index}`,
+            title,
+            statusText: getHistoryStatusText(getValueByKeys(entry, ['status_text', 'status', 'action']), currentLocale),
+            actorName: getHistoryActorName(entry, currentLocale) || '-',
+            actorRole: getHistoryActorRole(entry, currentLocale) || '-',
+            timestamp: getValueByKeys(entry, HISTORY_DATE_KEYS),
+            comments: getLocalizedValue(getValueByKeys(entry, HISTORY_COMMENT_KEYS), currentLocale) || '',
+            files: normalizeHistoryFiles(getValueByKeys(entry, ['files', 'attachments', 'documents']))
+        };
+    });
+
+    const creatorName =
+        getHistoryActorName(requestData, currentLocale) ||
+        getDisplayPersonName(requestData.submitted_data?.name, currentLocale) ||
+        '-';
+
+    const creationEntry = requestData.created_at
+        ? [{
+            id: `${requestData.id || 'request'}-created`,
+            title: t('join_requests.history_created', 'Request Created'),
+            statusText: t('join_requests.history_created_status', 'Created'),
+            actorName: creatorName,
+            actorRole: getHistoryActorRole(requestData, currentLocale) || '-',
+            timestamp: requestData.created_at,
+            comments: '',
+            files: []
+        }]
+        : [];
+
+    return [...creationEntry, ...normalizedEntries]
+        .filter((entry, index, arr) => arr.findIndex(item =>
+            item.title === entry.title &&
+            item.timestamp === entry.timestamp &&
+            item.statusText === entry.statusText &&
+            item.actorName === entry.actorName
+        ) === index)
+        .map((entry, index) => ({ ...entry, originalIndex: index }))
+        .sort((a, b) => {
+            const aDate = parseHistoryDate(a.timestamp);
+            const bDate = parseHistoryDate(b.timestamp);
+            if (aDate && bDate) return aDate - bDate;
+            if (aDate) return -1;
+            if (bDate) return 1;
+            return a.originalIndex - b.originalIndex;
+        });
+}
+
 export default function ViewJoinRequest({ onClose, oldData, isReadOnly = false }) {
     const { mutate: processStep, isPending } = useProcessJoinRequestStepMutation();
     const { t, currentLocale } = useLocale();
+    const requestId = oldData?.id;
+    const { data: detailsResponse, isFetching: isFetchingDetails } = useJoinRequestDetailsQuery(requestId, {
+        enabled: Boolean(requestId)
+    });
+    const requestData = useMemo(
+        () => mergeJoinRequestData(oldData, getJoinRequestPayload(detailsResponse)),
+        [oldData, detailsResponse]
+    );
+    const historyEntries = useMemo(
+        () => buildHistoryEntries(requestData, currentLocale, t),
+        [requestData, currentLocale, t]
+    );
 
     const { register, errors, handleSubmit, control, setValue } = useRFH({
         schema: processStepSchema,
@@ -134,7 +411,7 @@ export default function ViewJoinRequest({ onClose, oldData, isReadOnly = false }
     const onSubmit = data => {
         processStep(
             {
-                id: oldData.id,
+                id: requestData?.id,
                 data: {
                     status: data.status,
                     notes: data.notes || null,
@@ -406,17 +683,17 @@ export default function ViewJoinRequest({ onClose, oldData, isReadOnly = false }
         );
     };
 
-    const requestTypeName = oldData?.request_type?.name?.[currentLocale] ||
-        oldData?.request_type?.name?.en ||
-        oldData?.request_type?.name?.ar ||
+    const requestTypeName = requestData?.request_type?.name?.[currentLocale] ||
+        requestData?.request_type?.name?.en ||
+        requestData?.request_type?.name?.ar ||
         '-';
-    const formName = oldData?.form?.name?.[currentLocale] ||
-        oldData?.form?.name?.en ||
-        oldData?.form?.name?.ar ||
+    const formName = requestData?.form?.name?.[currentLocale] ||
+        requestData?.form?.name?.en ||
+        requestData?.form?.name?.ar ||
         '-';
-    const phaseName = oldData?.current_phase?.name?.[currentLocale] ||
-        oldData?.current_phase?.name?.en ||
-        oldData?.current_phase?.name?.ar ||
+    const phaseName = requestData?.current_phase?.name?.[currentLocale] ||
+        requestData?.current_phase?.name?.en ||
+        requestData?.current_phase?.name?.ar ||
         '-';
 
     return (
@@ -425,6 +702,9 @@ export default function ViewJoinRequest({ onClose, oldData, isReadOnly = false }
             <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col h-full min-h-0">
                 <ModalContent className="min-h-0 flex flex-col">
                     <div className="flex-1 min-h-0 overflow-y-auto space-y-6 pr-1 modal-scroll">
+                        {isFetchingDetails && (
+                            <p className="text-xs text-gray-500">{t('join_requests.loading_latest_details', 'Loading latest request details...')}</p>
+                        )}
                         {/* Request info – accordion */}
                         <AccordionSection
                             id="request_info"
@@ -435,18 +715,18 @@ export default function ViewJoinRequest({ onClose, oldData, isReadOnly = false }
                                 <DataField label={t('table_headers.request_type')} valueRender={requestTypeName} />
                                 <DataField label={t('table_headers.form')} valueRender={formName} />
                                 <DataField label={t('table_headers.current_phase')} valueRender={phaseName} />
-                                <DataField label={t('table_headers.status')} valueRender={oldData?.status_text ?? '-'} />
-                                <DataField label={t('table_headers.created_at')} valueRender={formatDateForDisplay(oldData?.created_at)} />
+                                <DataField label={t('table_headers.status')} valueRender={requestData?.status_text ?? '-'} />
+                                <DataField label={t('table_headers.created_at')} valueRender={formatDateForDisplay(requestData?.created_at)} />
                             </div>
                         </AccordionSection>
 
                         {/* Submitted data – grouped sections */}
-                        {oldData?.submitted_data && (
+                        {requestData?.submitted_data && (
                             <>
                                 <h3 className="text-base font-semibold text-gray-800 sticky top-0 z-10 bg-gray-50 py-2 -mx-1 px-1 rounded shadow-[0_1px_3px_0_rgba(0,0,0,0.06)]">
                                     {t('join_requests.submitted_data')}
                                 </h3>
-                                {renderSubmittedDataSections(oldData.submitted_data)}
+                                {renderSubmittedDataSections(requestData.submitted_data)}
                             </>
                         )}
 
@@ -510,6 +790,75 @@ export default function ViewJoinRequest({ onClose, oldData, isReadOnly = false }
                                 </div>
                             </AccordionSection>
                         )}
+
+                        <AccordionSection
+                            id="request_history"
+                            title={t('join_requests.history', 'History')}
+                            defaultOpen={true}
+                        >
+                            {historyEntries.length > 0 ? (
+                                <div className="space-y-4">
+                                    {historyEntries.map(entry => (
+                                        <div key={entry.id} className="rounded-xl border border-gray-200 bg-white p-4 shadow-sm">
+                                            <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
+                                                <div className="space-y-1">
+                                                    <p className="text-sm font-semibold text-gray-900">{entry.title}</p>
+                                                    <p className="text-xs text-gray-500">
+                                                        {entry.timestamp ? formatDateForDisplay(entry.timestamp) : '-'}
+                                                    </p>
+                                                </div>
+                                                <span className={`inline-flex w-fit rounded-full px-3 py-1 text-xs font-medium ${getHistoryBadgeClasses(entry.statusText)}`}>
+                                                    {entry.statusText || t('join_requests.history_status_unknown', 'Unknown')}
+                                                </span>
+                                            </div>
+
+                                            <div className="mt-4 grid grid-cols-1 gap-x-6 gap-y-4 md:grid-cols-2 lg:grid-cols-3">
+                                                <DataField label={t('join_requests.history_actor', 'Actor')} value={entry.actorName || '-'} />
+                                                <DataField label={t('join_requests.history_role', 'Role')} value={entry.actorRole || '-'} />
+                                                <DataField
+                                                    label={t('join_requests.history_action_date', 'Action Date')}
+                                                    value={entry.timestamp ? formatDateForDisplay(entry.timestamp) : '-'}
+                                                />
+                                            </div>
+
+                                            {entry.comments && (
+                                                <div className="mt-4 border-t border-gray-200 pt-4">
+                                                    <p className="text-xs font-medium uppercase tracking-wide text-gray-500">
+                                                        {t('join_requests.history_comments', 'Comments / Reason')}
+                                                    </p>
+                                                    <p className="mt-1 text-sm text-gray-900 whitespace-pre-wrap">{entry.comments}</p>
+                                                </div>
+                                            )}
+
+                                            {entry.files.length > 0 && (
+                                                <div className="mt-4 border-t border-gray-200 pt-4">
+                                                    <p className="text-xs font-medium uppercase tracking-wide text-gray-500">
+                                                        {t('join_requests.history_files', 'Files')}
+                                                    </p>
+                                                    <div className="mt-2 space-y-1">
+                                                        {entry.files.map((file, index) => (
+                                                            <p key={`${entry.id}-file-${index}`} className="text-sm">
+                                                                {file.url ? (
+                                                                    <a href={file.url} target="_blank" rel="noopener noreferrer" className="text-primary-600 hover:underline">
+                                                                        {file.name}
+                                                                    </a>
+                                                                ) : (
+                                                                    <span className="text-gray-700">{file.name}</span>
+                                                                )}
+                                                            </p>
+                                                        ))}
+                                                    </div>
+                                                </div>
+                                            )}
+                                        </div>
+                                    ))}
+                                </div>
+                            ) : (
+                                <p className="text-sm text-gray-600">
+                                    {t('join_requests.history_empty', 'No history entries are available for this request yet.')}
+                                </p>
+                            )}
+                        </AccordionSection>
                     </div>
                 </ModalContent>
 

@@ -402,6 +402,7 @@ export const API_URLS = {
     },
     JOIN_REQUESTS: {
         LIST: '/join-requests',
+        DETAILS: id => `/join-requests/${id}`,
         PROCESS_STEP: id => `/join-requests/${id}/process-step`
     },
 };
