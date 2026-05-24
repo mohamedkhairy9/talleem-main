@@ -1,6 +1,6 @@
 import React, { useMemo, useEffect } from 'react';
 import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
-import { useJoinRequestsQuery } from '@/api/hooks/useJoinRequests';
+import { useAllJoinRequestsQuery } from '@/api/hooks/useJoinRequests';
 import { useRequestTypesQuery } from '@/api/hooks/useRequestTypes';
 import { isBranchManagerOnly } from '@/api/axiosInstance';
 import useLocale from '@/utils/hooks/global/useLocale';
@@ -18,20 +18,68 @@ const VALID_CATEGORIES = ['entities', 'teachers', 'supervisors'];
 
 /** Fallback IDs when request types API is not available (e.g. branch manager). From request types sample. */
 const FALLBACK_IDS = {
-    entities: [3, 9, 10, 11, 12],
-    teachers: [1, 6, 7, 8],
-    supervisors: [2, 4, 5]
+    entities: [3, 10, 11, 12, 13],
+    teachers: [1, 7, 8, 9],
+    supervisors: [2, 4, 5, 6]
 };
 
-/** Map request types to category by name.en: Entity*, Teacher*, Student* (as supervisors). */
+function normalizeRequestTypeText(value) {
+    return String(value ?? '')
+        .trim()
+        .toLowerCase()
+        .replace(/[أإآ]/g, 'ا')
+        .replace(/ؤ/g, 'و')
+        .replace(/ئ/g, 'ي')
+        .replace(/ة/g, 'ه')
+        .replace(/ى/g, 'ي')
+        .replace(/[_-]+/g, ' ')
+        .replace(/\s+/g, ' ')
+        .trim();
+}
+
+function getRequestTypeTexts(requestType) {
+    const rawName = requestType?.name;
+    const values =
+        typeof rawName === 'object'
+            ? [rawName?.en, rawName?.ar]
+            : [rawName];
+
+    return [...new Set(values.map(normalizeRequestTypeText).filter(Boolean))];
+}
+
+function resolveRequestTypeCategory(requestType) {
+    const texts = getRequestTypeTexts(requestType);
+
+    if (
+        texts.some(
+            text => text.includes('teacher') || text.includes('معلم') || text.includes('مدرس')
+        )
+    ) {
+        return 'teachers';
+    }
+
+    if (texts.some(text => text.includes('student') || text.includes('طالب'))) {
+        return 'supervisors';
+    }
+
+    if (texts.some(text => text.includes('entity') || text.includes('جهه') || text.includes('جهة'))) {
+        return 'entities';
+    }
+
+    return null;
+}
+
+/** Map request types to category by actual request type labels across English and Arabic. */
 function getRequestTypeIdsByCategory(requestTypesData, category) {
     if (!category) return [];
     if (requestTypesData?.data?.length) {
-        const list = requestTypesData.data;
-        const enName = (t) => (typeof t?.name === 'object' ? t.name?.en : t?.name) || '';
-        if (category === 'entities') return list.filter((t) => /Entity/i.test(enName(t))).map((t) => t.id);
-        if (category === 'teachers') return list.filter((t) => /Teacher/i.test(enName(t))).map((t) => t.id);
-        if (category === 'supervisors') return list.filter((t) => /Student/i.test(enName(t))).map((t) => t.id);
+        const matchingIds = requestTypesData.data
+            .filter(requestType => resolveRequestTypeCategory(requestType) === category)
+            .map(requestType => requestType.id);
+
+        if (matchingIds.length > 0) {
+            return matchingIds;
+        }
     }
     return FALLBACK_IDS[category] || [];
 }
@@ -89,6 +137,10 @@ export default function JoinRequests() {
         () => getRequestTypesForCategory(requestTypesData, category, requestTypeIds),
         [requestTypesData, category, requestTypeIds]
     );
+    const categoryRequestTypeIdsSet = useMemo(
+        () => new Set(requestTypeIds.map(id => Number(id))),
+        [requestTypeIds]
+    );
 
     const [filtersInitialized, setFiltersInitialized] = React.useState(false);
 
@@ -124,11 +176,12 @@ export default function JoinRequests() {
         }
     }, [categoryRequestTypes.length, selectedRequestTypeId]);
 
-    const effectiveFilters = useMemo(() => {
-        const base = { ...filters };
-        base.request_type_id = selectedRequestTypeId;
-        return base;
-    }, [filters, selectedRequestTypeId]);
+    const fetchFilters = useMemo(
+        () => ({
+            search: filters.search
+        }),
+        [filters.search]
+    );
 
     const shouldFetchJoinRequests = Boolean(
         filtersInitialized &&
@@ -137,25 +190,60 @@ export default function JoinRequests() {
             selectedRequestTypeId !== null
     );
 
-    const { data, isLoading, refresh } = useJoinRequestsQuery(effectiveFilters, {
+    const { data, isLoading, refresh } = useAllJoinRequestsQuery(fetchFilters, {
         enabled: shouldFetchJoinRequests
     }, {
         mode: 'all'
     });
+    const filteredJoinRequests = useMemo(() => {
+        const allJoinRequests = data?.data || [];
+
+        return allJoinRequests.filter(item => {
+            const requestTypeId = Number(item?.request_type_id);
+
+            if (!categoryRequestTypeIdsSet.has(requestTypeId)) {
+                return false;
+            }
+
+            if (selectedRequestTypeId == null) {
+                return true;
+            }
+
+            return requestTypeId === Number(selectedRequestTypeId);
+        });
+    }, [data?.data, categoryRequestTypeIdsSet, selectedRequestTypeId]);
     const pendingLookupFilters = useMemo(() => ({
-        search: effectiveFilters.search,
-        request_type_id: effectiveFilters.request_type_id,
-        per_page: 1000
-    }), [effectiveFilters.search, effectiveFilters.request_type_id]);
-    const { data: pendingData } = useJoinRequestsQuery(pendingLookupFilters, {
+        search: fetchFilters.search
+    }), [fetchFilters.search]);
+    const { data: pendingData } = useAllJoinRequestsQuery(pendingLookupFilters, {
         enabled: shouldFetchJoinRequests && branchManagerOnly
     }, {
         mode: 'pending'
     });
     const actionableRequestIds = useMemo(() => {
         if (!branchManagerOnly) return null;
-        return new Set((pendingData?.data || []).map((item) => item.id));
-    }, [branchManagerOnly, pendingData?.data]);
+        return new Set(
+            (pendingData?.data || [])
+                .filter(item => {
+                    const requestTypeId = Number(item?.request_type_id);
+                    if (!categoryRequestTypeIdsSet.has(requestTypeId)) {
+                        return false;
+                    }
+
+                    if (selectedRequestTypeId == null) {
+                        return true;
+                    }
+
+                    return requestTypeId === Number(selectedRequestTypeId);
+                })
+                .map(item => item.id)
+        );
+    }, [
+        branchManagerOnly,
+        pendingData?.data,
+        categoryRequestTypeIdsSet,
+        selectedRequestTypeId
+    ]);
 
     const requestTypesMap = useMemo(() => {
         const map = {};
@@ -221,9 +309,9 @@ export default function JoinRequests() {
                 title={tableTitle}
                 refresh={refresh}
                 loading={isLoading}
-                data={data?.data || []}
-                serverPagination={true}
-                totalCount={data?.meta?.total}
+                data={filteredJoinRequests}
+                serverPagination={false}
+                totalCount={filteredJoinRequests.length}
                 columns={columns}
                 pagination={pagination}
                 setPagination={setter('pagination')}
@@ -237,7 +325,7 @@ export default function JoinRequests() {
             {isOpen.view && (
                 <ViewJoinRequest
                     onClose={toggle.view}
-                    oldData={getOriginalObject(isOpen.view, data?.data || [])}
+                    oldData={getOriginalObject(isOpen.view, filteredJoinRequests)}
                     isReadOnly={branchManagerOnly && !actionableRequestIds?.has(isOpen.view?.id)}
                 />
             )}

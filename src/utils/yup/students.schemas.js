@@ -1,5 +1,6 @@
 import * as yup from 'yup';
 import { t } from 'i18next';
+import { DEFAULT_PARENT_INFO_AGE_THRESHOLD } from '@/pages/students/utils/parentInfoThreshold';
 
 // Helper to calculate age
 const calculateAge = (dateOfBirth) => {
@@ -14,7 +15,12 @@ const calculateAge = (dateOfBirth) => {
     return age;
 };
 
-export const studentsSchema = yup.object({
+const shouldRequireParentInfo = (dateOfBirth, parentInfoAgeThreshold) => {
+    const age = calculateAge(dateOfBirth);
+    return age !== null && age < parentInfoAgeThreshold;
+};
+
+export const studentsSchema = (parentInfoAgeThreshold = DEFAULT_PARENT_INFO_AGE_THRESHOLD) => yup.object({
     name: yup
         .object({
             en: yup
@@ -151,55 +157,74 @@ export const studentsSchema = yup.object({
         .string()
         .required(t('validation.date_of_birth.required')),
     
-    // Parent name as bilingual object - required when (age < 18) OR (program_id === 2 AND age < 18)
+    // Parent information is required when student age is below the configured threshold.
     parent_name: yup
         .object({
-            en: yup
-                .string()
-                .nullable()
-                .when(['$date_of_birth', '$main_program_id'], {
-                    is: (dateOfBirth, mainProgramId) => {
-                        const age = calculateAge(dateOfBirth);
-                        const isMinor = age !== null && age < 18;
-                        // Required when minor for any program, or specifically for memorization program when minor
-                        return isMinor || (Number(mainProgramId) === 2 && isMinor);
-                    },
-                    then: schema =>
-                        schema
-                            .required(t('validation.required'))
-                            .min(2, t('validation.parent_name.en_min'))
-                            .max(100, t('validation.parent_name.en_max')),
-                    otherwise: schema => schema.nullable().optional()
-                }),
-            ar: yup
-                .string()
-                .nullable()
-                .when(['$date_of_birth', '$main_program_id'], {
-                    is: (dateOfBirth, mainProgramId) => {
-                        const age = calculateAge(dateOfBirth);
-                        const isMinor = age !== null && age < 18;
-                        return isMinor || (Number(mainProgramId) === 2 && isMinor);
-                    },
-                    then: schema =>
-                        schema
-                            .required(t('validation.required'))
-                            .min(2, t('validation.parent_name.ar_min'))
-                            .max(100, t('validation.parent_name.ar_max')),
-                    otherwise: schema => schema.nullable().optional()
-                })
+            en: yup.string().nullable().optional(),
+            ar: yup.string().nullable().optional()
         })
         .nullable()
-        .default({ en: '', ar: '' }),
+        .default({ en: '', ar: '' })
+        .test('parent-name-required-when-under-threshold', '', function (value) {
+            const { date_of_birth } = this.parent || {};
+
+            if (!shouldRequireParentInfo(date_of_birth, parentInfoAgeThreshold)) {
+                return true;
+            }
+
+            const englishName = String(value?.en ?? '').trim();
+            const arabicName = String(value?.ar ?? '').trim();
+
+            if (!englishName) {
+                return this.createError({
+                    path: `${this.path}.en`,
+                    message: t('validation.required')
+                });
+            }
+
+            if (englishName.length < 2) {
+                return this.createError({
+                    path: `${this.path}.en`,
+                    message: t('validation.parent_name.en_min')
+                });
+            }
+
+            if (englishName.length > 100) {
+                return this.createError({
+                    path: `${this.path}.en`,
+                    message: t('validation.parent_name.en_max')
+                });
+            }
+
+            if (!arabicName) {
+                return this.createError({
+                    path: `${this.path}.ar`,
+                    message: t('validation.required')
+                });
+            }
+
+            if (arabicName.length < 2) {
+                return this.createError({
+                    path: `${this.path}.ar`,
+                    message: t('validation.parent_name.ar_min')
+                });
+            }
+
+            if (arabicName.length > 100) {
+                return this.createError({
+                    path: `${this.path}.ar`,
+                    message: t('validation.parent_name.ar_max')
+                });
+            }
+
+            return true;
+        }),
     
     kinship_id: yup
         .number()
         .nullable()
-        .when(['date_of_birth', 'main_program_id'], {
-            is: (dateOfBirth, mainProgramId) => {
-                const age = calculateAge(dateOfBirth);
-                const isMinor = age !== null && age < 18;
-                return isMinor || (Number(mainProgramId) === 2 && isMinor);
-            },
+        .when('date_of_birth', {
+            is: dateOfBirth => shouldRequireParentInfo(dateOfBirth, parentInfoAgeThreshold),
             then: schema =>
                 schema
                     .required(t('validation.required'))
@@ -211,12 +236,8 @@ export const studentsSchema = yup.object({
     parent_phone_1: yup
         .string()
         .nullable()
-        .when(['date_of_birth', 'main_program_id'], {
-            is: (dateOfBirth, mainProgramId) => {
-                const age = calculateAge(dateOfBirth);
-                const isMinor = age !== null && age < 18;
-                return isMinor || (Number(mainProgramId) === 2 && isMinor);
-            },
+        .when('date_of_birth', {
+            is: dateOfBirth => shouldRequireParentInfo(dateOfBirth, parentInfoAgeThreshold),
             then: schema =>
                 schema
                     .required(t('validation.required'))
@@ -227,12 +248,8 @@ export const studentsSchema = yup.object({
     parent_phone_2: yup
         .string()
         .nullable()
-        .when(['date_of_birth', 'main_program_id'], {
-            is: (dateOfBirth, mainProgramId) => {
-                const age = calculateAge(dateOfBirth);
-                const isMinor = age !== null && age < 18;
-                return isMinor || (Number(mainProgramId) === 2 && isMinor);
-            },
+        .when('date_of_birth', {
+            is: dateOfBirth => shouldRequireParentInfo(dateOfBirth, parentInfoAgeThreshold),
             then: schema =>
                 schema.matches(/^[+]?[0-9]*$/, t('validation.phone.invalid')),
             otherwise: schema => schema.nullable().optional()

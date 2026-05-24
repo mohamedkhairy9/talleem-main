@@ -2,7 +2,7 @@ import React, { useMemo } from 'react';
 import FormStudent from './FormStudent';
 import Modal from '@/components/common/form/Modal';
 import ModalHeader from '@/components/common/form/ModalHeader';
-import { useUpdateStudentMutation } from '@/api/hooks/useStudents';
+import { useStudentQuery, useUpdateStudentMutation } from '@/api/hooks/useStudents';
 import { useBranchesQuery } from '@/api/hooks/useBranches';
 import { useMainProgramsQuery } from '@/api/hooks/useMainPrograms';
 import { useEducationProgramEntityTypesQuery } from '@/api/hooks/useEducationProgramEntityTypes';
@@ -30,6 +30,9 @@ const yesNoOptions = [
 export default function EditStudent({ onClose, oldData }) {
     console.log("old data: ", oldData);
     const { mutate, isPending } = useUpdateStudentMutation();
+    const { data: studentDetailsData } = useStudentQuery(oldData?.id, {
+        enabled: !!oldData?.id
+    });
 
     // Fetch all available options
     const { data: branchesData, isLoading: branchesLoading } =
@@ -104,12 +107,15 @@ export default function EditStudent({ onClose, oldData }) {
 
     if (isLoading) return <Loader />;
 
+    const studentDetails = studentDetailsData?.data || studentDetailsData || oldData;
+
     return (
         <Modal onClose={onClose} size="5xl">
             <ModalHeader onClose={onClose} header="students.edit" />
             <FormStudent
                 onClose={onClose}
                 oldData={oldData}
+                activeHalaqaRecord={studentDetails}
                 editMode={true}
                 mutate={mutate}
                 isPending={isPending}

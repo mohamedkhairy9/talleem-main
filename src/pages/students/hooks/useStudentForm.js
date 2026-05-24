@@ -22,7 +22,7 @@ const extractEducationEntityTypeData = (oldData) => {
     return { id: educationEntityType, classification: null, name: null };
 };
 
-export function useStudentForm({ oldData, editMode, viewMode, watch, setValue }) {
+export function useStudentForm({ oldData, editMode, viewMode, watch, setValue, parentInfoAgeThreshold }) {
     const lang = i18next.language;
     const previousParamsRef = useRef(null);
     const previousBranchIdRef = useRef(null);
@@ -48,7 +48,8 @@ export function useStudentForm({ oldData, editMode, viewMode, watch, setValue })
 
     // Calculate age and determine if parent fields should be shown
     const studentAge = useMemo(() => calculateAge(dateOfBirth), [dateOfBirth]);
-    const shouldShowParentFields = studentAge !== null && studentAge < 18;
+    const shouldShowParentFields =
+        studentAge !== null && studentAge < parentInfoAgeThreshold;
 
     // Entities query - ONLY when both main_program_id AND branch_id are selected
     // In edit mode, use oldData values if form values are not set yet

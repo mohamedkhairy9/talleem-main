@@ -73,6 +73,61 @@ export const joinRequestsService = {
         const client = branchManager ? joinRequestsClient : axiosInstance;
         return client.get(listPath, { params: finalParams });
     },
+    getAllJoinRequests: async (params, options = {}) => {
+        const branchManager = isBranchManagerOnly();
+        const mode = options.mode || 'auto';
+        const finalParams = branchManager ? stripEmptyParams(params) : params ?? {};
+        const listPath =
+            mode === 'pending'
+                ? `${API_URLS.JOIN_REQUESTS.LIST}/pending`
+                : mode === 'all'
+                    ? API_URLS.JOIN_REQUESTS.LIST
+                    : branchManager
+                        ? `${API_URLS.JOIN_REQUESTS.LIST}/pending`
+                        : API_URLS.JOIN_REQUESTS.LIST;
+        const client = branchManager ? joinRequestsClient : axiosInstance;
+
+        const firstPage = await client.get(listPath, {
+            params: { ...finalParams, page: 1 }
+        });
+
+        const firstPageItems = Array.isArray(firstPage?.data) ? firstPage.data : [];
+        const totalItems = Number(firstPage?.meta?.total ?? firstPageItems.length);
+        const perPage = Number(firstPage?.meta?.per_page ?? (firstPageItems.length || 20));
+        const totalPages =
+            totalItems > 0 && perPage > 0 ? Math.ceil(totalItems / perPage) : 1;
+
+        if (totalPages <= 1) {
+            return firstPage;
+        }
+
+        const remainingPages = await Promise.all(
+            Array.from({ length: totalPages - 1 }, (_, index) =>
+                client.get(listPath, {
+                    params: { ...finalParams, page: index + 2 }
+                })
+            )
+        );
+
+        const allItems = [
+            ...firstPageItems,
+            ...remainingPages.flatMap(response =>
+                Array.isArray(response?.data) ? response.data : []
+            )
+        ];
+
+        return {
+            ...firstPage,
+            data: allItems,
+            meta: {
+                ...(firstPage?.meta || {}),
+                total: allItems.length,
+                current_page: 1,
+                last_page: 1,
+                per_page: allItems.length || perPage
+            }
+        };
+    },
     getJoinRequestDetails: id => {
         const client = isBranchManagerOnly() ? joinRequestsClient : axiosInstance;
         return client.get(API_URLS.JOIN_REQUESTS.DETAILS(id));

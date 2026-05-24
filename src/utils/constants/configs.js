@@ -71,8 +71,6 @@ function filterSubMenuByVisibility(items, normalizedUserRoles, can) {
 }
 
 export const sideMenuTabs = [
-    { titleKey: 'sidebar.home', path: '/', icon: HiHome },
-
     // نظام الحماية
     {
         titleKey: 'sidebar.security_system',
@@ -91,15 +89,13 @@ export const sideMenuTabs = [
         titleKey: 'sidebar.system_settings',
         icon: HiCog,
         subMenu: [
-            { titleKey: 'sidebar.evaluation-parameters', path: '/evaluation-parameters', icon: VscDebugBreakpointLog, requiredPermission: { resource: 'evaluation_parameters', action: 'r' } },
-            { titleKey: 'sidebar.configurations', path: '/configurations', icon: HiDocumentText, requiredPermission: { resource: 'workflow_admin', action: 'r' } },
             {
-                titleKey: 'sidebar.lookups',
+                titleKey: 'sidebar.system_lookup_files',
                 icon: IoGrid,
                 subMenu: [
                     { titleKey: 'sidebar.main_programs', path: '/main-programs', icon: VscDebugBreakpointLog, requiredPermission: { resource: 'main_programs', action: 'r' } },
-                    { titleKey: 'sidebar.countries', path: '/countries', icon: VscDebugBreakpointLog, requiredPermission: { resource: 'countries', action: 'r' } },
                     { titleKey: 'sidebar.nationalities', path: '/nationalities', icon: VscDebugBreakpointLog, requiredPermission: { resource: 'nationalities', action: 'r' } },
+                    { titleKey: 'sidebar.countries', path: '/countries', icon: VscDebugBreakpointLog, requiredPermission: { resource: 'countries', action: 'r' } },
                     { titleKey: 'sidebar.cities', path: '/cities', icon: VscDebugBreakpointLog, requiredPermission: { resource: 'cities', action: 'r' } },
                     { titleKey: 'sidebar.neighborhoods', path: '/neighborhoods', icon: VscDebugBreakpointLog, requiredPermission: { resource: 'neighborhoods', action: 'r' } },
                     { titleKey: 'sidebar.jobs', path: '/jobs', icon: VscDebugBreakpointLog, requiredPermission: { resource: 'jobs', action: 'r' } },
@@ -108,23 +104,22 @@ export const sideMenuTabs = [
                     { titleKey: 'sidebar.branch_administrations', path: '/branch-administrations', icon: VscDebugBreakpointLog, requiredPermission: { resource: 'branch_administrations', action: 'r' } },
                     { titleKey: 'sidebar.remotely_attendance_platforms', path: '/remotely-attendance-platforms', icon: VscDebugBreakpointLog, requiredPermission: { resource: 'remote_attendance_platforms', action: 'r' } },
                     { titleKey: 'sidebar.kinships', path: '/kinships', icon: VscDebugBreakpointLog, requiredPermission: { resource: 'kinships', action: 'r' } },
-                    { titleKey: 'sidebar.certification-names', path: '/certification-names', icon: VscDebugBreakpointLog, requiredPermission: { resource: 'certificate_names', action: 'r' } },
-                    { titleKey: 'sidebar.entity_activities', path: '/activities', icon: VscDebugBreakpointLog, requiredPermission: { resource: 'activities', action: 'r' } },
-                    { titleKey: 'sidebar.warning_reasons', path: '/warning-reasons', icon: VscDebugBreakpointLog, requiredPermission: { resource: 'warning_reasons', action: 'r' } },
+                    { titleKey: 'sidebar.general_activities', path: '/activities', icon: VscDebugBreakpointLog, requiredPermission: { resource: 'activities', action: 'r' } },
+                    { titleKey: 'sidebar.entity_activities', path: '/entity-activities', icon: VscDebugBreakpointLog, requiredPermission: { resource: 'entity_activities', action: 'r' } },
                     { titleKey: 'sidebar.absences_types', path: '/attendances-types', icon: VscDebugBreakpointLog, requiredPermission: { resource: 'attendance_types', action: 'r' } },
-                    { titleKey: 'sidebar.academic_qualifications', path: '/academic-qualifications', icon: VscDebugBreakpointLog, requiredPermission: { resource: 'academic_qualifications', action: 'r' } },
-                    { titleKey: 'sidebar.academic_years', path: '/academic-years', icon: VscDebugBreakpointLog, requiredPermission: { resource: 'academic_years', action: 'r' } },
-                    { titleKey: 'sidebar.majors', path: '/majors', icon: VscDebugBreakpointLog, requiredPermission: { resource: 'majors', action: 'r' } }
+                    { titleKey: 'sidebar.academic_qualifications', path: '/academic-qualifications', icon: VscDebugBreakpointLog, requiredPermission: { resource: 'academic_qualifications', action: 'r' } }
                 ]
             },
+            { titleKey: 'sidebar.configurations_file', path: '/configurations', icon: HiDocumentText, requiredPermission: { resource: 'workflow_admin', action: 'r' } },
+            { titleKey: 'sidebar.evaluation_model_builder', path: '/evaluation-parameters', icon: VscDebugBreakpointLog, requiredPermission: { resource: 'evaluation_parameters', action: 'r' } },
             {
                 titleKey: 'sidebar.policies_and_banners',
                 icon: HiDocumentText,
                 subMenu: [
-                    { titleKey: 'sidebar.about_us', path: '/about-us', icon: VscDebugBreakpointLog, requiredPermission: { resource: 'about-us', action: 'r' } },
-                    { titleKey: 'sidebar.terms_and_conditions', path: '/term-and-condition', icon: VscDebugBreakpointLog, requiredPermission: { resource: 'terms-and-conditions', action: 'r' } },
                     { titleKey: 'sidebar.privacy_policies', path: '/privacy-policies', icon: VscDebugBreakpointLog, requiredPermission: { resource: 'privacy-and-policies', action: 'r' } },
-                    { titleKey: 'sidebar.general_banners', path: '/general-banners', icon: VscDebugBreakpointLog, requiredPermission: { resource: 'banners', action: 'r' } }
+                    { titleKey: 'sidebar.about_us', path: '/about-us', icon: VscDebugBreakpointLog, requiredPermission: { resource: 'about-us', action: 'r' } },
+                    { titleKey: 'sidebar.general_banners', path: '/general-banners', icon: VscDebugBreakpointLog, requiredPermission: { resource: 'banners', action: 'r' } },
+                    { titleKey: 'sidebar.terms_and_conditions', path: '/term-and-condition', icon: VscDebugBreakpointLog, requiredPermission: { resource: 'terms-and-conditions', action: 'r' } }
                 ]
             }
         ]
@@ -152,9 +147,62 @@ export const sideMenuTabs = [
         ]
     },
 
+    {
+        titleKey: 'sidebar.memorization_program_settings',
+        icon: HiBookOpen,
+        subMenu: [
+            {
+                titleKey: 'sidebar.memorization_lookup_files',
+                icon: IoGrid,
+                subMenu: [
+                    { titleKey: 'sidebar.memorization-program-entity-types', path: '/memorization-program-entity-types', icon: VscDebugBreakpointLog, requiredPermission: { resource: 'memorization_program_entity_types', action: 'r' } },
+                    { titleKey: 'sidebar.session_periods', path: '/session-periods', icon: VscDebugBreakpointLog, requiredPermission: { resource: 'session_periods', action: 'r' } }
+                ]
+            },
+            { titleKey: 'sidebar.mushaf_management', icon: HiBookOpen, path: '/quran-segmentation', requiredPermission: { resource: 'quran_segments', action: 'r' } },
+            {
+                titleKey: 'sidebar.exam_settings',
+                icon: VscDebugBreakpointLog,
+                subMenu: [
+                    { titleKey: 'sidebar.suggested_exam_templates', path: '/suggested-exam-templates', icon: VscDebugBreakpointLog, requiredPermission: { resource: 'exam_segments', action: 'r' } },
+                    { titleKey: 'sidebar.exam_segments_count', path: '/exam-segments-count', icon: VscDebugBreakpointLog, requiredPermission: { resource: 'exam_segments', action: 'r' } }
+                ]
+            }
+        ]
+    },
+
+    {
+        titleKey: 'sidebar.education_program_settings',
+        icon: HiAcademicCap,
+        subMenu: [
+            { titleKey: 'sidebar.education-program-entity-types', path: '/education-program-entity-types', icon: VscDebugBreakpointLog, requiredPermission: { resource: 'education_program_entity_types', action: 'r' } },
+            { titleKey: 'sidebar.academic_years', path: '/academic-years', icon: VscDebugBreakpointLog, requiredPermission: { resource: 'academic_years', action: 'r' } },
+            { titleKey: 'sidebar.academic_levels', path: '/academic-levels', icon: VscDebugBreakpointLog, requiredPermission: { resource: 'academic_levels', action: 'r' } },
+            {
+                titleKey: 'sidebar.education_materials_setup',
+                icon: IoGrid,
+                subMenu: [
+                    { titleKey: 'sidebar.specifications', path: '/specifications', icon: VscDebugBreakpointLog, requiredPermission: { resource: 'specifications', action: 'r' } },
+                    { titleKey: 'sidebar.majors', path: '/majors', icon: VscDebugBreakpointLog, requiredPermission: { resource: 'majors', action: 'r' } }
+                ]
+            },
+            { titleKey: 'sidebar.education_warning_reasons', path: '/warning-reasons', icon: VscDebugBreakpointLog, requiredPermission: { resource: 'warning_reasons', action: 'r' } }
+        ]
+    },
+    {
+        titleKey: 'sidebar.educational_supervision',
+        icon: HiAcademicCap,
+        subMenu: [
+            { titleKey: 'sidebar.inspector-assignments', path: '/inspector-assignments', icon: VscDebugBreakpointLog, requiredPermission: { resource: 'supervisor_assignments', action: 'r' } },
+            { titleKey: 'sidebar.certification-names', path: '/certification-names', icon: VscDebugBreakpointLog, requiredPermission: { resource: 'certificate_names', action: 'r' } },
+            { titleKey: 'sidebar.warning', path: '/issuing-warnings', icon: VscDebugBreakpointLog, requiredPermission: { resource: 'warnings', action: 'r' } },
+            { titleKey: 'sidebar.certificates', path: '/certificates', icon: VscDebugBreakpointLog, requiredPermission: { resource: 'certificates', action: 'r' } }
+        ]
+    },
+
     // Registration & join requests: visible when user has permission for any child
     {
-        titleKey: 'sidebar.registration_requests',
+        titleKey: 'sidebar.request_management',
         icon: HiDocumentAdd,
         subMenu: [
             {
@@ -178,41 +226,5 @@ export const sideMenuTabs = [
         ]
     },
 
-    {
-        titleKey: 'sidebar.memorization_program_settings',
-        icon: HiBookOpen,
-        subMenu: [
-            { titleKey: 'sidebar.session_periods', path: '/session-periods', icon: VscDebugBreakpointLog, requiredPermission: { resource: 'session_periods', action: 'r' } },
-            { titleKey: 'sidebar.academic_levels', path: '/academic-levels', icon: VscDebugBreakpointLog, requiredPermission: { resource: 'academic_levels', action: 'r' } },
-            { titleKey: 'sidebar.memorization-program-entity-types', path: '/memorization-program-entity-types', icon: VscDebugBreakpointLog, requiredPermission: { resource: 'memorization_program_entity_types', action: 'r' } },
-            { titleKey: 'sidebar.mushaf_management', icon: HiBookOpen, path: '/quran-segmentation', requiredPermission: { resource: 'quran_segments', action: 'r' } },
-            {
-                titleKey: 'sidebar.exam_settings',
-                icon: VscDebugBreakpointLog,
-                subMenu: [
-                    { titleKey: 'sidebar.suggested_exam_templates', path: '/suggested-exam-templates', icon: VscDebugBreakpointLog, requiredPermission: { resource: 'exam_segments', action: 'r' } },
-                    { titleKey: 'sidebar.exam_segments_count', path: '/exam-segments-count', icon: VscDebugBreakpointLog, requiredPermission: { resource: 'exam_segments', action: 'r' } }
-                ]
-            }
-        ]
-    },
-
-    {
-        titleKey: 'sidebar.education_program_settings',
-        icon: HiAcademicCap,
-        subMenu: [
-            { titleKey: 'sidebar.specifications', path: '/specifications', icon: VscDebugBreakpointLog, requiredPermission: { resource: 'specifications', action: 'r' } },
-            { titleKey: 'sidebar.education-program-entity-types', path: '/education-program-entity-types', icon: VscDebugBreakpointLog, requiredPermission: { resource: 'education_program_entity_types', action: 'r' } }
-        ]
-    },
-    {
-        titleKey: 'sidebar.educational_supervision',
-        icon: HiAcademicCap,
-        subMenu: [
-            { titleKey: 'sidebar.inspector-assignments', path: '/inspector-assignments', icon: VscDebugBreakpointLog, requiredPermission: { resource: 'supervisor_assignments', action: 'r' } },
-            { titleKey: 'sidebar.warning', path: '/issuing-warnings', icon: VscDebugBreakpointLog, requiredPermission: { resource: 'warnings', action: 'r' } },
-            { titleKey: 'sidebar.certificates', path: '/certificates', icon: VscDebugBreakpointLog, requiredPermission: { resource: 'certificates', action: 'r' } }
-        ]
-    },
-
+    { titleKey: 'sidebar.dashboard_reports', path: '/', icon: HiHome }
 ];

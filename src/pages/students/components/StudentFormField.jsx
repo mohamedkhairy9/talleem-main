@@ -24,7 +24,8 @@ export default function StudentFormField({
     isConditionallyRequired,
     oldData,
     setValue,
-    filesSupportingHint
+    filesSupportingHint,
+    segmentationChangeLocked
 }) {
     const { t } = useLocale();
     const lang = i18next.language;
@@ -114,7 +115,7 @@ export default function StudentFormField({
                     error={getNestedError(errors, field.name)}
                     type={field.type}
                     placeholder={field.placeholder}
-                    disabled={viewMode}
+                    disabled={viewMode || segmentationChangeLocked}
                     label={field.label}
                     name={field.name}
                     info={field.info}
@@ -127,7 +128,8 @@ export default function StudentFormField({
 
     // Special handling for entity field
     if (field.name === 'entity_id') {
-        const isEntityDisabled = !branchId || !mainProgramId || viewMode;
+        const isEntityDisabled =
+            !branchId || !mainProgramId || viewMode || segmentationChangeLocked;
         // Get loadOptions and defaultOptions from hook (passed via enhancedOptions or as separate props)
         const entityLoadOptions = enhancedOptions._entityLoadOptions;
         const entityDefaultOptions = enhancedOptions._entityDefaultOptions;
@@ -203,7 +205,11 @@ export default function StudentFormField({
                     error={getNestedError(errors, field.name)}
                     type={field.type}
                     placeholder={field.placeholder}
-                    disabled={viewMode}
+                    disabled={
+                        viewMode ||
+                        (segmentationChangeLocked &&
+                            ['main_program_id', 'branch_id', 'entity_id'].includes(field.name))
+                    }
                     label={field.label}
                     name={field.name}
                     info={field.info}

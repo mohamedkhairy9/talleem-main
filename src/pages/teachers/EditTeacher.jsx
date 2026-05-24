@@ -2,7 +2,7 @@ import React from 'react';
 import FormTeacher from './FormTeacher';
 import Modal from '@/components/common/form/Modal';
 import ModalHeader from '@/components/common/form/ModalHeader';
-import { useUpdateTeacherMutation } from '@/api/hooks/useTeachers';
+import { useTeacherQuery, useUpdateTeacherMutation } from '@/api/hooks/useTeachers';
 import { useBranchesQuery } from '@/api/hooks/useBranches';
 import { useMainProgramsQuery } from '@/api/hooks/useMainPrograms';
 import { useEducationProgramEntityTypesQuery } from '@/api/hooks/useEducationProgramEntityTypes';
@@ -26,6 +26,9 @@ import { useMemorizationProgramEntityTypesQuery } from '@/api/hooks/useMemorizat
 export default function EditTeacher({ onClose, oldData }) {
     console.log('oldData', oldData);
     const { mutate, isPending } = useUpdateTeacherMutation();
+    const { data: teacherDetailsData } = useTeacherQuery(oldData?.id, {
+        enabled: !!oldData?.id
+    });
 
     // Fetch all available options
     const { data: branchesData, isLoading: branchesLoading } =
@@ -71,12 +74,15 @@ export default function EditTeacher({ onClose, oldData }) {
 
     if (isLoading) return <Loader />;
 
+    const teacherDetails = teacherDetailsData?.data || teacherDetailsData || oldData;
+
     return (
         <Modal onClose={onClose} size="5xl">
             <ModalHeader onClose={onClose} header="teachers.edit" />
             <FormTeacher
                 onClose={onClose}
                 oldData={{ ...oldData, status: oldData.status?.toLowerCase() }}
+                activeHalaqaRecord={teacherDetails}
                 editMode={true}
                 mutate={mutate}
                 isPending={isPending}

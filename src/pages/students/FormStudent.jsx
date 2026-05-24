@@ -1,11 +1,11 @@
-import useRFH from '@/utils/hooks/global/useRFH';
-import { studentsSchema as schema } from '@/utils/yup/students.schemas';
 import React, { useMemo, useCallback, useRef } from 'react';
-import { studentsFields } from './configs';
+import useRFH from '@/utils/hooks/global/useRFH';
+import { studentsSchema } from '@/utils/yup/students.schemas';
 import Btn from '@/components/common/buttons/Btn';
 import ModalContent from '@/components/common/form/ModalContent';
 import ModalFooter from '@/components/common/form/ModalFooter';
 import { useStudentForm } from './hooks/useStudentForm';
+import { studentsFields } from './configs';
 import StudentFormField from './components/StudentFormField';
 import ParentInformationSection from './components/ParentInformationSection';
 import QualificationSection from './components/QualificationSection';
@@ -20,6 +20,19 @@ import {
     prepareSubmissionData
 } from './utils/studentFormHelpers';
 import { useRequiredDocumentsHint } from '@/api/hooks/useRequiredDocumentsHint';
+import { useConfigurationsQuery } from '@/api/hooks/useConfigurations';
+import useLocale from '@/utils/hooks/global/useLocale';
+import toastService from '@/utils/helpers/Toastservice';
+import Loader from '@/components/common/Loader';
+import {
+    getActiveHalaqaInfo,
+    hasSegmentationAffectingChange,
+    isMemorizationProgramSelected
+} from '@/utils/helpers/activeHalaqaGuard';
+import {
+    DEFAULT_PARENT_INFO_AGE_THRESHOLD,
+    resolveParentInfoAgeThreshold
+} from './utils/parentInfoThreshold';
 
 // Helper to extract education entity type data from oldData
 const extractEducationEntityTypeData = (oldData) => {
@@ -37,21 +50,24 @@ const extractEducationEntityTypeData = (oldData) => {
     return { id: educationEntityType, classification: null, name: null };
 };
 
-export default function FormStudent({
+function StudentFormContent({
     onClose,
     oldData,
+    activeHalaqaRecord,
     editMode,
     viewMode,
     isPending,
     mutate,
-    options
+    options,
+    parentInfoAgeThreshold
 }) {
+    const { t } = useLocale();
     const lang = i18next.language;
-    
+
     // Create stable defaultValues (only once)
     const defaultValuesRef = useRef(null);
     const oldDataIdRef = useRef(null);
-    
+
     if (defaultValuesRef.current === null || oldDataIdRef.current !== oldData?.id) {
         const educationEntityTypeInfo = extractEducationEntityTypeData(oldData);
         const baseValues = {
@@ -89,17 +105,24 @@ export default function FormStudent({
         oldDataIdRef.current = oldData?.id;
     }
 
-    // Initialize form
+    const schema = useMemo(
+        () => studentsSchema(parentInfoAgeThreshold),
+        [parentInfoAgeThreshold]
+    );
+
     const { register, errors, handleSubmit, setValue, control, watch } = useRFH({
         schema,
         defaultValues: defaultValuesRef.current || {}
     });
 
     // Watch form values
-    const hasMedicalIssues = watch('has_medical_issues');
     const hasHighSchool = watch('qualification.has_high_school');
     const hasBachelors = watch('qualification.has_bachelors_degree');
     const hasMemorizedFive = watch('qualification.has_memorized_quran_5_parts');
+    const activeHalaqaInfo = useMemo(
+        () => getActiveHalaqaInfo(activeHalaqaRecord || oldData),
+        [activeHalaqaRecord, oldData]
+    );
 
     // Use custom hook for API calls and side effects only
     const {
@@ -121,14 +144,15 @@ export default function FormStudent({
         editMode,
         viewMode,
         watch,
-        setValue
+        setValue,
+        parentInfoAgeThreshold
     });
 
     const { data: requiredDocsData } = useRequiredDocumentsHint('student', mainProgramId);
     const filesSupportingHint = useMemo(() => {
         const docs = requiredDocsData?.documents;
         if (!docs?.length) return undefined;
-        return docs.join('، ');
+        return docs.join('ØŒ ');
     }, [requiredDocsData]);
 
     // Enhanced options with dynamic entities and loadOptions
@@ -142,25 +166,25 @@ export default function FormStudent({
     // Get display value for category
     const categoryDisplayValue = useMemo(() =>
         getCategoryDisplayValue(selectedEntityEducationType, educationEntityTypeInfo),
-        [selectedEntityEducationType, educationEntityTypeInfo]
-    );
+    [selectedEntityEducationType, educationEntityTypeInfo]);
 
     // Filter fields
     const mainFields = useMemo(() =>
         filterMainFields(studentsFields, editMode, viewMode, mainProgramId),
-        [editMode, viewMode, mainProgramId]
-    );
+    [editMode, viewMode, mainProgramId]);
 
     const parentFields = useMemo(() =>
         filterParentFields(studentsFields, editMode, viewMode),
-        [editMode, viewMode]
-    );
+    [editMode, viewMode]);
 
     // Helper to check if field is conditionally required
     const isConditionallyRequired = useCallback((field) =>
         getIsConditionallyRequired(field, mainProgramId, schema),
-        [mainProgramId]
-    );
+    [mainProgramId, schema]);
+    const segmentationChangeLocked =
+        editMode &&
+        activeHalaqaInfo.hasActiveHalaqas &&
+        isMemorizationProgramSelected(mainProgramId, oldData?.main_program_id);
 
     // Handle profile image change
     const handleProfileImageChange = useCallback((e) => {
@@ -177,17 +201,45 @@ export default function FormStudent({
 
     // Handle form submission
     const onSubmit = useCallback((data) => {
+        if (
+            segmentationChangeLocked &&
+            hasSegmentationAffectingChange({
+                oldData,
+                currentMainProgramId: data.main_program_id,
+                currentBranchId: data.branch_id,
+                currentEntityId: data.entity_id,
+                currentEntityCategoryId: data.entity_category_id
+            })
+        ) {
+            toastService.error(t('common.segmentationLockedActiveHalaqas'));
+            return;
+        }
+
         const finalData = prepareSubmissionData(data, editMode, profileImageChanged);
         mutate(finalData, {
             onSuccess: () => {
                 onClose();
             }
         });
-    }, [editMode, profileImageChanged, mutate, onClose]);
+    }, [
+        editMode,
+        mutate,
+        oldData,
+        onClose,
+        profileImageChanged,
+        segmentationChangeLocked,
+        t
+    ]);
 
     return (
         <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col h-full">
             <ModalContent>
+                {segmentationChangeLocked && (
+                    <div className="mb-4 rounded-lg border border-amber-300 bg-amber-50 px-4 py-3 text-sm text-amber-900">
+                        <p className="font-semibold">{t('common.segmentationLockedTitle')}</p>
+                        <p>{t('common.segmentationLockedActiveHalaqas')}</p>
+                    </div>
+                )}
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                     {mainFields.map(field => (
                         <StudentFormField
@@ -210,6 +262,7 @@ export default function FormStudent({
                             oldData={oldData}
                             setValue={setValue}
                             filesSupportingHint={filesSupportingHint}
+                            segmentationChangeLocked={segmentationChangeLocked}
                         />
                     ))}
                 </div>
@@ -252,5 +305,26 @@ export default function FormStudent({
                 </ModalFooter>
             )}
         </form>
+    );
+}
+
+export default function FormStudent(props) {
+    const { data: configurationsData, isLoading: configurationsLoading } = useConfigurationsQuery('all');
+
+    const parentInfoAgeThreshold = useMemo(
+        () => resolveParentInfoAgeThreshold(configurationsData?.data),
+        [configurationsData?.data]
+    );
+
+    if (configurationsLoading && !configurationsData?.data) {
+        return <Loader />;
+    }
+
+    return (
+        <StudentFormContent
+            key={`student-form-threshold-${parentInfoAgeThreshold}`}
+            {...props}
+            parentInfoAgeThreshold={parentInfoAgeThreshold || DEFAULT_PARENT_INFO_AGE_THRESHOLD}
+        />
     );
 }

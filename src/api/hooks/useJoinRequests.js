@@ -12,6 +12,14 @@ export const useJoinRequestsQuery = (params = {}, options = {}, requestOptions =
     });
 };
 
+export const useAllJoinRequestsQuery = (params = {}, options = {}, requestOptions = {}) => {
+    return useCustomQuery({
+        queryKey: [API_KEYS.JOIN_REQUESTS, 'all-pages', params, requestOptions.mode || 'auto'],
+        queryFn: () => joinRequestsService.getAllJoinRequests(params, requestOptions),
+        ...options
+    });
+};
+
 export const useJoinRequestDetailsQuery = (id, options = {}) => {
     return useCustomQuery({
         queryKey: [API_KEYS.JOIN_REQUESTS, 'details', id],

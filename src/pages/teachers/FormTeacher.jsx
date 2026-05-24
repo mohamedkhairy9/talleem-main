@@ -16,6 +16,12 @@ import { isFieldRequired } from '@/utils/helpers/schemaHelpers';
 import { errorHandler } from '@/api/handler';
 import ValidationErrorsSummary from '@/pages/students/components/ValidationErrorsSummary';
 import { useRequiredDocumentsHint } from '@/api/hooks/useRequiredDocumentsHint';
+import toastService from '@/utils/helpers/Toastservice';
+import {
+    getActiveHalaqaInfo,
+    hasSegmentationAffectingChange,
+    isMemorizationProgramSelected
+} from '@/utils/helpers/activeHalaqaGuard';
 
 // Helper to extract education entity type data from oldData
 const extractEducationEntityTypeData = (oldData) => {
@@ -65,6 +71,7 @@ const extractMemorizationEntityTypeData = (oldData) => {
 export default function FormTeacher({
     onClose,
     oldData,
+    activeHalaqaRecord,
     editMode,
     viewMode,
     isPending,
@@ -160,13 +167,18 @@ export default function FormTeacher({
     });
 
     // Watch values
-    const cityId = watch('city_id');
     const branchId = watch('branch_id');
     const mainProgramId = watch('main_program_id');
     const entityId = watch('entity_id');
     const entryType = watch('entry_type');
-    const educationClassification = watch('education_program_entity_type_classification');
-    const entityCategory = watch('entity_category_id');
+    const activeHalaqaInfo = useMemo(
+        () => getActiveHalaqaInfo(activeHalaqaRecord || oldData),
+        [activeHalaqaRecord, oldData]
+    );
+    const segmentationChangeLocked =
+        editMode &&
+        activeHalaqaInfo.hasActiveHalaqas &&
+        isMemorizationProgramSelected(mainProgramId, oldData?.main_program_id);
 
     const { data: requiredDocsData } = useRequiredDocumentsHint('teacher', mainProgramId);
     const filesSupportingHint = useMemo(() => {
@@ -251,9 +263,9 @@ export default function FormTeacher({
     // Filter branches based on selected city
     // COMMENTED OUT: Branch filtering by city removed - may revert if needed
     // const filteredBranches = useMemo(() => {
-    //     if (!cityId || !options.branch_id) return [];
-    //     return options.branch_id.filter(branch => branch.city?.id === Number(cityId));
-    // }, [cityId, options.branch_id]);
+    //     if (!options.branch_id) return [];
+    //     return options.branch_id;
+    // }, [options.branch_id]);
 
     // When entity is selected, auto-fill category and classification (CREATE mode only)
     useEffect(() => {
@@ -359,6 +371,20 @@ export default function FormTeacher({
     }, [selectedEntityEducationType, educationEntityTypeInfo, mainProgramId, lang]);
 
     function onSubmit(data) {
+        if (
+            segmentationChangeLocked &&
+            hasSegmentationAffectingChange({
+                oldData,
+                currentMainProgramId: data.main_program_id,
+                currentBranchId: data.branch_id,
+                currentEntityId: data.entity_id,
+                currentEntityCategoryId: data.entity_category_id
+            })
+        ) {
+            toastService.error(t('common.segmentationLockedActiveHalaqas'));
+            return;
+        }
+
         const {
             education_program_entity_type_classification: _classificationHelper,
             ...submitData
@@ -462,6 +488,13 @@ export default function FormTeacher({
     const isFieldDisabled = (fieldName) => {
         if (viewMode) return true;
 
+        if (
+            segmentationChangeLocked &&
+            ['main_program_id', 'branch_id', 'entity_id'].includes(fieldName)
+        ) {
+            return true;
+        }
+
         // Entity field disabled until branch and program are selected
         if (fieldName === 'entity_id' && (!branchId || !mainProgramId)) {
             return true;
@@ -509,6 +542,12 @@ export default function FormTeacher({
         <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col h-full">
             <ModalContent>
             {!viewMode && <ValidationErrorsSummary errors={errors} />}
+            {segmentationChangeLocked && (
+                <div className="mb-4 rounded-lg border border-amber-300 bg-amber-50 px-4 py-3 text-sm text-amber-900">
+                    <p className="font-semibold">{t('common.segmentationLockedTitle')}</p>
+                    <p>{t('common.segmentationLockedActiveHalaqas')}</p>
+                </div>
+            )}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {filteredTeacherFields.map(field => {
                     // Special handling for classification field (read-only, auto-filled)
@@ -568,7 +607,7 @@ export default function FormTeacher({
                                     error={getNestedError(errors, field.name)}
                                     type={field.type}
                                     placeholder={field.placeholder}
-                                    disabled={viewMode}
+                                    disabled={viewMode || segmentationChangeLocked}
                                     label={field.label}
                                     name={field.name}
                                     info={field.info}
@@ -583,7 +622,8 @@ export default function FormTeacher({
 
                     // Special handling for entity field - disabled until branch and program are selected; pass fieldParams so async loadOptions calls entity API with branch_id + main_program_id
                     if (field.name === 'entity_id') {
-                        const isEntityDisabled = !branchId || !mainProgramId || viewMode;
+                        const isEntityDisabled =
+                            !branchId || !mainProgramId || viewMode || segmentationChangeLocked;
 
                         return (
                             <div key={`${field.name}-${branchId ?? ''}-${mainProgramId ?? ''}`}>
