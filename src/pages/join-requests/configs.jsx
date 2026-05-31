@@ -1,15 +1,18 @@
 import Cell from '@/components/common/table/cells/Cell';
 import NameCell from '@/components/common/table/cells/NameCell';
 import DateCell from '@/components/common/table/cells/DateCell';
-import StatusCell from '@/components/common/table/cells/StatusCell';
 import { createColumnHelper } from '@tanstack/react-table';
 import React from 'react';
 import i18next from 'i18next';
 import { API_KEYS } from '@/api/endpoints';
+import {
+    getJoinRequestDisplayStatus,
+    getJoinRequestStatusBadgeClasses
+} from './statusDisplay';
 
 const columnHelper = createColumnHelper();
 
-export const joinRequestsColumns = (requestTypesMap) => [
+export const joinRequestsColumns = (requestTypesMap, currentLocale = 'en') => [
     columnHelper.accessor('id', {
         header: 'table_headers.id',
         cell: info => <Cell value={info.getValue()} />
@@ -36,7 +39,22 @@ export const joinRequestsColumns = (requestTypesMap) => [
     }),
     columnHelper.accessor('status_text', {
         header: 'table_headers.status',
-        cell: info => <StatusCell info={info} />
+        cell: info => {
+            const statusDisplay = getJoinRequestDisplayStatus(
+                info.row.original,
+                currentLocale
+            );
+
+            return (
+                <span
+                    className={`inline-flex rounded-full px-2 py-1 text-xs font-medium border ${getJoinRequestStatusBadgeClasses(
+                        statusDisplay.key
+                    )}`}
+                >
+                    {statusDisplay.text}
+                </span>
+            );
+        }
     }),
     columnHelper.accessor('created_at', {
         header: 'table_headers.created_at',

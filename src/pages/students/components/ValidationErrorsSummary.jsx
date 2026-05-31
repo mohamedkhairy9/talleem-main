@@ -1,4 +1,5 @@
 import useLocale from '@/utils/hooks/global/useLocale';
+import { localizeMessage } from '@/utils/helpers/localizedMessages';
 
 export default function ValidationErrorsSummary({ errors }) {
     const { t } = useLocale();
@@ -18,13 +19,21 @@ export default function ValidationErrorsSummary({ errors }) {
                     if (typeof value === 'object' && !value.message) {
                         return Object.entries(value).map(([nestedKey, nestedValue]) => (
                             <li key={`${key}.${nestedKey}`}>
-                                {t(`validation.${key}.${nestedKey}.label`)}: {nestedValue?.message ? t(nestedValue.message) : t('validation.field_required')}
+                                {t(`validation.${key}.${nestedKey}.label`)}: {nestedValue?.message
+                                    ? localizeMessage(nestedValue.message, 'api.errors.validation', {
+                                        preferFallbackForEnglish: true
+                                    })
+                                    : t('validation.field_required')}
                             </li>
                         ));
                     }
                     return (
                         <li key={key}>
-                            {t(`validation.${key}.label`)}: {value?.message ? t(value.message) : t('validation.field_required')}
+                            {t(`validation.${key}.label`)}: {value?.message
+                                ? localizeMessage(value.message, 'api.errors.validation', {
+                                    preferFallbackForEnglish: true
+                                })
+                                : t('validation.field_required')}
                         </li>
                     );
                 })}

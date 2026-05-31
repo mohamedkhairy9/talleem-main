@@ -8,6 +8,7 @@ import Btn from '@/components/common/buttons/Btn';
 import { getNestedError } from '@/utils/helpers/getNestedError';
 import { generateOptions } from '@/utils/helpers/global.fns';
 import useLocale from '@/utils/hooks/global/useLocale';
+import { localizeMessage } from '@/utils/helpers/localizedMessages';
 import MapPicker from '@/components/common/maps/MapPicker';
 import Accordion from '@/components/common/UIs/Accordion';
 import i18next from 'i18next';
@@ -494,7 +495,11 @@ export default function FormEntity({
                         className="px-3 py-3 w-full border border-gray-300 rounded-md bg-gray-100 text-gray-700 cursor-not-allowed"
                     />
                     {error && (
-                        <p className="text-xs text-red-600 font-montserrat">{t(error.message)}</p>
+                        <p className="text-xs text-red-600 font-montserrat">
+                            {localizeMessage(error.message, 'api.errors.validation', {
+                                preferFallbackForEnglish: true
+                            })}
+                        </p>
                     )}
                 </div>
             );

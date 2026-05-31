@@ -6,6 +6,7 @@ import Btn from '@/components/common/buttons/Btn';
 import { getNestedError } from '@/utils/helpers/getNestedError';
 import { generateOptions } from '@/utils/helpers/global.fns';
 import useLocale from '@/utils/hooks/global/useLocale';
+import { localizeMessage } from '@/utils/helpers/localizedMessages';
 import i18next from 'i18next';
 import { roleOptions, evaluationSystemOptions, simpleFields, criteriaFields, dashboardOptions, evaluationForOptions, modelTypeOptions } from './configs';
 import { enabledDisabledOptions, yesNoOptions } from '@/utils/constants/options';
@@ -151,10 +152,10 @@ export default function FormEvaluationParameter({
         return dashboardSelectOptions.filter(option => option.value !== evaluationFor);
     }, [dashboardSelectOptions, evaluationFor]);
 
-    // Filter receivers options - exclude evaluation_for value (use dashboard options for receivers)
+    // Receivers should allow all available roles, including the selected evaluation target.
     const receiversFilteredOptions = useMemo(() => {
-        return dashboardSelectOptions.filter(option => option.value !== evaluationFor);
-    }, [dashboardSelectOptions, evaluationFor]);
+        return dashboardSelectOptions;
+    }, [dashboardSelectOptions]);
 
     // Effect to clear evaluation_for from dashboards if it's selected
     // Only run when evaluationFor changes, not when selectedDashboards changes
@@ -180,33 +181,6 @@ export default function FormEvaluationParameter({
                 return String(d) !== String(evaluationFor) && Number(d) !== Number(evaluationFor);
             });
             setValue('dashboards', newDashboards, { shouldValidate: false });
-        }
-    }, [evaluationFor, watch, setValue]); // Only depend on evaluationFor
-
-    // Effect to clear evaluation_for from receivers if it's selected
-    // Only run when evaluationFor changes, not when selectedReceivers changes
-    useEffect(() => {
-        if (!evaluationFor) {
-            return;
-        }
-        
-        // Read current values inside the effect to avoid stale closures
-        const currentReceivers = watch('receivers') || [];
-        
-        if (!Array.isArray(currentReceivers) || currentReceivers.length === 0) {
-            return;
-        }
-        
-        // Use a more robust comparison that handles type differences
-        const hasEvaluationFor = currentReceivers.some(r => {
-            return String(r) === String(evaluationFor) || Number(r) === Number(evaluationFor);
-        });
-        
-        if (hasEvaluationFor) {
-            const newReceivers = currentReceivers.filter(r => {
-                return String(r) !== String(evaluationFor) && Number(r) !== Number(evaluationFor);
-            });
-            setValue('receivers', newReceivers, { shouldValidate: false });
         }
     }, [evaluationFor, watch, setValue]); // Only depend on evaluationFor
 
@@ -579,7 +553,11 @@ export default function FormEvaluationParameter({
                         {allErrors.map((error, index) => (
                             <li key={`${error.path}-${index}`}>
                                 <span className="font-medium">{error.label}:</span>{' '}
-                                <span>{t(error.message) || error.message}</span>
+                                <span>
+                                    {localizeMessage(error.message, 'api.errors.validation', {
+                                        preferFallbackForEnglish: true
+                                    })}
+                                </span>
                             </li>
                         ))}
                     </ul>

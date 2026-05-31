@@ -3,6 +3,7 @@ import SelectRFH from './SelectRFH';
 import { shouldUseAsyncSelect, createLoadOptionsForField, getDefaultOptionsForField, createGetOptionByValueForField, getNestedValue } from '@/utils/helpers/asyncSelectFieldMapper';
 import { useMemo } from 'react';
 import i18next from 'i18next';
+import { localizeMessage } from '@/utils/helpers/localizedMessages';
 
 export default function InputRFH({
     error,
@@ -238,7 +239,7 @@ export default function InputRFH({
 
             {/* Error message */}
             <p className="mt-1 h-4 text-xs text-red-600">
-                {t(error) || ''}
+                {error ? localizeMessage(error, 'api.errors.validation', { preferFallbackForEnglish: true }) : ''}
             </p>
         </div>
     );

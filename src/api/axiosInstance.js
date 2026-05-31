@@ -2,6 +2,7 @@ import axios from 'axios';
 import { useUserStore } from '../utils/stores/user.store';
 import i18n from '../i18n';
 import { ROLE_SUPER_ADMIN, ROLE_BRANCH_ADMIN, normalizeRole } from '../utils/constants/configs';
+import { getLocalizedErrorMessage, getRawErrorMessage } from '@/utils/helpers/localizedMessages';
 
 const baseURL =
     import.meta.env.VITE_API_BASE_URL ||
@@ -83,7 +84,8 @@ const responseInterceptor = response => response.data;
 const responseErrorInterceptor = error => {
     const normalizedError = {
         status: error.response?.status,
-        message: error.response?.data?.message || error.response?.data?.error || error.message,
+        message: getLocalizedErrorMessage(error),
+        rawMessage: getRawErrorMessage(error),
         data: error.response?.data
     };
     if (error.response?.status === 401) {

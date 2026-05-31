@@ -27,9 +27,30 @@ function normalizeText(value) {
         .trim();
 }
 
+function collectTexts(value) {
+    if (value == null) return [];
+
+    if (typeof value === 'string' || typeof value === 'number') {
+        const normalized = normalizeText(value);
+        return normalized ? [normalized] : [];
+    }
+
+    if (Array.isArray(value)) {
+        return value.flatMap(collectTexts);
+    }
+
+    if (typeof value === 'object') {
+        return Object.values(value).flatMap(collectTexts);
+    }
+
+    return [];
+}
+
 function flattenConfigGroups(configGroups) {
     if (!Array.isArray(configGroups)) return [];
-    return configGroups.flatMap(group => (Array.isArray(group) ? group : [group])).filter(Boolean);
+    return configGroups
+        .flatMap(group => (Array.isArray(group) ? group : [group]))
+        .filter(Boolean);
 }
 
 function parsePositiveAgeThreshold(value) {
@@ -41,20 +62,26 @@ function parsePositiveAgeThreshold(value) {
 }
 
 function isParentInfoThresholdConfig(config) {
-    const key = normalizeText(config?.key);
-    const label = normalizeText(config?.label);
+    const searchableTexts = [
+        ...collectTexts(config?.key),
+        ...collectTexts(config?.label),
+        ...collectTexts(config?.name),
+        ...collectTexts(config?.title),
+        ...collectTexts(config?.description)
+    ];
 
-    if (PARENT_INFO_THRESHOLD_KEY_ALIASES.has(key)) {
+    if (searchableTexts.some(text => PARENT_INFO_THRESHOLD_KEY_ALIASES.has(text))) {
         return true;
     }
 
-    return (
-        label.includes('يجب ادخال بيانات ولي الامر') ||
-        label.includes('بيانات ولي الامر') ||
-        label.includes('guardian information') ||
-        label.includes('parent information') ||
-        label.includes('less than') ||
-        label.includes('اقل من')
+    return searchableTexts.some(text =>
+        text.includes('يجب ادخال بيانات ولي الامر') ||
+        text.includes('بيانات ولي الامر') ||
+        text.includes('parent information') ||
+        text.includes('guardian information') ||
+        text.includes('اقل من') ||
+        text.includes('less than') ||
+        text.includes('under age')
     );
 }
 

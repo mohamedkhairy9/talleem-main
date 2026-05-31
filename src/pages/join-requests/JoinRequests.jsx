@@ -269,7 +269,7 @@ export default function JoinRequests() {
         return <Loader />;
     }
 
-    const columns = joinRequestsColumns(requestTypesMap);
+    const columns = joinRequestsColumns(requestTypesMap, i18next.language);
     const tableTitle =
         category === 'entities'
             ? t('sidebar.join_requests_entities')

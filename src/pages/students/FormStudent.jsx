@@ -309,7 +309,7 @@ function StudentFormContent({
 }
 
 export default function FormStudent(props) {
-    const { data: configurationsData, isLoading: configurationsLoading } = useConfigurationsQuery('all');
+    const { data: configurationsData, isLoading: configurationsLoading } = useConfigurationsQuery('general');
 
     const parentInfoAgeThreshold = useMemo(
         () => resolveParentInfoAgeThreshold(configurationsData?.data),

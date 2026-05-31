@@ -13,6 +13,7 @@ import { formatDateForDisplay, isDateObject } from '@/utils/helpers/dateObjectHe
 import { getNestedError } from '@/utils/helpers/getNestedError';
 import * as yup from 'yup';
 import { t } from 'i18next';
+import { getJoinRequestDisplayStatus } from './statusDisplay';
 
 const statusOptions = [
     { label: { ar: 'موافق', en: 'Approved' }, value: 1 },
@@ -414,6 +415,10 @@ export default function ViewJoinRequest({ onClose, oldData, isReadOnly = false }
         () => buildHistoryEntries(requestData, currentLocale, t),
         [requestData, currentLocale, t]
     );
+    const displayStatus = useMemo(
+        () => getJoinRequestDisplayStatus(requestData, currentLocale),
+        [requestData, currentLocale]
+    );
     const isFinalizedRequest = useMemo(
         () => isFinalizedJoinRequest(requestData),
         [requestData]
@@ -738,7 +743,7 @@ export default function ViewJoinRequest({ onClose, oldData, isReadOnly = false }
                                 <DataField label={t('table_headers.request_type')} valueRender={requestTypeName} />
                                 <DataField label={t('table_headers.form')} valueRender={formName} />
                                 <DataField label={t('table_headers.current_phase')} valueRender={phaseName} />
-                                <DataField label={t('table_headers.status')} valueRender={requestData?.status_text ?? '-'} />
+                                <DataField label={t('table_headers.status')} valueRender={displayStatus.text} />
                                 <DataField label={t('table_headers.created_at')} valueRender={formatDateForDisplay(requestData?.created_at)} />
                             </div>
                         </AccordionSection>

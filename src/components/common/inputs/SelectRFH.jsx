@@ -5,6 +5,7 @@ import { AsyncPaginate } from 'react-select-async-paginate';
 import useLocale from '@/utils/hooks/global/useLocale';
 import { FaInfoCircle } from 'react-icons/fa';
 import Modal from '../form/Modal';
+import { localizeMessage } from '@/utils/helpers/localizedMessages';
 
 // ─── Shared styles ────────────────────────────────────────────────────────────
 
@@ -234,7 +235,7 @@ export default function SelectRFH({
             />
 
             <p className="mt-1 h-4 text-xs text-red-600 font-montserrat" role="alert">
-                {t(error) || ''}
+                {error ? localizeMessage(error, 'api.errors.validation', { preferFallbackForEnglish: true }) : ''}
             </p>
 
             {showInfo && (
