@@ -10,66 +10,50 @@ import ModalContent from '@/components/common/form/ModalContent';
 import ModalFooter from '@/components/common/form/ModalFooter';
 import { isFieldRequired } from '@/utils/helpers/schemaHelpers';
 import { useRolesQuery } from '@/api/hooks/useRoles';
-
-const FIXED_ROLE_USER_TYPES = new Set([
-    'teacher',
-    'student',
-    'parent',
-    'entity',
-    'entity-manager',
-    'entity_manager'
-]);
-
-// Helper to generate bilingual options (showing both en and ar)
-const generateBilingualUserTypeOptions = (options = []) => {
-    return options.map(opt => ({
-        label: `${opt.label?.en || opt.label} / ${opt.label?.ar || opt.label}`,
-        value: opt.value
-    }));
-};
-
-function normalizeUserType(value) {
-    return (value ?? '').toString().trim().toLowerCase().replace(/\s+/g, '-').replace(/_/g, '-');
-}
-
-function isFixedRoleUserType(value) {
-    return FIXED_ROLE_USER_TYPES.has(normalizeUserType(value));
-}
+import { isAssignableRole } from '@/utils/helpers/assignableRoles';
 
 // Resolve role to a single id for the async select (API may return role_id or roles array)
 function useResolvedRoleId(oldData) {
     const { data: rolesData } = useRolesQuery({ per_page: 100 });
+    const rolesList = rolesData?.data ?? [];
     const resolvedRoleId = React.useMemo(() => {
-        // role_id may come as a number OR a role name (string). Only accept numeric.
+        if (!rolesData) return undefined;
+
+        let role = null;
+
         if (oldData?.role_id != null && oldData.role_id !== '') {
-            if (typeof oldData.role_id === 'number') return Number(oldData.role_id);
-            if (typeof oldData.role_id === 'string' && /^\d+$/.test(oldData.role_id)) return Number(oldData.role_id);
+            const normalizedRoleId =
+                typeof oldData.role_id === 'number'
+                    ? Number(oldData.role_id)
+                    : typeof oldData.role_id === 'string' && /^\d+$/.test(oldData.role_id)
+                    ? Number(oldData.role_id)
+                    : null;
+
+            if (normalizedRoleId != null) {
+                role = rolesList.find(item => Number(item?.id) === normalizedRoleId) ?? null;
+            }
         }
+
         const first = oldData?.roles?.[0];
-        if (first == null) return undefined;
-        if (typeof first === 'number' || (typeof first === 'string' && /^\d+$/.test(first))) return Number(first);
-        const rolesList = rolesData?.data ?? [];
-        const role = rolesList.find(
-            ro => ro.name === first || ro.display_name?.en === first || ro.display_name?.ar === first
-        );
-        return role?.id;
-    }, [oldData?.role_id, oldData?.roles, rolesData?.data]);
+        if (!role && first != null) {
+            if (typeof first === 'number' || (typeof first === 'string' && /^\d+$/.test(first))) {
+                role = rolesList.find(item => Number(item?.id) === Number(first)) ?? null;
+            } else {
+                role =
+                    rolesList.find(
+                        item =>
+                            item.name === first ||
+                            item.display_name?.en === first ||
+                            item.display_name?.ar === first
+                    ) ?? null;
+            }
+        }
+
+        if (!role || !isAssignableRole(role)) return undefined;
+        return Number(role.id);
+    }, [oldData?.role_id, oldData?.roles, rolesData, rolesList]);
     const rolesReady = rolesData !== undefined;
     return { resolvedRoleId, rolesReady };
-}
-
-function ensureCurrentUserTypeOption(options = [], currentValue) {
-    if (!currentValue) return options;
-    const exists = options.some(opt => opt?.value === currentValue);
-    if (exists) return options;
-    // Add current value as a display-only fallback so edit/view doesn't render empty
-    return [
-        ...options,
-        {
-            label: { en: String(currentValue), ar: String(currentValue) },
-            value: currentValue
-        }
-    ];
 }
 
 export default function FormUser({
@@ -85,13 +69,11 @@ export default function FormUser({
         schema,
         defaultValues: oldData
     });
-    const watchedUserType = watch('user_type');
-    const currentUserType = watchedUserType ?? oldData?.user_type;
-    const isFixedRoleProfile = isFixedRoleUserType(currentUserType);
-    const isLockedFixedRoleProfile = editMode && isFixedRoleUserType(oldData?.user_type);
+    const branchId = watch('branch_id');
 
     const { resolvedRoleId, rolesReady } = useResolvedRoleId(oldData);
     const roleSyncedRef = useRef(false);
+    const previousBranchIdRef = useRef(oldData?.branch_id);
 
     // When roles API has loaded and we had role in oldData (role_id or roles[0]), set form value
     useEffect(() => {
@@ -105,28 +87,44 @@ export default function FormUser({
         roleSyncedRef.current = true;
     }, [rolesReady, resolvedRoleId, setValue]);
 
+    useEffect(() => {
+        if (viewMode) return;
+
+        const previousBranchId = previousBranchIdRef.current;
+        if (
+            previousBranchId !== undefined &&
+            previousBranchId !== null &&
+            branchId !== previousBranchId
+        ) {
+            setValue('entity_id', '');
+        }
+
+        previousBranchIdRef.current = branchId;
+    }, [branchId, setValue, viewMode]);
+
     function onSubmit(data) {
+        const normalizedName = data.name?.en?.trim?.() ?? '';
+        const normalizedStatus =
+            oldData?.status === 1 ||
+            oldData?.status === true ||
+            oldData?.status === '1';
+
         // Set locale fields to fixed 'en' value
         const submitData = {
             ...data,
+            name: {
+                en: normalizedName,
+                ar: normalizedName
+            },
             locale: 'en',
             current_app_locale: 'en',
-            status: data.status ? 1 : 0
+            status: normalizedStatus ? 1 : 0,
+            user_type: oldData?.user_type || 'employee'
         };
 
         // Edit mode: password is optional; don't send empty password
         if (editMode && (!submitData.password || submitData.password.trim() === '')) {
             delete submitData.password;
-        }
-
-        // Fixed-profile accounts own their role assignment and should not be changed here.
-        if (isFixedRoleProfile) {
-            delete submitData.role_id;
-        }
-
-        // Existing fixed-profile accounts should also keep their original user type.
-        if (isLockedFixedRoleProfile) {
-            delete submitData.user_type;
         }
 
         mutate(submitData, {
@@ -148,14 +146,23 @@ export default function FormUser({
                             (!editMode && !viewMode)
                     )
                     .map(field => {                        
+                        const fieldDefaultValue =
+                            field.name === 'name.en'
+                                ? oldData?.name?.en || oldData?.name?.ar || field.defaultValue
+                                : oldData?.[field.name] || field.defaultValue;
+                        const hasBranchSelection =
+                            branchId !== undefined && branchId !== null && branchId !== '';
                         const isFieldDisabled =
                             viewMode ||
-                            (field.name === 'role_id' && isFixedRoleProfile) ||
-                            (field.name === 'user_type' && isLockedFixedRoleProfile);
+                            (field.name === 'entity_id' && !hasBranchSelection);
 
                         return (
                             <div
-                                key={field.name}
+                                key={
+                                    field.name === 'entity_id'
+                                        ? `entity_id-${String(branchId ?? 'no-branch')}`
+                                        : field.name
+                                }
                                 className={
                                     field.type === 'textarea' ? 'md:col-span-2' : ''
                                 }
@@ -172,20 +179,24 @@ export default function FormUser({
                                     name={field.name}
                                     defaultValue={
                                         field.name === 'role_id'
-                                            ? (rolesReady ? resolvedRoleId : (oldData?.role_id ?? oldData?.[field.name]))
-                                            : oldData?.[field.name] || field.defaultValue
+                                            ? (rolesReady ? resolvedRoleId : undefined)
+                                            : field.name === 'password' && viewMode
+                                            ? '********'
+                                            : fieldDefaultValue
                                     }
                                     isMulti={field.isMulti}
                                     options={
-                                        field.name === 'user_type'
-                                            ? generateBilingualUserTypeOptions(
-                                                  ensureCurrentUserTypeOption(options?.[field.name] ?? [], oldData?.user_type)
-                                              )
-                                            : field.name === 'role_id'
+                                        field.name === 'role_id'
                                             ? undefined
                                             : generateOptions(options?.[field.name])
                                     }
                                     required={isFieldRequired(schema, field.name)}
+                                    oldData={oldData}
+                                    fieldParams={{
+                                        entity_id: {
+                                            branch_id: branchId ?? oldData?.branch_id
+                                        }
+                                    }}
                                 />
                             </div>
                         );

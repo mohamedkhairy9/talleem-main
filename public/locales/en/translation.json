@@ -643,8 +643,12 @@
                 "placeholder": "Select roles"
             },
             "role_id": {
-                "label": "Roles",
-                "placeholder": "Select roles"
+                "label": "Role",
+                "placeholder": "Select role"
+            },
+            "user_id": {
+                "label": "User ID",
+                "placeholder": "Enter user ID"
             },
             "email": {
                 "label": "Email",
@@ -1902,6 +1906,7 @@
     },
     "employees": {
         "create": "Create Employee",
+        "edit": "Edit Employee",
         "update": "Update Employee",
         "view": "View Employee"
     },

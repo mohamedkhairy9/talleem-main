@@ -34,11 +34,16 @@ export default function Users() {
         locale: item.locale,
         current_app_locale: item.current_app_locale,
         email: item.email,
-        name: item.name,
-        phone: item.phone,
+        name: {
+            en: item.name?.en || item.name?.ar || '',
+            ar: item.name?.ar || item.name?.en || ''
+        },
         status: item.status,
         user_type: item.user_type,
         branch_id: item.branch?.id,
+        branch: item.branch,
+        entity_id: item.entity?.id ?? item.entity_id?.id ?? item.entity?.value ?? item.entity_id,
+        entity: item.entity?.id ? item.entity : item.entity_id?.id ? item.entity_id : null,
         // role_id must be numeric; if API sends role names in roles[], don't pass them as role_id
         role_id:
             item.role_id ??

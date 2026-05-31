@@ -6,7 +6,6 @@ import { useUpdateUserMutation } from '@/api/hooks/useUsers';
 import { useBranchesQuery } from '@/api/hooks/useBranches';
 import Loader from '@/components/common/Loader';
 import { allData } from '@/utils/constants/global.constants';
-import { enabledDisabledOptions, userTypeOptions } from '@/utils/constants/options';
 
 export default function EditUser({ onClose, oldData }) {
     const { mutate, isPending } = useUpdateUserMutation();
@@ -25,9 +24,7 @@ export default function EditUser({ onClose, oldData }) {
                 mutate={mutate}
                 isPending={isPending}
                 options={{
-                    branch_id: branchesData?.data,
-                    status: enabledDisabledOptions,
-                    user_type: userTypeOptions
+                    branch_id: branchesData?.data
                 }}
             />
         </Modal>

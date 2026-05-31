@@ -1,7 +1,6 @@
 import Cell from '@/components/common/table/cells/Cell';
 import DateCell from '@/components/common/table/cells/DateCell';
 import NameCell from '@/components/common/table/cells/NameCell';
-import { enabledDisabledOptions } from '@/utils/constants/options';
 import { createColumnHelper } from '@tanstack/react-table';
 import React from 'react';
 
@@ -59,25 +58,17 @@ export const usersColumns = [
 export const usersFields = [
     {
         name: 'name.en',
-        label: 'validation.name.label.en',
+        label: 'validation.users.name.label',
         type: 'text',
-        placeholder: 'validation.name.placeholder.en',
-        editMode: true,
-        viewMode: true
-    },
-    {
-        name: 'name.ar',
-        label: 'validation.name.label.ar',
-        type: 'text',
-        placeholder: 'validation.name.placeholder.ar',
+        placeholder: 'validation.users.name.placeholder',
         editMode: true,
         viewMode: true
     },
     {
         name: 'email',
-        label: 'validation.users.email.label',
-        type: 'email',
-        placeholder: 'validation.users.email.placeholder',
+        label: 'activity_logs.user_id',
+        type: 'text',
+        placeholder: 'validation.users.user_id.placeholder',
         editMode: true,
         viewMode: true
     },
@@ -86,14 +77,6 @@ export const usersFields = [
         label: 'validation.users.password.label',
         type: 'password',
         placeholder: 'validation.users.password.placeholder',
-        editMode: true,
-        viewMode: false
-    },
-    {
-        name: 'phone',
-        label: 'validation.users.phone.label',
-        type: 'text',
-        placeholder: 'validation.users.phone.placeholder',
         editMode: true,
         viewMode: true
     },
@@ -106,20 +89,10 @@ export const usersFields = [
         viewMode: true
     },
     {
-        name: 'user_type',
-        label: 'validation.users.user_type.label',
+        name: 'entity_id',
+        label: 'validation.entity_id.label',
         type: 'select',
-        placeholder: 'validation.users.user_type.placeholder',
-        editMode: true,
-        viewMode: true
-    },
-    {
-        name: 'status',
-        label: 'validation.users.status.label',
-        type: 'select',
-        placeholder: 'validation.users.status.placeholder',
-        defaultValue: true,
-        options: enabledDisabledOptions,
+        placeholder: 'validation.entity_id.placeholder',
         editMode: true,
         viewMode: true
     },
@@ -134,9 +107,18 @@ export const usersFields = [
 ];
 
 export const usersDefaultValues = {
+    name: {
+        en: '',
+        ar: ''
+    },
+    email: '',
+    password: '',
+    branch_id: '',
+    entity_id: '',
+    role_id: null,
     locale: 'en',
     current_app_locale: 'en',
-    user_type: '',
+    user_type: 'employee',
     status: true
 };
 

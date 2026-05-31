@@ -48,6 +48,13 @@ const EXCLUDED_ROLE_MATCHERS = [
     text => text.includes('student') || text === 'طالب',
     text => text.includes('parent') || text === 'ولي امر',
     text =>
+        (text === 'entity' || text === 'جهه' || text === 'كيان') &&
+        !containsAllWords(text, ['entity', 'manager']) &&
+        !containsAllWords(text, ['مدير', 'جهه']) &&
+        !containsAllWords(text, ['مدير', 'كيان']) &&
+        !containsAllWords(text, ['مسؤول', 'جهه']),
+    text => text.includes('supervisor') || text === 'مشرف',
+    text =>
         containsAllWords(text, ['entity', 'manager']) ||
         containsAllWords(text, ['مدير', 'جهه']) ||
         containsAllWords(text, ['مدير', 'كيان']) ||
@@ -65,7 +72,12 @@ export function normalizeRoleName(name) {
 export function isAssignableRole(role) {
     if (!role) return true;
 
-    const searchableTexts = extractSearchableTexts(role.name, role.display_name, role.label, role.slug);
+    const searchableTexts = extractSearchableTexts(
+        role.name,
+        role.display_name,
+        role.label,
+        role.slug
+    );
     if (!searchableTexts.length) return true;
 
     return !searchableTexts.some(text =>

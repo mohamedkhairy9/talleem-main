@@ -7,7 +7,6 @@ import { usersDefaultValues } from './configs';
 import { useBranchesQuery } from '@/api/hooks/useBranches';
 import Loader from '@/components/common/Loader';
 import { allData } from '@/utils/constants/global.constants';
-import { enabledDisabledOptions, userTypeOptions } from '@/utils/constants/options';
 
 export default function CreateUser({ onClose }) {
     const { mutate, isPending } = useCreateUserMutation();
@@ -25,9 +24,7 @@ export default function CreateUser({ onClose }) {
                 mutate={mutate}
                 isPending={isPending}
                 options={{
-                    branch_id: branchesData?.data,
-                    status: enabledDisabledOptions,
-                    user_type: userTypeOptions
+                    branch_id: branchesData?.data
                 }}
             />
         </Modal>

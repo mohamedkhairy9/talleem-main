@@ -5,7 +5,6 @@ import ModalHeader from '@/components/common/form/ModalHeader';
 import { useBranchesQuery } from '@/api/hooks/useBranches';
 import Loader from '@/components/common/Loader';
 import { allData } from '@/utils/constants/global.constants';
-import { enabledDisabledOptions, userTypeOptions } from '@/utils/constants/options';
 
 export default function ViewUser({ onClose, oldData }) {
     const { data: branchesData, isLoading: branchesLoading } =
@@ -23,9 +22,7 @@ export default function ViewUser({ onClose, oldData }) {
                 mutate={() => {}} // No mutation needed for view mode
                 isPending={false}
                 options={{
-                    branch_id: branchesData?.data,
-                    status: enabledDisabledOptions,
-                    user_type: userTypeOptions
+                    branch_id: branchesData?.data
                 }}
             />
         </Modal>
