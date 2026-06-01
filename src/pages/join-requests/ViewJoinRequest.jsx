@@ -3,7 +3,7 @@ import Modal from '@/components/common/form/Modal';
 import ModalHeader from '@/components/common/form/ModalHeader';
 import ModalContent from '@/components/common/form/ModalContent';
 import ModalFooter from '@/components/common/form/ModalFooter';
-import { useJoinRequestDetailsQuery, useProcessJoinRequestStepMutation } from '@/api/hooks/useJoinRequests';
+import { useJoinRequestDetailsQuery, useJoinRequestLogsQuery, useProcessJoinRequestStepMutation } from '@/api/hooks/useJoinRequests';
 import useRFH from '@/utils/hooks/global/useRFH';
 import InputRFH from '@/components/common/inputs/InputRFH';
 import FileInputRFH from '@/components/common/inputs/FileInputRFH';
@@ -147,6 +147,23 @@ const HISTORY_DATE_KEYS = [
 const HISTORY_COMMENT_KEYS = ['comment', 'comments', 'notes', 'reason', 'message', 'description'];
 const HISTORY_ACTOR_KEYS = ['actor', 'user', 'approver', 'creator', 'created_by', 'performed_by', 'action_by', 'updated_by'];
 const HISTORY_ROLE_KEYS = ['role', 'role_name', 'user_role', 'approver_role', 'actor_role'];
+const HISTORY_FILE_KEYS = ['files', 'attachments', 'documents'];
+const HISTORY_EXTRA_FIELD_EXCLUDE_KEYS = new Set([
+    'id',
+    ...HISTORY_DATE_KEYS,
+    ...HISTORY_COMMENT_KEYS,
+    ...HISTORY_ACTOR_KEYS,
+    ...HISTORY_ROLE_KEYS,
+    ...HISTORY_FILE_KEYS,
+    'status',
+    'status_text',
+    'action',
+    'action_label',
+    'title',
+    'name',
+    'step_name',
+    'phase_name'
+]);
 const STATUS_TEXT_MAP = {
     0: { en: 'Pending', ar: 'قيد الانتظار' },
     1: { en: 'Approved', ar: 'موافق' },
@@ -289,6 +306,80 @@ function normalizeHistoryFiles(value) {
     return [];
 }
 
+function getHistoryEntriesFromResponse(response) {
+    if (!response) return [];
+    if (Array.isArray(response)) return response;
+    if (Array.isArray(response.data)) return response.data;
+    if (Array.isArray(response.data?.data)) return response.data.data;
+
+    const container = response.data && typeof response.data === 'object' && !Array.isArray(response.data)
+        ? response.data
+        : response;
+
+    if (!container || typeof container !== 'object') return [];
+
+    for (const key of HISTORY_ARRAY_KEYS) {
+        if (Array.isArray(container[key])) {
+            return container[key];
+        }
+    }
+
+    return [];
+}
+
+function formatHistoryExtraFieldLabel(key) {
+    return key
+        .replace(/_/g, ' ')
+        .replace(/([a-z])([A-Z])/g, '$1 $2')
+        .replace(/\b\w/g, char => char.toUpperCase());
+}
+
+function getHistoryExtraFieldValue(value, currentLocale = 'en') {
+    if (value == null || value === '') return '';
+    if (typeof value === 'string' || typeof value === 'number' || typeof value === 'boolean') {
+        return String(value);
+    }
+    if (isDateObject(value)) {
+        return formatDateForDisplay(value);
+    }
+    if (Array.isArray(value)) {
+        const values = value
+            .map(item => getHistoryExtraFieldValue(item, currentLocale))
+            .filter(Boolean);
+        return values.join(', ');
+    }
+    if (typeof value === 'object') {
+        const localized = getLocalizedValue(value, currentLocale);
+        if (localized) return localized;
+
+        const personName = getDisplayPersonName(value, currentLocale);
+        if (personName) return personName;
+
+        const roleName = getDisplayRole(value, currentLocale);
+        if (roleName) return roleName;
+    }
+
+    return '';
+}
+
+function getHistoryExtraFields(entry, currentLocale = 'en') {
+    if (!entry || typeof entry !== 'object' || Array.isArray(entry)) return [];
+
+    return Object.entries(entry)
+        .filter(([key, value]) => !HISTORY_EXTRA_FIELD_EXCLUDE_KEYS.has(key) && value != null && value !== '')
+        .map(([key, value]) => {
+            const displayValue = getHistoryExtraFieldValue(value, currentLocale);
+            if (!displayValue) return null;
+
+            return {
+                key,
+                label: formatHistoryExtraFieldLabel(key),
+                value: displayValue
+            };
+        })
+        .filter(Boolean);
+}
+
 function getJoinRequestPayload(response) {
     if (!response || typeof response !== 'object') return null;
     if (response.data && typeof response.data === 'object' && !Array.isArray(response.data)) {
@@ -341,11 +432,8 @@ function isFinalizedJoinRequest(requestData) {
     );
 }
 
-function buildHistoryEntries(requestData, currentLocale = 'en', t) {
-    if (!requestData) return [];
-
-    const historySourceKey = HISTORY_ARRAY_KEYS.find(key => Array.isArray(requestData[key]));
-    const rawEntries = historySourceKey ? requestData[historySourceKey] : [];
+function buildHistoryEntries(logsResponse, requestData, currentLocale = 'en', t) {
+    const rawEntries = getHistoryEntriesFromResponse(logsResponse);
     const normalizedEntries = rawEntries.map((entry, index) => {
         const title =
             getLocalizedValue(getValueByKeys(entry, ['step_name', 'phase_name', 'action_label', 'title', 'name']), currentLocale) ||
@@ -353,14 +441,15 @@ function buildHistoryEntries(requestData, currentLocale = 'en', t) {
             t('join_requests.history_action_fallback', 'Request Action');
 
         return {
-            id: entry.id || `${requestData.id || 'request'}-history-${index}`,
+            id: entry.id || `${requestData?.id || 'request'}-history-${index}`,
             title,
             statusText: getHistoryStatusText(getValueByKeys(entry, ['status_text', 'status', 'action']), currentLocale),
             actorName: getHistoryActorName(entry, currentLocale) || '-',
             actorRole: getHistoryActorRole(entry, currentLocale) || '-',
             timestamp: getValueByKeys(entry, HISTORY_DATE_KEYS),
             comments: getLocalizedValue(getValueByKeys(entry, HISTORY_COMMENT_KEYS), currentLocale) || '',
-            files: normalizeHistoryFiles(getValueByKeys(entry, ['files', 'attachments', 'documents']))
+            files: normalizeHistoryFiles(getValueByKeys(entry, HISTORY_FILE_KEYS)),
+            extraFields: getHistoryExtraFields(entry, currentLocale)
         };
     });
 
@@ -378,7 +467,8 @@ function buildHistoryEntries(requestData, currentLocale = 'en', t) {
             actorRole: getHistoryActorRole(requestData, currentLocale) || '-',
             timestamp: requestData.created_at,
             comments: '',
-            files: []
+            files: [],
+            extraFields: []
         }]
         : [];
 
@@ -407,13 +497,16 @@ export default function ViewJoinRequest({ onClose, oldData, isReadOnly = false }
     const { data: detailsResponse, isFetching: isFetchingDetails } = useJoinRequestDetailsQuery(requestId, {
         enabled: Boolean(requestId)
     });
+    const { data: logsResponse, isFetching: isFetchingLogs } = useJoinRequestLogsQuery(requestId, {
+        enabled: Boolean(requestId)
+    });
     const requestData = useMemo(
         () => mergeJoinRequestData(oldData, getJoinRequestPayload(detailsResponse)),
         [oldData, detailsResponse]
     );
     const historyEntries = useMemo(
-        () => buildHistoryEntries(requestData, currentLocale, t),
-        [requestData, currentLocale, t]
+        () => buildHistoryEntries(logsResponse, requestData, currentLocale, t),
+        [logsResponse, requestData, currentLocale, t]
     );
     const displayStatus = useMemo(
         () => getJoinRequestDisplayStatus(requestData, currentLocale),
@@ -730,7 +823,7 @@ export default function ViewJoinRequest({ onClose, oldData, isReadOnly = false }
             <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col h-full min-h-0">
                 <ModalContent className="min-h-0 flex flex-col">
                     <div className="flex-1 min-h-0 overflow-y-auto space-y-6 pr-1 modal-scroll">
-                        {isFetchingDetails && (
+                        {(isFetchingDetails || isFetchingLogs) && (
                             <p className="text-xs text-gray-500">{t('join_requests.loading_latest_details', 'Loading latest request details...')}</p>
                         )}
                         {/* Request info – accordion */}
@@ -852,6 +945,13 @@ export default function ViewJoinRequest({ onClose, oldData, isReadOnly = false }
                                                     label={t('join_requests.history_action_date', 'Action Date')}
                                                     value={entry.timestamp ? formatDateForDisplay(entry.timestamp) : '-'}
                                                 />
+                                                {entry.extraFields.map(field => (
+                                                    <DataField
+                                                        key={`${entry.id}-${field.key}`}
+                                                        label={field.label}
+                                                        value={field.value}
+                                                    />
+                                                ))}
                                             </div>
 
                                             {entry.comments && (

@@ -403,6 +403,7 @@ export const API_URLS = {
     JOIN_REQUESTS: {
         LIST: '/join-requests',
         DETAILS: id => `/join-requests/${id}`,
+        LOGS: id => `/join-requests/${id}/logs`,
         PROCESS_STEP: id => `/join-requests/${id}/process-step`
     },
 };

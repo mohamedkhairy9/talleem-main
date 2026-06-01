@@ -29,6 +29,15 @@ export const useJoinRequestDetailsQuery = (id, options = {}) => {
     });
 };
 
+export const useJoinRequestLogsQuery = (id, options = {}) => {
+    return useCustomQuery({
+        queryKey: [API_KEYS.JOIN_REQUESTS, 'logs', id],
+        queryFn: () => joinRequestsService.getJoinRequestLogs(id),
+        enabled: Boolean(id) && options.enabled !== false,
+        ...options
+    });
+};
+
 export const useProcessJoinRequestStepMutation = () => {
     const queryClient = useQueryClient();
     return useCustomMutation({
