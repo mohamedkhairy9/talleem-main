@@ -36,6 +36,15 @@ const STATUS_TEXT_MAP = {
     4: { en: 'Need Upload', ar: 'يحتاج رفع' }
 };
 
+const ARABIC_DISPLAY_STATUS_MAP = {
+    new: 'جديد',
+    pending: 'قيد المراجعة',
+    approved: 'تم القبول',
+    rejected: 'مرفوض',
+    needReview: 'بحاجة لمراجعة',
+    needUpload: 'بحاجة لرفع'
+};
+
 function normalizeText(value) {
     return String(value ?? '')
         .trim()
@@ -77,6 +86,41 @@ function getValueByKeys(source, keys = []) {
         }
     }
     return null;
+}
+
+export function localizeJoinRequestStatusText(statusText, currentLocale = 'en') {
+    if (statusText == null) return '';
+
+    const rawText = String(statusText).trim();
+    if (!rawText || currentLocale !== 'ar') {
+        return rawText;
+    }
+
+    const normalized = normalizeText(rawText);
+
+    if (normalized.includes('جديد') || normalized.includes('new')) return ARABIC_DISPLAY_STATUS_MAP.new;
+    if (normalized.includes('pending') || normalized.includes('انتظار') || normalized.includes('قيد المراجعه')) {
+        return ARABIC_DISPLAY_STATUS_MAP.pending;
+    }
+    if (
+        normalized.includes('approved') ||
+        normalized.includes('accepted') ||
+        normalized.includes('موافق') ||
+        normalized.includes('قبول')
+    ) {
+        return ARABIC_DISPLAY_STATUS_MAP.approved;
+    }
+    if (normalized.includes('rejected') || normalized.includes('declined') || normalized.includes('مرفوض')) {
+        return ARABIC_DISPLAY_STATUS_MAP.rejected;
+    }
+    if (normalized.includes('review') || normalized.includes('مراجعه')) {
+        return ARABIC_DISPLAY_STATUS_MAP.needReview;
+    }
+    if (normalized.includes('upload') || normalized.includes('رفع')) {
+        return ARABIC_DISPLAY_STATUS_MAP.needUpload;
+    }
+
+    return rawText;
 }
 
 function getHistoryEntries(request) {
@@ -174,14 +218,14 @@ function getHistoryEntryPhaseIdentifiers(entry, currentLocale = 'en') {
 function isApprovedEntry(entry) {
     const rawStatus = getValueByKeys(entry, ['status_text', 'status', 'action']);
     const normalized = normalizeText(rawStatus);
-    return rawStatus === 1 || normalized.includes('approved') || normalized.includes('موافق');
+    return rawStatus === 1 || normalized.includes('approved') || normalized.includes('موافق') || normalized.includes('قبول');
 }
 
 function isPendingRequest(request) {
     if (!request) return false;
     if (request.status === 0 || request.status === '0') return true;
     const normalized = normalizeText(request.status_text);
-    return normalized.includes('pending') || normalized.includes('انتظار');
+    return normalized.includes('pending') || normalized.includes('انتظار') || normalized.includes('قيد المراجعه');
 }
 
 export function shouldDisplayNewJoinRequestStatus(request, currentLocale = 'en') {
@@ -225,16 +269,19 @@ export function getJoinRequestDisplayStatus(request, currentLocale = 'en') {
     }
 
     if (typeof request?.status_text === 'string' && request.status_text.trim()) {
+        const localizedText = localizeJoinRequestStatusText(request.status_text, currentLocale);
         return {
-            key: normalizeText(request.status_text),
-            text: request.status_text
+            key: normalizeText(localizedText),
+            text: localizedText
         };
     }
 
     if (request?.status != null && STATUS_TEXT_MAP[Number(request.status)]) {
+        const fallbackText = STATUS_TEXT_MAP[Number(request.status)][currentLocale] || STATUS_TEXT_MAP[Number(request.status)].en;
+        const localizedFallbackText = localizeJoinRequestStatusText(fallbackText, currentLocale) || fallbackText;
         return {
-            key: normalizeText(STATUS_TEXT_MAP[Number(request.status)][currentLocale] || STATUS_TEXT_MAP[Number(request.status)].en),
-            text: STATUS_TEXT_MAP[Number(request.status)][currentLocale] || STATUS_TEXT_MAP[Number(request.status)].en
+            key: normalizeText(localizedFallbackText),
+            text: localizedFallbackText
         };
     }
 
@@ -247,7 +294,7 @@ export function getJoinRequestDisplayStatus(request, currentLocale = 'en') {
 export function getJoinRequestStatusBadgeClasses(statusKey = '') {
     const normalized = normalizeText(statusKey);
 
-    if (normalized.includes('approved') || normalized.includes('موافق')) {
+    if (normalized.includes('approved') || normalized.includes('موافق') || normalized.includes('قبول')) {
         return 'bg-green-100 text-green-800 border-green-200';
     }
 
@@ -259,7 +306,7 @@ export function getJoinRequestStatusBadgeClasses(statusKey = '') {
         return 'bg-blue-100 text-blue-800 border-blue-200';
     }
 
-    if (normalized.includes('pending') || normalized.includes('انتظار')) {
+    if (normalized.includes('pending') || normalized.includes('انتظار') || normalized.includes('قيد المراجعه')) {
         return 'bg-yellow-100 text-yellow-800 border-yellow-200';
     }
 

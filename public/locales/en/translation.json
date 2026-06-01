@@ -1,7 +1,7 @@
 {
     "validation": {
         "required": "This field is required",
-        "required_field":{
+        "required_field": {
             "label": "Required Field",
             "placeholder": "Enter required field"
         },
@@ -255,7 +255,7 @@
             "placeholder": "Select session mode",
             "required": "Session mode is required"
         },
-        "file":{
+        "file": {
             "label": "File",
             "placeholder": "Upload file"
         },
@@ -1796,7 +1796,7 @@
         "completeSegmentationBeforeLeave": "You must complete the current page segmentation before moving to another page.",
         "juz": "Juz",
         "surah": "Surah"
-      },
+    },
     "exam_templates": {
         "title": "Suggested Exam Templates",
         "juz": "Juz",

@@ -13,7 +13,7 @@ import { formatDateForDisplay, isDateObject } from '@/utils/helpers/dateObjectHe
 import { getNestedError } from '@/utils/helpers/getNestedError';
 import * as yup from 'yup';
 import { t } from 'i18next';
-import { getJoinRequestDisplayStatus } from './statusDisplay';
+import { getJoinRequestDisplayStatus, localizeJoinRequestStatusText } from './statusDisplay';
 
 const statusOptions = [
     { label: { ar: 'موافق', en: 'Approved' }, value: 1 },
@@ -270,14 +270,16 @@ function getHistoryStatusText(statusValue, currentLocale = 'en') {
         const trimmed = statusValue.trim();
         if (!trimmed) return '';
         if (/^\d+$/.test(trimmed) && STATUS_TEXT_MAP[Number(trimmed)]) {
-            return STATUS_TEXT_MAP[Number(trimmed)][currentLocale] || STATUS_TEXT_MAP[Number(trimmed)].en;
+            const fallbackText = STATUS_TEXT_MAP[Number(trimmed)][currentLocale] || STATUS_TEXT_MAP[Number(trimmed)].en;
+            return localizeJoinRequestStatusText(fallbackText, currentLocale) || fallbackText;
         }
-        return trimmed;
+        return localizeJoinRequestStatusText(trimmed, currentLocale) || trimmed;
     }
     if (typeof statusValue === 'number' && STATUS_TEXT_MAP[statusValue]) {
-        return STATUS_TEXT_MAP[statusValue][currentLocale] || STATUS_TEXT_MAP[statusValue].en;
+        const fallbackText = STATUS_TEXT_MAP[statusValue][currentLocale] || STATUS_TEXT_MAP[statusValue].en;
+        return localizeJoinRequestStatusText(fallbackText, currentLocale) || fallbackText;
     }
-    return String(statusValue);
+    return localizeJoinRequestStatusText(String(statusValue), currentLocale) || String(statusValue);
 }
 
 function normalizeHistoryFiles(value) {
@@ -402,11 +404,11 @@ function mergeJoinRequestData(oldData, detailedData) {
 
 function getHistoryBadgeClasses(statusText = '') {
     const text = statusText.toLowerCase();
-    if (text.includes('approved') || text.includes('موافق')) return 'bg-green-100 text-green-800';
+    if (text.includes('approved') || text.includes('موافق') || text.includes('قبول')) return 'bg-green-100 text-green-800';
     if (text.includes('rejected') || text.includes('مرفوض')) return 'bg-red-100 text-red-800';
     if (text.includes('review') || text.includes('مراجعة')) return 'bg-blue-100 text-blue-800';
     if (text.includes('upload') || text.includes('رفع')) return 'bg-purple-100 text-purple-800';
-    if (text.includes('pending') || text.includes('انتظار')) return 'bg-yellow-100 text-yellow-800';
+    if (text.includes('pending') || text.includes('انتظار') || text.includes('قيد المراجعة')) return 'bg-yellow-100 text-yellow-800';
     return 'bg-gray-100 text-gray-700';
 }
 
@@ -428,6 +430,7 @@ function isFinalizedJoinRequest(requestData) {
         statusText.includes('approved') ||
         statusText.includes('rejected') ||
         statusText.includes('موافق') ||
+        statusText.includes('قبول') ||
         statusText.includes('مرفوض')
     );
 }
