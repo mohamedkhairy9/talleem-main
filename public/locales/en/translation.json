@@ -1793,6 +1793,7 @@
         "deleteAllConfirm": "Are you sure you want to delete all Mushaf portions across every page?",
         "allSegmentsDeleted": "All Mushaf portions deleted successfully",
         "deleteAllFailed": "Failed to delete all Mushaf portions",
+        "completeSegmentationBeforeLeave": "You must complete the current page segmentation before moving to another page.",
         "juz": "Juz",
         "surah": "Surah"
       },

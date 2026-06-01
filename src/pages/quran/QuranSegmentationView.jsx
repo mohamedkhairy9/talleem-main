@@ -49,16 +49,6 @@ const QuranSegmentationView = () => {
     const [segments, setSegments] = useState([]);
     const [config, setConfig] = useState(null);
     
-    // Update page and URL together
-    const setCurrentPage = useCallback((pageOrFn) => {
-        setCurrentPageState(prevPage => {
-            const newPage = typeof pageOrFn === 'function' ? pageOrFn(prevPage) : pageOrFn;
-            // Update URL without causing a re-render loop
-            setSearchParams({ page: newPage.toString() }, { replace: true });
-            return newPage;
-        });
-    }, [setSearchParams]);
-    
     // Selection state
     const [editingSegment, setEditingSegment] = useState(null);
     const [selectedAyahs, setSelectedAyahs] = useState(new Set());
@@ -75,6 +65,31 @@ const QuranSegmentationView = () => {
     const [isFontLoading, setIsFontLoading] = useState(false);
     const [isSegmentsLoading, setIsSegmentsLoading] = useState(false);
     const [error, setError] = useState(null);
+
+    const hasIncompletePageSegmentation = useMemo(() => (
+        hasUnsavedSegment
+        || segments.some(segment => !segment.first_verse_key || !segment.last_verse_key)
+    ), [hasUnsavedSegment, segments]);
+
+    // Update page and URL together
+    const setCurrentPage = useCallback((pageOrFn) => {
+        const nextPageCandidate = typeof pageOrFn === 'function'
+            ? pageOrFn(currentPage)
+            : pageOrFn;
+        const nextPage = Math.min(604, Math.max(1, nextPageCandidate));
+
+        if (nextPage === currentPage) {
+            return;
+        }
+
+        if (hasIncompletePageSegmentation) {
+            toastService.warning(t('mushaf_management.completeSegmentationBeforeLeave'));
+            return;
+        }
+
+        setSearchParams({ page: nextPage.toString() }, { replace: true });
+        setCurrentPageState(nextPage);
+    }, [currentPage, hasIncompletePageSegmentation, setSearchParams, t]);
 
     // Initialize databases
     useEffect(() => {
