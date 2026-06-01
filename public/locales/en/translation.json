@@ -1789,9 +1789,13 @@
         "deletePageConfirm": "Are you sure you want to delete all segments for this page?",
         "pageSegmentsDeleted": "All page segments deleted successfully",
         "deletePageFailed": "Failed to delete page segments",
+        "deleteAllSegments": "Delete All Portions",
+        "deleteAllConfirm": "Are you sure you want to delete all Mushaf portions across every page?",
+        "allSegmentsDeleted": "All Mushaf portions deleted successfully",
+        "deleteAllFailed": "Failed to delete all Mushaf portions",
         "juz": "Juz",
         "surah": "Surah"
-    },
+      },
     "exam_templates": {
         "title": "Suggested Exam Templates",
         "juz": "Juz",

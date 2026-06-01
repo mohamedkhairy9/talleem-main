@@ -1630,6 +1630,10 @@
         "deletePageConfirm": "هل أنت متأكد من حذف جميع مقاطع هذه الصفحة؟",
         "pageSegmentsDeleted": "تم حذف جميع مقاطع الصفحة بنجاح",
         "deletePageFailed": "فشل حذف مقاطع الصفحة",
+        "deleteAllSegments": "حذف جميع المقاطع",
+        "deleteAllConfirm": "هل أنت متأكد من حذف جميع مقاطع المصحف في كافة الصفحات؟",
+        "allSegmentsDeleted": "تم حذف جميع مقاطع المصحف بنجاح",
+        "deleteAllFailed": "فشل حذف جميع مقاطع المصحف",
         "juz": "الجزء",
         "surah": "السورة"
     },

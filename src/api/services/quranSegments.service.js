@@ -120,6 +120,34 @@ const QuranSegmentsService = {
     },
 
     /**
+     * Delete all segments across the whole Mushaf.
+     * Uses the dedicated truncate endpoint from the backend.
+     * @returns {Promise<Object>} Deletion confirmation
+     */
+    deleteAllSegments: async () => {
+        const endpoint = '/quran/segments/truncate';
+
+        try {
+            const response = await axiosInstance.delete(endpoint);
+            return response?.data || response;
+        } catch (error) {
+            const status = error?.status || error?.response?.status;
+            if (status !== 405) {
+                console.error('Error truncating all segments:', error);
+                throw error;
+            }
+        }
+
+        try {
+            const response = await axiosInstance.post(endpoint);
+            return response?.data || response;
+        } catch (error) {
+            console.error('Error truncating all segments:', error);
+            throw error;
+        }
+    },
+
+    /**
      * Get all segments (with pagination if needed)
      * @param {Object} params - Query parameters
      * @returns {Promise<Object>} Segments list with pagination
@@ -127,7 +155,7 @@ const QuranSegmentsService = {
     getAllSegments: async (params = {}) => {
         try {
             const response = await axiosInstance.get('/quran/segments', { params });
-            return response.data;
+            return response;
         } catch (error) {
             console.error('Error fetching all segments:', error);
             throw error;

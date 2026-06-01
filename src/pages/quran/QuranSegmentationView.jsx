@@ -68,7 +68,7 @@ const QuranSegmentationView = () => {
     const [hasUnsavedSegment, setHasUnsavedSegment] = useState(false);
     const [isSaving, setIsSaving] = useState(false);
     const [isDeleting, setIsDeleting] = useState(false);
-    const [showDeleteModal, setShowDeleteModal] = useState(false);
+    const [deleteModalScope, setDeleteModalScope] = useState(null);
     
     // Loading states
     const [isLoading, setIsLoading] = useState(true);
@@ -575,12 +575,31 @@ const QuranSegmentationView = () => {
             setIsDeleting(true);
             await QuranSegmentsService.deletePageSegments(currentPage);
             toastService.success(t('mushaf_management.pageSegmentsDeleted'));
-            setShowDeleteModal(false);
+            setDeleteModalScope(null);
             await fetchSegments(currentPage);
         } catch (error) {
             console.error('Error deleting page segments:', error);
             const errorMessage = error.response?.data?.message || error.message || '';
             toastService.error(`${t('mushaf_management.deletePageFailed')}${errorMessage ? ': ' + errorMessage : ''}`);
+        } finally {
+            setIsDeleting(false);
+        }
+    };
+
+    /**
+     * Delete all segments across all pages
+     */
+    const deleteAllSegments = async () => {
+        try {
+            setIsDeleting(true);
+            await QuranSegmentsService.deleteAllSegments();
+            toastService.success(t('mushaf_management.allSegmentsDeleted'));
+            setDeleteModalScope(null);
+            await fetchSegments(currentPage);
+        } catch (error) {
+            console.error('Error deleting all segments:', error);
+            const errorMessage = error.response?.data?.message || error.message || '';
+            toastService.error(`${t('mushaf_management.deleteAllFailed')}${errorMessage ? ': ' + errorMessage : ''}`);
         } finally {
             setIsDeleting(false);
         }
@@ -714,10 +733,19 @@ const QuranSegmentationView = () => {
                                     {isSaving ? t('common.saving') : t('common.save')}
                                 </button>
                             )}
+                            {!hasUnsavedSegment && (
+                                <button 
+                                    className="btn-delete-page"
+                                    onClick={() => setDeleteModalScope('all')}
+                                    title={t('mushaf_management.deleteAllSegments')}
+                                >
+                                    {t('mushaf_management.deleteAllSegments')}
+                                </button>
+                            )}
                             {segments.length > 0 && !hasUnsavedSegment && (
                                 <button 
                                     className="btn-delete-page"
-                                    onClick={() => setShowDeleteModal(true)}
+                                    onClick={() => setDeleteModalScope('page')}
                                     title={t('mushaf_management.deletePageSegments')}
                                 >
                                     {t('mushaf_management.deletePageSegments')}
@@ -832,11 +860,21 @@ const QuranSegmentationView = () => {
             </div>
             
             {/* Delete Confirmation Modal */}
-            {showDeleteModal && (
+            {deleteModalScope === 'page' && (
                 <DeleteModal
                     deleteFn={deleteAllPageSegments}
                     loading={isDeleting}
-                    onClose={() => setShowDeleteModal(false)}
+                    onClose={() => setDeleteModalScope(null)}
+                    message={t('mushaf_management.deletePageConfirm')}
+                />
+            )}
+
+            {deleteModalScope === 'all' && (
+                <DeleteModal
+                    deleteFn={deleteAllSegments}
+                    loading={isDeleting}
+                    onClose={() => setDeleteModalScope(null)}
+                    message={t('mushaf_management.deleteAllConfirm')}
                 />
             )}
         </div>
