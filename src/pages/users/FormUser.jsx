@@ -12,12 +12,36 @@ import { isFieldRequired } from '@/utils/helpers/schemaHelpers';
 import { useRolesQuery } from '@/api/hooks/useRoles';
 import { isAssignableRole } from '@/utils/helpers/assignableRoles';
 
+function normalizeSelectedIds(value) {
+    if (Array.isArray(value)) {
+        return value
+            .map(item => item?.id ?? item?.value ?? item)
+            .filter(item => item !== undefined && item !== null && item !== '');
+    }
+
+    if (value && typeof value === 'object') {
+        const normalized = value.id ?? value.value;
+        return normalized !== undefined && normalized !== null && normalized !== ''
+            ? [normalized]
+            : [];
+    }
+
+    return value !== undefined && value !== null && value !== '' ? [value] : [];
+}
+
+function getSelectionKey(value) {
+    return normalizeSelectedIds(value)
+        .map(item => String(item))
+        .sort()
+        .join(',');
+}
+
 // Resolve role to a single id for the async select (API may return role_id or roles array)
 function useResolvedRoleId(oldData) {
     const { data: rolesData } = useRolesQuery({ per_page: 100 });
-    const rolesList = rolesData?.data ?? [];
     const resolvedRoleId = React.useMemo(() => {
         if (!rolesData) return undefined;
+        const rolesList = rolesData?.data ?? [];
 
         let role = null;
 
@@ -51,7 +75,7 @@ function useResolvedRoleId(oldData) {
 
         if (!role || !isAssignableRole(role)) return undefined;
         return Number(role.id);
-    }, [oldData?.role_id, oldData?.roles, rolesData, rolesList]);
+    }, [oldData?.role_id, oldData?.roles, rolesData]);
     const rolesReady = rolesData !== undefined;
     return { resolvedRoleId, rolesReady };
 }
@@ -65,15 +89,27 @@ export default function FormUser({
     mutate,
     options
 }) {
+    const normalizedDefaultValues = React.useMemo(() => ({
+        ...oldData,
+        branch_id: normalizeSelectedIds(
+            oldData?.branch_id ?? oldData?.branches ?? oldData?.branch
+        ),
+        entity_id: normalizeSelectedIds(
+            oldData?.entity_id ?? oldData?.entities ?? oldData?.entity
+        )
+    }), [oldData]);
+
     const { register, errors, handleSubmit, control, setValue, watch } = useRFH({
         schema,
-        defaultValues: oldData
+        defaultValues: normalizedDefaultValues
     });
     const branchId = watch('branch_id');
 
     const { resolvedRoleId, rolesReady } = useResolvedRoleId(oldData);
     const roleSyncedRef = useRef(false);
-    const previousBranchIdRef = useRef(oldData?.branch_id);
+    const previousBranchSelectionRef = useRef(
+        getSelectionKey(normalizedDefaultValues.branch_id)
+    );
 
     // When roles API has loaded and we had role in oldData (role_id or roles[0]), set form value
     useEffect(() => {
@@ -90,20 +126,23 @@ export default function FormUser({
     useEffect(() => {
         if (viewMode) return;
 
-        const previousBranchId = previousBranchIdRef.current;
+        const currentBranchSelection = getSelectionKey(branchId);
+        const previousBranchSelection = previousBranchSelectionRef.current;
+
         if (
-            previousBranchId !== undefined &&
-            previousBranchId !== null &&
-            branchId !== previousBranchId
+            previousBranchSelection &&
+            currentBranchSelection !== previousBranchSelection
         ) {
-            setValue('entity_id', '');
+            setValue('entity_id', []);
         }
 
-        previousBranchIdRef.current = branchId;
+        previousBranchSelectionRef.current = currentBranchSelection;
     }, [branchId, setValue, viewMode]);
 
     function onSubmit(data) {
         const normalizedName = data.name?.en?.trim?.() ?? '';
+        const normalizedBranchIds = normalizeSelectedIds(data.branch_id);
+        const normalizedEntityIds = normalizeSelectedIds(data.entity_id);
         const normalizedStatus =
             oldData?.status === 1 ||
             oldData?.status === true ||
@@ -116,6 +155,8 @@ export default function FormUser({
                 en: normalizedName,
                 ar: normalizedName
             },
+            branch_id: normalizedBranchIds,
+            entity_id: normalizedEntityIds,
             locale: 'en',
             current_app_locale: 'en',
             status: normalizedStatus ? 1 : 0,
@@ -149,9 +190,13 @@ export default function FormUser({
                         const fieldDefaultValue =
                             field.name === 'name.en'
                                 ? oldData?.name?.en || oldData?.name?.ar || field.defaultValue
-                                : oldData?.[field.name] || field.defaultValue;
+                                : field.name === 'branch_id'
+                                ? normalizedDefaultValues.branch_id
+                                : field.name === 'entity_id'
+                                ? normalizedDefaultValues.entity_id
+                                : oldData?.[field.name] ?? field.defaultValue;
                         const hasBranchSelection =
-                            branchId !== undefined && branchId !== null && branchId !== '';
+                            normalizeSelectedIds(branchId).length > 0;
                         const isFieldDisabled =
                             viewMode ||
                             (field.name === 'entity_id' && !hasBranchSelection);
@@ -160,7 +205,7 @@ export default function FormUser({
                             <div
                                 key={
                                     field.name === 'entity_id'
-                                        ? `entity_id-${String(branchId ?? 'no-branch')}`
+                                        ? `entity_id-${getSelectionKey(branchId) || 'no-branch'}`
                                         : field.name
                                 }
                                 className={
@@ -193,9 +238,14 @@ export default function FormUser({
                                     required={isFieldRequired(schema, field.name)}
                                     oldData={oldData}
                                     fieldParams={{
-                                        entity_id: {
-                                            branch_id: branchId ?? oldData?.branch_id
-                                        }
+                                        entity_id:
+                                            normalizeSelectedIds(branchId).length > 0
+                                                ? {
+                                                    branches_id: normalizeSelectedIds(branchId)
+                                                }
+                                                : {
+                                                    branches_id: normalizedDefaultValues.branch_id
+                                                }
                                     }}
                                 />
                             </div>

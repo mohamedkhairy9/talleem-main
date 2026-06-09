@@ -16,14 +16,26 @@ export const usersSchema = yup.object().shape({
         .required(t('validation.required')),
     password: yup.string().nullable().optional().min(6, t('validation.password.min')),
     branch_id: yup
-        .number()
-        .required(t('validation.required'))
-        .integer(t('validation.branch_id.integer'))
-        .min(1, t('validation.branch_id.min')),
+        .array()
+        .of(
+            yup
+                .number()
+                .required(t('validation.required'))
+                .integer(t('validation.branch_id.integer'))
+                .min(1, t('validation.branch_id.min'))
+        )
+        .min(1, t('validation.required'))
+        .required(t('validation.required')),
     entity_id: yup
-        .number()
-        .required(t('validation.required'))
-        .integer(t('validation.entity_id.integer'))
-        .min(1, t('validation.entity_id.min')),
+        .array()
+        .of(
+            yup
+                .number()
+                .required(t('validation.required'))
+                .integer(t('validation.entity_id.integer'))
+                .min(1, t('validation.entity_id.min'))
+        )
+        .min(1, t('validation.required'))
+        .required(t('validation.required')),
     role_id: yup.number().required(t('validation.required')).integer().min(1, t('validation.required')),
 });

@@ -14,7 +14,7 @@ import { useRolesQuery } from '@/api/hooks/useRoles';
 import Loader from '@/components/common/Loader';
 import { allData } from '@/utils/constants/global.constants';
 import { enabledDisabledOptions } from '@/utils/constants/options';
-import { filterAssignableRoles } from '@/utils/helpers/assignableRoles';
+import { filterEmployeeAssignableRoles } from '@/utils/helpers/assignableRoles';
 
 export default function EditEmployee({ onClose, oldData }) {
     const { mutate, isPending } = useUpdateEmployeeMutation();
@@ -66,7 +66,7 @@ export default function EditEmployee({ onClose, oldData }) {
                     // specification_id: specificationsData?.data,
                     city_id: citiesData?.data,
                     major_id: majorsData?.data,
-                    roles: filterAssignableRoles(rolesData?.data ?? []),
+                    roles: filterEmployeeAssignableRoles(rolesData?.data ?? []),
                     status: enabledDisabledOptions
                 }}
             />

@@ -85,6 +85,7 @@ export const usersFields = [
         label: 'validation.users.branch_id.label',
         type: 'select',
         placeholder: 'validation.users.branch_id.placeholder',
+        isMulti: true,
         editMode: true,
         viewMode: true
     },
@@ -93,6 +94,7 @@ export const usersFields = [
         label: 'validation.entity_id.label',
         type: 'select',
         placeholder: 'validation.entity_id.placeholder',
+        isMulti: true,
         editMode: true,
         viewMode: true
     },
@@ -113,8 +115,8 @@ export const usersDefaultValues = {
     },
     email: '',
     password: '',
-    branch_id: '',
-    entity_id: '',
+    branch_id: [],
+    entity_id: [],
     role_id: null,
     locale: 'en',
     current_app_locale: 'en',

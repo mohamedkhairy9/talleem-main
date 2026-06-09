@@ -29,6 +29,38 @@ function containsAllWords(text, words) {
     return words.every(word => text.includes(word));
 }
 
+const JOB_POLICY_MATCHERS = {
+    supervisor: [
+        text => text === 'supervisor',
+        text => text.includes('supervisor'),
+        text => text === 'مشرف'
+    ],
+    branch_manager: [
+        text => text === 'branch manager',
+        text => text.includes('branch manager'),
+        text => text === 'branchmanager',
+        text => containsAllWords(text, ['branch', 'manager']),
+        text => text === 'مدير فرع',
+        text => containsAllWords(text, ['مدير', 'فرع'])
+    ],
+    ceo: [
+        text => text === 'ceo',
+        text => text === 'chief executive officer',
+        text => containsAllWords(text, ['chief', 'executive', 'officer']),
+        text => text === 'general manager',
+        text => containsAllWords(text, ['general', 'manager']),
+        text => text.includes('director'),
+        text => text === 'رئيس تنفيذي',
+        text => containsAllWords(text, ['رئيس', 'تنفيذي']),
+        text => text === 'مدير عام',
+        text => containsAllWords(text, ['مدير', 'عام'])
+    ]
+};
+
+function matchesPolicy(text, policyKey) {
+    return (JOB_POLICY_MATCHERS[policyKey] || []).some(matcher => matcher(text));
+}
+
 function resolveJobPolicy(job) {
     const searchableTexts = extractSearchableTexts(
         job?.name,
@@ -38,36 +70,15 @@ function resolveJobPolicy(job) {
         job?.code
     );
 
-    const hasMatch = matchers => searchableTexts.some(text => matchers.some(matcher => matcher(text)));
-
-    if (
-        hasMatch([
-            text => text.includes('supervisor'),
-            text => text === 'مشرف'
-        ])
-    ) {
+    if (searchableTexts.some(text => matchesPolicy(text, 'supervisor'))) {
         return 'supervisor';
     }
 
-    if (
-        hasMatch([
-            text => containsAllWords(text, ['branch', 'manager']),
-            text => containsAllWords(text, ['مدير', 'فرع'])
-        ])
-    ) {
+    if (searchableTexts.some(text => matchesPolicy(text, 'branch_manager'))) {
         return 'branch_manager';
     }
 
-    if (
-        hasMatch([
-            text => text === 'ceo',
-            text => containsAllWords(text, ['chief', 'executive', 'officer']),
-            text => containsAllWords(text, ['general', 'manager']),
-            text => text.includes('director'),
-            text => containsAllWords(text, ['رئيس', 'تنفيذي']),
-            text => containsAllWords(text, ['مدير', 'عام'])
-        ])
-    ) {
+    if (searchableTexts.some(text => matchesPolicy(text, 'ceo'))) {
         return 'ceo';
     }
 
@@ -79,36 +90,13 @@ function roleMatchesPolicy(role, policyKey) {
         role?.name,
         role?.display_name,
         role?.label,
-        role?.slug
+        role?.slug,
+        role?.code
     );
 
     if (!searchableTexts.length || !policyKey) return false;
 
-    return searchableTexts.some(text => {
-        if (policyKey === 'supervisor') {
-            return text.includes('supervisor') || text === 'مشرف';
-        }
-
-        if (policyKey === 'branch_manager') {
-            return (
-                containsAllWords(text, ['branch', 'manager']) ||
-                containsAllWords(text, ['مدير', 'فرع'])
-            );
-        }
-
-        if (policyKey === 'ceo') {
-            return (
-                text === 'ceo' ||
-                containsAllWords(text, ['chief', 'executive', 'officer']) ||
-                containsAllWords(text, ['general', 'manager']) ||
-                text.includes('director') ||
-                containsAllWords(text, ['رئيس', 'تنفيذي']) ||
-                containsAllWords(text, ['مدير', 'عام'])
-            );
-        }
-
-        return false;
-    });
+    return searchableTexts.some(text => matchesPolicy(text, policyKey));
 }
 
 function getRelationDisplayName(oldData, fieldName, lang) {
@@ -411,6 +399,7 @@ export default function FormEmployee({
                 register={register}
                 error={error}
                 disabled={isFieldDisabled}
+                isAsync={fieldName === 'roles' ? false : undefined}
                 {...field}
                 name={fieldName}
                 isMulti={fieldName === 'branch_id' ? isMultiBranchJob : field.isMulti}

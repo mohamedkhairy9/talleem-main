@@ -79,7 +79,7 @@ export default function Login() {
                                 onSubmit={handleSubmit(login)}
                                 className="space-y-6 !font-islamic"
                             >
-                                
+
                                 {loginFields.map(field =>
                                     field.name === 'password' ? (
                                         <div key={field.name} className="relative">

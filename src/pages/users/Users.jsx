@@ -13,6 +13,23 @@ import i18next from 'i18next';
 import { getOriginalObject } from '@/utils/helpers/global.fns';
 import Filters from './Filters';
 
+function normalizeSelectedIds(value) {
+    if (Array.isArray(value)) {
+        return value
+            .map(item => item?.id ?? item?.value ?? item)
+            .filter(item => item !== undefined && item !== null && item !== '');
+    }
+
+    if (value && typeof value === 'object') {
+        const normalized = value.id ?? value.value;
+        return normalized !== undefined && normalized !== null && normalized !== ''
+            ? [normalized]
+            : [];
+    }
+
+    return value !== undefined && value !== null && value !== '' ? [value] : [];
+}
+
 export default function Users() {
     const { isOpen, toggle } = useIsOpen();
     const { pagination, handleFilter, filters, setter, setFilters } =
@@ -40,10 +57,22 @@ export default function Users() {
         },
         status: item.status,
         user_type: item.user_type,
-        branch_id: item.branch?.id,
+        branch_id: normalizeSelectedIds(item.branches ?? item.branch ?? item.branch_id),
         branch: item.branch,
-        entity_id: item.entity?.id ?? item.entity_id?.id ?? item.entity?.value ?? item.entity_id,
+        branches: Array.isArray(item.branches)
+            ? item.branches
+            : item.branch
+            ? [item.branch]
+            : [],
+        entity_id: normalizeSelectedIds(item.entities ?? item.entity ?? item.entity_id),
         entity: item.entity?.id ? item.entity : item.entity_id?.id ? item.entity_id : null,
+        entities: Array.isArray(item.entities)
+            ? item.entities
+            : item.entity?.id
+            ? [item.entity]
+            : item.entity_id?.id
+            ? [item.entity_id]
+            : [],
         // role_id must be numeric; if API sends role names in roles[], don't pass them as role_id
         role_id:
             item.role_id ??
