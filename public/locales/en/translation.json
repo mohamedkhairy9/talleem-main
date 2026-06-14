@@ -479,6 +479,11 @@
             "placeholder": "Select status",
             "invalid": "Status must be either enabled or disabled"
         },
+        "date": {
+            "label": "Date",
+            "placeholder": "Select date",
+            "required": "Date is required"
+        },
         "process_step": {
             "status": {
                 "label": "Status",
@@ -1247,6 +1252,11 @@
         "update": "Update Banner",
         "view": "View Banner"
     },
+    "general_holidays": {
+        "create": "Create General Holiday",
+        "update": "Update General Holiday",
+        "view": "View General Holiday"
+    },
     "home": {
         "welcome": {
             "title": "Welcome to Tallam",
@@ -1357,6 +1367,7 @@
         "terms_and_conditions": "Terms and Conditions",
         "privacy_policies": "Policies",
         "general_banners": "General Banners",
+        "general_holidays": "General Holidays",
         "system_online": "System Online",
         "employees": "Employee Profiles",
         "nationalities": "Nationalities",
@@ -1389,6 +1400,7 @@
         "notification_templates": "Notification Templates",
         "notifications": "Notifications",
         "general_banners": "General Banners",
+        "general_holidays": "General Holidays",
         "certificate_names": "Certificate Names",
         "certificates": "Certificates",
         "permissions": "Permissions",

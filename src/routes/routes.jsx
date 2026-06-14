@@ -29,6 +29,7 @@ import AboutUs from '@/pages/about-us/AboutUs';
 import TermsAndConditions from '@/pages/terms-and-conditions/TermsAndConditions';
 import PrivacyPolicies from '@/pages/privacy-policies/PrivacyPolicies';
 import GeneralBanners from '@/pages/general-banners/GeneralBanners';
+import GeneralHolidays from '@/pages/general-holidays/GeneralHolidays';
 import Employees from '@/pages/employees/Employees';
 import Teachers from '@/pages/teachers/Teachers';
 import EntityManagers from '@/pages/entity-managers/EntityManagers';
@@ -207,7 +208,7 @@ export const routes = [
         element: <SessionPeriods />
     },
     {
-        path: '/exam-segments-count',
+        path: '/required-exam-segments',
         element: <ExamSegmentsCount />
     },
     {
@@ -229,6 +230,10 @@ export const routes = [
     {
         path: '/general-banners',
         element: <GeneralBanners />
+    },
+    {
+        path: '/general-holidays',
+        element: <GeneralHolidays />
     },
     {
         path: '/employees',

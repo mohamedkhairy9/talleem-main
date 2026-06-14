@@ -471,6 +471,11 @@
             "placeholder": "اختر الحالة",
             "invalid": "يجب أن تكون الحالة إما مفعلة  أو معطلة"
         },
+        "date": {
+            "label": "التاريخ",
+            "placeholder": "اختر التاريخ",
+            "required": "التاريخ مطلوب"
+        },
         "process_step": {
             "status": {
                 "label": "الحالة",
@@ -1215,6 +1220,11 @@
         "update": "تحديث البانر",
         "view": "عرض البانر"
     },
+    "general_holidays": {
+        "create": "إنشاء عطلة عامة",
+        "update": "تحديث العطلة العامة",
+        "view": "عرض العطلة العامة"
+    },
     "home": {
         "welcome": {
             "title": "مرحباً بك في تعليم",
@@ -1325,6 +1335,7 @@
         "terms_and_conditions": "الشروط والأحكام",
         "privacy_policies": "السياسات",
         "general_banners": "اللافتات العامة",
+        "general_holidays": "العطل العامة",
         "system_online": "النظام متصل",
         "employees": "ملف تعريف الموظفين",
         "nationalities": "الجنسيات",
@@ -1357,6 +1368,7 @@
         "notification_templates": "قوالب الإشعارات",
         "notifications": "الإشعارات",
         "general_banners": "البانرات العامة",
+        "general_holidays": "العطل العامة",
         "certificate_names": "وصف أسماء الشهادات",
         "certificates": "الشهادات",
         "permissions": "الصلاحيات",

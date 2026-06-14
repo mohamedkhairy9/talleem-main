@@ -214,6 +214,13 @@ export const API_URLS = {
         UPDATE: id => `/banners/${id}`,
         DELETE: id => `/banners/${id}`
     },
+    GENERAL_HOLIDAYS: {
+        CREATE: '/general-holidays',
+        LIST: '/general-holidays',
+        DETAILS: id => `/general-holidays/${id}`,
+        UPDATE: id => `/general-holidays/${id}`,
+        DELETE: id => `/general-holidays/${id}`
+    },
     EMPLOYEES: {
         CREATE: '/employees',
         LIST: '/employees',
@@ -360,11 +367,11 @@ export const API_URLS = {
         UPDATE: program => `/configurations/${program}`
     },
     EXAM_SEGMENTS_COUNT: {
-        LIST: '/exam-segments-count',
-        DETAILS: id => `/exam-segments-count/${id}`,
-        CREATE: '/exam-segments-count',
-        UPDATE: id => `/exam-segments-count/${id}`,
-        DELETE: id => `/exam-segments-count/${id}`
+        LIST: '/required-exam-segments',
+        DETAILS: id => `/required-exam-segments/${id}`,
+        CREATE: '/required-exam-segments',
+        UPDATE: id => `/required-exam-segments/${id}`,
+        DELETE: id => `/required-exam-segments/${id}`
     },
     IMPORT_ERRORS: {
         LIST: '/import-errors',
@@ -435,7 +442,7 @@ export const API_KEYS = {
     BRANCHES: 'branches',
     MAIN_PROGRAMS: 'main-programs',
     QUORAN_PARTS: 'quoran-parts',
-    EXAM_SEGMENTS_COUNT: 'exam-segments-count',
+    EXAM_SEGMENTS_COUNT: 'required-exam-segments',
     ATTENDANCES_TYPES: 'attendances-types',
     EVALUATION_PARAMETERS: 'evaluation-parameters',
     MEMORIZATION_PROGRAM_ENTITY_TYPES: 'memorization-program-entity-types',
@@ -454,6 +461,7 @@ export const API_KEYS = {
     TERMS_AND_CONDITIONS: 'term-and-condition',
     PRIVACY_POLICIES: 'privacy-and-policy',
     GENERAL_BANNERS: 'general-banners',
+    GENERAL_HOLIDAYS: 'general-holidays',
     EMPLOYEES: 'employees',
     NATIONALITIES: 'nationalities',
     USERS: 'users',
@@ -468,7 +476,7 @@ export const API_KEYS = {
     ENTITY_ACTIVITIES: 'entity-activities',
     MAJORS: 'majors',
     REMOTELY_ATTENDANCE_PLATFORMS: 'remotely-attendance-platforms',
-    EXAM_SEGMENTS_COUNT: 'exam-segments-count',
+    EXAM_SEGMENTS_COUNT: 'required-exam-segments',
     IMPORT_ERRORS: 'import-errors',
     REQUEST_TYPES: 'request-types',
     PHASES: 'phases',

@@ -160,6 +160,7 @@ export const RESOURCE_BY_PATH = {
     '/term-and-condition': 'terms-and-conditions',
     '/privacy-policies': 'privacy-and-policies',
     '/general-banners': 'banners',
+    '/general-holidays': 'general_holidays',
     '/employees': 'employees',
     '/teachers': 'teachers',
     '/entity-managers': 'entity-managers',
@@ -182,7 +183,7 @@ export const RESOURCE_BY_PATH = {
     '/configurations': 'workflow_admin',
     '/quran-segmentation': 'quran_segments',
     '/suggested-exam-templates': 'exam_segments',
-    '/exam-segments-count': 'exam_segments',
+    '/required-exam-segments': 'exam_segments',
     '/session-modes': 'session_modes',
     '/online-attendances': 'online-attendances',
 };

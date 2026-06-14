@@ -248,6 +248,15 @@ export const sideMenuTabs = [
                         path: '/general-banners',
                         icon: VscDebugBreakpointLog,
                         requiredPermission: { resource: 'banners', action: 'r' }
+                    },
+                    {
+                        titleKey: 'sidebar.general_holidays',
+                        path: '/general-holidays',
+                        icon: VscDebugBreakpointLog,
+                        requiredPermission: {
+                            resource: 'general_holidays',
+                            action: 'r'
+                        }
                     }
                 ]
             }
@@ -356,7 +365,7 @@ export const sideMenuTabs = [
                     },
                     {
                         titleKey: 'sidebar.exam_segments_count',
-                        path: '/exam-segments-count',
+                        path: '/required-exam-segments',
                         icon: VscDebugBreakpointLog,
                         requiredPermission: { resource: 'exam_segments', action: 'r' }
                     }

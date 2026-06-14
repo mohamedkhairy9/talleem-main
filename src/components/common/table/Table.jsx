@@ -45,6 +45,7 @@ import { useTranslation } from 'react-i18next';
 import useLanguageStore from '@/utils/stores/language.store';
 import { FaEye } from 'react-icons/fa';
 import { getObjectName } from '@/utils/helpers/global.fns';
+import { formatDateForDisplay, isDateObject } from '@/utils/helpers/dateObjectHelpers';
 import Can from '@/components/common/Can';
 
 const columnHelper = createColumnHelper();
@@ -525,68 +526,207 @@ const Table = ({
         }
     };
 
-    const printTable = () => {
+    const getPrintableColumns = rowsTable =>
+        rowsTable
+            .getVisibleFlatColumns()
+            .filter(
+                col =>
+                    !['select', 'actions', 'expand', 'drag'].includes(col.id)
+            );
+
+    const escapeHtml = value =>
+        String(value)
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#39;');
+
+    const formatPrintableValue = value => {
+        if (value === null || value === undefined || value === '') return '-';
+
+        if (typeof value === 'boolean') {
+            return value ? t('common.enabled') : t('common.disabled');
+        }
+
+        if (
+            typeof value === 'string' ||
+            typeof value === 'number' ||
+            typeof value === 'bigint'
+        ) {
+            return String(value);
+        }
+
+        if (Array.isArray(value)) {
+            const formatted = value
+                .map(formatPrintableValue)
+                .filter(item => item && item !== '-');
+            return formatted.length ? formatted.join(', ') : '-';
+        }
+
+        if (isDateObject(value)) {
+            return formatDateForDisplay(value);
+        }
+
+        if (typeof value === 'object') {
+            const localizedValue = getObjectName(value);
+            if (localizedValue) return localizedValue;
+
+            if (value.label) return formatPrintableValue(value.label);
+            if (value.value && typeof value.value !== 'object') {
+                return formatPrintableValue(value.value);
+            }
+
+            const formatted = Object.values(value)
+                .map(formatPrintableValue)
+                .filter(item => item && item !== '-');
+
+            return formatted.length ? formatted.join(', ') : '-';
+        }
+
+        return String(value);
+    };
+
+    const getPrintableHeader = column => {
+        const header = column.columnDef.header;
+        if (typeof header === 'string') return t(header);
+        return column.id;
+    };
+
+    const getPrintableCellValue = (row, column) => {
+        let value;
+
         try {
-            const visibleColumns = table
-                .getVisibleFlatColumns()
-                .filter(col => col.id !== 'select' && col.id !== 'actions');
-            const allData = table
-                .getFilteredRowModel()
-                .rows.map(row => row.original);
+            value = row.getValue(column.id);
+        } catch {
+            value = row.original?.[column.id];
+        }
 
-            const printWindow = window.open('', '_blank');
+        return formatPrintableValue(value);
+    };
 
-            // Create table HTML with proper headers
-            const tableHTML = `
-                <table>
-                    <thead>
-                        <tr>
-                            ${visibleColumns
-                                .map(col => `<th>${col.columnDef.header}</th>`)
-                                .join('')}
-                        </tr>
-                    </thead>
-                    <tbody>
-                        ${allData
+    const openPrintPreview = ({
+        heading,
+        rows,
+        count,
+        countLabel,
+        onCloseMenu
+    }) => {
+        const visibleColumns = getPrintableColumns(table);
+        const printWindow = window.open('', '_blank');
+
+        if (!printWindow) {
+            throw new Error('Unable to open print window');
+        }
+
+        const tableHTML = `
+            <table>
+                <thead>
+                    <tr>
+                        ${visibleColumns
                             .map(
-                                rowData =>
-                                    `<tr>
-                                ${visibleColumns
-                                    .map(
-                                        col =>
-                                            `<td>${rowData[col.id] || ''}</td>`
-                                    )
-                                    .join('')}
-                            </tr>`
+                                col =>
+                                    `<th>${escapeHtml(
+                                        getPrintableHeader(col)
+                                    )}</th>`
                             )
                             .join('')}
-                    </tbody>
-                </table>
-            `;
+                    </tr>
+                </thead>
+                <tbody>
+                    ${rows
+                        .map(
+                            row => `
+                                <tr>
+                                    ${visibleColumns
+                                        .map(
+                                            col =>
+                                                `<td>${escapeHtml(
+                                                    getPrintableCellValue(
+                                                        row,
+                                                        col
+                                                    )
+                                                )}</td>`
+                                        )
+                                        .join('')}
+                                </tr>
+                            `
+                        )
+                        .join('')}
+                </tbody>
+            </table>
+        `;
 
-            printWindow.document.write(`
-                <html>
-                    <head>
-                        <title>${title}</title>
-                        <style>
-                            body { font-family: Arial, sans-serif; margin: 20px; }
-                            table { border-collapse: collapse; width: 100%; }
-                            th, td { border: 1px solid #ddd; padding: 8px; text-align: left; font-size: 12px; }
-                            th { background-color: #f2f2f2; font-weight: bold; }
-                        </style>
-                    </head>
-                    <body>
-                        <h1>${title}</h1>
-                        <p>Generated on: ${new Date().toLocaleString()}</p>
-                        <p>Total records: ${totalCount}</p>
-                        ${tableHTML}
-                    </body>
-                </html>
-            `);
+        printWindow.document.write(`
+            <html>
+                <head>
+                    <title>${escapeHtml(heading)}</title>
+                    <style>
+                        body {
+                            font-family: Arial, sans-serif;
+                            margin: 20px;
+                            direction: ${isRTL ? 'rtl' : 'ltr'};
+                        }
+                        h1 {
+                            margin-bottom: 8px;
+                        }
+                        .meta {
+                            margin: 0 0 16px;
+                            color: #555;
+                            font-size: 14px;
+                        }
+                        table {
+                            border-collapse: collapse;
+                            width: 100%;
+                        }
+                        th, td {
+                            border: 1px solid #ddd;
+                            padding: 8px;
+                            text-align: ${isRTL ? 'right' : 'left'};
+                            vertical-align: top;
+                            font-size: 12px;
+                        }
+                        th {
+                            background-color: #f2f2f2;
+                            font-weight: bold;
+                        }
+                        @media print {
+                            body {
+                                margin: 12px;
+                            }
+                        }
+                    </style>
+                </head>
+                <body>
+                    <h1>${escapeHtml(heading)}</h1>
+                    <p class="meta">${escapeHtml(
+                        `${countLabel}: ${count}`
+                    )}</p>
+                    ${tableHTML}
+                </body>
+            </html>
+        `);
 
-            printWindow.document.close();
+        printWindow.document.close();
+        printWindow.focus();
+
+        setTimeout(() => {
             printWindow.print();
-            setShowExportMenu(false);
+        }, 250);
+
+        onCloseMenu?.();
+    };
+
+    const printTable = () => {
+        try {
+            const rows = table.getSortedRowModel().rows;
+            openPrintPreview({
+                heading: title,
+                rows,
+                count: rows.length,
+                countLabel: isRTL ? 'إجمالي السجلات' : 'Total records',
+                onCloseMenu: () => setShowExportMenu(false)
+            });
         } catch (error) {
             console.error('Print failed:', error);
             alert('Print failed. Please try again.');
@@ -660,64 +800,13 @@ const Table = ({
 
     const printSelectedRows = () => {
         try {
-            const visibleColumns = table
-                .getVisibleFlatColumns()
-                .filter(col => col.id !== 'select' && col.id !== 'actions');
-            const selectedData = selectedRows.map(row => row.original);
-
-            const printWindow = window.open('', '_blank');
-
-            // Create table HTML for selected rows
-            const tableHTML = `
-                <table>
-                    <thead>
-                        <tr>
-                            ${visibleColumns
-                                .map(col => `<th>${col.columnDef.header}</th>`)
-                                .join('')}
-                        </tr>
-                    </thead>
-                    <tbody>
-                        ${selectedData
-                            .map(
-                                rowData =>
-                                    `<tr>
-                                ${visibleColumns
-                                    .map(
-                                        col =>
-                                            `<td>${rowData[col.id] || ''}</td>`
-                                    )
-                                    .join('')}
-                            </tr>`
-                            )
-                            .join('')}
-                    </tbody>
-                </table>
-            `;
-
-            printWindow.document.write(`
-                <html>
-                    <head>
-                        <title>${title} - Selected Items</title>
-                        <style>
-                            body { font-family: Arial, sans-serif; margin: 20px; }
-                            table { border-collapse: collapse; width: 100%; }
-                            th, td { border: 1px solid #ddd; padding: 8px; text-align: left; font-size: 12px; }
-                            th { background-color: #f2f2f2; font-weight: bold; }
-                        </style>
-                    </head>
-                    <body>
-                        <h1>${title} - Selected Items</h1>
-                        <p>Generated on: ${new Date().toLocaleString()}</p>
-                        <p>Selected records: ${selectedCount}</p>
-                        ${tableHTML}
-                    </body>
-                </html>
-            `);
-
-            printWindow.document.close();
-            printWindow.print();
-            setShowSelectedExportMenu(false);
+            openPrintPreview({
+                heading: `${title} - ${t('table.print_selected')}`,
+                rows: selectedRows,
+                count: selectedCount,
+                countLabel: isRTL ? 'عدد السجلات المحددة' : 'Selected records',
+                onCloseMenu: () => setShowSelectedExportMenu(false)
+            });
         } catch (error) {
             console.error('Print failed:', error);
             alert('Print failed. Please try again.');
