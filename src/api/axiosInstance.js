@@ -46,6 +46,15 @@ export function isBranchManagerOnly() {
     return hasBranchAdmin && !hasSuperAdmin;
 }
 
+export function isSuperAdminUser() {
+    const user = useUserStore.getState().user;
+    if (!user?.roles?.length) return false;
+    return user.roles
+        .map(normalizeRole)
+        .filter(Boolean)
+        .includes(normalizeRole(ROLE_SUPER_ADMIN));
+}
+
 /** Axios instance for front API (used by branch manager for join-requests). Same auth/language as main. */
 export const axiosInstanceFront = axios.create({
     baseURL: baseURLFront,

@@ -31,7 +31,7 @@ export default function AssignStudentToParent({ onClose, parentId }) {
 
     const fieldParams = useMemo(
         () => ({
-            student_id: { status: true },
+            student_id: { status: true, skipRequiredParams: true },
             kinship_id: {}
         }),
         []

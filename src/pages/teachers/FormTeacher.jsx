@@ -17,6 +17,7 @@ import { errorHandler } from '@/api/handler';
 import ValidationErrorsSummary from '@/pages/students/components/ValidationErrorsSummary';
 import { useRequiredDocumentsHint } from '@/api/hooks/useRequiredDocumentsHint';
 import toastService from '@/utils/helpers/Toastservice';
+import { withEntityAssignmentPayload } from '@/utils/helpers/entityAssignmentPayload';
 import {
     getActiveHalaqaInfo,
     hasSegmentationAffectingChange,
@@ -457,10 +458,10 @@ export default function FormTeacher({
             }
         }
 
-        const finalData = {
+        const finalData = withEntityAssignmentPayload({
             ...submitData,
             // Don't convert status - send as is ('active', 'cancelled', 'unauthorized')
-        };
+        });
 
         // For education program, set education_program_entity_type_id
         if (Number(submitData.main_program_id) === 1) {

@@ -13,7 +13,8 @@ import { useNationalitiesQuery } from '@/api/hooks/useNationalities';
 import { useUsersQuery } from '@/api/hooks/useUsers';
 import Loader from '@/components/common/Loader';
 import { allData } from '@/utils/constants/global.constants';
-import { genderOptions, teacherStatusOptions } from '@/utils/constants/options';
+import { genderOptions } from '@/utils/constants/options';
+import { teacherReadonlyStatusOptions } from './teacherStatusOptions';
 
 const entryTypeOptions = [
     { label: { ar: 'جديد بالموافقة', en: 'New with Approval' }, value: 'new_with_approval' },
@@ -100,7 +101,7 @@ export default function EditTeacher({ onClose, oldData }) {
                     academic_qualification_id: academicQualificationsData?.data,
                     specification_id: specificationsData?.data,
                     city_id: citiesData?.data,
-                    status: teacherStatusOptions,
+                    status: teacherReadonlyStatusOptions,
                     gender: genderOptions,
                     entry_type: entryTypeOptions
                 }}

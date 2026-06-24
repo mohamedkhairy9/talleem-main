@@ -88,6 +88,15 @@ export default function SideBar() {
     };
 
     const handleNavigation = path => {
+        const navigationEvent = new CustomEvent('app:navigation-attempt', {
+            cancelable: true,
+            detail: { path }
+        });
+
+        if (!window.dispatchEvent(navigationEvent)) {
+            return;
+        }
+
         navigate(path);
         if (isMobile) {
             setIsOpen(false);

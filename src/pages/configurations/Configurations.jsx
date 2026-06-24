@@ -7,6 +7,7 @@ import { useSearchParams } from 'react-router-dom';
 import { API_KEYS } from '@/api/endpoints';
 import useApiCalls from './useApiCalls';
 import i18next from 'i18next';
+import { getVisibleConfigurationGroups } from './configurationVisibility';
 
 export default function Configurations() {
     const { t } = useLocale();
@@ -19,7 +20,7 @@ export default function Configurations() {
     
     const { data, isLoading } = useConfigurationsQuery(selectedProgram);
 
-    const configGroups = data?.data || [];
+    const configGroups = getVisibleConfigurationGroups(data?.data || [], currentLang);
 
     // Fetch platforms and session modes data for mapping IDs to names
     const { platformsData, sessionModesData } = useApiCalls({

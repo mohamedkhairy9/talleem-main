@@ -11,23 +11,10 @@ import ModalFooter from '@/components/common/form/ModalFooter';
 import { isFieldRequired } from '@/utils/helpers/schemaHelpers';
 import { useRolesQuery } from '@/api/hooks/useRoles';
 import { isAssignableRole } from '@/utils/helpers/assignableRoles';
-
-function normalizeSelectedIds(value) {
-    if (Array.isArray(value)) {
-        return value
-            .map(item => item?.id ?? item?.value ?? item)
-            .filter(item => item !== undefined && item !== null && item !== '');
-    }
-
-    if (value && typeof value === 'object') {
-        const normalized = value.id ?? value.value;
-        return normalized !== undefined && normalized !== null && normalized !== ''
-            ? [normalized]
-            : [];
-    }
-
-    return value !== undefined && value !== null && value !== '' ? [value] : [];
-}
+import {
+    buildUserSubmissionPayload,
+    normalizeSelectedIds
+} from './userFormPolicy';
 
 function getSelectionKey(value) {
     return normalizeSelectedIds(value)
@@ -140,28 +127,7 @@ export default function FormUser({
     }, [branchId, setValue, viewMode]);
 
     function onSubmit(data) {
-        const normalizedName = data.name?.en?.trim?.() ?? '';
-        const normalizedBranchIds = normalizeSelectedIds(data.branch_id);
-        const normalizedEntityIds = normalizeSelectedIds(data.entity_id);
-        const normalizedStatus =
-            oldData?.status === 1 ||
-            oldData?.status === true ||
-            oldData?.status === '1';
-
-        // Set locale fields to fixed 'en' value
-        const submitData = {
-            ...data,
-            name: {
-                en: normalizedName,
-                ar: normalizedName
-            },
-            branch_id: normalizedBranchIds,
-            entity_id: normalizedEntityIds,
-            locale: 'en',
-            current_app_locale: 'en',
-            status: normalizedStatus ? 1 : 0,
-            user_type: oldData?.user_type || 'employee'
-        };
+        const submitData = buildUserSubmissionPayload(data, oldData);
 
         // Edit mode: password is optional; don't send empty password
         if (editMode && (!submitData.password || submitData.password.trim() === '')) {

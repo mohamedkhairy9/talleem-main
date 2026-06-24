@@ -1,10 +1,11 @@
 import axios from 'axios';
 import { useUserStore } from '@/utils/stores/user.store';
 import i18n from '@/i18n';
-import { isBranchManagerOnly } from '../axiosInstance';
+import { isBranchManagerOnly, isSuperAdminUser } from '../axiosInstance';
 import { axiosInstance } from '../axiosInstance';
 import { API_URLS } from '../endpoints';
 import { prepareFormData } from '@/utils/helpers/global.fns';
+import { resolveJoinRequestsListPath } from './joinRequestsRouting';
 
 /** Remove params that have no value (for branch manager: front API should not receive empty params). */
 function stripEmptyParams(params) {
@@ -61,30 +62,18 @@ export const joinRequestsService = {
     getJoinRequests: (params, options = {}) => {
         const branchManager = isBranchManagerOnly();
         const mode = options.mode || 'auto';
+        const scoped = !isSuperAdminUser();
         const finalParams = branchManager ? stripEmptyParams(params) : params ?? {};
-        const listPath =
-            mode === 'pending'
-                ? `${API_URLS.JOIN_REQUESTS.LIST}/pending`
-                : mode === 'all'
-                    ? API_URLS.JOIN_REQUESTS.LIST
-                    : branchManager
-                        ? `${API_URLS.JOIN_REQUESTS.LIST}/pending`
-                        : API_URLS.JOIN_REQUESTS.LIST;
+        const listPath = resolveJoinRequestsListPath({ mode, scoped });
         const client = branchManager ? joinRequestsClient : axiosInstance;
         return client.get(listPath, { params: finalParams });
     },
     getAllJoinRequests: async (params, options = {}) => {
         const branchManager = isBranchManagerOnly();
         const mode = options.mode || 'auto';
+        const scoped = !isSuperAdminUser();
         const finalParams = branchManager ? stripEmptyParams(params) : params ?? {};
-        const listPath =
-            mode === 'pending'
-                ? `${API_URLS.JOIN_REQUESTS.LIST}/pending`
-                : mode === 'all'
-                    ? API_URLS.JOIN_REQUESTS.LIST
-                    : branchManager
-                        ? `${API_URLS.JOIN_REQUESTS.LIST}/pending`
-                        : API_URLS.JOIN_REQUESTS.LIST;
+        const listPath = resolveJoinRequestsListPath({ mode, scoped });
         const client = branchManager ? joinRequestsClient : axiosInstance;
 
         const firstPage = await client.get(listPath, {

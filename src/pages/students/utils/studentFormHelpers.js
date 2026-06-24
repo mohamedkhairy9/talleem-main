@@ -1,5 +1,6 @@
 import { isFieldRequired } from '@/utils/helpers/schemaHelpers';
 import i18next from 'i18next';
+import { withEntityAssignmentPayload } from '@/utils/helpers/entityAssignmentPayload';
 
 // Helper to check if field is conditionally required
 export const getIsConditionallyRequired = (field, mainProgramId, schema) => {
@@ -95,10 +96,10 @@ export const prepareSubmissionData = (data, editMode, profileImageChanged) => {
         }
     }
 
-    const finalData = {
+    const finalData = withEntityAssignmentPayload({
         ...submitData,
         status: submitData.status ? 1 : 0,
-    };
+    });
 
     // For education program, set education_program_entity_type_id from entity_category_id
     if (Number(submitData.main_program_id) === 1) {

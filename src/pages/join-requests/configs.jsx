@@ -3,12 +3,12 @@ import NameCell from '@/components/common/table/cells/NameCell';
 import DateCell from '@/components/common/table/cells/DateCell';
 import { createColumnHelper } from '@tanstack/react-table';
 import React from 'react';
-import i18next from 'i18next';
 import { API_KEYS } from '@/api/endpoints';
 import {
     getJoinRequestDisplayStatus,
     getJoinRequestStatusBadgeClasses
 } from './statusDisplay';
+import { getLocalizedRequestTypeName } from './joinRequestTypeDisplay';
 
 const columnHelper = createColumnHelper();
 
@@ -23,11 +23,18 @@ export const joinRequestsColumns = (requestTypesMap, currentLocale = 'en') => [
     }),
     columnHelper.accessor('request_type_id', {
         header: 'table_headers.request_type',
-        cell: info => (
-            <Cell 
-                value={requestTypesMap[info.getValue()] || `Request Type ${info.getValue()}`} 
-            />
-        )
+        cell: info => {
+            const requestTypeId = info.getValue();
+            const requestTypeName =
+                requestTypesMap[requestTypeId] ||
+                getLocalizedRequestTypeName(info.row.original.request_type, currentLocale);
+
+            return (
+                <Cell
+                    value={requestTypeName || `Request Type ${requestTypeId}`}
+                />
+            );
+        }
     }),
     columnHelper.accessor('form.name', {
         header: 'table_headers.form',

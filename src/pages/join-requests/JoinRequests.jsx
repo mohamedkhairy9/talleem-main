@@ -13,94 +13,13 @@ import Filters from './Filters';
 import useIsOpen from '@/utils/hooks/global/useIsOpen';
 import ViewJoinRequest from './ViewJoinRequest';
 import { getOriginalObject } from '@/utils/helpers/global.fns';
+import {
+    buildRequestTypesMap,
+    getRequestTypeIdsByCategory,
+    getRequestTypesForCategory
+} from './joinRequestTypeDisplay';
 
 const VALID_CATEGORIES = ['entities', 'teachers', 'supervisors'];
-
-/** Fallback IDs when request types API is not available (e.g. branch manager). From request types sample. */
-const FALLBACK_IDS = {
-    entities: [3, 10, 11, 12, 13],
-    teachers: [1, 7, 8, 9],
-    supervisors: [2, 4, 5, 6]
-};
-
-function normalizeRequestTypeText(value) {
-    return String(value ?? '')
-        .trim()
-        .toLowerCase()
-        .replace(/[أإآ]/g, 'ا')
-        .replace(/ؤ/g, 'و')
-        .replace(/ئ/g, 'ي')
-        .replace(/ة/g, 'ه')
-        .replace(/ى/g, 'ي')
-        .replace(/[_-]+/g, ' ')
-        .replace(/\s+/g, ' ')
-        .trim();
-}
-
-function getRequestTypeTexts(requestType) {
-    const rawName = requestType?.name;
-    const values =
-        typeof rawName === 'object'
-            ? [rawName?.en, rawName?.ar]
-            : [rawName];
-
-    return [...new Set(values.map(normalizeRequestTypeText).filter(Boolean))];
-}
-
-function resolveRequestTypeCategory(requestType) {
-    const texts = getRequestTypeTexts(requestType);
-
-    if (
-        texts.some(
-            text => text.includes('teacher') || text.includes('معلم') || text.includes('مدرس')
-        )
-    ) {
-        return 'teachers';
-    }
-
-    if (texts.some(text => text.includes('student') || text.includes('طالب'))) {
-        return 'supervisors';
-    }
-
-    if (texts.some(text => text.includes('entity') || text.includes('جهه') || text.includes('جهة'))) {
-        return 'entities';
-    }
-
-    return null;
-}
-
-/** Map request types to category by actual request type labels across English and Arabic. */
-function getRequestTypeIdsByCategory(requestTypesData, category) {
-    if (!category) return [];
-    if (requestTypesData?.data?.length) {
-        const matchingIds = requestTypesData.data
-            .filter(requestType => resolveRequestTypeCategory(requestType) === category)
-            .map(requestType => requestType.id);
-
-        if (matchingIds.length > 0) {
-            return matchingIds;
-        }
-    }
-    return FALLBACK_IDS[category] || [];
-}
-
-/** Get request type objects for the current category only (for tabs). */
-function getRequestTypesForCategory(requestTypesData, category, requestTypeIds) {
-    if (!category || requestTypeIds.length === 0) return [];
-    if (requestTypesData?.data?.length) {
-        const idSet = new Set(requestTypeIds);
-        return requestTypesData.data
-            .filter((t) => idSet.has(t.id))
-            .map((type) => ({
-                id: type.id,
-                name:
-                    typeof type.name === 'string'
-                        ? type.name
-                        : type.name?.[i18next.language] || type.name?.en || type.name?.ar || `Request Type ${type.id}`
-            }));
-    }
-    return requestTypeIds.map((id) => ({ id, name: `Request Type ${id}` }));
-}
 
 export default function JoinRequests() {
     const branchManagerOnly = isBranchManagerOnly();
@@ -128,20 +47,6 @@ export default function JoinRequests() {
         }
     }, [urlCategory, navigate]);
 
-    const requestTypeIds = useMemo(
-        () => getRequestTypeIdsByCategory(requestTypesData, category),
-        [requestTypesData, category]
-    );
-
-    const categoryRequestTypes = useMemo(
-        () => getRequestTypesForCategory(requestTypesData, category, requestTypeIds),
-        [requestTypesData, category, requestTypeIds]
-    );
-    const categoryRequestTypeIdsSet = useMemo(
-        () => new Set(requestTypeIds.map(id => Number(id))),
-        [requestTypeIds]
-    );
-
     const [filtersInitialized, setFiltersInitialized] = React.useState(false);
 
     useEffect(() => {
@@ -155,6 +60,51 @@ export default function JoinRequests() {
             setFiltersInitialized(true);
         }
     }, [category]);
+
+    const fetchFilters = useMemo(
+        () => ({
+            search: filters.search
+        }),
+        [filters.search]
+    );
+
+    const shouldFetchJoinRequests = Boolean(
+        filtersInitialized &&
+            category &&
+            (branchManagerOnly || !isLoadingRequestTypes)
+    );
+
+    const { data, isLoading, refresh } = useAllJoinRequestsQuery(fetchFilters, {
+        enabled: shouldFetchJoinRequests
+    }, {
+        mode: 'all'
+    });
+
+    const discoverableJoinRequests = useMemo(
+        () => data?.data || [],
+        [data?.data]
+    );
+
+    const requestTypeIds = useMemo(
+        () => getRequestTypeIdsByCategory(requestTypesData, category, discoverableJoinRequests),
+        [requestTypesData, category, discoverableJoinRequests]
+    );
+
+    const categoryRequestTypes = useMemo(
+        () => getRequestTypesForCategory(
+            requestTypesData,
+            category,
+            requestTypeIds,
+            discoverableJoinRequests,
+            i18next.language
+        ),
+        [requestTypesData, category, requestTypeIds, discoverableJoinRequests]
+    );
+
+    const categoryRequestTypeIdsSet = useMemo(
+        () => new Set(requestTypeIds.map(id => Number(id))),
+        [requestTypeIds]
+    );
 
     const selectedRequestTypeId = useMemo(() => {
         const urlId = searchParams.get('request_type_id');
@@ -174,27 +124,14 @@ export default function JoinRequests() {
             }
             setFilters((prev) => ({ ...prev, request_type_id: selectedRequestTypeId }));
         }
-    }, [categoryRequestTypes.length, selectedRequestTypeId]);
+    }, [
+        categoryRequestTypes.length,
+        searchParams,
+        selectedRequestTypeId,
+        setFilters,
+        setSearchParams
+    ]);
 
-    const fetchFilters = useMemo(
-        () => ({
-            search: filters.search
-        }),
-        [filters.search]
-    );
-
-    const shouldFetchJoinRequests = Boolean(
-        filtersInitialized &&
-            category &&
-            (branchManagerOnly || !isLoadingRequestTypes) &&
-            selectedRequestTypeId !== null
-    );
-
-    const { data, isLoading, refresh } = useAllJoinRequestsQuery(fetchFilters, {
-        enabled: shouldFetchJoinRequests
-    }, {
-        mode: 'all'
-    });
     const filteredJoinRequests = useMemo(() => {
         const allJoinRequests = data?.data || [];
 
@@ -212,6 +149,7 @@ export default function JoinRequests() {
             return requestTypeId === Number(selectedRequestTypeId);
         });
     }, [data?.data, categoryRequestTypeIdsSet, selectedRequestTypeId]);
+
     const pendingLookupFilters = useMemo(() => ({
         search: fetchFilters.search
     }), [fetchFilters.search]);
@@ -245,20 +183,15 @@ export default function JoinRequests() {
         selectedRequestTypeId
     ]);
 
-    const requestTypesMap = useMemo(() => {
-        const map = {};
-        categoryRequestTypes.forEach((type) => {
-            map[type.id] = type.name;
-        });
-        requestTypesData?.data?.forEach((type) => {
-            const name =
-                typeof type.name === 'object'
-                    ? type.name?.[i18next.language] || type.name?.en || type.name?.ar
-                    : type.name;
-            if (name) map[type.id] = name;
-        });
-        return map;
-    }, [categoryRequestTypes, requestTypesData?.data]);
+    const requestTypesMap = useMemo(
+        () => buildRequestTypesMap(
+            categoryRequestTypes,
+            discoverableJoinRequests,
+            i18next.language,
+            requestTypesData
+        ),
+        [categoryRequestTypes, discoverableJoinRequests, requestTypesData]
+    );
 
     const handleTabChange = (requestTypeId) => {
         setSearchParams({ request_type_id: String(requestTypeId) }, { replace: true });

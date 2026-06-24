@@ -290,7 +290,7 @@ export const teachersFields = [
 ];
 
 export const teachersDefaultValues = {
-    status: true,
+    status: 'active',
     name: {
         en: '',
         ar: ''

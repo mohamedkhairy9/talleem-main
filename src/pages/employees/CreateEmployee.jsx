@@ -15,7 +15,7 @@ import { useRolesQuery } from '@/api/hooks/useRoles';
 import Loader from '@/components/common/Loader';
 import { allData } from '@/utils/constants/global.constants';
 import { enabledDisabledOptions } from '@/utils/constants/options';
-import { filterEmployeeAssignableRoles } from '@/utils/helpers/assignableRoles';
+import { filterEmployeeRoleOptions } from './employeeJobPolicy';
 
 export default function CreateEmployee({ onClose }) {
     const { mutate, isPending } = useCreateEmployeeMutation();
@@ -66,7 +66,7 @@ export default function CreateEmployee({ onClose }) {
                     // specification_id: specificationsData?.data,
                     city_id: citiesData?.data,
                     major_id: majorsData?.data,
-                    roles: filterEmployeeAssignableRoles(rolesData?.data ?? []),
+                    roles: filterEmployeeRoleOptions(rolesData?.data ?? []),
                     status: enabledDisabledOptions
                 }}
             />

@@ -1,10 +1,13 @@
 import { multipartFormData } from '@/utils/constants/global.constants';
 import { axiosInstance } from '../axiosInstance';
 import { API_URLS } from '../endpoints';
+import { normalizeEntityListParams } from './entityListParams';
 
 export const entitiesService = {
     getEntities: async params => {
-        return await axiosInstance.get(API_URLS.ENTITIES.LIST, { params });
+        return await axiosInstance.get(API_URLS.ENTITIES.LIST, {
+            params: normalizeEntityListParams(params)
+        });
     },
 
     getEntity: async id => {

@@ -9,6 +9,9 @@ import { FaArrowLeft, FaArrowRight, FaEye } from 'react-icons/fa';
 import useLocale from '@/utils/hooks/global/useLocale';
 import DeleteModal from '@/components/common/form/DeleteModal';
 import MushafPage from '@/components/quran/MushafPage';
+import {
+    getSegmentationLeaveBlockReason
+} from './quranSegmentationGuard';
 
 // Juz starting pages in standard Madani Mushaf
 const JUZ_START_PAGES = [
@@ -66,10 +69,105 @@ const QuranSegmentationView = () => {
     const [isSegmentsLoading, setIsSegmentsLoading] = useState(false);
     const [error, setError] = useState(null);
 
-    const hasIncompletePageSegmentation = useMemo(() => (
-        hasUnsavedSegment
-        || segments.some(segment => !segment.first_verse_key || !segment.last_verse_key)
-    ), [hasUnsavedSegment, segments]);
+    const pageVerseKeys = useMemo(() => {
+        if (!wordsDb || pageLines.length === 0) return [];
+
+        const verseKeys = [];
+        const seenVerseKeys = new Set();
+        const ayahLines = pageLines.filter(line => line.line_type === 'ayah');
+
+        ayahLines.forEach(line => {
+            if (!line.first_word_id || !line.last_word_id) return;
+
+            try {
+                const query = `SELECT location FROM words WHERE id >= ${line.first_word_id} AND id <= ${line.last_word_id} ORDER BY id`;
+                const result = wordsDb.exec(query);
+
+                if (result.length === 0 || result[0].values.length === 0) return;
+
+                result[0].values.forEach(([location]) => {
+                    if (!location) return;
+                    const [surah, ayah] = String(location).split(':');
+                    if (!surah || !ayah) return;
+
+                    const verseKey = `${surah}:${ayah}`;
+                    if (!seenVerseKeys.has(verseKey)) {
+                        seenVerseKeys.add(verseKey);
+                        verseKeys.push(verseKey);
+                    }
+                });
+            } catch (error) {
+                console.error('Error deriving page verse keys:', error);
+            }
+        });
+
+        return verseKeys;
+    }, [pageLines, wordsDb]);
+
+    const segmentationLeaveBlockReason = useMemo(() => getSegmentationLeaveBlockReason({
+        hasUnsavedSegment,
+        editingSegment,
+        segments,
+        pageVerseKeys
+    }), [editingSegment, hasUnsavedSegment, pageVerseKeys, segments]);
+    const hasIncompletePageSegmentation = Boolean(segmentationLeaveBlockReason);
+
+    const warnIncompleteSegmentation = useCallback(() => {
+        toastService.warning(t('mushaf_management.completeSegmentationBeforeLeave'));
+    }, [t]);
+
+    useEffect(() => {
+        if (!hasIncompletePageSegmentation) return undefined;
+
+        const handleBeforeUnload = (event) => {
+            event.preventDefault();
+            event.returnValue = '';
+        };
+
+        window.addEventListener('beforeunload', handleBeforeUnload);
+        return () => window.removeEventListener('beforeunload', handleBeforeUnload);
+    }, [hasIncompletePageSegmentation]);
+
+    useEffect(() => {
+        if (!hasIncompletePageSegmentation) return undefined;
+
+        const handleAppNavigationAttempt = (event) => {
+            event.preventDefault();
+            warnIncompleteSegmentation();
+        };
+
+        const handlePotentialAppNavigation = (event) => {
+            const target = event.target;
+            if (!(target instanceof Element)) return;
+
+            const link = target.closest('a[href]');
+            const isOwnPageControl = target.closest('.segmentation-view');
+
+            if (!link) return;
+            if (isOwnPageControl) return;
+
+            const url = new URL(link.href, window.location.href);
+            if (url.origin !== window.location.origin) return;
+            if (
+                url.pathname === window.location.pathname &&
+                url.search === window.location.search
+            ) {
+                return;
+            }
+
+            event.preventDefault();
+            event.stopPropagation();
+            event.stopImmediatePropagation();
+            warnIncompleteSegmentation();
+        };
+
+        window.addEventListener('app:navigation-attempt', handleAppNavigationAttempt);
+        document.addEventListener('click', handlePotentialAppNavigation, true);
+        return () => {
+            window.removeEventListener('app:navigation-attempt', handleAppNavigationAttempt);
+            document.removeEventListener('click', handlePotentialAppNavigation, true);
+        };
+    }, [hasIncompletePageSegmentation, warnIncompleteSegmentation]);
 
     // Update page and URL together
     const setCurrentPage = useCallback((pageOrFn) => {
@@ -83,13 +181,13 @@ const QuranSegmentationView = () => {
         }
 
         if (hasIncompletePageSegmentation) {
-            toastService.warning(t('mushaf_management.completeSegmentationBeforeLeave'));
+            warnIncompleteSegmentation();
             return;
         }
 
         setSearchParams({ page: nextPage.toString() }, { replace: true });
         setCurrentPageState(nextPage);
-    }, [currentPage, hasIncompletePageSegmentation, setSearchParams, t]);
+    }, [currentPage, hasIncompletePageSegmentation, setSearchParams, warnIncompleteSegmentation]);
 
     // Initialize databases
     useEffect(() => {

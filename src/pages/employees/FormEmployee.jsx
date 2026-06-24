@@ -12,7 +12,10 @@ import ModalFooter from '@/components/common/form/ModalFooter';
 import { isFieldRequired } from '@/utils/helpers/schemaHelpers';
 import useLocale from '@/utils/hooks/global/useLocale';
 import i18next from 'i18next';
-import { extractSearchableTexts } from '@/utils/helpers/assignableRoles';
+import {
+    buildEmployeeSubmissionPayload,
+    getEmployeeJobPolicyState,
+} from './employeeJobPolicy';
 
 const RELATION_FIELDS_VIEW = [
     'nationality_id',
@@ -24,80 +27,6 @@ const RELATION_FIELDS_VIEW = [
     'major_id',
     'roles'
 ];
-
-function containsAllWords(text, words) {
-    return words.every(word => text.includes(word));
-}
-
-const JOB_POLICY_MATCHERS = {
-    supervisor: [
-        text => text === 'supervisor',
-        text => text.includes('supervisor'),
-        text => text === 'مشرف'
-    ],
-    branch_manager: [
-        text => text === 'branch manager',
-        text => text.includes('branch manager'),
-        text => text === 'branchmanager',
-        text => containsAllWords(text, ['branch', 'manager']),
-        text => text === 'مدير فرع',
-        text => containsAllWords(text, ['مدير', 'فرع'])
-    ],
-    ceo: [
-        text => text === 'ceo',
-        text => text === 'chief executive officer',
-        text => containsAllWords(text, ['chief', 'executive', 'officer']),
-        text => text === 'general manager',
-        text => containsAllWords(text, ['general', 'manager']),
-        text => text.includes('director'),
-        text => text === 'رئيس تنفيذي',
-        text => containsAllWords(text, ['رئيس', 'تنفيذي']),
-        text => text === 'مدير عام',
-        text => containsAllWords(text, ['مدير', 'عام'])
-    ]
-};
-
-function matchesPolicy(text, policyKey) {
-    return (JOB_POLICY_MATCHERS[policyKey] || []).some(matcher => matcher(text));
-}
-
-function resolveJobPolicy(job) {
-    const searchableTexts = extractSearchableTexts(
-        job?.name,
-        job?.label,
-        job?.display_name,
-        job?.slug,
-        job?.code
-    );
-
-    if (searchableTexts.some(text => matchesPolicy(text, 'supervisor'))) {
-        return 'supervisor';
-    }
-
-    if (searchableTexts.some(text => matchesPolicy(text, 'branch_manager'))) {
-        return 'branch_manager';
-    }
-
-    if (searchableTexts.some(text => matchesPolicy(text, 'ceo'))) {
-        return 'ceo';
-    }
-
-    return null;
-}
-
-function roleMatchesPolicy(role, policyKey) {
-    const searchableTexts = extractSearchableTexts(
-        role?.name,
-        role?.display_name,
-        role?.label,
-        role?.slug,
-        role?.code
-    );
-
-    if (!searchableTexts.length || !policyKey) return false;
-
-    return searchableTexts.some(text => matchesPolicy(text, policyKey));
-}
 
 function getRelationDisplayName(oldData, fieldName, lang) {
     if (fieldName === 'roles') {
@@ -151,7 +80,6 @@ export default function FormEmployee({
         }
     });
 
-    const cityId = watch('city_id');
     const branchId = watch('branch_id');
     const jobId = watch('job_id');
 
@@ -189,39 +117,20 @@ export default function FormEmployee({
             return;
         }
 
-        const job = jobsList.find(j => j.id == jobId);
-        if (!job) {
-            setIsRolesForced(false);
-            setIsSupervisorJob(false);
-            setIsCeoJob(false);
-            setIsBranchManagerJob(false);
-            return;
+        const policyState = getEmployeeJobPolicyState({
+            jobId,
+            jobs: jobsList,
+            roles: rolesList
+        });
+
+        setIsSupervisorJob(policyState.isSupervisorJob);
+        setIsCeoJob(policyState.isCeoJob);
+        setIsBranchManagerJob(policyState.isBranchManagerJob);
+        setIsRolesForced(policyState.forceRoles);
+
+        if (policyState.forceRoles) {
+            setValue('roles', policyState.forcedRoleIds);
         }
-
-        const targetKey = resolveJobPolicy(job);
-
-        setIsSupervisorJob(targetKey === 'supervisor');
-        setIsCeoJob(targetKey === 'ceo');
-        setIsBranchManagerJob(targetKey === 'branch_manager');
-
-        if (!targetKey) {
-            setIsRolesForced(false);
-            return;
-        }
-
-        const matchRoles = () => {
-            return rolesList.filter(role => roleMatchesPolicy(role, targetKey));
-        };
-
-        const matching = matchRoles();
-        if (!matching.length) {
-            setIsRolesForced(false);
-            return;
-        }
-
-        const roleIds = matching.map(r => r.id);
-        setValue('roles', roleIds);
-        setIsRolesForced(true);
     }, [jobId, options?.job_id, options?.roles, setValue]);
 
     // Enforce branch/entity restrictions based on job type.
@@ -265,12 +174,7 @@ export default function FormEmployee({
             data.profile_picture = data.profile_picture[0];
         }
 
-        // Send role names (not ids) as roles[] in form data
-        const roleNames = (data.roles || []).map(id => {
-            const role = (options?.roles || []).find(r => r.id == id);
-            return role?.name ?? String(id);
-        });
-        const payload = { ...data, roles: roleNames, status: data.status ? 1 : 0 };
+        const payload = buildEmployeeSubmissionPayload(data, options?.roles || []);
 
         mutate(payload, {
             onSuccess: () => {

@@ -1542,6 +1542,7 @@
         "warning_type": "Warning Type",
         "student": "Student",
         "teacher": "Teacher",
+        "employee": "Employee",
         "warning_reason": "Warning Reason",
         "warning_date": "Warning Date",
         "job": "Job",
