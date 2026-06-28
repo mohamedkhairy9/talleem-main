@@ -43,6 +43,7 @@ function AsyncSelect({
     t,
     styles,
     defaultValue,
+    defaultOptions,
     getOptionByValue
 }) {
     const [selected, setSelected] = useState(null);
@@ -111,7 +112,7 @@ function AsyncSelect({
             placeholder={loading ? t('common.loading') : t(placeholder)}
             loadOptions={loadOptions}
             additional={{ page: 1 }}
-            defaultOptions={true}
+            defaultOptions={defaultOptions}
             menuPortalTarget={document.body}
             menuPosition="fixed"
             styles={styles}
@@ -160,6 +161,7 @@ export default function SelectRFH({
     loading      = false,
     isAsync      = false,
     loadOptions  = null,
+    defaultOptions = false,
     getOptionByValue = null
 }) {
     const { t, isRTL } = useLocale();
@@ -204,6 +206,7 @@ export default function SelectRFH({
                                 t={t}
                                 styles={styles}
                                 defaultValue={defaultValue}
+                                defaultOptions={defaultOptions}
                                 getOptionByValue={getOptionByValue}
                             />
                         );

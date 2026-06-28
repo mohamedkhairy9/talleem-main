@@ -26,7 +26,7 @@ export default function EditConfigurationModal({ config, onClose }) {
     if (config.key === 'teaching_method') {
         apiCallsToFetch.push({ key: API_KEYS.SESSION_MODES });
     }
-    
+
     const { platformsData, sessionModesData, isLoading: platformsLoading } = useApiCalls({
         apiCalls: apiCallsToFetch
     });
@@ -77,7 +77,7 @@ export default function EditConfigurationModal({ config, onClose }) {
             return {
                 type: 'select',
                 options: weekDaysOptions,
-                isMulti: config.type === 'multiselect'  
+                isMulti: config.type === 'multiselect'
             };
         }
         if (config.key === 'teaching_method') {
@@ -205,11 +205,11 @@ export default function EditConfigurationModal({ config, onClose }) {
                     return sessionMode.value; // Use the ID directly
                 }
             }
-            
+
             // If not found as ID, try to find by name (for backward compatibility)
             if (sessionModeOptions.length > 0) {
-                const sessionMode = sessionModeOptions.find(opt => 
-                    opt.sessionModeName === config.value || 
+                const sessionMode = sessionModeOptions.find(opt =>
+                    opt.sessionModeName === config.value ||
                     opt.name === config.value ||
                     opt.label === config.value
                 );
@@ -217,7 +217,7 @@ export default function EditConfigurationModal({ config, onClose }) {
                     return sessionMode.value; // Return the ID
                 }
             }
-            
+
             // If sessionModeOptions not loaded yet, return the value as-is (will be handled when options load)
             return config.value;
         }
@@ -247,8 +247,8 @@ export default function EditConfigurationModal({ config, onClose }) {
                 }
             } else {
                 // Try to find by name (for backward compatibility)
-                const sessionMode = sessionModeOptions.find(opt => 
-                    opt.sessionModeName === config.value || 
+                const sessionMode = sessionModeOptions.find(opt =>
+                    opt.sessionModeName === config.value ||
                     opt.name === config.value ||
                     opt.label === config.value
                 );
@@ -275,7 +275,7 @@ export default function EditConfigurationModal({ config, onClose }) {
             // Generic multiselect: send as comma-separated string
             valueToSend = data.value.join(', ');
         }
-        
+
         // Handle teaching_method - send the ID directly (not convert to name)
         if (config.key === 'teaching_method') {
             valueToSend = data.value;

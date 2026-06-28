@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState, useRef, useCallback } from 'react';
 import { useEntitiesQuery } from '@/api/hooks/useEntities';
+import { useEntityQuery } from '@/api/hooks/useEntities';
 import { allData } from '@/utils/constants/global.constants';
 import calculateAge from '@/utils/helpers/ageCalculation';
 import i18next from 'i18next';
@@ -104,19 +105,32 @@ export function useStudentForm({ oldData, editMode, viewMode, watch, setValue, p
         return fetchedEntities;
     }, [entitiesData?.data, editMode, viewMode, oldData?.entity_id, oldData?.entity]);
 
+    const normalizedEntityId = useMemo(() => {
+        if (entityId === undefined || entityId === null || entityId === '') return null;
+        const parsedEntityId = Number(entityId);
+        return Number.isNaN(parsedEntityId) ? null : parsedEntityId;
+    }, [entityId]);
+
+    const selectedEntity = useMemo(() => {
+        if (!normalizedEntityId || !entities.length) return null;
+        return entities.find(entity => entity.id === normalizedEntityId) || null;
+    }, [normalizedEntityId, entities]);
+
+    const { data: selectedEntityData } = useEntityQuery(normalizedEntityId, {
+        enabled: !!normalizedEntityId && !selectedEntity
+    });
+
+    const resolvedSelectedEntity = selectedEntity || selectedEntityData?.data || selectedEntityData || null;
+
     // Get selected entity's education program entity type
     const selectedEntityEducationType = useMemo(() => {
-        if (!entityId || !entities.length) return null;
-        const selectedEntity = entities.find(entity => entity.id === Number(entityId));
-        return selectedEntity?.education_program_entity_type || null;
-    }, [entityId, entities]);
+        return resolvedSelectedEntity?.education_program_entity_type || null;
+    }, [resolvedSelectedEntity]);
 
     // Get selected entity's memorization program entity type
     const selectedEntityMemorizationType = useMemo(() => {
-        if (!entityId || !entities.length) return null;
-        const selectedEntity = entities.find(entity => entity.id === Number(entityId));
-        return selectedEntity?.memorization_program_entity_type || null;
-    }, [entityId, entities]);
+        return resolvedSelectedEntity?.memorization_program_entity_type || null;
+    }, [resolvedSelectedEntity]);
 
     // Clear entity when branch or main program changes (and fetch new entities)
     useEffect(() => {
@@ -169,7 +183,19 @@ export function useStudentForm({ oldData, editMode, viewMode, watch, setValue, p
 
     // Auto-fill memorization entity type when entity is selected (CREATE and EDIT mode)
     useEffect(() => {
-        if (viewMode || !selectedEntityMemorizationType || Number(mainProgramId) !== 2) return;
+        if (viewMode) return;
+
+        if (Number(mainProgramId) !== 2 || !normalizedEntityId || !selectedEntityMemorizationType) {
+            setValue('memorization_program_entity_type', '', {
+                shouldValidate: true,
+                shouldDirty: true
+            });
+            setValue('memorization_program_entity_type_id', '', {
+                shouldValidate: true,
+                shouldDirty: true
+            });
+            return;
+        }
 
         const entityTypeName = selectedEntityMemorizationType.name?.[lang] ||
             selectedEntityMemorizationType.name?.en ||
@@ -188,7 +214,7 @@ export function useStudentForm({ oldData, editMode, viewMode, watch, setValue, p
                 shouldDirty: true
             });
         }
-    }, [selectedEntityMemorizationType, viewMode, lang, mainProgramId, setValue]);
+    }, [selectedEntityMemorizationType, viewMode, lang, mainProgramId, normalizedEntityId, setValue]);
 
     // Update profile image preview when oldData changes
     useEffect(() => {
