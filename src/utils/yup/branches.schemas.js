@@ -9,15 +9,16 @@ export const branchesSchema = yup.object({
         })
         .required(t('validation.required')),
     city_id: yup
-        .number()
+        .array()
         .required(t('validation.required'))
-        .integer(t('validation.city_id.integer'))
-        .min(1, t('validation.city_id.min')),
-    neighborhood_id: yup
-        .number()
-        .required(t('validation.required'))
-        .integer(t('validation.neighborhood_id.integer'))
-        .min(1, t('validation.neighborhood_id.min')),
+        .of(
+            yup
+                .number()
+                .required(t('validation.required'))
+                .integer(t('validation.city_id.integer'))
+                .min(1, t('validation.city_id.min'))
+        )
+        .min(1, t('validation.required')),
     code: yup
         .number()
         .required(t('validation.required'))

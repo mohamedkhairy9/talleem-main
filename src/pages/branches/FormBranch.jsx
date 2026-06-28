@@ -1,6 +1,6 @@
 import useRFH from '@/utils/hooks/global/useRFH';
 import { branchesSchema as schema } from '@/utils/yup/branches.schemas';
-import React, { useEffect } from 'react';
+import React from 'react';
 import { branchesFields } from './configs';
 import InputRFH from '@/components/common/inputs/InputRFH';
 import Btn from '@/components/common/buttons/Btn';
@@ -9,6 +9,7 @@ import { generateOptions } from '@/utils/helpers/global.fns';
 import ModalContent from '@/components/common/form/ModalContent';
 import ModalFooter from '@/components/common/form/ModalFooter';
 import { isFieldRequired } from '@/utils/helpers/schemaHelpers';
+import { buildBranchSubmissionPayload } from './branchFormPolicy';
 
 export default function FormBranch({
     onClose,
@@ -17,35 +18,21 @@ export default function FormBranch({
     viewMode,
     isPending,
     mutate,
-    options,
-    onCityChange,
-    neighborhoodsLoading
+    options
 }) {
-    const { register, errors, handleSubmit, control, watch, setValue } = useRFH({
+    const { register, errors, handleSubmit, control } = useRFH({
         schema,
         defaultValues: oldData
     });
 
-    const cityId = watch('city_id');
-
-    useEffect(() => {
-        if (cityId && onCityChange) {
-            onCityChange(cityId);
-            // Clear neighborhood selection when city changes
-            setValue('neighborhood_id', '');
-        }
-    }, [cityId, onCityChange, setValue]);
-
     function onSubmit(data) {
-        console.log('data', data);
-        mutate(data, {
+        const payload = buildBranchSubmissionPayload(data);
+        mutate(payload, {
             onSuccess: () => {
                 onClose();
             }
         });
     }
-
-    console.log('options', options);
 
     return (
         <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col h-full">
@@ -65,14 +52,7 @@ export default function FormBranch({
                         error={getNestedError(errors, field.name)}
                         key={field.name}
                         type={field.type}
-                        disabled={
-                            viewMode ||
-                            (field.name === 'neighborhood_id' && !cityId)
-                        }
-                        loading={
-                            field.name === 'neighborhood_id' &&
-                            neighborhoodsLoading
-                        }
+                        disabled={viewMode}
                         placeholder={field.placeholder}
                         label={field.label}
                         name={field.name}
@@ -80,6 +60,7 @@ export default function FormBranch({
                             oldData?.[field.name] || field.defaultValue
                         }
                         options={generateOptions(options?.[field.name])}
+                        isMulti={field.isMulti}
                         required={isFieldRequired(schema, field.name)}
                     />
                 ))}

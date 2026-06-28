@@ -12,6 +12,7 @@ import i18next from 'i18next';
 import { getOriginalObject } from '@/utils/helpers/global.fns';
 import ViewBranch from './ViewBranch';
 import Filters from './Filters';
+import { normalizeBranchCityValue } from './branchFormPolicy';
 
 export default function Branches() {
     const { isOpen, toggle } = useIsOpen();
@@ -30,8 +31,8 @@ export default function Branches() {
         name: item.name,
         code: item.code,
         status: item.status,
-        city_id: item.city.id,
-        neighborhood_id: item.neighborhood.id
+        city_id: normalizeBranchCityValue(item),
+        neighborhood_id: item.neighborhood?.id ?? item.neighborhood_id ?? null
     }));
 
     return (

@@ -44,14 +44,7 @@ export const branchesFields = [
         label: 'validation.city_id.label',
         type: 'select',
         placeholder: 'validation.city_id.placeholder',
-        editMode: true,
-        viewMode: true
-    },
-    {
-        name: 'neighborhood_id',
-        label: 'validation.neighborhood_id.label',
-        type: 'select',
-        placeholder: 'validation.neighborhood_id.placeholder',
+        isMulti: true,
         editMode: true,
         viewMode: true
     },
