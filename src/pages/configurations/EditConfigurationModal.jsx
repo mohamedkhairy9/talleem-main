@@ -77,7 +77,7 @@ export default function EditConfigurationModal({ config, onClose }) {
             return {
                 type: 'select',
                 options: weekDaysOptions,
-                isMulti: config.type === 'multiselect'
+                isMulti: config.type === 'multiselect'  
             };
         }
         if (config.key === 'teaching_method') {
