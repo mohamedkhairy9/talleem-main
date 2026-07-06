@@ -1,6 +1,6 @@
 import * as yup from 'yup';
 import { t } from 'i18next';
-import { optionalSelectSchema, selectSchema } from './globals.schemas';
+import { selectSchema } from './globals.schemas';
 
 export const employeesSchema = yup.object({
     name: yup
@@ -15,7 +15,17 @@ export const employeesSchema = yup.object({
         .mixed()
         .nullable()
         .optional(),
-    entity_id: optionalSelectSchema,
+    entity_id: yup
+        .array()
+        .of(
+            yup
+                .number()
+                .nullable()
+                .optional()
+                .integer(t('validation.entity_id.integer'))
+        )
+        .nullable()
+        .optional(),
     nationality_id: selectSchema,
     academic_qualification_id: yup.number().nullable().optional().integer(),
     // specification_id: selectSchema,

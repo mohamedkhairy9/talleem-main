@@ -43,7 +43,7 @@ const isTranslationKey = message =>
 const isMostlyEnglish = message =>
     typeof message === 'string' &&
     /[A-Za-z]/.test(message) &&
-    /^[\x00-\x7F\s.,:;!?()[\]{}'"`/_-]+$/.test(message);
+    /^[ -~\s]+$/.test(message);
 
 const translateIfKey = message => {
     if (!isTranslationKey(message)) return null;
@@ -58,6 +58,25 @@ const translateKnownEnglishMessage = message => {
     const normalized = message.trim().toLowerCase();
     const key = ENGLISH_MESSAGE_KEY_MAP[normalized];
     return key ? i18next.t(key) : null;
+};
+
+const translateDatabaseConstraintMessage = message => {
+    if (typeof message !== 'string') return null;
+
+    const normalized = message.trim().toLowerCase();
+
+    if (
+        normalized.includes('duplicate entry') &&
+        (normalized.includes('users_email_unique') ||
+            normalized.includes("'email'") ||
+            normalized.includes(' email '))
+    ) {
+        return i18next.language === 'ar'
+            ? 'البريد الإلكتروني مستخدم بالفعل'
+            : 'This email address is already in use';
+    }
+
+    return null;
 };
 
 export const getRawErrorMessage = error =>
@@ -86,6 +105,12 @@ export const localizeMessage = (
     const knownEnglishTranslation = translateKnownEnglishMessage(message);
     if (knownEnglishTranslation) {
         return knownEnglishTranslation;
+    }
+
+    const databaseConstraintTranslation =
+        translateDatabaseConstraintMessage(message);
+    if (databaseConstraintTranslation) {
+        return databaseConstraintTranslation;
     }
 
     if (preferFallbackForEnglish && i18next.language === 'ar' && isMostlyEnglish(message)) {
