@@ -113,7 +113,8 @@ export const employeesFields = [
         placeholder: 'validation.branch_id.placeholder',
         info: 'info.branch_id',
         editMode: true,
-        viewMode: true
+        viewMode: true,
+        isMulti: true
     },
     {
         name: 'entity_id',

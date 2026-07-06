@@ -98,14 +98,17 @@ export function getEmployeeJobPolicyState({ jobId, jobs = [], roles = [] }) {
     const job = jobs.find(item => item.id == jobId);
     const policy = resolveEmployeeJobPolicy(job);
     const allowedRoles = filterEmployeeRoleOptions(roles);
-    const forcedRoles = policy
+    const matchedRoles = policy
         ? allowedRoles.filter(role => roleMatchesPolicy(role, policy))
         : [];
+    const matchedRoleIds = matchedRoles.map(role => role.id);
+    const forceRoles = policy === 'supervisor' && matchedRoleIds.length > 0;
 
     return {
         policy,
-        forcedRoleIds: forcedRoles.map(role => role.id),
-        forceRoles: forcedRoles.length > 0,
+        autoRoleIds: matchedRoleIds,
+        forcedRoleIds: forceRoles ? matchedRoleIds : [],
+        forceRoles,
         isSupervisorJob: policy === 'supervisor',
         isBranchManagerJob: policy === 'branch_manager',
         isCeoJob: policy === 'ceo',
@@ -129,7 +132,7 @@ export function getRoleSubmissionName(role) {
     return role.slug || role.code || String(role.id ?? '');
 }
 
-function normalizeSelectedIds(value) {
+export function normalizeSelectedIds(value) {
     if (value === null || value === undefined || value === '') return [];
     const rawValues = Array.isArray(value) ? value : [value];
 

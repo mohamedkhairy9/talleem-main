@@ -15,6 +15,7 @@ import Filters from './Filters';
 import ImportEmployee from './ImportEmployee';
 import { useExportExampleFileMutation } from '@/api/hooks/useEmployees';
 import useExportExample from '@/utils/hooks/global/useExportExample';
+import { normalizeSelectedIds } from './employeeJobPolicy';
 
 export default function Employees() {
     const { isOpen, toggle } = useIsOpen();
@@ -25,6 +26,19 @@ export default function Employees() {
     const { mutate } = useExportExampleFileMutation();
     const { handleExportExample } = useExportExample({ mutate, filename: 'employees_example.xlsx' });
 
+    const getLocalizedBranchesName = item => {
+        const branches = Array.isArray(item.branches)
+            ? item.branches
+            : item.branch
+              ? [item.branch]
+              : [];
+
+        return branches
+            .map(branch => branch?.name?.[i18next.language] || branch?.name?.en || branch?.name?.ar || branch?.name)
+            .filter(Boolean)
+            .join(', ');
+    };
+
     const tableData = data?.data?.map(item => ({
         ...item,
         job: {
@@ -33,7 +47,7 @@ export default function Employees() {
         },
         branch: {
             ...item.branch,
-            name: item.branch?.name?.[i18next.language]
+            name: getLocalizedBranchesName(item)
         }
     }));
 
@@ -41,8 +55,22 @@ export default function Employees() {
         ...item,
         user_id: item.user?.id,
         job_id: item.job?.id,
-        branch_id: item.branch?.id,
-        entity_id: item.entity?.id,
+        branch_id: normalizeSelectedIds(
+            item.branches ?? item.branch ?? item.branch_id
+        ),
+        branches: Array.isArray(item.branches)
+            ? item.branches
+            : item.branch
+              ? [item.branch]
+              : [],
+        entity_id: normalizeSelectedIds(
+            item.entities ?? item.entity ?? item.entity_id
+        ),
+        entities: Array.isArray(item.entities)
+            ? item.entities
+            : item.entity
+              ? [item.entity]
+              : [],
         nationality_id: item.nationality?.id,
         academic_qualification_id: item.academic_qualification?.id,
         // specification_id: item.specification?.id,

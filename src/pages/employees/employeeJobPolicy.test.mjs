@@ -55,6 +55,7 @@ assert.deepEqual(
     }),
     {
         policy: 'supervisor',
+        autoRoleIds: [1],
         forcedRoleIds: [1],
         forceRoles: true,
         isSupervisorJob: true,
@@ -90,9 +91,28 @@ assert.deepEqual(
         jobId: 11,
         jobs: [{ id: 11, name: { en: 'CEO' } }],
         roles: backendRoles
-    }).forcedRoleIds,
+    }),
+    {
+        policy: 'ceo',
+        autoRoleIds: [3],
+        forcedRoleIds: [],
+        forceRoles: false,
+        isSupervisorJob: false,
+        isBranchManagerJob: false,
+        isCeoJob: true,
+        isMultiBranchJob: false
+    },
+    'CEO job suggests the backend ceo role without locking role selection'
+);
+
+assert.deepEqual(
+    getEmployeeJobPolicyState({
+        jobId: 11,
+        jobs: [{ id: 11, name: { en: 'CEO' } }],
+        roles: backendRoles
+    }).autoRoleIds,
     [3],
-    'CEO job forces the backend ceo role'
+    'CEO job auto-selects the backend ceo role'
 );
 
 assert.equal(
@@ -110,9 +130,28 @@ assert.deepEqual(
         jobId: 12,
         jobs: [{ id: 12, name: { en: 'Branch Manager' } }],
         roles: backendRoles
-    }).forcedRoleIds,
+    }),
+    {
+        policy: 'branch_manager',
+        autoRoleIds: [2],
+        forcedRoleIds: [],
+        forceRoles: false,
+        isSupervisorJob: false,
+        isBranchManagerJob: true,
+        isCeoJob: false,
+        isMultiBranchJob: true
+    },
+    'branch manager job suggests the backend branch manager role without locking role selection'
+);
+
+assert.deepEqual(
+    getEmployeeJobPolicyState({
+        jobId: 12,
+        jobs: [{ id: 12, name: { en: 'Branch Manager' } }],
+        roles: backendRoles
+    }).autoRoleIds,
     [2],
-    'branch manager job forces the backend branch manager role'
+    'branch manager job auto-selects the backend branch manager role'
 );
 
 assert.equal(
