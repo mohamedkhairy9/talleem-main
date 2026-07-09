@@ -21,6 +21,22 @@ export const useTeacherQuery = (id, options = {}) => {
     });
 };
 
+export const useUnlicensedTeachersQuery = (params = {}, options = {}) => {
+    return useCustomQuery({
+        queryKey: [API_KEYS.LICENSES, 'unlicensed-teachers', params],
+        queryFn: () => teachersService.getUnlicensedTeachers(params),
+        ...options
+    });
+};
+
+export const usePendingTeacherLicensesQuery = (params = {}, options = {}) => {
+    return useCustomQuery({
+        queryKey: [API_KEYS.TEACHER_LICENSES, params],
+        queryFn: () => teachersService.getPendingTeacherLicenses(params),
+        ...options
+    });
+};
+
 export const useCreateTeacherMutation = () => {
     const queryClient = useQueryClient();
     return useCustomMutation({
@@ -55,6 +71,40 @@ export const useDeleteTeacherMutation = () => {
         mutationFn: id => teachersService.deleteTeacher(id),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: [API_KEYS.TEACHERS] });
+        },
+        onError: error => {
+            console.log(error);
+        }
+    });
+};
+
+export const useIssueTeacherLicenseMutation = () => {
+    const queryClient = useQueryClient();
+    return useCustomMutation({
+        mutationFn: ({ teacherId, data }) =>
+            teachersService.issueTeacherLicense(teacherId, data),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: [API_KEYS.TEACHERS] });
+            queryClient.invalidateQueries({
+                queryKey: [API_KEYS.TEACHER_LICENSES]
+            });
+        },
+        onError: error => {
+            console.log(error);
+        }
+    });
+};
+
+export const useRenewTeacherLicenseMutation = () => {
+    const queryClient = useQueryClient();
+    return useCustomMutation({
+        mutationFn: teacherId => teachersService.renewTeacherLicense(teacherId),
+        showErrorToast: false,
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: [API_KEYS.TEACHERS] });
+            queryClient.invalidateQueries({
+                queryKey: [API_KEYS.TEACHER_LICENSES]
+            });
         },
         onError: error => {
             console.log(error);

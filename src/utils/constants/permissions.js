@@ -163,6 +163,7 @@ export const RESOURCE_BY_PATH = {
     '/general-holidays': 'general_holidays',
     '/employees': 'employees',
     '/teachers': 'teachers',
+    '/license-renewals': 'licenses',
     '/entity-managers': 'entity-managers',
     '/parents': 'parents',
     '/entities': 'entities',

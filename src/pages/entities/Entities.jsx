@@ -1,6 +1,7 @@
 import React from 'react';
 import {
     useEntitiesQuery,
+    useUnlicensedEntitiesQuery,
     useExportExampleFileMutation
 } from '@/api/hooks/useEntities';
 import Table from '@/components/common/table/Table';
@@ -18,23 +19,61 @@ import Filters from './Filters';
 import useExportExample from '@/utils/hooks/global/useExportExample';
 import i18next from 'i18next';
 
+const extractCollection = response => {
+    if (Array.isArray(response)) return response;
+    if (Array.isArray(response?.data)) return response.data;
+    if (Array.isArray(response?.items)) return response.items;
+    if (Array.isArray(response?.results)) return response.results;
+    if (Array.isArray(response?.entities)) return response.entities;
+    return [];
+};
+
 export default function Entities() {
     const { isOpen, toggle } = useIsOpen();
     const { pagination, handleFilter, filters, setter, setFilters } =
         useFiltering(filtersDefaultValues);
-    const { data, isLoading, refresh } = useEntitiesQuery(filters);
+    const isUnauthorizedView = filters?.status === 'unauthorized';
+    const {
+        data: entitiesResponse,
+        isLoading: isEntitiesLoading,
+        refresh: refreshEntities
+    } = useEntitiesQuery(filters, {
+        enabled: !isUnauthorizedView
+    });
+    const {
+        data: unlicensedEntitiesResponse,
+        isLoading: isUnlicensedEntitiesLoading,
+        refresh: refreshUnlicensedEntities
+    } = useUnlicensedEntitiesQuery(filters, {
+        enabled: isUnauthorizedView
+    });
     const { t } = useLocale();
     const { mutate } = useExportExampleFileMutation();
     const { handleExportExample } = useExportExample({mutate, filename: 'entities_example.xlsx'});
+    const sourceResponse = isUnauthorizedView
+        ? unlicensedEntitiesResponse
+        : entitiesResponse;
+    const dataList = extractCollection(sourceResponse);
+    const isLoading = isUnauthorizedView
+        ? isUnlicensedEntitiesLoading
+        : isEntitiesLoading;
+    const refresh = isUnauthorizedView
+        ? refreshUnlicensedEntities
+        : refreshEntities;
+    const totalCount =
+        sourceResponse?.meta?.total ??
+        sourceResponse?.total ??
+        sourceResponse?.data?.length ??
+        dataList.length;
     
-    const tableData = data?.data?.map(item => ({
+    const tableData = dataList.map(item => ({
         ...item,
         name: item.name?.[i18next.language],
         branch: item.branch?.name?.[i18next.language],
         main_program: item.main_program?.name?.[i18next.language]
     }));
 
-    const formData = data?.data?.map(item => ({
+    const formData = dataList.map(item => ({
         id: item.id,
         name: {
             en: item.name?.en,
@@ -102,7 +141,7 @@ export default function Entities() {
                 loading={isLoading}
                 data={tableData}
                 serverPagination={true}
-                totalCount={data?.meta?.total}
+                totalCount={totalCount}
                 columns={entitiesColumns}
                 toggleModals={toggle}
                 pagination={pagination}

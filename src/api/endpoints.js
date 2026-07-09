@@ -46,6 +46,21 @@ export const API_URLS = {
     NOTIFICATION_SCHEDULE: {
         SCHEDULE: '/notifications/schedule'
     },
+    LICENSES: {
+        ISSUE_TEACHER: teacherId => `/licenses/issue-teacher/${teacherId}`,
+        ISSUE_ENTITY: entityId => `/licenses/issue-entity/${entityId}`,
+        UNLICENSED_TEACHERS: '/licenses/unlicensed-teachers',
+        UNLICENSED_ENTITIES: '/licenses/unlicensed-entities'
+    },
+    TEACHER_LICENSES: {
+        PENDING: '/teacher-licenses/pending',
+        RENEW: teacherId => `/teacher-licenses/renew/${teacherId}`
+    },
+    ENTITY_LICENSES: {
+        PENDING: '/entity-licenses/pending',
+        RENEW: entityId => `/entity-licenses/renew/${entityId}`,
+        UPDATE_ACTIVITIES: entityId => `/entity-licenses/update-activities/${entityId}`
+    },
     LANGUAGE: {
         SWITCH: locale => `profile/locale/${locale}`
     },
@@ -432,6 +447,9 @@ export const API_KEYS = {
     NOTIFICATION_TEMPLATES: 'notification-templates',
     NOTIFICATION_TRIGGER: 'notification-trigger',
     NOTIFICATION_SCHEDULE: 'notification-schedule',
+    LICENSES: 'licenses',
+    TEACHER_LICENSES: 'teacher-licenses',
+    ENTITY_LICENSES: 'entity-licenses',
     LANGUAGE: 'language',
     ACTIVITY_LOGS: 'activity-logs',
     ACADEMIC_QUALIFICATIONS: 'academic-qualifications',

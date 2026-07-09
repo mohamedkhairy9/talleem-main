@@ -11,6 +11,12 @@ export const teachersService = {
         return await axiosInstance.get(API_URLS.TEACHERS.DETAILS(id));
     },
 
+    getUnlicensedTeachers: async params => {
+        return await axiosInstance.get(API_URLS.LICENSES.UNLICENSED_TEACHERS, {
+            params
+        });
+    },
+
     createTeacher: async data => {
         return await axiosInstance.post(API_URLS.TEACHERS.CREATE, data,multipartFormData);
     },
@@ -21,6 +27,25 @@ export const teachersService = {
 
     deleteTeacher: async id => {
         return await axiosInstance.delete(API_URLS.TEACHERS.DELETE(id));
+    },
+
+    getPendingTeacherLicenses: async params => {
+        return await axiosInstance.get(API_URLS.TEACHER_LICENSES.PENDING, {
+            params
+        });
+    },
+
+    issueTeacherLicense: async (teacherId, data) => {
+        return await axiosInstance.post(
+            API_URLS.LICENSES.ISSUE_TEACHER(teacherId),
+            data
+        );
+    },
+
+    renewTeacherLicense: async teacherId => {
+        return await axiosInstance.post(
+            API_URLS.TEACHER_LICENSES.RENEW(teacherId)
+        );
     },
 
     importTeachers: async data => {

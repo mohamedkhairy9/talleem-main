@@ -21,6 +21,22 @@ export const useEntityQuery = (id, options = {}) => {
     });
 };
 
+export const useUnlicensedEntitiesQuery = (params = {}, options = {}) => {
+    return useCustomQuery({
+        queryKey: [API_KEYS.LICENSES, 'unlicensed-entities', params],
+        queryFn: () => entitiesService.getUnlicensedEntities(params),
+        ...options
+    });
+};
+
+export const usePendingEntityLicensesQuery = (params = {}, options = {}) => {
+    return useCustomQuery({
+        queryKey: [API_KEYS.ENTITY_LICENSES, params],
+        queryFn: () => entitiesService.getPendingEntityLicenses(params),
+        ...options
+    });
+};
+
 export const useCreateEntityMutation = () => {
     const queryClient = useQueryClient();
     return useCustomMutation({
@@ -54,6 +70,58 @@ export const useDeleteEntityMutation = () => {
         mutationFn: id => entitiesService.deleteEntity(id),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: [API_KEYS.ENTITIES] });
+        },
+        onError: error => {
+            console.log(error);
+        }
+    });
+};
+
+export const useIssueEntityLicenseMutation = () => {
+    const queryClient = useQueryClient();
+    return useCustomMutation({
+        mutationFn: ({ entityId, data }) =>
+            entitiesService.issueEntityLicense(entityId, data),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: [API_KEYS.ENTITIES] });
+            queryClient.invalidateQueries({
+                queryKey: [API_KEYS.ENTITY_LICENSES]
+            });
+        },
+        onError: error => {
+            console.log(error);
+        }
+    });
+};
+
+export const useRenewEntityLicenseMutation = () => {
+    const queryClient = useQueryClient();
+    return useCustomMutation({
+        mutationFn: ({ entityId, data }) =>
+            entitiesService.renewEntityLicense(entityId, data),
+        showErrorToast: false,
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: [API_KEYS.ENTITIES] });
+            queryClient.invalidateQueries({
+                queryKey: [API_KEYS.ENTITY_LICENSES]
+            });
+        },
+        onError: error => {
+            console.log(error);
+        }
+    });
+};
+
+export const useUpdateEntityLicenseActivitiesMutation = () => {
+    const queryClient = useQueryClient();
+    return useCustomMutation({
+        mutationFn: ({ entityId, data }) =>
+            entitiesService.updateEntityLicenseActivities(entityId, data),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: [API_KEYS.ENTITIES] });
+            queryClient.invalidateQueries({
+                queryKey: [API_KEYS.ENTITY_LICENSES]
+            });
         },
         onError: error => {
             console.log(error);

@@ -60,6 +60,7 @@ import Phases from '@/pages/phases/Phases';
 import Steps from '@/pages/steps/Steps';
 import JoinRequestForms from '@/pages/join-request-forms/JoinRequestForms';
 import JoinRequests from '@/pages/join-requests/JoinRequests';
+import LicenseRenewals from '@/pages/license-renewals/LicenseRenewals';
 
 export const routes = [
     {
@@ -314,5 +315,9 @@ export const routes = [
     {
         path: '/join-requests/:category',
         element: <JoinRequests />
+    },
+    {
+        path: '/license-renewals',
+        element: <LicenseRenewals />
     }
 ];

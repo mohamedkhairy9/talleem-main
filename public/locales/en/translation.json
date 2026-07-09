@@ -1374,6 +1374,7 @@
         "users": "Users",
         "online_attendances": "Online Attendances",
         "teachers": "Teachers",
+        "license_renewals": "License Renewals",
         "entities": "Entities",
         "students": "Students",
         "entity_managers": "Entity Managers",
@@ -1981,7 +1982,12 @@
             "unauthorized": "You are not authorized to perform this action.",
             "not_found": "The requested resource was not found.",
             "validation": "Please check your input and try again.",
-            "server": "Server error. Please try again later."
+            "server": "Server error. Please try again later.",
+            "license_already_issued": "A license has already been issued for this record.",
+            "teacher_license_already_issued": "A license has already been issued for this teacher.",
+            "entity_license_already_issued": "A license has already been issued for this entity.",
+            "record_already_active": "This record is already active.",
+            "renewal_not_allowed_before_date": "You cannot renew the license right now. You can renew starting from {{date}}, within 30 days before expiry."
         }
     }
 }

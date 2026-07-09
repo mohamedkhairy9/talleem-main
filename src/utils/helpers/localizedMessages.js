@@ -60,6 +60,73 @@ const translateKnownEnglishMessage = message => {
     return key ? i18next.t(key) : null;
 };
 
+const translateAxiosStatusMessage = (message, fallbackKey) => {
+    if (typeof message !== 'string') return null;
+
+    const normalized = message.trim().toLowerCase();
+    if (/^request failed with status code \d+$/.test(normalized)) {
+        return fallbackKey ? i18next.t(fallbackKey) : null;
+    }
+
+    return null;
+};
+
+const translateRenewalWindowMessage = message => {
+    if (typeof message !== 'string') return null;
+
+    const match = message.match(
+        /you are not allowed to renew the license at this time\.\s*you can renew from\s*(\d{4}-\d{2}-\d{2})\s*\(within 30 days before expiry\)\.?/i
+    );
+
+    if (!match) return null;
+
+    return i18next.t('api.errors.renewal_not_allowed_before_date', {
+        date: match[1]
+    });
+};
+
+const translateLicenseDomainMessage = message => {
+    if (typeof message !== 'string') return null;
+
+    const normalized = message.trim().toLowerCase();
+
+    if (
+        normalized.includes('license') &&
+        normalized.includes('already') &&
+        normalized.includes('issued') &&
+        normalized.includes('teacher')
+    ) {
+        return i18next.t('api.errors.teacher_license_already_issued');
+    }
+
+    if (
+        normalized.includes('license') &&
+        normalized.includes('already') &&
+        normalized.includes('issued') &&
+        normalized.includes('entity')
+    ) {
+        return i18next.t('api.errors.entity_license_already_issued');
+    }
+
+    if (
+        normalized.includes('license') &&
+        normalized.includes('already') &&
+        normalized.includes('issued')
+    ) {
+        return i18next.t('api.errors.license_already_issued');
+    }
+
+    if (
+        normalized.includes('already active') ||
+        (normalized.includes('status') && normalized.includes('active')) ||
+        (normalized.includes('record') && normalized.includes('active'))
+    ) {
+        return i18next.t('api.errors.record_already_active');
+    }
+
+    return null;
+};
+
 const translateDatabaseConstraintMessage = message => {
     if (typeof message !== 'string') return null;
 
@@ -79,13 +146,31 @@ const translateDatabaseConstraintMessage = message => {
     return null;
 };
 
+const extractNestedErrorMessage = errorsObject => {
+    if (!errorsObject || typeof errorsObject !== 'object') return '';
+
+    const firstErrorGroup = Object.values(errorsObject).find(
+        value => value !== undefined && value !== null && value !== ''
+    );
+
+    if (Array.isArray(firstErrorGroup)) {
+        return firstErrorGroup.find(
+            value => typeof value === 'string' && value.trim() !== ''
+        ) || '';
+    }
+
+    return typeof firstErrorGroup === 'string' ? firstErrorGroup : '';
+};
+
 export const getRawErrorMessage = error =>
     error?.rawMessage ||
-    error?.message ||
     error?.data?.message ||
     error?.data?.error ||
+    extractNestedErrorMessage(error?.data?.errors) ||
     error?.response?.data?.message ||
     error?.response?.data?.error ||
+    extractNestedErrorMessage(error?.response?.data?.errors) ||
+    error?.message ||
     '';
 
 export const localizeMessage = (
@@ -105,6 +190,24 @@ export const localizeMessage = (
     const knownEnglishTranslation = translateKnownEnglishMessage(message);
     if (knownEnglishTranslation) {
         return knownEnglishTranslation;
+    }
+
+    const axiosStatusTranslation = translateAxiosStatusMessage(
+        message,
+        fallbackKey
+    );
+    if (axiosStatusTranslation) {
+        return axiosStatusTranslation;
+    }
+
+    const renewalWindowTranslation = translateRenewalWindowMessage(message);
+    if (renewalWindowTranslation) {
+        return renewalWindowTranslation;
+    }
+
+    const licenseDomainTranslation = translateLicenseDomainMessage(message);
+    if (licenseDomainTranslation) {
+        return licenseDomainTranslation;
     }
 
     const databaseConstraintTranslation =
@@ -128,7 +231,5 @@ export const getLocalizedErrorMessage = (
     const resolvedFallbackKey = fallbackKey || getDefaultFallbackKey(status);
     const rawMessage = getRawErrorMessage(error);
 
-    return localizeMessage(rawMessage, resolvedFallbackKey, {
-        preferFallbackForEnglish: true
-    });
+    return localizeMessage(rawMessage, resolvedFallbackKey);
 };

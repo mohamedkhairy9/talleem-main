@@ -8,7 +8,9 @@ export default function useCustomMutation({
     onSuccess,
     onError,
     onSettled,
-    onMutate
+    onMutate,
+    showSuccessToast = true,
+    showErrorToast = true
 }) {
     const queryClient = useQueryClient();
 
@@ -28,7 +30,9 @@ export default function useCustomMutation({
             if (onSuccess) {
                 onSuccess(data, variables, context);
             }
-            successHandler(data.message || 'Success');
+            if (showSuccessToast) {
+                successHandler(data.message || 'Success');
+            }
         },
 
         onError: (error, variables, context) => {
@@ -36,7 +40,9 @@ export default function useCustomMutation({
             if (onError) {
                 onError(error, variables, context);
             }
-            errorHandler(error);
+            if (showErrorToast) {
+                errorHandler(error);
+            }
         },
 
         onSettled: (data, error, variables, context) => {

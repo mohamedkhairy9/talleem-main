@@ -1,6 +1,7 @@
 import React from 'react';
 import {
     useTeachersQuery,
+    useUnlicensedTeachersQuery,
     useExportExampleFileMutation
 } from '@/api/hooks/useTeachers';
 import Table from '@/components/common/table/Table';
@@ -18,23 +19,61 @@ import { getOriginalObject } from '@/utils/helpers/global.fns';
 import Filters from './Filters';
 import useExportExample from '@/utils/hooks/global/useExportExample';
 
+const extractCollection = response => {
+    if (Array.isArray(response)) return response;
+    if (Array.isArray(response?.data)) return response.data;
+    if (Array.isArray(response?.items)) return response.items;
+    if (Array.isArray(response?.results)) return response.results;
+    if (Array.isArray(response?.teachers)) return response.teachers;
+    return [];
+};
+
 export default function Teachers() {
     const { isOpen, toggle } = useIsOpen();
     const { pagination, handleFilter, filters, setter, setFilters } =
         useFiltering(filtersDefaultValues);
-    const { data, isLoading, refresh } = useTeachersQuery(filters);
+    const isUnauthorizedView = filters?.status === 'unauthorized';
+    const {
+        data: teachersResponse,
+        isLoading: isTeachersLoading,
+        refresh: refreshTeachers
+    } = useTeachersQuery(filters, {
+        enabled: !isUnauthorizedView
+    });
+    const {
+        data: unlicensedTeachersResponse,
+        isLoading: isUnlicensedTeachersLoading,
+        refresh: refreshUnlicensedTeachers
+    } = useUnlicensedTeachersQuery(filters, {
+        enabled: isUnauthorizedView
+    });
     const { t } = useLocale();
     const { mutate } = useExportExampleFileMutation();
     const { handleExportExample } = useExportExample({mutate, filename: 'teachers_example.xlsx'});
+    const sourceResponse = isUnauthorizedView
+        ? unlicensedTeachersResponse
+        : teachersResponse;
+    const dataList = extractCollection(sourceResponse);
+    const isLoading = isUnauthorizedView
+        ? isUnlicensedTeachersLoading
+        : isTeachersLoading;
+    const refresh = isUnauthorizedView
+        ? refreshUnlicensedTeachers
+        : refreshTeachers;
+    const totalCount =
+        sourceResponse?.meta?.total ??
+        sourceResponse?.total ??
+        sourceResponse?.data?.length ??
+        dataList.length;
 
-    const tableData = data?.data?.map(item => ({
+    const tableData = dataList.map(item => ({
         ...item,
         name: item.name?.[i18next.language],
         branch: item.branch?.[i18next.language],
         main_program: item.main_program?.name?.[i18next.language]
     }));
 
-    const formData = data?.data?.map(item => {
+    const formData = dataList.map(item => {
         // Map gender from Arabic text to value
         let genderValue = item.gender;
         if (typeof item.gender === 'string') {
@@ -103,7 +142,7 @@ export default function Teachers() {
                 loading={isLoading}
                 data={tableData}
                 serverPagination={true}
-                totalCount={data?.meta?.total}
+                totalCount={totalCount}
                 columns={teachersColumns}
                 toggleModals={toggle}
                 pagination={pagination}

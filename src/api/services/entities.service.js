@@ -14,6 +14,12 @@ export const entitiesService = {
         return await axiosInstance.get(API_URLS.ENTITIES.DETAILS(id));
     },
 
+    getUnlicensedEntities: async params => {
+        return await axiosInstance.get(API_URLS.LICENSES.UNLICENSED_ENTITIES, {
+            params
+        });
+    },
+
     createEntity: async data => {
         return await axiosInstance.post(
             API_URLS.ENTITIES.CREATE,
@@ -32,6 +38,33 @@ export const entitiesService = {
 
     deleteEntity: async id => {
         return await axiosInstance.delete(API_URLS.ENTITIES.DELETE(id));
+    },
+
+    getPendingEntityLicenses: async params => {
+        return await axiosInstance.get(API_URLS.ENTITY_LICENSES.PENDING, {
+            params
+        });
+    },
+
+    issueEntityLicense: async (entityId, data) => {
+        return await axiosInstance.post(
+            API_URLS.LICENSES.ISSUE_ENTITY(entityId),
+            data
+        );
+    },
+
+    renewEntityLicense: async (entityId, data) => {
+        return await axiosInstance.post(
+            API_URLS.ENTITY_LICENSES.RENEW(entityId),
+            data
+        );
+    },
+
+    updateEntityLicenseActivities: async (entityId, data) => {
+        return await axiosInstance.post(
+            API_URLS.ENTITY_LICENSES.UPDATE_ACTIVITIES(entityId),
+            data
+        );
     },
 
     importEntities: async data => {

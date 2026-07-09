@@ -28,6 +28,7 @@ export default function FormEntity({
     oldData,
     editMode,
     viewMode,
+    hideActivityField = false,
     isPending,
     mutate,
     options
@@ -541,6 +542,10 @@ export default function FormEntity({
     };
 
     const filteredEntityFields = entitiesFields.filter(field => {
+        if (hideActivityField && field.name === 'activity_ids') {
+            return false;
+        }
+
         // Check edit/view mode
         const modeMatch =
             (editMode && field.editMode) ||

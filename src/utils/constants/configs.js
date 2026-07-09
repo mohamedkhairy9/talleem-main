@@ -285,6 +285,12 @@ export const sideMenuTabs = [
                 requiredPermission: { resource: 'teachers', action: 'r' }
             },
             {
+                titleKey: 'sidebar.license_renewals',
+                path: '/license-renewals',
+                icon: HiDocumentText,
+                requiredPermission: { resource: 'licenses', action: 'r' }
+            },
+            {
                 titleKey: 'sidebar.students',
                 path: '/students',
                 icon: HiUserGroup,

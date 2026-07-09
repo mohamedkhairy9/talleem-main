@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import FormTeacher from './FormTeacher';
 import Modal from '@/components/common/form/Modal';
 import ModalHeader from '@/components/common/form/ModalHeader';
@@ -22,8 +22,19 @@ const entryTypeOptions = [
 import { useEntitiesQuery } from '@/api/hooks/useEntities';
 import { useMemorizationProgramEntityTypesQuery } from '@/api/hooks/useMemorizationProgramEntityTypes';
 import { useMajorsQuery } from '@/api/hooks/useMajors';
+import useLocale from '@/utils/hooks/global/useLocale';
+import IssueTeacherLicense from './IssueTeacherLicense';
 
 export default function ViewTeacher({ onClose, oldData }) {
+    const [isIssueLicenseOpen, setIsIssueLicenseOpen] = useState(false);
+    const [issuedInSession, setIssuedInSession] = useState(false);
+    const { currentLocale } = useLocale();
+    const normalizedStatus = String(oldData?.status ?? '').toLowerCase();
+    const canIssueLicense =
+        !issuedInSession &&
+        normalizedStatus !== 'active' &&
+        !oldData?.license_number;
+
     // Fetch all available options
     const { data: branchesData, isLoading: branchesLoading } =
         useBranchesQuery(allData);
@@ -70,8 +81,20 @@ export default function ViewTeacher({ onClose, oldData }) {
     if (isLoading) return <Loader />;
 
     return (
+        <>
         <Modal onClose={onClose} size="5xl">
             <ModalHeader onClose={onClose} header="teachers.view" />
+            {canIssueLicense && (
+                <div className="flex justify-end border-b border-gray-200 bg-gray-50 px-5 py-3">
+                    <button
+                        type="button"
+                        onClick={() => setIsIssueLicenseOpen(true)}
+                        className="rounded-lg bg-primary px-4 py-2 text-sm font-medium text-white transition hover:opacity-90"
+                    >
+                        {currentLocale === 'ar' ? 'إصدار رخصة' : 'Issue License'}
+                    </button>
+                </div>
+            )}
             <FormTeacher
                 onClose={onClose}
                 oldData={{ ...oldData, status: oldData.status?.toLowerCase() }}
@@ -98,5 +121,13 @@ export default function ViewTeacher({ onClose, oldData }) {
                 }}
             />
         </Modal>
+        {isIssueLicenseOpen && (
+            <IssueTeacherLicense
+                teacherId={oldData?.id}
+                onClose={setIsIssueLicenseOpen}
+                onIssued={() => setIssuedInSession(true)}
+            />
+        )}
+        </>
     );
 }
