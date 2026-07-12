@@ -61,6 +61,9 @@ import Steps from '@/pages/steps/Steps';
 import JoinRequestForms from '@/pages/join-request-forms/JoinRequestForms';
 import JoinRequests from '@/pages/join-requests/JoinRequests';
 import LicenseRenewals from '@/pages/license-renewals/LicenseRenewals';
+import ConductExams from '@/pages/conduct-exams/ConductExams';
+import ConductExamSession from '@/pages/conduct-exams/ConductExamSession';
+import ConductExamResult from '@/pages/conduct-exams/ConductExamResult';
 
 export const routes = [
     {
@@ -319,5 +322,17 @@ export const routes = [
     {
         path: '/license-renewals',
         element: <LicenseRenewals />
+    },
+    {
+        path: '/conduct-exams',
+        element: <ConductExams />
+    },
+    {
+        path: '/conduct-exams/:scheduledExamId/students/:studentId/conduct',
+        element: <ConductExamSession />
+    },
+    {
+        path: '/conduct-exams/:scheduledExamId/students/:studentId/result',
+        element: <ConductExamResult />
     }
 ];

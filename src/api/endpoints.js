@@ -61,6 +61,19 @@ export const API_URLS = {
         RENEW: entityId => `/entity-licenses/renew/${entityId}`,
         UPDATE_ACTIVITIES: entityId => `/entity-licenses/update-activities/${entityId}`
     },
+    CONDUCT_EXAMS: {
+        BRANCHES: '/oversight/conduct-exams/branches',
+        ENTITIES: '/oversight/conduct-exams/entities',
+        TODAY: '/oversight/conduct-exams/today',
+        DETAILS: scheduledExamId => `/oversight/conduct-exams/${scheduledExamId}`,
+        START_STUDENT: (scheduledExamId, studentId) =>
+            `/oversight/conduct-exams/${scheduledExamId}/students/${studentId}/start`,
+        SUBMIT_STUDENT: (scheduledExamId, studentId) =>
+            `/oversight/conduct-exams/${scheduledExamId}/students/${studentId}/submit`,
+        RESULT_STUDENT: (scheduledExamId, studentId) =>
+            `/oversight/conduct-exams/${scheduledExamId}/students/${studentId}/result`,
+        EVALUATION_TEMPLATES: '/oversight/conduct-exams/evaluation-templates'
+    },
     LANGUAGE: {
         SWITCH: locale => `profile/locale/${locale}`
     },
@@ -450,6 +463,7 @@ export const API_KEYS = {
     LICENSES: 'licenses',
     TEACHER_LICENSES: 'teacher-licenses',
     ENTITY_LICENSES: 'entity-licenses',
+    CONDUCT_EXAMS: 'conduct-exams',
     LANGUAGE: 'language',
     ACTIVITY_LOGS: 'activity-logs',
     ACADEMIC_QUALIFICATIONS: 'academic-qualifications',

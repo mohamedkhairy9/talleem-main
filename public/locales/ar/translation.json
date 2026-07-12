@@ -1363,7 +1363,8 @@
         "join_requests_entities": "طلبات الجهة",
         "join_requests_teachers": "طلبات المعلم",
         "join_requests_supervisors": "طلبات المشرف التربوي",
-        "join_requests_settings": "إعدادات الطلبات"
+        "join_requests_settings": "إعدادات الطلبات",
+        "conduct_exams": "إجراء الامتحانات"
     },
     "table_titles": {
         "notification_templates": "قوالب الإشعارات",

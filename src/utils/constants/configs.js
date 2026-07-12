@@ -435,6 +435,12 @@ export const sideMenuTabs = [
         icon: HiAcademicCap,
         subMenu: [
             {
+                titleKey: 'sidebar.conduct_exams',
+                path: '/conduct-exams',
+                icon: VscDebugBreakpointLog,
+                requiredPermission: { resource: 'supervisor_assignments', action: 'r' }
+            },
+            {
                 titleKey: 'sidebar.inspector-assignments',
                 path: '/inspector-assignments',
                 icon: VscDebugBreakpointLog,

@@ -1395,7 +1395,8 @@
         "join_requests_entities": "Entity Requests",
         "join_requests_teachers": "Teacher Requests",
         "join_requests_supervisors": "Educational Supervisor Requests",
-        "join_requests_settings": "Request Settings"
+        "join_requests_settings": "Request Settings",
+        "conduct_exams": "Conduct Exams"
     },
     "table_titles": {
         "notification_templates": "Notification Templates",
