@@ -63,8 +63,9 @@ export const teachersService = {
         });
     },
 
-    exportExampleFile: async () => {
+    exportExampleFile: async params => {
         return await axiosInstance.get(API_URLS.TEACHERS.EXPORT_EXAMPLE, {
+            params,
             responseType: 'blob'
         });
     }

@@ -70,6 +70,7 @@ const Table = ({
     enableExportExample = false,
     onImport,
     onExportExample,
+    ToolbarExtra = null,
     onRowClick,
     customActions = [],
     refresh,
@@ -1229,6 +1230,8 @@ const Table = ({
                                         </span>
                                     </button>
                                 ))}
+
+                                {ToolbarExtra}
 
                                 {/* Column Settings */}
                                 <div className="relative column-settings">

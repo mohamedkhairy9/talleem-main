@@ -479,6 +479,9 @@
             "placeholder": "Select status",
             "invalid": "Status must be either enabled or disabled"
         },
+        "license_filter": {
+            "placeholder": "Select license status"
+        },
         "date": {
             "label": "Date",
             "placeholder": "Select date",

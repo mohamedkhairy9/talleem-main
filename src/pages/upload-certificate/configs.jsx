@@ -104,6 +104,22 @@ export const certificatesFields = [
         max: new Date().toISOString().split('T')[0]
     },
     {
+        name: 'description.en',
+        label: 'validation.description.label.en',
+        type: 'textarea',
+        placeholder: 'validation.description.placeholder.en',
+        editMode: true,
+        viewMode: true
+    },
+    {
+        name: 'description.ar',
+        label: 'validation.description.label.ar',
+        type: 'textarea',
+        placeholder: 'validation.description.placeholder.ar',
+        editMode: true,
+        viewMode: true
+    },
+    {
         name: 'file',
         label: 'validation.file.label',
         type: 'file',
@@ -149,6 +165,11 @@ export const certificatesDefaultValues = {
     student_id: '',
     certificate_name_id: '',
     issued_date: '',
+    description: {
+        en: '',
+        ar: ''
+    },
+    is_active: 1,
     file: null
 };
 

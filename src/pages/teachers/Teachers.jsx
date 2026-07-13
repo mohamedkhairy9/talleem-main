@@ -5,7 +5,11 @@ import {
     useExportExampleFileMutation
 } from '@/api/hooks/useTeachers';
 import Table from '@/components/common/table/Table';
-import { teachersColumns, filtersDefaultValues } from './configs';
+import {
+    teachersColumns,
+    filtersDefaultValues,
+    teacherLicenseFilterOptions
+} from './configs';
 import useIsOpen from '@/utils/hooks/global/useIsOpen';
 import useFiltering from '@/utils/hooks/global/useFiltering';
 import CreateTeacher from './CreateTeacher';
@@ -15,9 +19,13 @@ import ViewTeacher from './ViewTeacher';
 import ImportTeacher from './ImportTeacher';
 import useLocale from '@/utils/hooks/global/useLocale';
 import i18next from 'i18next';
-import { getOriginalObject } from '@/utils/helpers/global.fns';
+import {
+    generateOptions,
+    getOriginalObject
+} from '@/utils/helpers/global.fns';
 import Filters from './Filters';
 import useExportExample from '@/utils/hooks/global/useExportExample';
+import FilterSelect from '@/components/common/inputs/FilterSelect';
 
 const extractCollection = response => {
     if (Array.isArray(response)) return response;
@@ -32,32 +40,57 @@ export default function Teachers() {
     const { isOpen, toggle } = useIsOpen();
     const { pagination, handleFilter, filters, setter, setFilters } =
         useFiltering(filtersDefaultValues);
-    const isUnauthorizedView = filters?.status === 'unauthorized';
+    const isUnlicensedView = filters?.license_filter === 'unlicensed';
+    const { license_filter: _licenseFilter, ...teacherListFilters } = filters;
+    const unlicensedTeacherFilters = { ...teacherListFilters };
+
+    delete unlicensedTeacherFilters.status;
+
     const {
         data: teachersResponse,
         isLoading: isTeachersLoading,
         refresh: refreshTeachers
-    } = useTeachersQuery(filters, {
-        enabled: !isUnauthorizedView
+    } = useTeachersQuery(teacherListFilters, {
+        enabled: !isUnlicensedView
     });
     const {
         data: unlicensedTeachersResponse,
         isLoading: isUnlicensedTeachersLoading,
         refresh: refreshUnlicensedTeachers
-    } = useUnlicensedTeachersQuery(filters, {
-        enabled: isUnauthorizedView
+    } = useUnlicensedTeachersQuery(unlicensedTeacherFilters, {
+        enabled: isUnlicensedView
     });
     const { t } = useLocale();
     const { mutate } = useExportExampleFileMutation();
-    const { handleExportExample } = useExportExample({mutate, filename: 'teachers_example.xlsx'});
-    const sourceResponse = isUnauthorizedView
+    const { handleExportExample } = useExportExample({
+        mutate,
+        filename: 'teachers_example.xlsx'
+    });
+    const handleTeachersExportExample = () =>
+        handleExportExample({
+            unlicensed: isUnlicensedView ? 1 : 0
+        });
+    const toolbarLicenseFilter = (
+        <div className="min-w-[180px]">
+            <FilterSelect
+                name="license_filter"
+                placeholder="validation.license_filter.placeholder"
+                value={filters?.license_filter}
+                onChange={({ value }) =>
+                    handleFilter('license_filter', value)
+                }
+                options={generateOptions(teacherLicenseFilterOptions)}
+            />
+        </div>
+    );
+    const sourceResponse = isUnlicensedView
         ? unlicensedTeachersResponse
         : teachersResponse;
     const dataList = extractCollection(sourceResponse);
-    const isLoading = isUnauthorizedView
+    const isLoading = isUnlicensedView
         ? isUnlicensedTeachersLoading
         : isTeachersLoading;
-    const refresh = isUnauthorizedView
+    const refresh = isUnlicensedView
         ? refreshUnlicensedTeachers
         : refreshTeachers;
     const totalCount =
@@ -155,7 +188,8 @@ export default function Teachers() {
                 enableImport={true}
                 enableExportExample={true}
                 onImport={toggle.import}
-                onExportExample={handleExportExample}
+                onExportExample={handleTeachersExportExample}
+                ToolbarExtra={toolbarLicenseFilter}
             />
             {isOpen.add && <CreateTeacher onClose={toggle.add} />}
             {isOpen.edit && (

@@ -6,8 +6,17 @@ import { generateOptions } from '@/utils/helpers/global.fns';
 import FilterText from '@/components/common/inputs/FilterText';
 
 export default function Filters({ filters, handleFilter }) {
+    const teacherFilterStatusOptions = teacherStatusOptions.filter(
+        option => option.value !== 'unauthorized'
+    );
+    const teacherLicenseFilterOptions = [
+        { label: { ar: 'مرخص', en: 'Licensed' }, value: 'licensed' },
+        { label: { ar: 'غير مرخص', en: 'Unlicensed' }, value: 'unlicensed' }
+    ];
+
     const options = {
-        status: teacherStatusOptions
+        status: teacherFilterStatusOptions,
+        license_filter: teacherLicenseFilterOptions
     };
 
     return teachersFilters.map(filter =>
@@ -18,6 +27,10 @@ export default function Filters({ filters, handleFilter }) {
                 value={filters?.[filter.name]}
                 onChange={({ value }) => handleFilter(filter.name, value)}
                 options={generateOptions(options?.[filter.name])}
+                disabled={
+                    filter.name === 'status' &&
+                    filters?.license_filter === 'unlicensed'
+                }
             />
         ) : (
             <FilterText

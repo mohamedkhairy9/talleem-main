@@ -4,8 +4,8 @@ export default function useExportExample({
     mutate,
     filename = 'example.xlsx'
 }) {
-    const handleExportExample = () => {
-        mutate(undefined, {
+    const handleExportExample = params => {
+        mutate(params, {
             onSuccess: response => {
                 // Support both axios instances that return full response or response.data directly
                 const blobLike =

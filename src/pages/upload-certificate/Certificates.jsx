@@ -37,6 +37,10 @@ export default function Certificates() {
         student_id: item.student?.id,
         certificate_name_id: item.certificate_name?.id,
         issued_date: item.issued_date,
+        description: {
+            en: item.description?.en || '',
+            ar: item.description?.ar || ''
+        },
         is_active: item.is_active,
         file: item.image_url  // Changed: use image_url from response
     }));

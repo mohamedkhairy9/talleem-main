@@ -33,6 +33,11 @@ export const certificatesSchema = yup.object({
         .number()
         .required(t('validation.required'))
         .positive(t('validation.required')),
+
+    description: yup.object({
+        en: yup.string().required(t('validation.required')),
+        ar: yup.string().required(t('validation.required'))
+    }),
     
     issued_date: yup
         .string()

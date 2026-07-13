@@ -89,9 +89,14 @@ export default function FormCertificate({
 
     function onSubmit(data) {
         // Remove filter-only fields from submission
-        const { main_program_id, branch_id, entity_id, ...submissionData } = data;
+        const {
+            main_program_id: _mainProgramId,
+            branch_id: _branchId,
+            entity_id: _entityId,
+            ...submissionData
+        } = data;
 
-        submissionData.is_active = 1;
+        submissionData.is_active = data.is_active ?? oldData?.is_active ?? 1;
 
         // Handle file - make sure it's a single file, not an array
         if (submissionData.file) {

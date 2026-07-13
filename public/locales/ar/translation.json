@@ -471,6 +471,9 @@
             "placeholder": "اختر الحالة",
             "invalid": "يجب أن تكون الحالة إما مفعلة  أو معطلة"
         },
+        "license_filter": {
+            "placeholder": "\u0627\u062e\u062a\u0631 \u062d\u0627\u0644\u0629 \u0627\u0644\u062a\u0631\u062e\u064a\u0635"
+        },
         "date": {
             "label": "التاريخ",
             "placeholder": "اختر التاريخ",

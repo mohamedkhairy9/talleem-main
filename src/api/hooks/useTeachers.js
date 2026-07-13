@@ -135,7 +135,7 @@ export const useExportTeachersQuery = params => {
 
 export const useExportExampleFileMutation = () => {
     return useCustomMutation({
-        mutationFn: () => teachersService.exportExampleFile(),
+        mutationFn: params => teachersService.exportExampleFile(params),
         onError: error => {
             console.log(error);
         }

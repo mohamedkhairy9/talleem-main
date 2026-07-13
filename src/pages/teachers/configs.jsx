@@ -8,6 +8,17 @@ import { getMaxDateForMinAge, getTodayDate } from '@/utils/helpers/dateHelpers';
 
 const columnHelper = createColumnHelper();
 
+export const teacherLicenseFilterOptions = [
+    {
+        label: { ar: '\u0645\u0631\u062e\u0635', en: 'Licensed' },
+        value: 'licensed'
+    },
+    {
+        label: { ar: '\u063a\u064a\u0631 \u0645\u0631\u062e\u0635', en: 'Unlicensed' },
+        value: 'unlicensed'
+    }
+];
+
 export const teachersColumns = [
     columnHelper.accessor('name', {
         header: 'table_headers.name',
@@ -307,6 +318,12 @@ export const teachersFilters = [
         defaultValue: ''
     },
     {
+        name: 'license_filter',
+        type: 'select',
+        placeholder: 'validation.license_filter.placeholder',
+        defaultValue: 'licensed'
+    },
+    {
         name: 'status',
         type: 'select',
         placeholder: 'validation.status.placeholder',
@@ -315,6 +332,7 @@ export const teachersFilters = [
 ];
 
 export const filtersDefaultValues = {
+    license_filter: 'licensed',
     status: 'active',
     search: ''
 };
