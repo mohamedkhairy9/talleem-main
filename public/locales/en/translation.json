@@ -975,19 +975,19 @@
         "min_length": "Minimum length must be {{min}} characters"
     },
     "auth": {
-        "email": {
-            "label": "البريد الإلكتروني",
-            "placeholder": "أدخل بريدك الإلكتروني"
+        "national_id": {
+            "label": "National ID",
+            "placeholder": "Enter your national ID"
         },
         "password": {
-            "label": "كلمة المرور",
-            "placeholder": "أدخل كلمة المرور"
+            "label": "Password",
+            "placeholder": "Enter password"
         },
-        "login": "تسجيل الدخول",
-        "forgot_password": "هل نسيت كلمة المرور ؟",
-        "recover": "إستعادة",
-        "or": "أو",
-        "start_journey": "ابدأ رحلتك مع القرآن الكريم"
+        "login": "Login",
+        "forgot_password": "Forgot your password?",
+        "recover": "Recover",
+        "or": "Or",
+        "start_journey": "Start your journey with the Holy Quran"
     },
     "common": {
         "close": "Close",

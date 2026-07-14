@@ -982,9 +982,9 @@
         "min_length": "يجب أن يكون الحد الأدنى {{min}} حروف"
     },
     "auth": {
-        "email": {
-            "label": "البريد الإلكتروني",
-            "placeholder": "أدخل بريدك الإلكتروني"
+        "national_id": {
+            "label": "رقم الهوية",
+            "placeholder": "أدخل رقم هويتك"
         },
         "password": {
             "label": "كلمة المرور",

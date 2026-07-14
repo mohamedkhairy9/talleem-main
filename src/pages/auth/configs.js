@@ -1,9 +1,9 @@
 export const loginFields = [
     {
-        type: 'email',
-        name: 'email',
-        label: 'auth.email.label',
-        placeholder: 'auth.email.placeholder'
+        type: 'text',
+        name: 'national_id',
+        label: 'auth.national_id.label',
+        placeholder: 'auth.national_id.placeholder'
     },
     {
         type: 'password',
@@ -14,6 +14,6 @@ export const loginFields = [
 ];
 
 export const loginDefaultValues = {
-    email: 'admin@system.com',
-    password: 'super123456'
+    national_id: '',
+    password: ''
 };

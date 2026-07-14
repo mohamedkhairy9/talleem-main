@@ -7,9 +7,9 @@ export default function DemoCredentials() {
                 Demo Credentials
             </p>
             <p className="">
-                <span className="font-semibold text-indigo-700">Email : </span>
+                <span className="font-semibold text-indigo-700">National ID : </span>
                 <span className="font-medium text-indigo-600">
-                admin@system.com
+                    Use your assigned ID
                 </span>
             </p>
             <p className="">

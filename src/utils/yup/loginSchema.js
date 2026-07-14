@@ -1,12 +1,12 @@
 import * as yup from 'yup';
+import { t } from 'i18next';
 
 export const loginSchema = yup.object({
-    email: yup
+    national_id: yup
         .string()
-        .email('من فضلك أدخل بريدك الإلكتروني الصحيح')
-        .required('البريد الإلكتروني مطلوب'),
+        .required(t('validation.required')),
     password: yup
         .string()
-        .min(6, 'كلمة المرور يجب أن تكون على الأقل 6 أحرف')
-        .required('كلمة المرور مطلوبة')
+        .min(6, t('validation.password.min'))
+        .required(t('validation.required'))
 });

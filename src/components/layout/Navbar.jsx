@@ -76,8 +76,9 @@ export default function Navbar() {
                                                 {user?.name[currentLocale] || (currentLocale === "en" ? "User" : "مستخدم")}
                                             </p>
                                             <p className="text-sm text-gray-500">
-                                                {user?.email ||
-                                                    'user@example.com'}
+                                                {user?.national_id ||
+                                                    user?.email ||
+                                                    (currentLocale === 'en' ? 'No national ID' : 'لا يوجد رقم هوية')}
                                             </p>
                                         </div>
 

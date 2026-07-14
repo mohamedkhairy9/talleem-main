@@ -86,7 +86,7 @@ export default function Login() {
                                             <input
                                                 {...register(field.name)}
                                                 type={showPassword ? 'text' : 'password'}
-                                                placeholder={field.placeholder}
+                                                placeholder={t(field.placeholder)}
                                                 className="w-full border rounded-lg px-4 py-3 "
                                             />
 
