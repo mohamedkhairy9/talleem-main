@@ -38,7 +38,8 @@ export const API_URLS = {
         LIST: '/notifications'
     },
     NOTIFICATION_TEMPLATES: {
-        LIST: '/notification-templates'
+        LIST: '/notification-templates',
+        DETAILS: id => `/notification-templates/${id}`
     },
     NOTIFICATION_TRIGGER: {
         TRIGGER: '/notifications/trigger'

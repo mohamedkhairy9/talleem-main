@@ -5,7 +5,6 @@ import { notificationTemplatesColumns, filtersDefaultValues } from './configs';
 import useIsOpen from '@/utils/hooks/global/useIsOpen';
 import useFiltering from '@/utils/hooks/global/useFiltering';
 import useLocale from '@/utils/hooks/global/useLocale';
-import i18next from 'i18next';
 import { getOriginalObject } from '@/utils/helpers/global.fns';
 import Filters from './Filters';
 import Actions from './Actions';
@@ -13,17 +12,37 @@ import TriggerNotification from './TriggerNotification';
 import ScheduleNotification from './ScheduleNotification';
 import ViewNotificationTemplate from './ViewNotificationTemplate';
 
+const extractTemplatesCollection = response => {
+    if (Array.isArray(response)) return response;
+    if (Array.isArray(response?.data)) return response.data;
+    if (Array.isArray(response?.items)) return response.items;
+    if (Array.isArray(response?.results)) return response.results;
+    if (Array.isArray(response?.notification_templates)) {
+        return response.notification_templates;
+    }
+    return [];
+};
+
+const resolveTemplatesTotalCount = (response, fallbackCount) => {
+    const total =
+        response?.meta?.total ??
+        response?.total ??
+        (response?.meta?.last_page && response?.meta?.per_page
+            ? response.meta.last_page * response.meta.per_page
+            : undefined) ??
+        fallbackCount;
+
+    return Number(total) || 0;
+};
+
 export default function NotificationTemplates() {
     const { isOpen, toggle } = useIsOpen();
     const { pagination, handleFilter, filters, setter, setFilters } =
         useFiltering(filtersDefaultValues);
     const { data, isLoading, refresh } = useNotificationTemplatesQuery(filters);
     const { t } = useLocale();
-
-    const tableData = data
-
-    console.log('tableData', tableData);
-    
+    const tableData = extractTemplatesCollection(data);
+    const totalCount = resolveTemplatesTotalCount(data, tableData.length);
 
     return (
         <div>
@@ -34,7 +53,7 @@ export default function NotificationTemplates() {
                 loading={isLoading}
                 data={tableData}
                 serverPagination={true}
-                totalCount={data?.meta?.total}
+                totalCount={totalCount}
                 columns={notificationTemplatesColumns}
                 toggleModals={toggle}
                 pagination={pagination}
@@ -54,19 +73,19 @@ export default function NotificationTemplates() {
             {isOpen.view && (
                 <ViewNotificationTemplate
                     onClose={toggle.view}
-                    template={getOriginalObject(isOpen.view, data)}
+                    template={getOriginalObject(isOpen.view, tableData)}
                 />
             )}
             {isOpen.trigger && (
                 <TriggerNotification
                     onClose={toggle.trigger}
-                    template={getOriginalObject(isOpen.trigger, data)}
+                    template={getOriginalObject(isOpen.trigger, tableData)}
                 />
             )}
             {isOpen.schedule && (
                 <ScheduleNotification
                     onClose={toggle.schedule}
-                    template={getOriginalObject(isOpen.schedule, data)}
+                    template={getOriginalObject(isOpen.schedule, tableData)}
                 />
             )}
         </div>

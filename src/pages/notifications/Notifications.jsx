@@ -7,7 +7,9 @@ import useLocale from '@/utils/hooks/global/useLocale';
 import useIsOpen from '@/utils/hooks/global/useIsOpen';
 import Filters from './Filters';
 import SendNotification from './SendNotification';
+import ViewNotification from './ViewNotification';
 import i18next from 'i18next';
+import { getOriginalObject } from '@/utils/helpers/global.fns';
 
 const extractNotificationsCollection = response => {
     if (Array.isArray(response)) return response;
@@ -96,15 +98,15 @@ export default function Notifications() {
                 enableEdit={false}
                 enableDelete={false}
                 enableCopy={false}
-                enableView={false}
+                enableView={true}
             />
             {isOpen.add && <SendNotification onClose={toggle.add} />}
-            {/* {isOpen.view && (
+            {isOpen.view && (
                 <ViewNotification
                     onClose={toggle.view}
-                    notification={getOriginalObject(isOpen.view, data)}
+                    notification={getOriginalObject(isOpen.view, tableData)}
                 />
-            )} */}
+            )}
         </div>
     );
 }

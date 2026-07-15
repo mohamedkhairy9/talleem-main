@@ -39,6 +39,7 @@ export default function Users() {
 
     const tableData = data?.data?.map(item => ({
         ...item,
+        national_id: item.national_id ?? item.email ?? '',
         name: item.name?.[i18next.language],
         branch: {
             ...item.branch,
@@ -50,7 +51,7 @@ export default function Users() {
         id: item.id,
         locale: item.locale,
         current_app_locale: item.current_app_locale,
-        email: item.email,
+        national_id: item.national_id ?? item.email ?? '',
         name: {
             en: item.name?.en || item.name?.ar || '',
             ar: item.name?.ar || item.name?.en || ''

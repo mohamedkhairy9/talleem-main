@@ -11,8 +11,8 @@ export const usersColumns = [
         header: 'table_headers.name',
         cell: info => <NameCell directValue={info.getValue()} />
     }),
-    columnHelper.accessor('email', {
-        header: 'table_headers.email',
+    columnHelper.accessor('national_id', {
+        header: 'table_headers.national_id',
         cell: info => <Cell value={info.getValue()} />
     }),
     columnHelper.accessor('phone', {
@@ -65,10 +65,10 @@ export const usersFields = [
         viewMode: true
     },
     {
-        name: 'email',
-        label: 'activity_logs.user_id',
+        name: 'national_id',
+        label: 'validation.national_id.label',
         type: 'text',
-        placeholder: 'validation.users.user_id.placeholder',
+        placeholder: 'validation.national_id.placeholder',
         editMode: true,
         viewMode: true
     },
@@ -113,7 +113,7 @@ export const usersDefaultValues = {
         en: '',
         ar: ''
     },
-    email: '',
+    national_id: '',
     password: '',
     branch_id: [],
     entity_id: [],

@@ -6,5 +6,11 @@ export const notificationTemplatesService = {
         return await axiosInstance.get(API_URLS.NOTIFICATION_TEMPLATES.LIST, {
             params
         });
+    },
+
+    getNotificationTemplate: async id => {
+        return await axiosInstance.get(
+            API_URLS.NOTIFICATION_TEMPLATES.DETAILS(id)
+        );
     }
 };

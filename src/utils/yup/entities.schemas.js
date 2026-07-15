@@ -188,8 +188,7 @@ export const entitiesSchema = yup.object({
                 .required(t('validation.required')),
             national_id: yup
                 .string()
-                .required(t('validation.required'))
-                .matches(/^[0-9]+$/, t('validation.national_id.numeric')),
+                .required(t('validation.required')),
             gender: yup
                 .string()
                 .required(t('validation.required'))

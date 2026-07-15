@@ -26,7 +26,7 @@ assert.deepEqual(
     buildUserSubmissionPayload(
         {
             name: { en: 'Admin User' },
-            email: 'admin@example.com',
+            national_id: 'admin-user-id',
             password: 'secret123',
             branch_id: [2, 3],
             entity_id: [7, 8],
@@ -36,7 +36,7 @@ assert.deepEqual(
     ),
     {
         name: { en: 'Admin User', ar: 'Admin User' },
-        email: 'admin@example.com',
+        national_id: 'admin-user-id',
         password: 'secret123',
         branch_id: 2,
         branch_ids: [2, 3],

@@ -128,8 +128,7 @@ export const studentsSchema = (parentInfoAgeThreshold = DEFAULT_PARENT_INFO_AGE_
     
     national_id: yup
         .string()
-        .required(t('validation.required'))
-        .matches(/^[0-9]+$/, t('validation.national_id.numeric')),
+        .required(t('validation.required')),
     
     nationality_id: yup
         .number()

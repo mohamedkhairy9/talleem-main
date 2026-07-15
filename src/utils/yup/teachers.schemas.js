@@ -215,8 +215,7 @@ export const teachersSchema = yup.object({
 
     national_id: yup
         .string()
-        .required(t('validation.required'))
-        .matches(/^[0-9]+$/, t('validation.national_id.numeric')),
+        .required(t('validation.required')),
 
     phone: yup
         .string()

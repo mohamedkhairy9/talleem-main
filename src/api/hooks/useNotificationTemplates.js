@@ -10,3 +10,12 @@ export const useNotificationTemplatesQuery = (params = {}, options = {}) => {
         ...options
     });
 };
+
+export const useNotificationTemplateQuery = (id, options = {}) => {
+    return useCustomQuery({
+        queryKey: [API_KEYS.NOTIFICATION_TEMPLATES, 'details', id],
+        queryFn: () => notificationTemplatesService.getNotificationTemplate(id),
+        enabled: Boolean(id) && options.enabled !== false,
+        ...options
+    });
+};

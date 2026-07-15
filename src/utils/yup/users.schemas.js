@@ -11,7 +11,7 @@ export const usersSchema = yup.object().shape({
             ar: yup.string().nullable().optional()
         })
         .required(t('validation.required')),
-    email: yup
+    national_id: yup
         .string()
         .required(t('validation.required')),
     password: yup.string().nullable().optional().min(6, t('validation.password.min')),
