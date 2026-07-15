@@ -11,13 +11,18 @@ import {
 import {
     buildGradeKey,
     extractCollection,
+    extractRecord,
     firstNonEmpty,
     formatTimeRange,
     normalizeExamDetails,
     normalizeTemplateItem,
-    resolveSegmentsForStudent,
     resolveTemplateForStudent
 } from './helpers';
+import InteractiveExamMushaf from './InteractiveExamMushaf';
+import {
+    getExamConductionSegments,
+    getExamConductionSubmissionSegmentId
+} from './examSegments';
 
 const getExamTypeLabel = (type, isArabic) => {
     if (type === 'sard') return isArabic ? 'سرد' : 'Sard';
@@ -85,9 +90,10 @@ export default function ConductExamSession() {
     );
 
     const sessionData = useMemo(
-        () => location.state?.startData?.data || location.state?.startData || null,
+        () => extractRecord(location.state?.startData),
         [location.state?.startData]
     );
+    const hasActiveSession = Boolean(sessionData?.id || sessionData?.exam_session_id || sessionData?.status);
 
     const [selectedTemplateId, setSelectedTemplateId] = useState('');
     const [grades, setGrades] = useState({});
@@ -119,19 +125,25 @@ export default function ConductExamSession() {
         [fallbackTemplate, selectedTemplateId, templates]
     );
 
-    const studentWithSessionData = useMemo(() => {
-        if (!selectedStudent) return null;
-
-        return {
-            ...selectedStudent,
-            sessionSegments: extractCollection(sessionData?.segments)
-        };
-    }, [selectedStudent, sessionData?.segments]);
-
-    const segments = useMemo(
-        () => resolveSegmentsForStudent(studentWithSessionData, examDetails),
-        [studentWithSessionData, examDetails]
-    );
+    const examType =
+        location.state?.startPayload?.exam_type || sessionData?.exam_type || selectedStudent?.examType || 'maqata3';
+    const segments = useMemo(() => getExamConductionSegments({
+        examType,
+        rawSegments: extractCollection(sessionData?.segments).length
+            ? extractCollection(sessionData?.segments)
+            : (
+                selectedStudent?.raw?.segments ||
+                selectedStudent?.raw?.exam_segments ||
+                selectedStudent?.raw?.quran_exam_segment_items ||
+                examDetails?.raw?.segments ||
+                examDetails?.raw?.exam_segments ||
+                examDetails?.raw?.quran_exam_segment_items ||
+                examDetails?.raw?.exam_segment?.items ||
+                []
+            ),
+        studentJuzNumbers: selectedStudent?.juzNumbers,
+        fallbackJuzNumbers: extractCollection(sessionData?.segments).map(segment => segment?.juz_number ?? segment?.juzNumber)
+    }), [examDetails?.raw?.exam_segment?.items, examDetails?.raw?.exam_segments, examDetails?.raw?.quran_exam_segment_items, examDetails?.raw?.segments, examType, selectedStudent?.juzNumbers, selectedStudent?.raw?.exam_segments, selectedStudent?.raw?.quran_exam_segment_items, selectedStudent?.raw?.segments, sessionData?.segments]);
 
     const criteria = useMemo(() => {
         const sessionCriteria = extractCollection(sessionData?.evaluation_parameter?.criteria).map(
@@ -150,9 +162,6 @@ export default function ConductExamSession() {
         if (sessionCriteria.length) return sessionCriteria;
         return selectedTemplate?.criteria || [];
     }, [selectedTemplate?.criteria, sessionData?.evaluation_parameter?.criteria]);
-    const examType =
-        location.state?.startPayload?.exam_type || selectedStudent?.examType || 'maqata3';
-
     useEffect(() => {
         if (!segments.length || !criteria.length) return;
 
@@ -175,11 +184,6 @@ export default function ConductExamSession() {
         }
     }, [activeSegmentId, segments]);
 
-    const activeSegment = useMemo(
-        () => segments.find(segment => String(segment.id) === String(activeSegmentId)) || null,
-        [activeSegmentId, segments]
-    );
-
     const handleBack = () => navigate('/conduct-exams');
 
     const handleGradeChange = (segmentId, criteriaId, value) => {
@@ -197,6 +201,15 @@ export default function ConductExamSession() {
     };
 
     const handleSubmit = () => {
+        if (!hasActiveSession) {
+            setPageError(
+                isArabic
+                    ? 'لا توجد جلسة امتحان فعالة. ارجع لتفاصيل الامتحان واضغط استئناف التقييم أولًا.'
+                    : 'There is no active exam session. Go back to the exam details and resume the evaluation first.'
+            );
+            return;
+        }
+
         if (!segments.length || !criteria.length) {
             setPageError(
                 isArabic
@@ -209,7 +222,7 @@ export default function ConductExamSession() {
         const nextErrors = {};
         const payload = {
             segments: segments.map(segment => ({
-                segment_id: segment.id,
+                segment_id: getExamConductionSubmissionSegmentId(segment),
                 grades: criteria.map(criterion => {
                     const gradeKey = buildGradeKey(segment.id, criterion.id);
                     const rawValue = grades[gradeKey];
@@ -328,6 +341,14 @@ export default function ConductExamSession() {
                 </div>
             ) : null}
 
+            {!hasActiveSession ? (
+                <div className="rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
+                    {isArabic
+                        ? 'لم تصل بيانات جلسة البدء لهذه الصفحة. ارجع لتفاصيل الامتحان، ثم اضغط استئناف التقييم لتجهيز الجلسة بشكل صحيح.'
+                        : 'The start-session data is missing. Return to the exam details and resume the evaluation to prepare the session correctly.'}
+                </div>
+            ) : null}
+
             <section className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
                 <div className="mb-5 flex flex-wrap items-center gap-3">
                     <span className="rounded-full bg-gray-100 px-3 py-1 text-xs font-semibold text-gray-700">
@@ -343,7 +364,8 @@ export default function ConductExamSession() {
                     <button
                         type="button"
                         onClick={() => setShowGradesStep(true)}
-                        className="rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-white transition hover:opacity-90"
+                        disabled={!hasActiveSession}
+                        className="rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-white transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-40"
                     >
                         {isArabic ? 'إرسال الدرجات' : 'Submit Grades'}
                     </button>
@@ -621,71 +643,12 @@ export default function ConductExamSession() {
                                 </button>
                             </div>
 
-                            <div className="space-y-5 overflow-y-auto p-6">
-                                <div className="flex flex-wrap gap-3">
-                                    {segments.map(segment => {
-                                        const isSelected =
-                                            String(segment.id) === String(activeSegmentId);
-
-                                        return (
-                                            <button
-                                                key={segment.id}
-                                                type="button"
-                                                onClick={() => setActiveSegmentId(segment.id)}
-                                                className={`rounded-xl border px-4 py-3 text-sm font-semibold transition ${
-                                                    isSelected
-                                                        ? 'border-primary bg-primary/10 text-primary'
-                                                        : 'border-gray-200 bg-white text-gray-700 hover:border-primary/40'
-                                                }`}
-                                            >
-                                                {isArabic
-                                                    ? `المقطع ${segment.order}`
-                                                    : `Segment ${segment.order}`}
-                                            </button>
-                                        );
-                                    })}
-                                </div>
-
-                                <div className="rounded-2xl border border-gray-200 bg-gray-50 p-5">
-                                    <div className="grid gap-4 md:grid-cols-2">
-                                        <div>
-                                            <p className="text-sm text-gray-500">
-                                                {isArabic ? 'المقطع' : 'Segment'}
-                                            </p>
-                                            <p className="mt-1 text-lg font-semibold text-gray-900">
-                                                {activeSegment
-                                                    ? isArabic
-                                                        ? `المقطع ${activeSegment.order}`
-                                                        : `Segment ${activeSegment.order}`
-                                                    : '-'}
-                                            </p>
-                                        </div>
-                                        <div>
-                                            <p className="text-sm text-gray-500">
-                                                {isArabic ? 'الجزء' : 'Juz'}
-                                            </p>
-                                            <p className="mt-1 text-lg font-semibold text-gray-900">
-                                                {activeSegment?.juzNumber || '-'}
-                                            </p>
-                                        </div>
-                                        <div>
-                                            <p className="text-sm text-gray-500">
-                                                {isArabic ? 'بداية المقطع' : 'First Verse'}
-                                            </p>
-                                            <p className="mt-1 text-lg font-semibold text-gray-900">
-                                                {activeSegment?.firstVerseKey || '-'}
-                                            </p>
-                                        </div>
-                                        <div>
-                                            <p className="text-sm text-gray-500">
-                                                {isArabic ? 'نهاية المقطع' : 'Last Verse'}
-                                            </p>
-                                            <p className="mt-1 text-lg font-semibold text-gray-900">
-                                                {activeSegment?.lastVerseKey || '-'}
-                                            </p>
-                                        </div>
-                                    </div>
-                                </div>
+                            <div className="overflow-y-auto p-6">
+                                <InteractiveExamMushaf
+                                    segments={segments}
+                                    activeSegmentId={activeSegmentId}
+                                    onSegmentChange={setActiveSegmentId}
+                                />
                             </div>
                         </div>
                     </div>

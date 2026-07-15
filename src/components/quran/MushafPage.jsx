@@ -128,7 +128,7 @@ const MushafPage = ({
                                         }
                                     }}
                                     style={{ 
-                                        cursor: isUsed ? 'not-allowed' : (isEditable ? 'pointer' : 'default') 
+                                        cursor: isUsed ? 'not-allowed' : (isEditable ? 'pointer' : 'default')
                                     }}
                                     ref={el => {
                                         if (el) {

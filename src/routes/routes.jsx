@@ -62,6 +62,7 @@ import JoinRequestForms from '@/pages/join-request-forms/JoinRequestForms';
 import JoinRequests from '@/pages/join-requests/JoinRequests';
 import LicenseRenewals from '@/pages/license-renewals/LicenseRenewals';
 import ConductExams from '@/pages/conduct-exams/ConductExams';
+import ConductExamDetails from '@/pages/conduct-exams/ConductExamDetails';
 import ConductExamSession from '@/pages/conduct-exams/ConductExamSession';
 import ConductExamResult from '@/pages/conduct-exams/ConductExamResult';
 
@@ -326,6 +327,10 @@ export const routes = [
     {
         path: '/conduct-exams',
         element: <ConductExams />
+    },
+    {
+        path: '/conduct-exams/:scheduledExamId',
+        element: <ConductExamDetails />
     },
     {
         path: '/conduct-exams/:scheduledExamId/students/:studentId/conduct',
