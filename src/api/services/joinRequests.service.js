@@ -126,10 +126,21 @@ export const joinRequestsService = {
         return client.get(API_URLS.JOIN_REQUESTS.LOGS(id));
     },
     processStep: (id, data) => {
+        const client = isBranchManagerOnly() ? joinRequestsClient : axiosInstance;
+
+        // A "need upload" action creates a form definition for the applicant.
+        // It must remain JSON so the nested resubmission_form is not flattened
+        // into multipart keys.
+        if (Number(data?.status) === 4 && data?.resubmission_form) {
+            return client.post(API_URLS.JOIN_REQUESTS.PROCESS_STEP(id), {
+                status: 4,
+                notes: data.notes || null,
+                resubmission_form: data.resubmission_form
+            });
+        }
+
         const formData = prepareFormData(data);
         const opts = { headers: { 'Content-Type': 'multipart/form-data' } };
-        // Branch manager: use front base URL for process step too
-        const client = isBranchManagerOnly() ? joinRequestsClient : axiosInstance;
         return client.post(API_URLS.JOIN_REQUESTS.PROCESS_STEP(id), formData, opts);
     }
 };

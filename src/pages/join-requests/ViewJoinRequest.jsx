@@ -14,6 +14,7 @@ import { getNestedError } from '@/utils/helpers/getNestedError';
 import * as yup from 'yup';
 import { t } from 'i18next';
 import { getJoinRequestDisplayStatus, localizeJoinRequestStatusText } from './statusDisplay';
+import ResubmissionFormBuilder, { createDefaultResubmissionForm } from './ResubmissionFormBuilder';
 
 const statusOptions = [
     { label: { ar: 'موافق', en: 'Approved' }, value: 1 },
@@ -521,7 +522,7 @@ export default function ViewJoinRequest({ onClose, oldData, isReadOnly = false }
     );
     const isLocked = isReadOnly || isFinalizedRequest;
 
-    const { register, errors, handleSubmit, control, setValue } = useRFH({
+    const { register, errors, handleSubmit, control, setValue, watch } = useRFH({
         schema: processStepSchema,
         defaultValues: {
             status: '',
@@ -529,9 +530,33 @@ export default function ViewJoinRequest({ onClose, oldData, isReadOnly = false }
             files: null
         }
     });
+    const selectedStatus = Number(watch('status'));
+    const [resubmissionForm, setResubmissionForm] = useState(createDefaultResubmissionForm);
+    const [resubmissionFormError, setResubmissionFormError] = useState('');
 
     const onSubmit = data => {
         if (isLocked) return;
+
+        if (Number(data.status) === 4) {
+            const fields = resubmissionForm?.data?.fields || [];
+            const hasInvalidField = fields.some(field =>
+                !field.key?.trim() || !field.label?.ar?.trim() || !field.label?.en?.trim()
+            );
+
+            if (
+                !resubmissionForm?.name?.ar?.trim() ||
+                !resubmissionForm?.name?.en?.trim() ||
+                !resubmissionForm?.description?.ar?.trim() ||
+                !resubmissionForm?.description?.en?.trim() ||
+                fields.length === 0 ||
+                hasInvalidField
+            ) {
+                setResubmissionFormError('يرجى استكمال اسم ووصف النموذج وبيانات كل الحقول بالعربية والإنجليزية.');
+                return;
+            }
+        }
+
+        setResubmissionFormError('');
 
         processStep(
             {
@@ -539,7 +564,8 @@ export default function ViewJoinRequest({ onClose, oldData, isReadOnly = false }
                 data: {
                     status: data.status,
                     notes: data.notes || null,
-                    files: data.files || null
+                    files: Number(data.status) === 4 ? null : (data.files || null),
+                    ...(Number(data.status) === 4 ? { resubmission_form: resubmissionForm } : {})
                 }
             },
             {
@@ -907,15 +933,23 @@ export default function ViewJoinRequest({ onClose, oldData, isReadOnly = false }
                                         label="validation.process_step.notes.label"
                                         name="notes"
                                     />
-                                    <FileInputRFH
-                                        error={getNestedError(errors, 'files')}
-                                        placeholder="validation.process_step.files.placeholder"
-                                        label="validation.process_step.files.label"
-                                        name="files"
-                                        register={register}
-                                        setValue={setValue}
-                                        multiple={true}
-                                    />
+                                    {selectedStatus === 4 ? (
+                                        <ResubmissionFormBuilder
+                                            value={resubmissionForm}
+                                            onChange={setResubmissionForm}
+                                            error={resubmissionFormError}
+                                        />
+                                    ) : (
+                                        <FileInputRFH
+                                            error={getNestedError(errors, 'files')}
+                                            placeholder="validation.process_step.files.placeholder"
+                                            label="validation.process_step.files.label"
+                                            name="files"
+                                            register={register}
+                                            setValue={setValue}
+                                            multiple={true}
+                                        />
+                                    )}
                                 </div>
                             </AccordionSection>
                         )}

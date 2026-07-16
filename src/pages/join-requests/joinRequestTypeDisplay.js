@@ -4,6 +4,13 @@ const FALLBACK_IDS = {
     supervisors: [2, 4, 5, 6]
 };
 
+// These two request types are managed outside Educational Supervisor Requests.
+const HIDDEN_SUPERVISOR_REQUEST_TYPE_IDS = new Set([2, 4]);
+
+const isVisibleForCategory = (requestTypeId, category) =>
+    category !== 'supervisors' ||
+    !HIDDEN_SUPERVISOR_REQUEST_TYPE_IDS.has(Number(requestTypeId));
+
 export function normalizeRequestTypeText(value) {
     return String(value ?? '')
         .trim()
@@ -94,12 +101,18 @@ export function getRequestTypeIdsByCategory(requestTypesData, category, joinRequ
             .filter(requestType => resolveRequestTypeCategory(requestType) === category)
             .map(requestType => requestType.id);
 
-        if (matchingIds.length > 0) {
-            return matchingIds;
+        const visibleIds = matchingIds.filter(requestTypeId =>
+            isVisibleForCategory(requestTypeId, category)
+        );
+
+        if (visibleIds.length > 0) {
+            return visibleIds;
         }
     }
 
-    return FALLBACK_IDS[category] || [];
+    return (FALLBACK_IDS[category] || []).filter(requestTypeId =>
+        isVisibleForCategory(requestTypeId, category)
+    );
 }
 
 export function getRequestTypesForCategory(
@@ -111,12 +124,18 @@ export function getRequestTypesForCategory(
 ) {
     if (!category || requestTypeIds.length === 0) return [];
 
+    const visibleRequestTypeIds = requestTypeIds.filter(requestTypeId =>
+        isVisibleForCategory(requestTypeId, category)
+    );
+
+    if (visibleRequestTypeIds.length === 0) return [];
+
     const requestTypes = requestTypesData?.data?.length
         ? requestTypesData.data
         : collectRequestTypesFromJoinRequests(joinRequests);
 
     if (requestTypes.length) {
-        const idSet = new Set(requestTypeIds.map(Number));
+        const idSet = new Set(visibleRequestTypeIds.map(Number));
         const matchingTypes = requestTypes
             .filter(type => idSet.has(Number(type.id)))
             .map(type => ({
@@ -129,7 +148,7 @@ export function getRequestTypesForCategory(
         }
     }
 
-    return requestTypeIds.map(id => ({ id, name: `Request Type ${id}` }));
+    return visibleRequestTypeIds.map(id => ({ id, name: `Request Type ${id}` }));
 }
 
 export function buildRequestTypesMap(categoryRequestTypes = [], joinRequests = [], locale = 'en', requestTypesData = null) {
