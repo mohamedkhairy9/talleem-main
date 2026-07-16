@@ -30,17 +30,12 @@ export default function Certificates() {
 
     const formData = data?.data?.map(item => ({
         id: item.id,
-        issued_from: item.issued_from,
         main_program_id: item.main_program?.id,
         branch_id: item.branch?.id,
         entity_id: item.entity?.id,
         student_id: item.student?.id,
         certificate_name_id: item.certificate_name?.id,
         issued_date: item.issued_date,
-        description: {
-            en: item.description?.en || '',
-            ar: item.description?.ar || ''
-        },
         is_active: item.is_active,
         file: item.image_url  // Changed: use image_url from response
     }));

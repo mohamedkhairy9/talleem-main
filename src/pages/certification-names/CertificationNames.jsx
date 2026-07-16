@@ -23,7 +23,8 @@ export default function CertificateNames() {
 
     const formData = data?.data?.map(item => ({
         ...item,
-        main_program_id: item.main_program?.id
+        main_program_id: item.main_program?.id,
+        issued_from: item.issued_from || ''
     }));
 
     return (

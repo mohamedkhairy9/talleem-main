@@ -127,11 +127,33 @@ export default function ConductExamSession() {
 
     const examType =
         location.state?.startPayload?.exam_type || sessionData?.exam_type || selectedStudent?.examType || 'maqata3';
+    const sessionSegments = useMemo(() => {
+        const candidates = [
+            sessionData?.segments,
+            sessionData?.exam_segments,
+            sessionData?.quran_exam_segment_items,
+            sessionData?.exam_segment?.items,
+            sessionData?.student_exam?.segments,
+            sessionData?.student_exam?.exam_segments,
+            sessionData?.student_exam?.quran_exam_segment_items,
+            sessionData?.student_exam?.exam_segment?.items,
+            sessionData?.exam_session?.segments,
+            sessionData?.exam_session?.exam_segments,
+            sessionData?.exam_session?.quran_exam_segment_items,
+            sessionData?.exam_session?.exam_segment?.items,
+            sessionData?.session?.segments,
+            sessionData?.session?.exam_segments,
+            sessionData?.session?.quran_exam_segment_items,
+            sessionData?.session?.exam_segment?.items
+        ];
+
+        return candidates.map(extractCollection).find(items => items.length) || [];
+    }, [sessionData]);
     const segments = useMemo(() => getExamConductionSegments({
         examType,
-        rawSegments: extractCollection(sessionData?.segments).length
-            ? extractCollection(sessionData?.segments)
-            : (
+        rawSegments: sessionSegments.length
+            ? sessionSegments
+            : (!hasActiveSession ? (
                 selectedStudent?.raw?.segments ||
                 selectedStudent?.raw?.exam_segments ||
                 selectedStudent?.raw?.quran_exam_segment_items ||
@@ -140,10 +162,10 @@ export default function ConductExamSession() {
                 examDetails?.raw?.quran_exam_segment_items ||
                 examDetails?.raw?.exam_segment?.items ||
                 []
-            ),
+            ) : []),
         studentJuzNumbers: selectedStudent?.juzNumbers,
-        fallbackJuzNumbers: extractCollection(sessionData?.segments).map(segment => segment?.juz_number ?? segment?.juzNumber)
-    }), [examDetails?.raw?.exam_segment?.items, examDetails?.raw?.exam_segments, examDetails?.raw?.quran_exam_segment_items, examDetails?.raw?.segments, examType, selectedStudent?.juzNumbers, selectedStudent?.raw?.exam_segments, selectedStudent?.raw?.quran_exam_segment_items, selectedStudent?.raw?.segments, sessionData?.segments]);
+        fallbackJuzNumbers: sessionSegments.map(segment => segment?.juz_number ?? segment?.juzNumber)
+    }), [examDetails?.raw?.exam_segment?.items, examDetails?.raw?.exam_segments, examDetails?.raw?.quran_exam_segment_items, examDetails?.raw?.segments, examType, hasActiveSession, selectedStudent?.juzNumbers, selectedStudent?.raw?.exam_segments, selectedStudent?.raw?.quran_exam_segment_items, selectedStudent?.raw?.segments, sessionSegments]);
 
     const criteria = useMemo(() => {
         const sessionCriteria = extractCollection(sessionData?.evaluation_parameter?.criteria).map(
@@ -204,8 +226,8 @@ export default function ConductExamSession() {
         if (!hasActiveSession) {
             setPageError(
                 isArabic
-                    ? 'لا توجد جلسة امتحان فعالة. ارجع لتفاصيل الامتحان واضغط استئناف التقييم أولًا.'
-                    : 'There is no active exam session. Go back to the exam details and resume the evaluation first.'
+                    ? 'لا توجد جلسة امتحان فعالة. ارجع لتفاصيل الامتحان واضغط بدء الامتحان أولًا.'
+                    : 'There is no active exam session. Go back to the exam details and start the exam first.'
             );
             return;
         }
@@ -260,11 +282,12 @@ export default function ConductExamSession() {
                 data: payload
             },
             {
-                onSuccess: () => {
+                onSuccess: response => {
                     navigate(`/conduct-exams/${scheduledExamId}/students/${studentId}/result`, {
                         state: {
                             student: selectedStudent,
-                            exam: examDetails
+                            exam: examDetails,
+                            resultData: response
                         }
                     });
                 },
@@ -344,8 +367,8 @@ export default function ConductExamSession() {
             {!hasActiveSession ? (
                 <div className="rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
                     {isArabic
-                        ? 'لم تصل بيانات جلسة البدء لهذه الصفحة. ارجع لتفاصيل الامتحان، ثم اضغط استئناف التقييم لتجهيز الجلسة بشكل صحيح.'
-                        : 'The start-session data is missing. Return to the exam details and resume the evaluation to prepare the session correctly.'}
+                        ? 'لم تصل بيانات جلسة البدء لهذه الصفحة. ارجع لتفاصيل الامتحان، ثم اضغط بدء الامتحان لتجهيز الجلسة بشكل صحيح.'
+                        : 'The start-session data is missing. Return to the exam details and start the exam to prepare the session correctly.'}
                 </div>
             ) : null}
 
@@ -367,11 +390,11 @@ export default function ConductExamSession() {
                         disabled={!hasActiveSession}
                         className="rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-white transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-40"
                     >
-                        {isArabic ? 'إرسال الدرجات' : 'Submit Grades'}
+                        {isArabic ? 'إنهاء الامتحان وإدخال الدرجات' : 'Finish Exam & Enter Grades'}
                     </button>
                 </div>
 
-                <div className="grid gap-4 border-b border-gray-100 pb-5 md:grid-cols-4">
+                <div className="grid gap-4 border-b border-gray-100 pb-5 md:grid-cols-5">
                     <div>
                         <p className="text-sm text-gray-500">{isArabic ? 'الطالب' : 'Student'}</p>
                         <p className="mt-1 font-semibold text-gray-900">
@@ -392,6 +415,14 @@ export default function ConductExamSession() {
                         </p>
                         <p className="mt-1 font-semibold text-gray-900">
                             {selectedTemplate?.displayName || '-'}
+                        </p>
+                    </div>
+                    <div>
+                        <p className="text-sm text-gray-500">
+                            {isArabic ? 'رقم الجلسة' : 'Session Number'}
+                        </p>
+                        <p className="mt-1 font-semibold text-gray-900">
+                            {sessionData?.id || sessionData?.exam_session_id || '-'}
                         </p>
                     </div>
                     <div>
@@ -484,11 +515,11 @@ export default function ConductExamSession() {
                         <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
                             <div>
                                 <h2 className="text-lg font-semibold text-gray-900">
-                                    {isArabic ? 'إدخال الدرجات' : 'Grade Entry'}
+                                    {isArabic ? 'إنهاء الامتحان وإدخال الدرجات' : 'Finish Exam & Enter Grades'}
                                 </h2>
                                 <p className="mt-1 text-sm text-gray-500">
                                     {isArabic
-                                        ? 'أدخل درجات كل معيار داخل كل مقطع ثم أرسل النتيجة النهائية.'
+                                        ? 'راجع الدرجات ثم أنهِ الامتحان بحفظ النتيجة النهائية.'
                                         : 'Enter each criterion grade for every segment, then submit the final result.'}
                                 </p>
                             </div>
@@ -606,7 +637,7 @@ export default function ConductExamSession() {
                                         ? 'جارٍ الإرسال...'
                                         : 'Submitting...'
                                     : isArabic
-                                    ? 'إرسال الدرجات'
+                                    ? 'إنهاء الامتحان وحفظ الدرجات'
                                     : 'Submit Grades'}
                             </button>
                         </div>

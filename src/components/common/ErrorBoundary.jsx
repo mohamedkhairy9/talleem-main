@@ -7,7 +7,7 @@ class ErrorBoundary extends React.Component {
         this.state = { hasError: false, error: null, errorInfo: null };
     }
 
-    static getDerivedStateFromError(error) {
+    static getDerivedStateFromError() {
         // تحديث الحالة عند حدوث خطأ
         return { hasError: true };
     }
@@ -47,7 +47,7 @@ class ErrorBoundary extends React.Component {
                             نعتذر عن الإزعاج. حدث خطأ غير متوقع في التطبيق.
                         </p>
 
-                        {process.env.NODE_ENV === 'development' && this.state.error && (
+                        {import.meta.env.DEV && this.state.error && (
                             <details className="mb-4 p-4 bg-red-50 rounded border border-red-200">
                                 <summary className="cursor-pointer font-semibold text-red-700 mb-2">
                                     تفاصيل الخطأ (Development Mode)

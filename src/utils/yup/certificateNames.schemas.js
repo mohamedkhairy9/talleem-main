@@ -20,6 +20,11 @@ export const certificateNamesSchema = yup.object({
             return typeof value === 'number' ? value > 0 : !isNaN(parseInt(value));
         })
         .required(t('validation.required')),
+
+    issued_from: yup
+        .string()
+        .required(t('validation.required'))
+        .oneOf(['high management', 'branch management', 'entity management'], t('validation.invalid_issued_from')),
     
     status: yup.boolean().required(t('validation.required'))
 });

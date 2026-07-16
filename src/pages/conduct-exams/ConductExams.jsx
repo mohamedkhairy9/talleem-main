@@ -14,6 +14,28 @@ import {
     normalizeEntityItem,
     normalizeExamItem
 } from './helpers';
+import { getExamStartAvailability } from './examTiming';
+
+const getScheduleState = (exam, now, isArabic) => {
+    const availability = getExamStartAvailability(exam, now);
+
+    if (availability.reason === 'not_started') {
+        return {
+            label: isArabic ? 'لم يبدأ بعد' : 'Not started yet',
+            className: 'bg-sky-50 text-sky-700 ring-1 ring-sky-200'
+        };
+    }
+    if (availability.reason === 'ended') {
+        return {
+            label: isArabic ? 'انتهى الموعد' : 'Ended',
+            className: 'bg-gray-100 text-gray-700 ring-1 ring-gray-200'
+        };
+    }
+    return {
+        label: isArabic ? 'متاح الآن' : 'Available now',
+        className: 'bg-emerald-50 text-emerald-700 ring-1 ring-emerald-200'
+    };
+};
 
 export default function ConductExams() {
     const navigate = useNavigate();
@@ -21,6 +43,7 @@ export default function ConductExams() {
     const isArabic = currentLocale === 'ar';
     const [selectedBranchId, setSelectedBranchId] = useState('');
     const [selectedEntityId, setSelectedEntityId] = useState('');
+    const [now, setNow] = useState(() => new Date());
 
     const branchesQuery = useConductExamBranchesQuery();
     const entitiesQuery = useConductExamEntitiesQuery(
@@ -56,6 +79,11 @@ export default function ConductExams() {
             setSelectedEntityId('');
         }
     }, [entities, selectedEntityId]);
+
+    useEffect(() => {
+        const timer = window.setInterval(() => setNow(new Date()), 30_000);
+        return () => window.clearInterval(timer);
+    }, []);
 
     if (branchesQuery.isLoading || entitiesQuery.isLoading || todayQuery.isLoading) {
         return <Loader />;
@@ -142,6 +170,14 @@ export default function ConductExams() {
                                 </p>
                             </div>
                             <div className="flex items-center gap-3">
+                                {(() => {
+                                    const scheduleState = getScheduleState(exam, now, isArabic);
+                                    return (
+                                        <span className={`rounded-full px-3 py-1 text-xs font-semibold ${scheduleState.className}`}>
+                                            {scheduleState.label}
+                                        </span>
+                                    );
+                                })()}
                                 <span className="rounded-full bg-gray-100 px-3 py-1 text-xs font-semibold text-gray-700">
                                     {exam.studentsCount} {isArabic ? 'طالب' : 'students'}
                                 </span>

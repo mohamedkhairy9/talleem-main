@@ -449,10 +449,22 @@ export const sideMenuTabs = [
         ]
     },
     {
-        titleKey: 'sidebar.certificates',
-        path: '/certificates',
+        titleKey: 'sidebar.certificates_management',
         icon: HiDocumentText,
-        requiredPermission: { resource: 'certificates', action: 'r' }
+        subMenu: [
+            {
+                titleKey: 'sidebar.certificates',
+                path: '/certificates',
+                icon: VscDebugBreakpointLog,
+                requiredPermission: { resource: 'certificates', action: 'r' }
+            },
+            {
+                titleKey: 'sidebar.certificate_names',
+                path: '/certification-names',
+                icon: VscDebugBreakpointLog,
+                requiredPermission: { resource: 'certificate_names', action: 'r' }
+            }
+        ]
     },
     {
         titleKey: 'sidebar.warning',

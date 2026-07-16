@@ -1,5 +1,6 @@
 import React from 'react';
-import { certificatesFilters, issuedFromOptions } from './configs';
+import { certificatesFilters } from './configs';
+import { issuedFromOptions } from '@/pages/certification-names/configs';
 import FilterSelect from '@/components/common/inputs/FilterSelect';
 import { generateOptions } from '@/utils/helpers/global.fns';
 import FilterText from '@/components/common/inputs/FilterText';

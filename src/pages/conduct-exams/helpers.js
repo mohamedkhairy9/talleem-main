@@ -256,6 +256,13 @@ export const normalizeExamDetails = response => {
 
 export const normalizeResultDetails = response => {
     const result = extractRecord(response) || {};
+    const scheduledExam = result?.scheduled_exam || {};
+    const resultSegments = [
+        result?.segments,
+        result?.student_exam_segments,
+        result?.exam_segments,
+        result?.result_segments
+    ].map(extractCollection).find(items => items.length) || [];
 
     return {
         id: result?.id,
@@ -264,23 +271,54 @@ export const normalizeResultDetails = response => {
         examType: firstNonEmpty(result?.exam_type, 'maqata3'),
         conductedBy: result?.conducted_by?.name || '-',
         studentName: firstNonEmpty(getLocalizedValue(result?.student?.name), result?.student?.name),
-        scheduledExam: result?.scheduled_exam || {},
-        segments: extractCollection(result?.segments).map((segment, index) => ({
-            id: firstNonEmpty(segment?.id, `segment-result-${index}`),
-            order: firstNonEmpty(segment?.order, index + 1),
-            juzNumber: firstNonEmpty(segment?.juz_number, '-'),
-            columnTotal: firstNonEmpty(segment?.column_total, '-'),
-            grades: extractCollection(segment?.grades).map((grade, gradeIndex) => ({
+        scheduledExam,
+        scheduledExamDate: getDisplayDate(scheduledExam?.exam_date || scheduledExam?.date),
+        segments: resultSegments.map((segment, index) => {
+            const rawGrades = [
+                segment?.grades,
+                segment?.criteria_grades,
+                segment?.evaluation_grades,
+                segment?.evaluations,
+                segment?.segment_grades,
+                segment?.details?.grades
+            ].map(extractCollection).find(items => items.length) || [];
+            const grades = rawGrades.map((grade, gradeIndex) => ({
                 id: firstNonEmpty(grade?.id, `${segment?.id}-${gradeIndex}`),
                 criteriaName: firstNonEmpty(
                     getLocalizedValue(grade?.criteria_name),
-                    grade?.criteria_name,
+                    getLocalizedValue(grade?.criterion?.name),
+                    getLocalizedValue(grade?.criteria?.name),
+                    getLocalizedValue(grade?.evaluation_criterion?.name),
                     grade?.name
                 ),
-                maxDegree: firstNonEmpty(grade?.max_degree, grade?.degree, '-'),
-                grade: firstNonEmpty(grade?.grade, '-')
-            }))
-        }))
+                maxDegree: firstNonEmpty(
+                    grade?.max_degree,
+                    grade?.degree,
+                    grade?.criterion?.degree,
+                    grade?.criteria?.degree,
+                    '-'
+                ),
+                grade: firstNonEmpty(grade?.grade, grade?.score, grade?.value, '-')
+            }));
+            const calculatedTotal = grades.reduce((total, grade) => {
+                const value = Number(grade.grade);
+                return Number.isFinite(value) ? total + value : total;
+            }, 0);
+            const suppliedTotal = firstNonEmpty(
+                segment?.total_grade,
+                segment?.total,
+                segment?.score,
+                segment?.column_total
+            );
+
+            return {
+                id: firstNonEmpty(segment?.id, segment?.segment_id, `segment-result-${index}`),
+                order: firstNonEmpty(segment?.order, segment?.segment_order, index + 1),
+                juzNumber: firstNonEmpty(segment?.juz_number, segment?.juz?.number, '-'),
+                columnTotal: Number(suppliedTotal) || calculatedTotal || 0,
+                grades
+            };
+        })
     };
 };
 

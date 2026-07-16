@@ -12,9 +12,26 @@ import i18next from 'i18next';
 const columnHelper = createColumnHelper();
 
 const getLocalizedValue = value => {
-    if (!value) return '';
-    if (typeof value === 'string') return value;
-    return value[i18next.language] || value.en || value.ar || '';
+    if (value === null || value === undefined) return '';
+    if (typeof value === 'string' || typeof value === 'number') {
+        return String(value);
+    }
+    if (Array.isArray(value)) {
+        return value.map(getLocalizedValue).filter(Boolean).join(', ');
+    }
+    if (typeof value === 'object') {
+        const locale = i18next.resolvedLanguage || i18next.language || 'en';
+        const localizedValue =
+            value[locale] ||
+            value[locale.split('-')[0]] ||
+            value.en ||
+            value.ar;
+
+        return localizedValue && localizedValue !== value
+            ? getLocalizedValue(localizedValue)
+            : '';
+    }
+    return '';
 };
 
 const getNotificationData = item => item?.data || item || {};

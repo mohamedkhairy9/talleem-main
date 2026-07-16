@@ -1,7 +1,7 @@
 import useRFH from '@/utils/hooks/global/useRFH';
 import { certificatesSchema as schema } from '@/utils/yup/certificates.schemas';
 import React, { useEffect, useMemo, useState } from 'react';
-import { certificatesFields, issuedFromOptions } from './configs';
+import { certificatesFields } from './configs';
 import InputRFH from '@/components/common/inputs/InputRFH';
 import Btn from '@/components/common/buttons/Btn';
 import { getNestedError } from '@/utils/helpers/getNestedError';
@@ -80,7 +80,6 @@ export default function FormCertificate({
 
     const enhancedOptions = useMemo(() => ({
         ...options,
-        issued_from: issuedFromOptions,
         branch_id: options.branch_id || [],
         // Empty when deps not met so we never call API without filters; async uses fieldParams when deps met
         entity_id: branchId && mainProgramId ? undefined : [],

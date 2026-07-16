@@ -58,6 +58,7 @@ export default function ConductExamDetails() {
         }
         return isArabic ? 'انتهى وقت الامتحان، ولا يمكن بدء تقييم جديد.' : 'The exam time has ended, so a new evaluation cannot be started.';
     }, [isArabic, startAvailability.isAvailable, startAvailability.reason]);
+    const isExamEnded = startAvailability.reason === 'ended';
 
     useEffect(() => {
         const timer = window.setInterval(() => setNow(new Date()), 30_000);
@@ -75,22 +76,40 @@ export default function ConductExamDetails() {
         startMutation.mutate(
             { scheduledExamId, studentId: selectedStudent.id, data: payload },
             {
-                onSuccess: response => navigate(
-                    `/conduct-exams/${scheduledExamId}/students/${selectedStudent.id}/conduct`,
-                    {
-                        state: {
-                            student: selectedStudent,
-                            exam,
-                            startData: response,
-                            selectedTemplate: templates.find(template => String(template.id) === String(payload.evaluation_parameter_id)),
-                            startPayload: payload
+                onSuccess: response => {
+                    const startData = response?.data?.data || response?.data || response;
+
+                    navigate(
+                        `/conduct-exams/${scheduledExamId}/students/${selectedStudent.id}/conduct`,
+                        {
+                            state: {
+                                student: selectedStudent,
+                                exam,
+                                startData,
+                                selectedTemplate: templates.find(template => String(template.id) === String(payload.evaluation_parameter_id)),
+                                startPayload: payload
+                            }
                         }
+                    );
+                },
+                onError: error => {
+                    const rawMessage = String(
+                        error?.rawMessage || error?.data?.message || error?.message || ''
+                    ).toLowerCase();
+                    const isCompletedExam = error?.status === 409 && rawMessage.includes('already completed');
+
+                    if (isCompletedExam) {
+                        navigate(`/conduct-exams/${scheduledExamId}/students/${selectedStudent.id}/result`, {
+                            state: { student: selectedStudent, exam }
+                        });
+                        return;
                     }
-                ),
-                onError: error => setPageError(
-                    getLocalizedErrorMessage(error) ||
-                    (isArabic ? 'فشل بدء الامتحان. حاول مرة أخرى.' : 'Failed to start the exam. Please try again.')
-                )
+
+                    setPageError(
+                        getLocalizedErrorMessage(error) ||
+                        (isArabic ? 'فشل بدء الامتحان. حاول مرة أخرى.' : 'Failed to start the exam. Please try again.')
+                    );
+                }
             }
         );
     };
@@ -156,7 +175,7 @@ export default function ConductExamDetails() {
                     <h2 className="text-lg font-semibold text-gray-900">{isArabic ? 'الطلاب' : 'Students'}</h2>
                 </div>
                 <div className="overflow-x-auto">
-                    <table className="w-full min-w-[720px] text-start text-sm">
+                    <table className="w-full min-w-[720px] table-fixed text-center text-sm">
                         <thead className="bg-gray-50 text-gray-600">
                             <tr>
                                 <th className="px-6 py-3 font-medium">{isArabic ? 'الطالب' : 'Student'}</th>
@@ -166,7 +185,25 @@ export default function ConductExamDetails() {
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-gray-100">
-                            {exam.students.map(student => (
+                            {exam.students.map(student => {
+                                const canStartStudent = student.statusKey !== 'submitted' && startAvailability.isAvailable;
+                                const canViewResult = student.statusKey === 'submitted';
+                                const actionLabel = canViewResult
+                                    ? (isArabic ? 'عرض الدرجات' : 'View Grades')
+                                    : student.statusKey === 'started'
+                                    ? (isExamEnded
+                                        ? (isArabic ? 'لم تُرسل الدرجات' : 'Grades not submitted')
+                                        : (isArabic ? 'بدء الامتحان' : 'Start Exam'))
+                                    : student.statusKey === 'submitted'
+                                    ? (isArabic ? 'تظهر الدرجات بعد انتهاء الموعد' : 'Grades appear after the exam ends')
+                                    : (isArabic ? 'بدء الامتحان' : 'Start Exam');
+                                const actionTitle = canStartStudent || canViewResult
+                                    ? undefined
+                                    : student.statusKey === 'not_started'
+                                    ? startAvailabilityMessage
+                                    : actionLabel;
+
+                                return (
                                 <tr key={student.id}>
                                     <td className="px-6 py-4 font-medium text-gray-900">{student.displayName || '-'}</td>
                                     <td className="px-6 py-4 text-gray-600">{student.juzNumbers?.join(', ') || '-'}</td>
@@ -176,22 +213,29 @@ export default function ConductExamDetails() {
                                         </span>
                                     </td>
                                     <td className="px-6 py-4">
-                                        {student.statusKey === 'submitted' ? (
-                                            <button type="button" onClick={() => navigate(`/conduct-exams/${scheduledExamId}/students/${student.id}/result`)} className="rounded-lg border border-primary px-3 py-2 text-xs font-semibold text-primary">
-                                                {isArabic ? 'عرض النتيجة' : 'View Result'}
-                                            </button>
-                                        ) : student.statusKey === 'started' ? (
-                                            <button type="button" disabled={!startAvailability.isAvailable} title={!startAvailability.isAvailable ? startAvailabilityMessage : undefined} onClick={() => setSelectedStudent(student)} className="rounded-lg border border-primary px-3 py-2 text-xs font-semibold text-primary disabled:cursor-not-allowed disabled:opacity-40">
-                                                {isArabic ? 'استئناف التقييم' : 'Resume Evaluation'}
-                                            </button>
-                                        ) : (
-                                            <button type="button" disabled={!startAvailability.isAvailable} title={!startAvailability.isAvailable ? startAvailabilityMessage : undefined} onClick={() => setSelectedStudent(student)} className="rounded-lg bg-primary px-3 py-2 text-xs font-semibold text-white disabled:cursor-not-allowed disabled:opacity-40">
-                                                {isArabic ? 'بدء الامتحان' : 'Start Exam'}
-                                            </button>
-                                        )}
+                                        <button
+                                            type="button"
+                                            disabled={!canStartStudent && !canViewResult}
+                                            title={actionTitle}
+                                            onClick={() => {
+                                                if (canViewResult) {
+                                                    navigate(`/conduct-exams/${scheduledExamId}/students/${student.id}/result`);
+                                                } else if (canStartStudent) {
+                                                    setSelectedStudent(student);
+                                                }
+                                            }}
+                                            className={`rounded-lg px-3 py-2 text-xs font-semibold disabled:cursor-not-allowed disabled:opacity-40 ${
+                                                canViewResult
+                                                    ? 'border border-primary text-primary'
+                                                    : 'bg-primary text-white'
+                                            }`}
+                                        >
+                                            {actionLabel}
+                                        </button>
                                     </td>
                                 </tr>
-                            ))}
+                                );
+                            })}
                             {!exam.students.length ? <tr><td colSpan="4" className="px-6 py-8 text-center text-gray-500">{isArabic ? 'لا يوجد طلاب مسجلون لهذا الامتحان.' : 'No students are assigned to this exam.'}</td></tr> : null}
                         </tbody>
                     </table>

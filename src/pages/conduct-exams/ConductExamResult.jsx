@@ -1,28 +1,33 @@
 import React, { useMemo } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import Loader from '@/components/common/Loader';
+import ErrorBoundary from '@/components/common/ErrorBoundary';
 import useLocale from '@/utils/hooks/global/useLocale';
 import { useConductExamStudentResultQuery } from '@/api/hooks/useConductExams';
 import { formatTimeRange, normalizeResultDetails } from './helpers';
 
-export default function ConductExamResult() {
+function ConductExamResultContent() {
     const navigate = useNavigate();
+    const location = useLocation();
     const { scheduledExamId, studentId } = useParams();
     const { currentLocale } = useLocale();
     const isArabic = currentLocale === 'ar';
 
     const resultQuery = useConductExamStudentResultQuery(scheduledExamId, studentId, {
-        enabled: !!scheduledExamId && !!studentId
+        enabled: !!scheduledExamId && !!studentId && !location.state?.resultData
     });
 
     const result = useMemo(
-        () => (resultQuery.data ? normalizeResultDetails(resultQuery.data) : null),
-        [resultQuery.data]
+        () => {
+            const source = location.state?.resultData || resultQuery.data;
+            return source ? normalizeResultDetails(source) : null;
+        },
+        [location.state?.resultData, resultQuery.data]
     );
 
     const handleBack = () => navigate('/conduct-exams');
 
-    if (resultQuery.isLoading) {
+    if (resultQuery.isLoading && !location.state?.resultData) {
         return <Loader />;
     }
 
@@ -132,7 +137,7 @@ export default function ConductExamResult() {
                                 <span className="font-semibold text-gray-900">
                                     {isArabic ? 'التاريخ:' : 'Date:'}
                                 </span>{' '}
-                                {result.scheduledExam?.exam_date || '-'}
+                                {result.scheduledExamDate || '-'}
                             </p>
                             <p>
                                 <span className="font-semibold text-gray-900">
@@ -215,5 +220,13 @@ export default function ConductExamResult() {
                 </section>
             </div>
         </div>
+    );
+}
+
+export default function ConductExamResult() {
+    return (
+        <ErrorBoundary>
+            <ConductExamResultContent />
+        </ErrorBoundary>
     );
 }

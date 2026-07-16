@@ -20,13 +20,36 @@ const normalizeJuzNumbers = values => [...new Set(
 const valueOf = (segment, camelCase, snakeCase, fallback = null) =>
     segment?.[camelCase] ?? segment?.[snakeCase] ?? fallback;
 
+const getSubmissionSegmentId = (segment, fallback = null) =>
+    valueOf(
+        segment,
+        'submissionSegmentId',
+        'submission_segment_id',
+        valueOf(
+            segment,
+            'quranExamSegmentItemId',
+            'quran_exam_segment_item_id',
+            valueOf(
+                segment,
+                'examSegmentItemId',
+                'exam_segment_item_id',
+                segment?.quran_exam_segment_item?.id ??
+                    segment?.exam_segment_item?.id ??
+                    segment?.exam_segment?.item?.id ??
+                    segment?.item?.id ??
+                    segment?.segment?.id ??
+                    valueOf(segment, 'segmentId', 'segment_id', segment?.id ?? fallback)
+            )
+        )
+    );
+
 const normalizeSegment = (segment, index, fallbackJuz) => {
     const juzNumber = Number(valueOf(segment, 'juzNumber', 'juz_number', fallbackJuz)) || fallbackJuz;
     const id = valueOf(segment, 'id', 'segment_id', valueOf(segment, 'quranExamSegmentItemId', 'quran_exam_segment_item_id', juzNumber ?? index + 1));
 
     return {
         id,
-        submissionSegmentId: valueOf(segment, 'submissionSegmentId', 'submission_segment_id', valueOf(segment, 'quranExamSegmentItemId', 'quran_exam_segment_item_id', id)),
+        submissionSegmentId: getSubmissionSegmentId(segment, id),
         order: valueOf(segment, 'order', 'order', index + 1),
         juzNumber,
         firstVerseKey: valueOf(segment, 'firstVerseKey', 'first_verse_key'),
@@ -70,4 +93,4 @@ export const getExamConductionSegments = ({ examType, rawSegments, studentJuzNum
 };
 
 export const getExamConductionSubmissionSegmentId = segment =>
-    segment?.submissionSegmentId ?? segment?.id ?? null;
+    getSubmissionSegmentId(segment, segment?.id ?? null);

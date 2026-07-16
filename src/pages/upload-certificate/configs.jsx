@@ -35,22 +35,7 @@ export const certificatesColumns = [
     })
 ];
 
-// Options for issued_from - always send English value
-export const issuedFromOptions = [
-    { label: { en: 'Main Administration', ar: 'الإدارة العامة' }, value: 'high management' },
-    { label: { en: 'Branch Management', ar: 'إدارة الفرع' }, value: 'branch management' },
-    { label: { en: 'Entity Management', ar: 'إدارة الجهة' }, value: 'entity management' }
-];
-
 export const certificatesFields = [
-    {
-        name: 'issued_from',
-        label: 'validation.issued_from.label',
-        type: 'select',
-        placeholder: 'validation.issued_from.placeholder',
-        editMode: true,
-        viewMode: true
-    },
     {
         name: 'main_program_id',
         label: 'validation.main_program_id.label',
@@ -104,22 +89,6 @@ export const certificatesFields = [
         max: new Date().toISOString().split('T')[0]
     },
     {
-        name: 'description.en',
-        label: 'validation.description.label.en',
-        type: 'textarea',
-        placeholder: 'validation.description.placeholder.en',
-        editMode: true,
-        viewMode: true
-    },
-    {
-        name: 'description.ar',
-        label: 'validation.description.label.ar',
-        type: 'textarea',
-        placeholder: 'validation.description.placeholder.ar',
-        editMode: true,
-        viewMode: true
-    },
-    {
         name: 'file',
         label: 'validation.file.label',
         type: 'file',
@@ -158,17 +127,12 @@ export const filtersDefaultValues = {
 };
 
 export const certificatesDefaultValues = {
-    issued_from: '',
     main_program_id: '',
     branch_id: '',
     entity_id: '',
     student_id: '',
     certificate_name_id: '',
     issued_date: '',
-    description: {
-        en: '',
-        ar: ''
-    },
     is_active: 1,
     file: null
 };

@@ -11,6 +11,29 @@ import ViewNotification from './ViewNotification';
 import i18next from 'i18next';
 import { getOriginalObject } from '@/utils/helpers/global.fns';
 
+const getDisplayText = value => {
+    if (value === null || value === undefined) return '';
+    if (typeof value === 'string' || typeof value === 'number') {
+        return String(value);
+    }
+    if (Array.isArray(value)) {
+        return value.map(getDisplayText).filter(Boolean).join(', ');
+    }
+    if (typeof value === 'object') {
+        const locale = i18next.resolvedLanguage || i18next.language || 'en';
+        const localizedValue =
+            value[locale] ||
+            value[locale.split('-')[0]] ||
+            value.en ||
+            value.ar;
+
+        return localizedValue && localizedValue !== value
+            ? getDisplayText(localizedValue)
+            : '';
+    }
+    return '';
+};
+
 const extractNotificationsCollection = response => {
     if (Array.isArray(response)) return response;
     if (Array.isArray(response?.data)) return response.data;
@@ -61,15 +84,7 @@ export default function Notifications() {
 
     const tableData = notificationsList.map(item => ({
         ...item,
-        title:
-            item?.data?.title?.[i18next.language] ||
-            item?.data?.title?.ar ||
-            item?.data?.title?.en ||
-            item?.title?.[i18next.language] ||
-            item?.title?.ar ||
-            item?.title?.en ||
-            item?.title ||
-            'N/A'
+        title: getDisplayText(item?.data?.title) || getDisplayText(item?.title) || 'N/A'
     }));
 
     return (

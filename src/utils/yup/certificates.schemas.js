@@ -2,11 +2,6 @@ import * as yup from 'yup';
 import { t } from 'i18next';
 
 export const certificatesSchema = yup.object({
-    issued_from: yup
-        .string()
-        .required(t('validation.required'))
-        .oneOf(['high management', 'branch management', 'entity management'], t('validation.invalid_issued_from')),
-    
     // Filter fields - not required in submission but needed for form
     main_program_id: yup
         .number()
@@ -34,11 +29,6 @@ export const certificatesSchema = yup.object({
         .required(t('validation.required'))
         .positive(t('validation.required')),
 
-    description: yup.object({
-        en: yup.string().required(t('validation.required')),
-        ar: yup.string().required(t('validation.required'))
-    }),
-    
     issued_date: yup
         .string()
         .required(t('validation.required'))

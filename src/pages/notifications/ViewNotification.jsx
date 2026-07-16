@@ -7,9 +7,23 @@ import { formatDateForDisplay } from '@/utils/helpers/dateObjectHelpers';
 const FALLBACK = 'N/A';
 
 function extractValue(value, locale) {
-    if (!value) return null;
-    if (typeof value === 'string' || typeof value === 'number') return value;
-    return value?.[locale] || value?.en || value?.ar || null;
+    if (value === null || value === undefined) return null;
+    if (typeof value === 'string' || typeof value === 'number') {
+        return String(value);
+    }
+    if (Array.isArray(value)) {
+        return value.map(item => extractValue(item, locale)).filter(Boolean).join(', ');
+    }
+
+    const localizedValue =
+        value?.[locale] ||
+        value?.[locale?.split('-')[0]] ||
+        value?.en ||
+        value?.ar;
+
+    return localizedValue && localizedValue !== value
+        ? extractValue(localizedValue, locale)
+        : null;
 }
 
 function formatLabel(value) {

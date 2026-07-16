@@ -1,7 +1,7 @@
 import useRFH from '@/utils/hooks/global/useRFH';
 import { certificateNamesSchema as schema } from '@/utils/yup/certificateNames.schemas';
-import React from 'react';
-import { certificateNamesFields } from './configs';
+import React, { useMemo } from 'react';
+import { certificateNamesFields, issuedFromOptions } from './configs';
 import InputRFH from '@/components/common/inputs/InputRFH';
 import Btn from '@/components/common/buttons/Btn';
 import { getNestedError } from '@/utils/helpers/getNestedError';
@@ -25,9 +25,15 @@ export default function FormCertificateName({
                 en: ''
             },
             main_program_id: '',
+            issued_from: '',
             status: true
         }
     });
+
+    const enhancedOptions = useMemo(() => ({
+        ...options,
+        issued_from: issuedFromOptions
+    }), [options]);
 
     function onSubmit(data) {
         console.log('data', data);
@@ -63,7 +69,7 @@ export default function FormCertificateName({
                             disabled={viewMode}
                             label={field.label}
                             name={field.name}
-                            options={generateOptions(options?.[field.name])}
+                            options={generateOptions(enhancedOptions[field.name])}
                             defaultValue={
                                 field.name.includes('.')
                                     ? field.name.split('.').reduce((obj, key) => obj?.[key], oldData) || field.defaultValue
