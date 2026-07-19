@@ -94,14 +94,15 @@ export const studentsFields = [
     },
 
     {
-        name: 'entity_id',
-        label: 'validation.entity_id.label',
+        name: 'entity_ids',
+        label: 'validation.entity_ids.label',
         type: 'select',
-        placeholder: 'validation.entity_id.placeholder',
+        placeholder: 'validation.entity_ids.placeholder',
         editMode: true,
         viewMode: true,
         conditional: true,
         info: 'info.entity',
+        isMulti: true,
         showWhen: { main_program_id: [1, 2] }
     },
     {
@@ -357,6 +358,7 @@ export const studentsFields = [
 export const studentsDefaultValues = {
     status: 1,
     has_medical_issues: 0,
+    entity_ids: [],
     name: {
         en: '',
         ar: ''

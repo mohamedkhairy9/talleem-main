@@ -16,11 +16,16 @@ export const entityManagersSchema = yup.object({
                 .max(100, t('validation.name.ar_max'))
         })
         .required(t('validation.required')),
-    entity_id: yup
-        .number()
-        .required(t('validation.required'))
-        .integer(t('validation.entity_id.integer'))
-        .min(1, t('validation.entity_id.min')),
+    entity_ids: yup
+        .array()
+        .of(
+            yup
+                .number()
+                .integer(t('validation.entity_id.integer'))
+                .min(1, t('validation.entity_id.min'))
+        )
+        .min(1, t('validation.at_least_one'))
+        .required(t('validation.required')),
     nationality_id: yup
         .number()
         .required(t('validation.required'))

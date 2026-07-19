@@ -149,12 +149,13 @@ export const teachersFields = [
         viewMode: true
     },
     {
-        name: 'entity_id',
-        label: 'validation.entity_id.label',
+        name: 'entity_ids',
+        label: 'validation.entity_ids.label',
         type: 'select',
-        placeholder: 'validation.entity_id.placeholder',
+        placeholder: 'validation.entity_ids.placeholder',
         editMode: true,
-        viewMode: true
+        viewMode: true,
+        isMulti: true
     },
 
     {
@@ -307,7 +308,8 @@ export const teachersDefaultValues = {
         ar: ''
     },
     gender: '',
-    registration_date: ''
+    registration_date: '',
+    entity_ids: []
 };
 
 export const teachersFilters = [

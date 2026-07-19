@@ -118,11 +118,16 @@ export const studentsSchema = (parentInfoAgeThreshold = DEFAULT_PARENT_INFO_AGE_
         .integer(t('validation.branch_id.integer'))
         .min(1, t('validation.branch_id.min')),
     
-    entity_id: yup
-        .number()
-        .required(t('validation.required'))
-        .integer(t('validation.entity_id.integer'))
-        .min(1, t('validation.entity_id.min')),
+    entity_ids: yup
+        .array()
+        .of(
+            yup
+                .number()
+                .integer(t('validation.entity_id.integer'))
+                .min(1, t('validation.entity_id.min'))
+        )
+        .min(1, t('validation.at_least_one'))
+        .required(t('validation.required')),
     
     status: yup.boolean().required(t('validation.required')),
     

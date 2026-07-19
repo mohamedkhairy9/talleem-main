@@ -30,7 +30,7 @@ const yesNoOptions = [
 export default function EditStudent({ onClose, oldData }) {
     console.log("old data: ", oldData);
     const { mutate, isPending } = useUpdateStudentMutation();
-    const { data: studentDetailsData } = useStudentQuery(oldData?.id, {
+    const { data: studentDetailsData, isLoading: studentDetailsLoading } = useStudentQuery(oldData?.id, {
         enabled: !!oldData?.id
     });
 
@@ -94,6 +94,7 @@ export default function EditStudent({ onClose, oldData }) {
     ]);
 
     const isLoading =
+        studentDetailsLoading ||
         branchesLoading ||
         mainProgramsLoading ||
         educationProgramEntityTypesLoading ||
@@ -108,13 +109,25 @@ export default function EditStudent({ onClose, oldData }) {
     if (isLoading) return <Loader />;
 
     const studentDetails = studentDetailsData?.data || studentDetailsData || oldData;
+    const studentEntityIds = Array.isArray(studentDetails?.entity_ids) && studentDetails.entity_ids.length > 0
+        ? studentDetails.entity_ids.map(entity => entity?.id ?? entity?.value ?? entity)
+        : Array.isArray(studentDetails?.entities) && studentDetails.entities.length > 0
+            ? studentDetails.entities.map(entity => entity?.id ?? entity?.value ?? entity)
+            : oldData?.entity_ids || (oldData?.entity_id != null ? [oldData.entity_id] : []);
+    const studentEntities = Array.isArray(studentDetails?.entities) && studentDetails.entities.length > 0
+        ? studentDetails.entities
+        : oldData?.entities || (oldData?.entity ? [oldData.entity] : []);
 
     return (
         <Modal onClose={onClose} size="5xl">
             <ModalHeader onClose={onClose} header="students.edit" />
             <FormStudent
                 onClose={onClose}
-                oldData={oldData}
+                oldData={{
+                    ...oldData,
+                    entity_ids: studentEntityIds,
+                    entities: studentEntities
+                }}
                 activeHalaqaRecord={studentDetails}
                 editMode={true}
                 mutate={mutate}

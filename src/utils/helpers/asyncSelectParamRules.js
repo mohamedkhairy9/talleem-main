@@ -2,6 +2,7 @@ export const SKIP_REQUIRED_PARAMS_KEY = 'skipRequiredParams';
 
 const REQUIRED_PARAM_KEYS_BY_FIELD = {
     entity_id: ['branch_id'],
+    entity_ids: ['branch_id'],
     student_id: ['entity_id'],
     teacher_id: ['entity_id'],
     warning_reason_id: ['main_program_id']
@@ -21,7 +22,7 @@ export function hasRequiredParams(fieldName, params = {}) {
     if (!requiredParamKeys?.length) return true;
 
     // Employee form can load entities for one branch or many branches.
-    if (fieldName === 'entity_id') {
+    if (fieldName === 'entity_id' || fieldName === 'entity_ids') {
         const hasSingleBranch = params.branch_id !== undefined && params.branch_id !== null && params.branch_id !== '';
         const hasMultipleBranches = Array.isArray(params.branches_id) && params.branches_id.length > 0;
         return hasSingleBranch || hasMultipleBranches;

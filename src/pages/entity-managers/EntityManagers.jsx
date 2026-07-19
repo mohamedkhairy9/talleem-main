@@ -30,22 +30,35 @@ export default function EntityManagers() {
         entity: item.entity?.name?.[i18next.language],
     }));
 
-    const formData = data?.data?.map(({ city, branch, entity, main_program, nationality, user, major, major_id, date_of_birth, created_at, updated_at, ...item }) => ({
-        ...item,
-        entity_id: entity?.id,
-        nationality_id: nationality?.id,
-        nationality: nationality, // Keep nationality object for form options
-        branch_id: branch?.id || entity?.branch?.id,
-        city_id: city?.id,
-        user_id: user?.id,
-        date_of_birth: onlyDate(date_of_birth),
-        main_program_id: main_program?.id,
-        status: user?.status ?? true,
-        // major_id can be either an object with id or already an id
-        major_id: major?.id || (major_id?.id !== undefined ? major_id.id : major_id),
-        // academic_qualification_id is already a number in the API response, keep it as is
-        academic_qualification_id: item.academic_qualification_id
-    }));
+    const formData = data?.data?.map(({ city, branch, entity, entities, entity_ids, main_program, nationality, user, major, major_id, date_of_birth, created_at, updated_at, ...item }) => {
+        const assignedEntityIds = Array.isArray(entity_ids) && entity_ids.length > 0
+            ? entity_ids.map(item => item?.id ?? item?.value ?? item)
+            : Array.isArray(entities) && entities.length > 0
+                ? entities.map(item => item?.id ?? item?.value ?? item)
+                : entity?.id != null
+                    ? [entity.id]
+                    : [];
+
+        return {
+            ...item,
+            entity_id: assignedEntityIds[0],
+            entity_ids: assignedEntityIds,
+            entity: entity,
+            entities: Array.isArray(entities) ? entities : entity ? [entity] : [],
+            nationality_id: nationality?.id,
+            nationality: nationality, // Keep nationality object for form options
+            branch_id: branch?.id || entity?.branch?.id,
+            city_id: city?.id,
+            user_id: user?.id,
+            date_of_birth: onlyDate(date_of_birth),
+            main_program_id: main_program?.id,
+            status: user?.status ?? true,
+            // major_id can be either an object with id or already an id
+            major_id: major?.id || (major_id?.id !== undefined ? major_id.id : major_id),
+            // academic_qualification_id is already a number in the API response, keep it as is
+            academic_qualification_id: item.academic_qualification_id
+        };
+    });
 
     return (
         <div>

@@ -118,12 +118,22 @@ export default function Teachers() {
             }
         }
 
+        const entityIds = Array.isArray(item.entity_ids) && item.entity_ids.length > 0
+            ? item.entity_ids.map(entity => entity?.id ?? entity?.value ?? entity)
+            : Array.isArray(item.entities) && item.entities.length > 0
+                ? item.entities.map(entity => entity?.id ?? entity?.value ?? entity)
+                : item.entity?.id != null
+                    ? [item.entity.id]
+                    : [];
+
         return {
             ...item,
             user_id: item.user?.id,
             branch_id: item.branch?.id,
             main_program_id: item.main_program?.id,
-            entity_id: item.entity != null ? Number(item.entity.id) : undefined,
+            entity_id: entityIds[0] != null ? Number(entityIds[0]) : undefined,
+            entity_ids: entityIds,
+            entities: Array.isArray(item.entities) ? item.entities : item.entity ? [item.entity] : [],
             entity: item.entity ?? undefined,
             major_id: item.major?.id,
             nationality_id: item.nationality != null ? Number(item.nationality.id) : undefined,

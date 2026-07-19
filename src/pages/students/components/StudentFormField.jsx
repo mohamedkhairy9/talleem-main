@@ -126,8 +126,8 @@ export default function StudentFormField({
         );
     }
 
-    // Special handling for entity field
-    if (field.name === 'entity_id') {
+    // Special handling for entities field
+    if (field.name === 'entity_ids') {
         const isEntityDisabled =
             !branchId || !mainProgramId || viewMode || segmentationChangeLocked;
         // Get loadOptions and defaultOptions from hook (passed via enhancedOptions or as separate props)
@@ -155,6 +155,7 @@ export default function StudentFormField({
                     loadOptions={entityLoadOptions}
                     defaultOptions={entityDefaultOptions}
                     oldData={oldData}
+                    isMulti={field.isMulti}
                     fieldParams={{}}
                 />
             </div>
@@ -208,7 +209,7 @@ export default function StudentFormField({
                     disabled={
                         viewMode ||
                         (segmentationChangeLocked &&
-                            ['main_program_id', 'branch_id', 'entity_id'].includes(field.name))
+                            ['main_program_id', 'branch_id', 'entity_ids'].includes(field.name))
                     }
                     label={field.label}
                     name={field.name}

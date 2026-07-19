@@ -69,6 +69,18 @@ const extractMemorizationEntityTypeData = (oldData) => {
     return { id: memorizationEntityType, name: null };
 };
 
+const getTeacherEntityIds = teacher => {
+    const values = Array.isArray(teacher?.entity_ids) && teacher.entity_ids.length > 0
+        ? teacher.entity_ids
+        : Array.isArray(teacher?.entities) && teacher.entities.length > 0
+            ? teacher.entities
+            : teacher?.entity ?? teacher?.entity_id ?? [];
+
+    return (Array.isArray(values) ? values : [values])
+        .map(value => value?.id ?? value?.value ?? value)
+        .filter(value => value !== null && value !== undefined && value !== '');
+};
+
 export default function FormTeacher({
     onClose,
     oldData,
@@ -136,10 +148,12 @@ export default function FormTeacher({
 
     // Prepare default values
     const defaultValues = useMemo(() => {
+        const entityIds = getTeacherEntityIds(oldData);
         const baseValues = {
             ...oldData,
             dob: onlyDate(oldData?.dob),
-            registration_date: onlyDate(oldData?.registration_date)
+            registration_date: onlyDate(oldData?.registration_date),
+            entity_ids: entityIds
         };
 
         // In edit/view mode, set the classification and category
@@ -170,7 +184,8 @@ export default function FormTeacher({
     // Watch values
     const branchId = watch('branch_id');
     const mainProgramId = watch('main_program_id');
-    const entityId = watch('entity_id');
+    const entityIds = watch('entity_ids');
+    const entityId = Array.isArray(entityIds) ? entityIds[0] : entityIds;
     const entryType = watch('entry_type');
     const activeHalaqaInfo = useMemo(
         () => getActiveHalaqaInfo(activeHalaqaRecord || oldData),
@@ -205,61 +220,11 @@ export default function FormTeacher({
         return null;
     }, [entityId, mainProgramId, options.entity_id]);
 
-    // Filter entities based on main program AND branch
-    const filteredEntities = useMemo(() => {
-        console.log('=== FILTERING ENTITIES (TEACHERS) ===');
-        console.log('mainProgramId:', mainProgramId);
-        console.log('branchId:', branchId);
-
-        if (!mainProgramId || !options.entity_id) {
-            console.log('No program selected');
-            return [];
-        }
-
-        if (!branchId) {
-            console.log('No branch selected - entities disabled');
-            return [];
-        }
-
-        const entities = options.entity_id;
-
-        const filtered = entities.filter(entity => {
-            const matchesProgram = entity.main_program?.id === Number(mainProgramId);
-
-            let matchesBranch = false;
-
-            if (entity.branch_id) {
-                matchesBranch = entity.branch_id === Number(branchId);
-            } else if (entity.branch?.id) {
-                matchesBranch = entity.branch.id === Number(branchId);
-            } else if (Array.isArray(entity.branches)) {
-                matchesBranch = entity.branches.some(branch =>
-                    branch.id === Number(branchId) || branch === Number(branchId)
-                );
-            }
-
-            console.log(`Entity ${entity.id} (${entity.name?.[lang]}):`, {
-                matchesProgram,
-                matchesBranch,
-                included: matchesProgram && matchesBranch
-            });
-
-            return matchesProgram && matchesBranch;
-        });
-
-        // In view/edit mode, ensure the teacher's current entity is in the list so the select displays it
-        if ((editMode || viewMode) && oldData?.entity && oldData?.entity_id != null) {
-            const hasCurrentEntity = filtered.some(
-                e => Number(e.id) === Number(oldData.entity_id)
-            );
-            if (!hasCurrentEntity) {
-                return [...filtered, oldData.entity];
-            }
-        }
-
-        console.log('Final filtered entities:', filtered.length);
-        return filtered;
-    }, [mainProgramId, branchId, options.entity_id, lang, editMode, viewMode, oldData]);
+    // Keep all entities available so a teacher can be assigned across branches.
+    const availableEntities = useMemo(
+        () => (Array.isArray(options.entity_id) ? options.entity_id : []),
+        [options.entity_id]
+    );
 
     // Filter branches based on selected city
     // COMMENTED OUT: Branch filtering by city removed - may revert if needed
@@ -304,7 +269,7 @@ export default function FormTeacher({
     useEffect(() => {
         if (mainProgramId && mainProgramId !== oldData?.main_program_id) {
             console.log('Main program changed, resetting fields');
-            setValue('entity_id', '');
+            setValue('entity_ids', []);
             setValue('entity_category_id', '');
             setValue('education_program_entity_type_classification', '');
         }
@@ -326,7 +291,7 @@ export default function FormTeacher({
     useEffect(() => {
         if (branchId && branchId !== oldData?.branch_id) {
             console.log('Branch changed, resetting entity');
-            setValue('entity_id', '');
+            setValue('entity_ids', []);
             setValue('entity_category_id', '');
             setValue('education_program_entity_type_classification', '');
         }
@@ -335,8 +300,8 @@ export default function FormTeacher({
     // Enhanced options with filtered data
     const enhancedOptions = useMemo(() => ({
         ...options,
-        entity_id: filteredEntities
-    }), [options, filteredEntities]);
+        entity_ids: availableEntities
+    }), [options, availableEntities]);
 
     // Get display value for category
     const categoryDisplayValue = useMemo(() => {
@@ -378,7 +343,7 @@ export default function FormTeacher({
                 oldData,
                 currentMainProgramId: data.main_program_id,
                 currentBranchId: data.branch_id,
-                currentEntityId: data.entity_id,
+                currentEntityId: Array.isArray(data.entity_ids) ? data.entity_ids[0] : data.entity_ids,
                 currentEntityCategoryId: data.entity_category_id
             })
         ) {
@@ -390,6 +355,10 @@ export default function FormTeacher({
             education_program_entity_type_classification: _classificationHelper,
             ...submitData
         } = data;
+
+        // The API uses entity_ids for the complete assignment and entity_id as its primary entity.
+        // Always derive the primary value from the current multi-select selection.
+        delete submitData.entity_id;
 
         // Handle profile image
         if (editMode && !profileImageChanged) {
@@ -491,13 +460,13 @@ export default function FormTeacher({
 
         if (
             segmentationChangeLocked &&
-            ['main_program_id', 'branch_id', 'entity_id'].includes(fieldName)
+            ['main_program_id', 'branch_id', 'entity_ids'].includes(fieldName)
         ) {
             return true;
         }
 
         // Entity field disabled until branch and program are selected
-        if (fieldName === 'entity_id' && (!branchId || !mainProgramId)) {
+        if (fieldName === 'entity_ids' && (!branchId || !mainProgramId)) {
             return true;
         }
 
@@ -621,8 +590,8 @@ export default function FormTeacher({
                         );
                     }
 
-                    // Special handling for entity field - disabled until branch and program are selected; pass fieldParams so async loadOptions calls entity API with branch_id + main_program_id
-                    if (field.name === 'entity_id') {
+                    // Special handling for entities field - disabled until branch and program are selected.
+                    if (field.name === 'entity_ids') {
                         const isEntityDisabled =
                             !branchId || !mainProgramId || viewMode || segmentationChangeLocked;
 
@@ -641,14 +610,10 @@ export default function FormTeacher({
                                     info={field.info}
                                     options={generateOptions(enhancedOptions[field.name] || [])}
                                     defaultValue={defaultValues[field.name] || field.defaultValue}
+                                    isMulti={field.isMulti}
+                                    isAsync={false}
                                     required={isFieldRequired(schema, field.name)}
                                     oldData={oldData}
-                                    fieldParams={{
-                                        entity_id: {
-                                            branch_id: branchId ?? oldData?.branch_id,
-                                            main_program_id: mainProgramId ?? oldData?.main_program_id
-                                        }
-                                    }}
                                 />
                             </div>
                         );

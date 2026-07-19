@@ -17,6 +17,19 @@ import WarningModal from '@/components/common/form/WarningModal';
 import { useEntitiesQuery } from '@/api/hooks/useEntities';
 import { ASYNC_SELECT_PAGE_SIZE } from '@/utils/helpers/asyncSelectHelpers';
 import { useRequiredDocumentsHint } from '@/api/hooks/useRequiredDocumentsHint';
+import { withEntityAssignmentPayload } from '@/utils/helpers/entityAssignmentPayload';
+
+const getEntityManagerEntityIds = manager => {
+    const values = Array.isArray(manager?.entity_ids) && manager.entity_ids.length > 0
+        ? manager.entity_ids
+        : Array.isArray(manager?.entities) && manager.entities.length > 0
+            ? manager.entities
+            : manager?.entity ?? manager?.entity_id ?? [];
+
+    return (Array.isArray(values) ? values : [values])
+        .map(value => value?.id ?? value?.value ?? value)
+        .filter(value => value !== null && value !== undefined && value !== '');
+};
 
 export default function FormEntityManager({
     onClose,
@@ -38,12 +51,14 @@ export default function FormEntityManager({
     const [pendingSubmissionData, setPendingSubmissionData] = useState(null);
     const [existingManagerName, setExistingManagerName] = useState('');
 
+    const defaultEntityIds = useMemo(() => getEntityManagerEntityIds(oldData), [oldData]);
     const { register, errors, handleSubmit, control, setValue, watch } = useRFH({
         schema,
         defaultValues: {
             ...oldData,
             date_of_birth: onlyDate(oldData?.date_of_birth),
             name: oldData?.name || { en: '', ar: '' },
+            entity_ids: defaultEntityIds,
             // Explicitly set nationality_id from oldData to ensure it's set
             nationality_id: oldData?.nationality_id || oldData?.nationality?.id || ''
         }
@@ -53,7 +68,7 @@ export default function FormEntityManager({
     const cityId = watch('city_id');
     const branchId = watch('branch_id');
     const mainProgramId = watch('main_program_id');
-    const entityId = watch('entity_id');
+    const entityIds = watch('entity_ids');
 
     const { data: requiredDocsData } = useRequiredDocumentsHint('entity', mainProgramId);
     const filesSupportingHint = useMemo(() => {
@@ -86,32 +101,36 @@ export default function FormEntityManager({
         { enabled: shouldEnableEntitiesQuery }
     );
 
-    // Include selected entity from oldData in edit/view mode
+    // Include all assigned entities from oldData in edit/view mode.
     const filteredEntities = useMemo(() => {
         const entities = entitiesData?.data || [];
-        
-        // In view/edit mode, include selected entity even if not in fetched results
-        if ((viewMode || editMode) && oldData?.entity_id && options?.entity_id) {
-            const selectedEntity = options.entity_id.find(e => e.id === oldData.entity_id);
-            if (selectedEntity && !entities.some(e => e.id === selectedEntity.id)) {
-                return [selectedEntity, ...entities];
-            }
+
+        if (!viewMode && !editMode) {
+            return entities;
         }
-        
-        return entities;
-    }, [entitiesData, viewMode, editMode, oldData?.entity_id, options?.entity_id]);
+
+        const selectedEntityIds = getEntityManagerEntityIds(oldData);
+        const selectedEntities = (options?.entity_id || []).filter(entity =>
+            selectedEntityIds.some(id => Number(id) === Number(entity.id))
+        );
+        const missingSelectedEntities = selectedEntities.filter(selectedEntity =>
+            !entities.some(entity => Number(entity.id) === Number(selectedEntity.id))
+        );
+
+        return [...missingSelectedEntities, ...entities];
+    }, [entitiesData, viewMode, editMode, oldData, options?.entity_id]);
 
     // Reset entity when branch changes (only in create mode)
     useEffect(() => {
         if (!editMode && !viewMode && branchId && branchId !== oldData?.branch_id) {
-            setValue('entity_id', '');
+            setValue('entity_ids', []);
         }
     }, [branchId, oldData?.branch_id, setValue, editMode, viewMode]);
 
     // Reset entity when main program changes (only in create mode)
     useEffect(() => {
         if (!editMode && !viewMode && mainProgramId && mainProgramId !== oldData?.main_program_id) {
-            setValue('entity_id', '');
+            setValue('entity_ids', []);
         }
     }, [mainProgramId, oldData?.main_program_id, setValue, editMode, viewMode]);
 
@@ -121,17 +140,19 @@ export default function FormEntityManager({
     // Enhanced options with filtered data
     const enhancedOptions = useMemo(() => ({
         ...options,
-        entity_id: filteredEntities
+        entity_ids: filteredEntities
     }), [options, filteredEntities]);
 
-    // Get the selected entity to check for existing manager
-    const selectedEntity = useMemo(() => {
-        if (!entityId || !filteredEntities) return null;
-        return filteredEntities.find(entity => entity.id === Number(entityId));
-    }, [entityId, filteredEntities]);
+    const selectedEntities = useMemo(() => {
+        const selectedIds = Array.isArray(entityIds) ? entityIds : [entityIds];
+        return filteredEntities.filter(entity =>
+            selectedIds.some(id => Number(id) === Number(entity.id))
+        );
+    }, [entityIds, filteredEntities]);
 
     function prepareSubmissionData(data) {
         const submissionData = { ...data };
+        delete submissionData.entity_id;
         // In edit mode, if profile image not changed, don't send it
         if (editMode && !profileImageChanged) {
             delete submissionData.profile_image;
@@ -154,7 +175,7 @@ export default function FormEntityManager({
                 delete submissionData.files;
             }
         }
-        return submissionData;
+        return withEntityAssignmentPayload(submissionData);
     }
 
     function proceedWithSubmission(data) {
@@ -167,14 +188,19 @@ export default function FormEntityManager({
     }
 
     function onSubmit(data) {
-        // Check if selected entity has a manager (only in create mode or if entity changed in edit mode)
-        const shouldCheckManager = !editMode || (editMode && entityId && entityId !== oldData?.entity_id);
-        
-        if (selectedEntity?.manager && shouldCheckManager) {
+        const previousEntityIds = getEntityManagerEntityIds(oldData);
+        const entitiesToCheck = editMode
+            ? selectedEntities.filter(entity =>
+                !previousEntityIds.some(id => Number(id) === Number(entity.id))
+            )
+            : selectedEntities;
+        const entityWithManager = entitiesToCheck.find(entity => entity?.manager);
+
+        if (entityWithManager?.manager) {
             // Get manager name from entity.manager
-            const managerName = selectedEntity.manager.name?.[lang] || 
-                              selectedEntity.manager.name?.en || 
-                              selectedEntity.manager.name?.ar || 
+            const managerName = entityWithManager.manager.name?.[lang] ||
+                              entityWithManager.manager.name?.en ||
+                              entityWithManager.manager.name?.ar ||
                               t('common.entity_manager');
             setExistingManagerName(managerName);
             setPendingSubmissionData(data);
@@ -217,7 +243,7 @@ export default function FormEntityManager({
         if (viewMode) return true;
 
         // Entity field disabled until branch is selected
-        if (fieldName === 'entity_id' && !branchId) {
+        if (fieldName === 'entity_ids' && !branchId) {
             return true;
         }
 
@@ -285,9 +311,9 @@ export default function FormEntityManager({
                             );
                         }
 
-                        // Entity field: async paginated select filtered by branch + main program (page & per_page always sent)
+                        // Entities field: async paginated select filtered by branch + main program (page & per_page always sent)
                         // Key forces remount when branch/program change so async loadOptions gets fresh params and entity API is called
-                        if (field.name === 'entity_id') {
+                        if (field.name === 'entity_ids') {
                             const isEntityDisabled = !branchId || !mainProgramId || viewMode || entitiesLoading;
 
                             return (
@@ -305,11 +331,12 @@ export default function FormEntityManager({
                                         name={field.name}
                                         info={field.info}
                                         options={getFieldOptions(field.name)}
-                                        defaultValue={oldData?.[field.name] || field.defaultValue}
+                                        defaultValue={defaultEntityIds}
+                                        isMulti={field.isMulti}
                                         required={isFieldRequired(schema, field.name)}
                                         oldData={oldData}
                                         fieldParams={{
-                                            entity_id: {
+                                            entity_ids: {
                                                 branch_id: branchId ?? oldData?.branch_id,
                                                 main_program_id: mainProgramId ?? oldData?.main_program_id
                                             }

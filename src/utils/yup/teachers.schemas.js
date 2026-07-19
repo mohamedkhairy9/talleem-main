@@ -59,11 +59,16 @@ export const teachersSchema = yup.object({
         .integer(t('validation.main_program_id.integer'))
         .min(1, t('validation.main_program_id.min')),
 
-    entity_id: yup
-        .number()
-        .required(t('validation.required'))
-        .integer(t('validation.entity_id.integer'))
-        .min(1, t('validation.entity_id.min')),
+    entity_ids: yup
+        .array()
+        .of(
+            yup
+                .number()
+                .integer(t('validation.entity_id.integer'))
+                .min(1, t('validation.entity_id.min'))
+        )
+        .min(1, t('validation.at_least_one'))
+        .required(t('validation.required')),
 
     // Classification is a text string
     education_program_entity_type_classification: yup

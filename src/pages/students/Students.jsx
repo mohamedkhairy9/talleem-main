@@ -28,39 +28,50 @@ export default function Students() {
 
     const tableData = data?.data;
 
-    const formData = data?.data?.map(item => ({
-        ...item,
-        branch_id: item.branch?.id,
-        main_program_id: 
-            item.main_program ? item.main_program.id : item.main_program_id?.id, // leaving it as it is until fixed
-        // entity_category_id: item.entity_category?.id,
-        education_program_entity_type_classification: item.education_program_entity_type?.name?.en || '',
-        entity_category_id:
-            item.main_program?.id == 1
-                ? item.education_program_entity_type?.id
-                : null,
-        // Memorization program entity type
-        memorization_program_entity_type: item.memorization_program_entity_type?.name?.en || item.memorization_program_entity_type?.name?.ar || '',
-        memorization_program_entity_type_id: item.memorization_program_entity_type?.id,
-        city_id: item.city?.id,
-        kinship_id: item.kinship?.id,
-        academic_level_id: item.academic_level?.id,
-        academic_qualification_id: item.academic_qualification?.id,
-        entity_id: item.entity?.id,
-        nationality_id: item.nationality?.id,
-        specification_id: item.specification?.id,
-        qualification: {
-            ...item.qualification,
-            major_id: item.major?.id || item.qualification?.major_id
-        },
-        has_medical_issues: +item.has_medical_issues,
-        // Map status from user.status or item.status (convert to boolean for form)
-        status: item.user?.status !== undefined ? (item.user.status ? 1 : 0) : (item.status !== undefined ? (item.status ? 1 : 0) : 1),
-        // Ensure profile_picture and files are passed through
-        profile_picture: item.profile_picture,
-        // Transform files array: convert URL strings to objects with { url, name, size } structure
-        files: Array.isArray(item.files) 
-            ? item.files.map(file => {
+    const formData = data?.data?.map(item => {
+        const entityIds = Array.isArray(item.entity_ids) && item.entity_ids.length > 0
+            ? item.entity_ids.map(entity => entity?.id ?? entity?.value ?? entity)
+            : Array.isArray(item.entities) && item.entities.length > 0
+                ? item.entities.map(entity => entity?.id ?? entity?.value ?? entity)
+                : item.entity?.id != null
+                    ? [item.entity.id]
+                    : [];
+
+        return {
+            ...item,
+            branch_id: item.branch?.id,
+            main_program_id:
+                item.main_program ? item.main_program.id : item.main_program_id?.id, // leaving it as it is until fixed
+            // entity_category_id: item.entity_category?.id,
+            education_program_entity_type_classification: item.education_program_entity_type?.name?.en || '',
+            entity_category_id:
+                item.main_program?.id == 1
+                    ? item.education_program_entity_type?.id
+                    : null,
+            // Memorization program entity type
+            memorization_program_entity_type: item.memorization_program_entity_type?.name?.en || item.memorization_program_entity_type?.name?.ar || '',
+            memorization_program_entity_type_id: item.memorization_program_entity_type?.id,
+            city_id: item.city?.id,
+            kinship_id: item.kinship?.id,
+            academic_level_id: item.academic_level?.id,
+            academic_qualification_id: item.academic_qualification?.id,
+            entity_id: entityIds[0],
+            entity_ids: entityIds,
+            entities: Array.isArray(item.entities) ? item.entities : item.entity ? [item.entity] : [],
+            nationality_id: item.nationality?.id,
+            specification_id: item.specification?.id,
+            qualification: {
+                ...item.qualification,
+                major_id: item.major?.id || item.qualification?.major_id
+            },
+            has_medical_issues: +item.has_medical_issues,
+            // Map status from user.status or item.status (convert to boolean for form)
+            status: item.user?.status !== undefined ? (item.user.status ? 1 : 0) : (item.status !== undefined ? (item.status ? 1 : 0) : 1),
+            // Ensure profile_picture and files are passed through
+            profile_picture: item.profile_picture,
+            // Transform files array: convert URL strings to objects with { url, name, size } structure
+            files: Array.isArray(item.files)
+                ? item.files.map(file => {
                 // If it's already an object with url property, return as is
                 if (typeof file === 'object' && file !== null && file.url) {
                     return file;
@@ -75,9 +86,10 @@ export default function Students() {
                     };
                 }
                 return file;
-            })
-            : []
-    }));
+                })
+                : []
+        };
+    });
 
     return (
         <div>

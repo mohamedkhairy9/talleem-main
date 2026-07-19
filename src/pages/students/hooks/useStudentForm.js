@@ -23,6 +23,18 @@ const extractEducationEntityTypeData = (oldData) => {
     return { id: educationEntityType, classification: null, name: null };
 };
 
+const getStudentEntityIds = student => {
+    const values = Array.isArray(student?.entity_ids) && student.entity_ids.length > 0
+        ? student.entity_ids
+        : Array.isArray(student?.entities) && student.entities.length > 0
+            ? student.entities
+            : student?.entity ?? student?.entity_id ?? [];
+
+    return (Array.isArray(values) ? values : [values])
+        .map(value => value?.id ?? value?.value ?? value)
+        .filter(value => value !== null && value !== undefined && value !== '');
+};
+
 export function useStudentForm({ oldData, editMode, viewMode, watch, setValue, parentInfoAgeThreshold }) {
     const lang = i18next.language;
     const previousParamsRef = useRef(null);
@@ -44,7 +56,8 @@ export function useStudentForm({ oldData, editMode, viewMode, watch, setValue, p
     // Watch form values
     const mainProgramId = watch('main_program_id');
     const branchId = watch('branch_id');
-    const entityId = watch('entity_id');
+    const entityIds = watch('entity_ids');
+    const entityId = Array.isArray(entityIds) ? entityIds[0] : entityIds;
     const dateOfBirth = watch('date_of_birth');
 
     // Calculate age and determine if parent fields should be shown
@@ -94,16 +107,22 @@ export function useStudentForm({ oldData, editMode, viewMode, watch, setValue, p
     const entities = useMemo(() => {
         const fetchedEntities = entitiesData?.data || [];
         
-        // In edit/view mode, include selected entity from oldData if it's not in fetched results
-        if ((editMode || viewMode) && oldData?.entity_id && oldData?.entity) {
-            const selectedEntity = oldData.entity;
-            if (selectedEntity && !fetchedEntities.some(e => e.id === selectedEntity.id)) {
-                return [selectedEntity, ...fetchedEntities];
-            }
+        // In edit/view mode, include all assigned entities if they are not in fetched results.
+        if (editMode || viewMode) {
+            const selectedEntityIds = getStudentEntityIds(oldData);
+            const selectedEntities = Array.isArray(oldData?.entities)
+                ? oldData.entities
+                : oldData?.entity ? [oldData.entity] : [];
+            const missingSelectedEntities = selectedEntities.filter(entity =>
+                selectedEntityIds.some(id => Number(id) === Number(entity?.id)) &&
+                !fetchedEntities.some(fetchedEntity => Number(fetchedEntity.id) === Number(entity?.id))
+            );
+
+            return [...missingSelectedEntities, ...fetchedEntities];
         }
         
         return fetchedEntities;
-    }, [entitiesData?.data, editMode, viewMode, oldData?.entity_id, oldData?.entity]);
+    }, [entitiesData?.data, editMode, viewMode, oldData]);
 
     const normalizedEntityId = useMemo(() => {
         if (entityId === undefined || entityId === null || entityId === '') return null;
@@ -148,7 +167,7 @@ export function useStudentForm({ oldData, editMode, viewMode, watch, setValue, p
         // Only clear entity if branch or program actually changed (not on initial load)
         if ((branchChanged || mainProgramChanged) && 
             (previousBranchIdRef.current !== null || previousMainProgramIdRef.current !== null)) {
-            setValue('entity_id', '');
+            setValue('entity_ids', []);
             setValue('entity_category_id', '');
             setValue('education_program_entity_type_classification', '');
             setValue('memorization_program_entity_type', '');

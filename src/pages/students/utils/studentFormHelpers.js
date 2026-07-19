@@ -96,6 +96,9 @@ export const prepareSubmissionData = (data, editMode, profileImageChanged) => {
         }
     }
 
+    // entity_id is derived from the selected entity_ids so it always matches the primary selection.
+    delete submitData.entity_id;
+
     const finalData = withEntityAssignmentPayload({
         ...submitData,
         status: submitData.status ? 1 : 0,

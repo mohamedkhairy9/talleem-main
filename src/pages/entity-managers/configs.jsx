@@ -91,13 +91,14 @@ export const entityManagersFields = [
         info: 'info.branch_id'
     },
     {
-        name: 'entity_id',
-        label: 'validation.entity_id.label',
+        name: 'entity_ids',
+        label: 'validation.entity_ids.label',
         type: 'select',
-        placeholder: 'validation.entity_id.placeholder',
+        placeholder: 'validation.entity_ids.placeholder',
         editMode: true,
         viewMode: true,
-        info: 'info.entity'
+        info: 'info.entity',
+        isMulti: true
     },
     {
         name: 'nationality_id',
@@ -224,7 +225,8 @@ export const entityManagersDefaultValues = {
     name: {
         en: '',
         ar: ''
-    }
+    },
+    entity_ids: []
 };
 
 export const entityManagersFilters = [

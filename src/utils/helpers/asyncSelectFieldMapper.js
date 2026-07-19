@@ -65,6 +65,11 @@ export const FIELD_TO_SERVICE_MAP = {
         getById: entitiesService.getEntity,
         serviceName: 'entitiesService.getEntities'
     },
+    entity_ids: {
+        service: entitiesService.getEntities,
+        getById: entitiesService.getEntity,
+        serviceName: 'entitiesService.getEntities'
+    },
     main_program_id: {
         service: mainProgramsService.getMainPrograms,
         getById: mainProgramsService.getMainProgram,

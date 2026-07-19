@@ -2,7 +2,7 @@ import React from 'react';
 import FormEntityManager from './FormEntityManager';
 import Modal from '@/components/common/form/Modal';
 import ModalHeader from '@/components/common/form/ModalHeader';
-import { useUpdateEntityManagerMutation } from '@/api/hooks/useEntityManagers';
+import { useEntityManagerQuery, useUpdateEntityManagerMutation } from '@/api/hooks/useEntityManagers';
 import { useBranchesQuery } from '@/api/hooks/useBranches';
 import { useAcademicLevelsQuery } from '@/api/hooks/useAcademicLevels';
 import { useAcademicQualificationsQuery } from '@/api/hooks/useAcademicQualifications';
@@ -18,6 +18,9 @@ import { useMajorsQuery } from '@/api/hooks/useMajors';
 
 export default function EditEntityManager({ onClose, oldData }) {
     const { mutate, isPending } = useUpdateEntityManagerMutation();
+    const { data: managerDetailsData, isLoading: managerDetailsLoading } = useEntityManagerQuery(oldData?.id, {
+        enabled: !!oldData?.id
+    });
 
     // Fetch all available options
     const { data: branchesData, isLoading: branchesLoading } =
@@ -43,6 +46,7 @@ export default function EditEntityManager({ onClose, oldData }) {
 
     const isLoading =
         branchesLoading ||
+        managerDetailsLoading ||
         entitiesLoading ||
         academicLevelsLoading ||
         academicQualificationsLoading ||
@@ -54,12 +58,26 @@ export default function EditEntityManager({ onClose, oldData }) {
 
     if (isLoading) return <Loader />;
 
+    const managerDetails = managerDetailsData?.data || managerDetailsData || oldData;
+    const managerEntityIds = Array.isArray(managerDetails?.entity_ids) && managerDetails.entity_ids.length > 0
+        ? managerDetails.entity_ids.map(entity => entity?.id ?? entity?.value ?? entity)
+        : Array.isArray(managerDetails?.entities) && managerDetails.entities.length > 0
+            ? managerDetails.entities.map(entity => entity?.id ?? entity?.value ?? entity)
+            : oldData?.entity_ids || (oldData?.entity_id != null ? [oldData.entity_id] : []);
+    const managerEntities = Array.isArray(managerDetails?.entities) && managerDetails.entities.length > 0
+        ? managerDetails.entities
+        : oldData?.entities || (oldData?.entity ? [oldData.entity] : []);
+
     return (
         <Modal onClose={onClose} size="5xl">
             <ModalHeader onClose={onClose} header="entity_managers.update" />
             <FormEntityManager
                 onClose={onClose}
-                oldData={oldData}
+                oldData={{
+                    ...oldData,
+                    entity_ids: managerEntityIds,
+                    entities: managerEntities
+                }}
                 editMode={true}
                 mutate={mutate}
                 isPending={isPending}

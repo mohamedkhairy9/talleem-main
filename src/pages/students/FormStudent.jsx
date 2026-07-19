@@ -50,6 +50,18 @@ const extractEducationEntityTypeData = (oldData) => {
     return { id: educationEntityType, classification: null, name: null };
 };
 
+const getStudentEntityIds = student => {
+    const values = Array.isArray(student?.entity_ids) && student.entity_ids.length > 0
+        ? student.entity_ids
+        : Array.isArray(student?.entities) && student.entities.length > 0
+            ? student.entities
+            : student?.entity ?? student?.entity_id ?? [];
+
+    return (Array.isArray(values) ? values : [values])
+        .map(value => value?.id ?? value?.value ?? value)
+        .filter(value => value !== null && value !== undefined && value !== '');
+};
+
 function StudentFormContent({
     onClose,
     oldData,
@@ -74,6 +86,7 @@ function StudentFormContent({
             ...oldData,
             date_of_birth: onlyDate(oldData?.date_of_birth),
             registration_date: onlyDate(oldData?.registration_date),
+            entity_ids: getStudentEntityIds(oldData),
             qualification: oldData?.qualification || {
                 has_high_school: 0,
                 high_school_grade: 0,
@@ -158,7 +171,7 @@ function StudentFormContent({
     // Enhanced options with dynamic entities and loadOptions
     const enhancedOptions = useMemo(() => ({
         ...options,
-        entity_id: entities,
+        entity_ids: entities,
         _entityLoadOptions: entityLoadOptions,
         _entityDefaultOptions: entityDefaultOptions
     }), [options, entities, entityLoadOptions, entityDefaultOptions]);
@@ -207,7 +220,7 @@ function StudentFormContent({
                 oldData,
                 currentMainProgramId: data.main_program_id,
                 currentBranchId: data.branch_id,
-                currentEntityId: data.entity_id,
+                currentEntityId: Array.isArray(data.entity_ids) ? data.entity_ids[0] : data.entity_ids,
                 currentEntityCategoryId: data.entity_category_id
             })
         ) {

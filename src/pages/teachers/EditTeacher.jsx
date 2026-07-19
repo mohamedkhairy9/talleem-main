@@ -76,13 +76,26 @@ export default function EditTeacher({ onClose, oldData }) {
     if (isLoading) return <Loader />;
 
     const teacherDetails = teacherDetailsData?.data || teacherDetailsData || oldData;
+    const teacherEntityIds = Array.isArray(teacherDetails?.entity_ids) && teacherDetails.entity_ids.length > 0
+        ? teacherDetails.entity_ids.map(entity => entity?.id ?? entity?.value ?? entity)
+        : Array.isArray(teacherDetails?.entities) && teacherDetails.entities.length > 0
+            ? teacherDetails.entities.map(entity => entity?.id ?? entity?.value ?? entity)
+            : oldData?.entity_ids || (oldData?.entity_id != null ? [oldData.entity_id] : []);
+    const teacherEntities = Array.isArray(teacherDetails?.entities) && teacherDetails.entities.length > 0
+        ? teacherDetails.entities
+        : oldData?.entities || (oldData?.entity ? [oldData.entity] : []);
 
     return (
         <Modal onClose={onClose} size="5xl">
             <ModalHeader onClose={onClose} header="teachers.edit" />
             <FormTeacher
                 onClose={onClose}
-                oldData={{ ...oldData, status: oldData.status?.toLowerCase() }}
+                oldData={{
+                    ...oldData,
+                    entity_ids: teacherEntityIds,
+                    entities: teacherEntities,
+                    status: oldData.status?.toLowerCase()
+                }}
                 activeHalaqaRecord={teacherDetails}
                 editMode={true}
                 mutate={mutate}
