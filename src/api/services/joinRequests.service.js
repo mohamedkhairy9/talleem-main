@@ -118,12 +118,10 @@ export const joinRequestsService = {
         };
     },
     getJoinRequestDetails: id => {
-        const client = isBranchManagerOnly() ? joinRequestsClient : axiosInstance;
-        return client.get(API_URLS.JOIN_REQUESTS.DETAILS(id));
+        return axiosInstance.get(API_URLS.JOIN_REQUESTS.DETAILS(id));
     },
     getJoinRequestLogs: id => {
-        const client = isBranchManagerOnly() ? joinRequestsClient : axiosInstance;
-        return client.get(API_URLS.JOIN_REQUESTS.LOGS(id));
+        return axiosInstance.get(API_URLS.JOIN_REQUESTS.LOGS(id));
     },
     processStep: (id, data) => {
         const client = isBranchManagerOnly() ? joinRequestsClient : axiosInstance;

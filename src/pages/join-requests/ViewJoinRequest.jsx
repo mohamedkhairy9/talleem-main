@@ -477,12 +477,6 @@ function buildHistoryEntries(logsResponse, requestData, currentLocale = 'en', t)
         : [];
 
     return [...creationEntry, ...normalizedEntries]
-        .filter((entry, index, arr) => arr.findIndex(item =>
-            item.title === entry.title &&
-            item.timestamp === entry.timestamp &&
-            item.statusText === entry.statusText &&
-            item.actorName === entry.actorName
-        ) === index)
         .map((entry, index) => ({ ...entry, originalIndex: index }))
         .sort((a, b) => {
             const aDate = parseHistoryDate(a.timestamp);
