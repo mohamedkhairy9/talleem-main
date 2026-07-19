@@ -3,6 +3,7 @@ import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
 import { useAllJoinRequestsQuery } from '@/api/hooks/useJoinRequests';
 import { useRequestTypesQuery } from '@/api/hooks/useRequestTypes';
 import { isBranchManagerOnly } from '@/api/axiosInstance';
+import { useUserStore } from '@/utils/stores/user.store';
 import useLocale from '@/utils/hooks/global/useLocale';
 import i18next from 'i18next';
 import Loader from '@/components/common/Loader';
@@ -21,8 +22,57 @@ import {
 
 const VALID_CATEGORIES = ['entities', 'teachers', 'supervisors'];
 
+function extractIds(value) {
+    if (value == null || value === '') return [];
+    if (Array.isArray(value)) return value.flatMap(extractIds);
+    if (typeof value === 'object') {
+        return value.id != null ? [value.id] : [];
+    }
+    return [value];
+}
+
+function uniqueIds(...values) {
+    return [...new Set(values.flatMap(extractIds).map(String))];
+}
+
+function getManagedBranchIds(user) {
+    return uniqueIds(
+        user?.branch_ids,
+        user?.branches,
+        user?.branch_id,
+        user?.branch,
+        user?.employee?.branch_ids,
+        user?.employee?.branches,
+        user?.employee?.branch_id,
+        user?.employee?.branch
+    );
+}
+
+function getRequestBranchIds(request) {
+    const submittedData = request?.submitted_data || {};
+    return uniqueIds(
+        request?.branch_id,
+        request?.branch,
+        request?.branches,
+        request?.entity?.branch_id,
+        request?.entity?.branch,
+        submittedData?.branch_id,
+        submittedData?.branch,
+        submittedData?.branches,
+        submittedData?.entity?.branch_id,
+        submittedData?.entity?.branch
+    );
+}
+
+function isRequestInManagedBranch(request, managedBranchIds) {
+    if (managedBranchIds.length === 0) return false;
+    const requestBranchIds = getRequestBranchIds(request);
+    return requestBranchIds.some(id => managedBranchIds.includes(id));
+}
+
 export default function JoinRequests() {
     const branchManagerOnly = isBranchManagerOnly();
+    const user = useUserStore(state => state.user);
     const { category: urlCategory } = useParams();
     const navigate = useNavigate();
     const [searchParams, setSearchParams] = useSearchParams();
@@ -80,9 +130,18 @@ export default function JoinRequests() {
         mode: 'all'
     });
 
+    const managedBranchIds = useMemo(
+        () => getManagedBranchIds(user),
+        [user]
+    );
     const discoverableJoinRequests = useMemo(
-        () => data?.data || [],
-        [data?.data]
+        () => {
+            const requests = data?.data || [];
+            return branchManagerOnly
+                ? requests.filter(request => isRequestInManagedBranch(request, managedBranchIds))
+                : requests;
+        },
+        [data?.data, branchManagerOnly, managedBranchIds]
     );
 
     const requestTypeIds = useMemo(
@@ -133,7 +192,7 @@ export default function JoinRequests() {
     ]);
 
     const filteredJoinRequests = useMemo(() => {
-        const allJoinRequests = data?.data || [];
+        const allJoinRequests = discoverableJoinRequests;
 
         return allJoinRequests.filter(item => {
             const requestTypeId = Number(item?.request_type_id);
@@ -148,40 +207,7 @@ export default function JoinRequests() {
 
             return requestTypeId === Number(selectedRequestTypeId);
         });
-    }, [data?.data, categoryRequestTypeIdsSet, selectedRequestTypeId]);
-
-    const pendingLookupFilters = useMemo(() => ({
-        search: fetchFilters.search
-    }), [fetchFilters.search]);
-    const { data: pendingData } = useAllJoinRequestsQuery(pendingLookupFilters, {
-        enabled: shouldFetchJoinRequests && branchManagerOnly
-    }, {
-        mode: 'pending'
-    });
-    const actionableRequestIds = useMemo(() => {
-        if (!branchManagerOnly) return null;
-        return new Set(
-            (pendingData?.data || [])
-                .filter(item => {
-                    const requestTypeId = Number(item?.request_type_id);
-                    if (!categoryRequestTypeIdsSet.has(requestTypeId)) {
-                        return false;
-                    }
-
-                    if (selectedRequestTypeId == null) {
-                        return true;
-                    }
-
-                    return requestTypeId === Number(selectedRequestTypeId);
-                })
-                .map(item => item.id)
-        );
-    }, [
-        branchManagerOnly,
-        pendingData?.data,
-        categoryRequestTypeIdsSet,
-        selectedRequestTypeId
-    ]);
+    }, [discoverableJoinRequests, categoryRequestTypeIdsSet, selectedRequestTypeId]);
 
     const requestTypesMap = useMemo(
         () => buildRequestTypesMap(
@@ -259,7 +285,10 @@ export default function JoinRequests() {
                 <ViewJoinRequest
                     onClose={toggle.view}
                     oldData={getOriginalObject(isOpen.view, filteredJoinRequests)}
-                    isReadOnly={branchManagerOnly && !actionableRequestIds?.has(isOpen.view?.id)}
+                    isReadOnly={
+                        branchManagerOnly &&
+                        !isRequestInManagedBranch(isOpen.view, managedBranchIds)
+                    }
                 />
             )}
         </div>

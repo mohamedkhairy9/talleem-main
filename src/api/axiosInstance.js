@@ -42,8 +42,9 @@ export function isBranchManagerOnly() {
     if (!user?.roles?.length) return false;
     const normalized = user.roles.map(normalizeRole).filter(Boolean);
     const hasSuperAdmin = normalized.includes(normalizeRole(ROLE_SUPER_ADMIN));
+    const hasGeneralManager = isGeneralManagerUser();
     const hasBranchAdmin = normalized.includes(normalizeRole(ROLE_BRANCH_ADMIN));
-    return hasBranchAdmin && !hasSuperAdmin;
+    return hasBranchAdmin && !hasSuperAdmin && !hasGeneralManager;
 }
 
 export function isSuperAdminUser() {
@@ -53,6 +54,24 @@ export function isSuperAdminUser() {
         .map(normalizeRole)
         .filter(Boolean)
         .includes(normalizeRole(ROLE_SUPER_ADMIN));
+}
+
+/** General managers can oversee approval requests across every branch. */
+export function isGeneralManagerUser() {
+    const user = useUserStore.getState().user;
+    if (!user?.roles?.length) return false;
+
+    const generalManagerRoles = new Set([
+        normalizeRole('general manager'),
+        normalizeRole('ceo'),
+        normalizeRole('مدير عام'),
+        normalizeRole('مدير الإدارة العامة')
+    ]);
+
+    return user.roles
+        .map(normalizeRole)
+        .filter(Boolean)
+        .some(role => generalManagerRoles.has(role));
 }
 
 /** Axios instance for front API (used by branch manager for join-requests). Same auth/language as main. */
