@@ -15,6 +15,9 @@ import * as yup from 'yup';
 import { t } from 'i18next';
 import { getJoinRequestDisplayStatus, localizeJoinRequestStatusText } from './statusDisplay';
 import ResubmissionFormBuilder, { createDefaultResubmissionForm } from './ResubmissionFormBuilder';
+import { useRolesQuery } from '@/api/hooks/useRoles';
+import { useUserStore } from '@/utils/stores/user.store';
+import { ROLE_BRANCH_ADMIN, ROLE_ENTITY_MANAGER, ROLE_SUPER_ADMIN, normalizeRole } from '@/utils/constants/configs';
 
 const statusOptions = [
     { label: { ar: 'موافق', en: 'Approved' }, value: 1 },
@@ -130,6 +133,87 @@ const HISTORY_ARRAY_KEYS = [
     'audit_trail',
     'audit_logs'
 ];
+
+const GENERAL_MANAGER_ROLE_KEYS = new Set([
+    normalizeRole('general manager'),
+    normalizeRole('ceo'),
+    normalizeRole('مدير عام'),
+    normalizeRole('مدير الإدارة العامة')
+]);
+
+function getRoleKeys(value) {
+    if (!value) return [];
+    if (Array.isArray(value)) return value.flatMap(getRoleKeys);
+    if (typeof value === 'string') return [normalizeRole(value)].filter(Boolean);
+    if (typeof value !== 'object') return [];
+
+    return [
+        value.name,
+        value.display_name,
+        value.slug,
+        value.code,
+        value.role_name
+    ].flatMap(item => {
+        if (typeof item === 'string') return [normalizeRole(item)].filter(Boolean);
+        if (item && typeof item === 'object') {
+            return [item.en, item.ar].map(normalizeRole).filter(Boolean);
+        }
+        return [];
+    });
+}
+
+function getCurrentActionStep(request) {
+    return request?.current_step || request?.current_phase?.current_step || request?.current_phase || null;
+}
+
+function getActionPermission({ request, user, roles }) {
+    const userRoleKeys = getRoleKeys(user?.roles);
+    const userRoleIds = new Set(
+        (user?.roles || []).map(role => role?.id).filter(id => id != null).map(String)
+    );
+    const isSuperAdmin = userRoleKeys.includes(normalizeRole(ROLE_SUPER_ADMIN));
+    const isGeneralManager = userRoleKeys.some(role => GENERAL_MANAGER_ROLE_KEYS.has(role));
+    if (isSuperAdmin || isGeneralManager) return true;
+
+    const step = getCurrentActionStep(request);
+    if (!step) return null;
+
+    const assignedType = String(step.assigned_to_type || step.assignee_type || '').toLowerCase();
+    const assignedId = step.assigned_to_id ?? step.assignee_id ?? step.role_id;
+    if (assignedType === 'user') {
+        if (assignedId != null && String(assignedId) === String(user?.id)) return true;
+    }
+
+    const assignedRole = assignedId != null
+        ? (roles || []).find(role => String(role?.id) === String(assignedId))
+        : null;
+    const assignedRoleKeys = getRoleKeys([
+        assignedRole,
+        step.assigned_to_role,
+        step.assigned_role,
+        step.role,
+        step.assigned_to,
+        step.assignee
+    ]);
+
+    if (assignedId != null && (assignedType === 'role' || step.role_id != null) && userRoleIds.has(String(assignedId))) {
+        return true;
+    }
+
+    const isEntityManagerStep = assignedRoleKeys.includes(normalizeRole(ROLE_ENTITY_MANAGER));
+    const isBranchManagerStep = assignedRoleKeys.includes(normalizeRole(ROLE_BRANCH_ADMIN));
+    const isEntityManager = userRoleKeys.includes(normalizeRole(ROLE_ENTITY_MANAGER));
+    const isBranchManager = userRoleKeys.includes(normalizeRole(ROLE_BRANCH_ADMIN));
+
+    if (isBranchManager && (isBranchManagerStep || isEntityManagerStep)) return true;
+    if (isEntityManager && isEntityManagerStep) return true;
+
+    if (assignedRoleKeys.length > 0) {
+        return assignedRoleKeys.some(role => userRoleKeys.includes(role));
+    }
+
+    return null;
+}
 
 const HISTORY_DATE_KEYS = [
     'action_at',
@@ -488,10 +572,15 @@ function buildHistoryEntries(logsResponse, requestData, currentLocale = 'en', t)
         });
 }
 
-export default function ViewJoinRequest({ onClose, oldData, isReadOnly = false }) {
+export default function ViewJoinRequest({ onClose, oldData, isReadOnly = false, onAuthorizationDenied }) {
     const { mutate: processStep, isPending } = useProcessJoinRequestStepMutation();
     const { t, currentLocale } = useLocale();
+    const user = useUserStore(state => state.user);
     const requestId = oldData?.id;
+    const { data: rolesResponse, isLoading: isLoadingRoles } = useRolesQuery(
+        { status: true, per_page: 1000 },
+        { enabled: Boolean(requestId) }
+    );
     const { data: detailsResponse, isFetching: isFetchingDetails } = useJoinRequestDetailsQuery(requestId, {
         enabled: Boolean(requestId)
     });
@@ -514,7 +603,17 @@ export default function ViewJoinRequest({ onClose, oldData, isReadOnly = false }
         () => isFinalizedJoinRequest(requestData),
         [requestData]
     );
-    const isLocked = isReadOnly || isFinalizedRequest;
+    const [isAuthorizationDenied, setIsAuthorizationDenied] = useState(false);
+    const roleActionPermission = useMemo(
+        () => getActionPermission({
+            request: requestData,
+            user,
+            roles: rolesResponse?.data || []
+        }),
+        [requestData, user, rolesResponse?.data]
+    );
+    const isRoleBasedReadOnly = !isLoadingRoles && roleActionPermission !== true;
+    const isLocked = isReadOnly || isFinalizedRequest || isAuthorizationDenied || isRoleBasedReadOnly;
 
     const { register, errors, handleSubmit, control, setValue, watch } = useRFH({
         schema: processStepSchema,
@@ -565,6 +664,12 @@ export default function ViewJoinRequest({ onClose, oldData, isReadOnly = false }
             {
                 onSuccess: () => {
                     onClose();
+                },
+                onError: error => {
+                    if (Number(error?.status) === 403) {
+                        setIsAuthorizationDenied(true);
+                        onAuthorizationDenied?.(requestData?.id);
+                    }
                 }
             }
         );
@@ -890,8 +995,8 @@ export default function ViewJoinRequest({ onClose, oldData, isReadOnly = false }
                                             'This request has already been finalized and is now available as a read-only record.'
                                         )
                                         : t(
-                                            'join_requests.read_only_log',
-                                            'This request has already moved past your approval queue and is now shown here as a read-only log record.'
+                                            'join_requests.unauthorized_read_only',
+                                            'You are not authorized to perform an action on this request. It is available as a read-only record.'
                                         )}
                                 </p>
                             </AccordionSection>

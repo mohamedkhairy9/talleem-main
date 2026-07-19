@@ -1713,7 +1713,8 @@
         "history_status_unknown": "Unknown",
         "history_empty": "No history entries are available for this request yet.",
         "loading_latest_details": "Loading latest request details...",
-        "finalized_read_only_log": "This request has already been finalized and is now available as a read-only record."
+        "finalized_read_only_log": "This request has already been finalized and is now available as a read-only record.",
+        "unauthorized_read_only": "You are not authorized to perform an action on this request. It is available as a read-only record."
     },
     "warnings": {
         "create": "Add Warning",
