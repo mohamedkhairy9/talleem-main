@@ -2,9 +2,13 @@ import { axiosInstance } from '../axiosInstance';
 import { API_URLS } from '../endpoints';
 
 export const notificationsService = {
-    getNotifications: async params => {
+    getNotifications: async ({ page = 1, per_page = 10, ...filters } = {}) => {
         return await axiosInstance.get(API_URLS.NOTIFICATIONS.LIST, {
-            params
+            params: {
+                ...filters,
+                page,
+                per_page
+            }
         });
     },
 

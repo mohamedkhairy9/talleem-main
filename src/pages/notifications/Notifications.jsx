@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { useNotificationsQuery } from '@/api/hooks/useNotifications';
 import Table from '@/components/common/table/Table';
 import { notificationsColumns, filtersDefaultValues } from './configs';
@@ -7,6 +7,7 @@ import useLocale from '@/utils/hooks/global/useLocale';
 import useIsOpen from '@/utils/hooks/global/useIsOpen';
 import Filters from './Filters';
 import SendNotification from './SendNotification';
+import ScheduleNotification from './ScheduleNotification';
 import ViewNotification from './ViewNotification';
 import i18next from 'i18next';
 import { getOriginalObject } from '@/utils/helpers/global.fns';
@@ -37,6 +38,7 @@ const getDisplayText = value => {
 const extractNotificationsCollection = response => {
     if (Array.isArray(response)) return response;
     if (Array.isArray(response?.data)) return response.data;
+    if (Array.isArray(response?.data?.data)) return response.data.data;
     if (Array.isArray(response?.items)) return response.items;
     if (Array.isArray(response?.results)) return response.results;
     if (Array.isArray(response?.notifications)) return response.notifications;
@@ -47,8 +49,13 @@ const resolveNotificationsTotalCount = (response, fallbackCount) => {
     const total =
         response?.meta?.total ??
         response?.total ??
+        response?.data?.meta?.total ??
+        response?.data?.total ??
         (response?.meta?.last_page && response?.meta?.per_page
             ? response.meta.last_page * response.meta.per_page
+            : undefined) ??
+        (response?.data?.meta?.last_page && response?.data?.meta?.per_page
+            ? response.data.meta.last_page * response.data.meta.per_page
             : undefined) ??
         fallbackCount;
 
@@ -66,13 +73,34 @@ export default function Notifications() {
         setFilters
     } =
         useFiltering(filtersDefaultValues);
-    const { data, isLoading, refresh } = useNotificationsQuery(filters);
+    const notificationParams = useMemo(
+        () => ({
+            ...filters,
+            page: pagination.page,
+            per_page: pagination.per_page
+        }),
+        [filters, pagination.page, pagination.per_page]
+    );
+    const { data, isLoading, refresh } = useNotificationsQuery(
+        notificationParams
+    );
     const { t } = useLocale();
-    const notificationsList = extractNotificationsCollection(data);
+    const allNotifications = extractNotificationsCollection(data);
     const totalCount = resolveNotificationsTotalCount(
         data,
-        notificationsList.length
+        allNotifications.length
     );
+    // Some notification API responses return the full collection even when
+    // page/per_page are supplied. Keep server pagination as the default, but
+    // paginate locally only when the response contains every record.
+    const notificationsList =
+        totalCount > pagination.per_page &&
+        allNotifications.length >= totalCount
+            ? allNotifications.slice(
+                  (pagination.page - 1) * pagination.per_page,
+                  pagination.page * pagination.per_page
+              )
+            : allNotifications;
 
     const handleNotificationsFilter = (name, value) => {
         handleFilter(name, value);
@@ -86,6 +114,15 @@ export default function Notifications() {
         ...item,
         title: getDisplayText(item?.data?.title) || getDisplayText(item?.title) || 'N/A'
     }));
+    const scheduleButton = (
+        <button
+            type="button"
+            onClick={toggle.schedule}
+            className="rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-white transition hover:opacity-90"
+        >
+            {t('table_headers.scheduled')}
+        </button>
+    );
 
     return (
         <div>
@@ -114,8 +151,12 @@ export default function Notifications() {
                 enableDelete={false}
                 enableCopy={false}
                 enableView={true}
+                ToolbarExtra={scheduleButton}
             />
             {isOpen.add && <SendNotification onClose={toggle.add} />}
+            {isOpen.schedule && (
+                <ScheduleNotification onClose={toggle.schedule} />
+            )}
             {isOpen.view && (
                 <ViewNotification
                     onClose={toggle.view}

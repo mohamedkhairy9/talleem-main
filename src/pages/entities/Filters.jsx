@@ -6,7 +6,6 @@ import FilterText from '@/components/common/inputs/FilterText';
 
 const statusOptions = [
     { label: { ar: 'نشط', en: 'Active' }, value: 'active' },
-    { label: { ar: 'غير نشط', en: 'Inactive' }, value: 'inactive' },
     { label: { ar: 'معلق', en: 'Suspended' }, value: 'suspended' },
     { label: { ar: 'ملغاة', en: 'Cancelled' }, value: 'Cancelled' },
     { label: { ar: 'غير مصرح', en: 'Unauthorized' }, value: 'unauthorized' }
