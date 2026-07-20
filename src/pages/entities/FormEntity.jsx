@@ -22,6 +22,9 @@ import { API_KEYS } from '@/api/endpoints';
 import { isFieldRequired } from '@/utils/helpers/schemaHelpers';
 import { useNeighborhoodsQuery } from '@/api/hooks/useNeighborhoods';
 import { useRequiredDocumentsHint } from '@/api/hooks/useRequiredDocumentsHint';
+import { useUserStore } from '@/utils/stores/user.store';
+import { normalizeRole, ROLE_SUPER_ADMIN } from '@/utils/constants/configs';
+import { canChangeEntityStatus } from './entityStatusPolicy';
 
 export default function FormEntity({
     onClose,
@@ -34,6 +37,11 @@ export default function FormEntity({
     options
 }) {
     const { t } = useLocale();
+    const currentUser = useUserStore(state => state.user);
+    const isSuperAdmin = Array.isArray(currentUser?.roles) &&
+        currentUser.roles.some(
+            role => normalizeRole(role) === normalizeRole(ROLE_SUPER_ADMIN)
+        );
     const [openSections, setOpenSections] = useState({
         entityInfo: true,
         managerInfo: false
@@ -90,6 +98,17 @@ export default function FormEntity({
             education_program_entity_type_classification: _classificationHelper,
             ...submitData
         } = data;
+
+        if (
+            editMode &&
+            !canChangeEntityStatus({
+                currentStatus: oldData?.status,
+                nextStatus: submitData.status,
+                isSuperAdmin
+            })
+        ) {
+            submitData.status = oldData?.status;
+        }
 
         // Remove license_image if not changed in edit mode
         if (editMode && !licenseImageChanged) {
@@ -474,6 +493,16 @@ export default function FormEntity({
             enhancedOptions?.[fieldName] ||
             managerOptions[fieldName];
 
+        const statusOptions =
+            fieldName === 'status' &&
+            editMode &&
+            oldData?.status === 'suspended' &&
+            isSuperAdmin
+                ? (fieldOptionsValue || []).filter(option =>
+                      ['suspended', 'active'].includes(option.value)
+                  )
+                : fieldOptionsValue;
+
         // Education: Entity Category is read-only, showing educational_entity_classification of selected type
         if (fieldName === 'entity_category_id' && mainProgramId === 1) {
             const classificationLabel = selectedEducationType?.educational_entity_classification
@@ -512,8 +541,15 @@ export default function FormEntity({
         const isCityFieldDisabled = fieldName === 'city_id';
         // Disable neighborhood_id field if city_id is not selected
         const isNeighborhoodFieldDisabled = fieldName === 'neighborhood_id' && !cityId;
-        // Disable status in edit mode; also when entry_type is 'new_with_approval' (status locked to 'unauthorized')
-        const isStatusFieldDisabled = fieldName === 'status' && (editMode || entryType === 'new_with_approval');
+        const canActivateSuspendedEntity =
+            fieldName === 'status' &&
+            editMode &&
+            isSuperAdmin &&
+            oldData?.status === 'suspended';
+        const isStatusFieldDisabled =
+            fieldName === 'status' &&
+            (entryType === 'new_with_approval' ||
+                (editMode && !canActivateSuspendedEntity));
         // Check if field has disabled property
         const isFieldDisabled = field.disabled || viewMode || isActivityFieldDisabled || isCityFieldDisabled || isNeighborhoodFieldDisabled || isStatusFieldDisabled;
 
@@ -532,7 +568,7 @@ export default function FormEntity({
                 disabled={isFieldDisabled}
                 {...field}
                 name={fieldName}
-                options={generateOptions(fieldOptionsValue)}
+                options={generateOptions(statusOptions)}
                 defaultValue={defaultValue}
                 required={isFieldRequired(adjustedSchema, fieldName)}
                 oldData={oldData}
