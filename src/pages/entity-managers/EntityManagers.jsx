@@ -45,18 +45,29 @@ export default function EntityManagers() {
             entity_ids: assignedEntityIds,
             entity: entity,
             entities: Array.isArray(entities) ? entities : entity ? [entity] : [],
-            nationality_id: nationality?.id,
+            nationality_id: nationality?.id ?? item.nationality_id,
             nationality: nationality, // Keep nationality object for form options
-            branch_id: branch?.id || entity?.branch?.id,
-            city_id: city?.id,
+            branch_id: branch?.id ?? entity?.branch?.id ?? item.branch_id,
+            city_id:
+                city?.id ??
+                branch?.city?.id ??
+                entity?.branch?.city?.id ??
+                item.city_id,
             user_id: user?.id,
             date_of_birth: onlyDate(date_of_birth),
-            main_program_id: main_program?.id,
-            status: user?.status ?? true,
+            main_program_id:
+                main_program?.id ??
+                entity?.main_program?.id ??
+                item.main_program_id,
+            status: user?.status ?? item.status ?? true,
             // major_id can be either an object with id or already an id
-            major_id: major?.id || (major_id?.id !== undefined ? major_id.id : major_id),
+            major_id:
+                major?.id ??
+                (major_id?.id !== undefined ? major_id.id : major_id),
             // academic_qualification_id is already a number in the API response, keep it as is
-            academic_qualification_id: item.academic_qualification_id
+            academic_qualification_id:
+                item.academic_qualification?.id ??
+                item.academic_qualification_id
         };
     });
 

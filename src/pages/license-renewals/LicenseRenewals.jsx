@@ -9,6 +9,16 @@ import IssueLicenseModal from '@/components/licenses/IssueLicenseModal';
 import useLocale from '@/utils/hooks/global/useLocale';
 import usePagination from '@/utils/hooks/global/usePagination';
 import { getLocalizedErrorMessage } from '@/utils/helpers/localizedMessages';
+import { allData } from '@/utils/constants/global.constants';
+import { useMainProgramsQuery } from '@/api/hooks/useMainPrograms';
+import {
+    useEntitiesQuery,
+    useUnlicensedEntitiesQuery
+} from '@/api/hooks/useEntities';
+import {
+    useTeachersQuery,
+    useUnlicensedTeachersQuery
+} from '@/api/hooks/useTeachers';
 import {
     usePendingTeacherLicensesQuery,
     useRenewTeacherLicenseMutation
@@ -23,8 +33,31 @@ const columnHelper = createColumnHelper();
 const firstNonEmpty = (...values) =>
     values.find(value => value !== undefined && value !== null && value !== '');
 
-const firstObject = (...values) =>
-    values.find(value => value && typeof value === 'object' && !Array.isArray(value));
+const asObject = value => {
+    if (value && typeof value === 'object' && !Array.isArray(value)) {
+        return value;
+    }
+
+    if (typeof value === 'string') {
+        try {
+            const parsedValue = JSON.parse(value);
+            return parsedValue && typeof parsedValue === 'object' && !Array.isArray(parsedValue)
+                ? parsedValue
+                : undefined;
+        } catch {
+            return undefined;
+        }
+    }
+
+    return undefined;
+};
+
+const firstObject = (...values) => values.map(asObject).find(Boolean);
+
+const getRelationId = value => {
+    const objectValue = asObject(value);
+    return objectValue?.id ?? objectValue?.value ?? value;
+};
 
 const getLocalizedValue = value => {
     if (value == null || value === '') return value;
@@ -41,6 +74,18 @@ const getDisplayDate = value => {
     }
     return value;
 };
+
+const findRecord = (records, id, name) =>
+    records.find(record => String(record?.id) === String(id)) ||
+    records.find(
+        record =>
+            name &&
+            [
+                getLocalizedValue(record?.name),
+                record?.name,
+                record?.full_name
+            ].includes(name)
+    );
 
 const extractCollection = response => {
     if (Array.isArray(response)) return response;
@@ -95,7 +140,7 @@ function StatusBadge({ status, currentLocale }) {
     );
 }
 
-const normalizeTeacherPendingItem = (item, index) => {
+const normalizeTeacherPendingItem = (item, index, mainPrograms, teachers) => {
     const submittedData = firstObject(item.submitted_data, item.submittedData, item.payload);
     const teacher = firstObject(
         item.teacher,
@@ -105,38 +150,70 @@ const normalizeTeacherPendingItem = (item, index) => {
         item.user,
         submittedData?.teacher
     );
+    const renewTargetId = firstNonEmpty(
+        item.teacher_id,
+        teacher?.id,
+        item.teacherId,
+        submittedData?.teacher_id,
+        submittedData?.current_teacher_id,
+        item.licenseable_id,
+        typeof item.id === 'number' ? item.id : null
+    );
+    const displayName = firstNonEmpty(
+        getLocalizedValue(teacher?.name),
+        item.teacher_name,
+        item.name,
+        teacher?.full_name,
+        getLocalizedValue(submittedData?.name)
+    );
+    const fullTeacher = findRecord(teachers, renewTargetId, displayName);
+    const resolvedTeacher = firstObject(fullTeacher, teacher);
     const branch = firstObject(
+        resolvedTeacher?.branch,
         teacher?.branch,
         item.branch,
         submittedData?.current_branch,
         submittedData?.new_branch
     );
     const mainProgram = firstObject(
+        resolvedTeacher?.main_program,
         teacher?.main_program,
         item.main_program,
         submittedData?.main_program,
         submittedData?.program
     );
+    const license = firstObject(
+        item.license,
+        item.teacher_license,
+        item.license_data,
+        resolvedTeacher?.license,
+        teacher?.license,
+        submittedData?.license
+    );
+    const mainProgramId = firstNonEmpty(
+        getRelationId(mainProgram),
+        item.main_program_id,
+        resolvedTeacher?.main_program_id,
+        teacher?.main_program_id,
+        branch?.main_program_id,
+        submittedData?.main_program_id,
+        submittedData?.program_id
+    );
+    const mainProgramFromId = mainPrograms.find(
+        program => String(program.id) === String(mainProgramId)
+    );
 
     return {
         id: firstNonEmpty(item.id, `teacher-license-${index}`),
-        renew_target_id: firstNonEmpty(
-            item.teacher_id,
-            teacher?.id,
-            item.teacherId,
-            submittedData?.teacher_id,
-            submittedData?.current_teacher_id,
-            item.licenseable_id,
-            typeof item.id === 'number' ? item.id : null
+        renew_target_id: renewTargetId,
+        display_name: displayName,
+        phone: firstNonEmpty(
+            resolvedTeacher?.phone,
+            resolvedTeacher?.user?.phone,
+            teacher?.phone,
+            teacher?.user?.phone,
+            item.phone
         ),
-        display_name: firstNonEmpty(
-            getLocalizedValue(teacher?.name),
-            item.teacher_name,
-            item.name,
-            teacher?.full_name,
-            getLocalizedValue(submittedData?.name)
-        ),
-        phone: firstNonEmpty(teacher?.phone, teacher?.user?.phone, item.phone),
         branch: firstNonEmpty(
             getLocalizedValue(branch?.name),
             getLocalizedValue(item.branch_name),
@@ -145,10 +222,14 @@ const normalizeTeacherPendingItem = (item, index) => {
         main_program: firstNonEmpty(
             getLocalizedValue(mainProgram?.name),
             getLocalizedValue(item.main_program_name),
-            item.main_program_name
+            item.main_program_name,
+            getLocalizedValue(mainProgramFromId?.name)
         ),
         license_number: firstNonEmpty(
             item.license_number,
+            license?.license_number,
+            license?.number,
+            resolvedTeacher?.license_number,
             teacher?.license_number,
             item.current_license_number,
             submittedData?.license_number
@@ -156,20 +237,30 @@ const normalizeTeacherPendingItem = (item, index) => {
         expiration_date: firstNonEmpty(
             getDisplayDate(item.expiration_date),
             getDisplayDate(item.license_expiration_date),
+            getDisplayDate(item.expiry_date),
+            getDisplayDate(license?.expiration_date),
+            getDisplayDate(license?.expiry_date),
+            getDisplayDate(license?.expires_at),
+            getDisplayDate(license?.end_date),
+            getDisplayDate(resolvedTeacher?.license_expiration_date),
             getDisplayDate(teacher?.license_expiration_date),
-            getDisplayDate(submittedData?.expiration_date)
+            getDisplayDate(teacher?.license?.expiration_date),
+            getDisplayDate(submittedData?.expiration_date),
+            getDisplayDate(submittedData?.expiry_date)
         ),
         status: firstNonEmpty(
             item.status,
             item.status_text,
             item.license_status,
+            license?.status,
+            resolvedTeacher?.status,
             teacher?.status,
             'pending'
         )
     };
 };
 
-const normalizeEntityPendingItem = (item, index) => {
+const normalizeEntityPendingItem = (item, index, mainPrograms, entities) => {
     const submittedData = firstObject(item.submitted_data, item.submittedData, item.payload);
     const entity = firstObject(
         item.entity,
@@ -181,7 +272,26 @@ const normalizeEntityPendingItem = (item, index) => {
         submittedData?.current_entity
     );
     const teacher = firstObject(submittedData?.teacher);
+    const renewTargetId = firstNonEmpty(
+        item.entity_id,
+        item.entityId,
+        submittedData?.current_entity_id,
+        submittedData?.entity_id,
+        submittedData?.current_entity?.id,
+        entity?.id,
+        item.licenseable_id,
+        typeof item.id === 'number' ? item.id : null
+    );
+    const displayName = firstNonEmpty(
+        getLocalizedValue(entity?.name),
+        item.entity_name,
+        item.name,
+        getLocalizedValue(submittedData?.name)
+    );
+    const fullEntity = findRecord(entities, renewTargetId, displayName);
+    const resolvedEntity = firstObject(fullEntity, entity);
     const branch = firstObject(
+        resolvedEntity?.branch,
         entity?.branch,
         item.branch,
         submittedData?.new_branch,
@@ -189,31 +299,43 @@ const normalizeEntityPendingItem = (item, index) => {
         teacher?.branch
     );
     const mainProgram = firstObject(
+        resolvedEntity?.main_program,
         entity?.main_program,
         item.main_program,
         submittedData?.main_program,
         submittedData?.program
     );
+    const license = firstObject(
+        item.license,
+        item.entity_license,
+        item.license_data,
+        resolvedEntity?.license,
+        entity?.license,
+        submittedData?.license
+    );
+    const mainProgramId = firstNonEmpty(
+        getRelationId(mainProgram),
+        item.main_program_id,
+        resolvedEntity?.main_program_id,
+        entity?.main_program_id,
+        branch?.main_program_id,
+        submittedData?.main_program_id,
+        submittedData?.program_id
+    );
+    const mainProgramFromId = mainPrograms.find(
+        program => String(program.id) === String(mainProgramId)
+    );
 
     return {
         id: firstNonEmpty(item.id, `entity-license-${index}`),
-        renew_target_id: firstNonEmpty(
-            item.entity_id,
-            item.entityId,
-            submittedData?.current_entity_id,
-            submittedData?.entity_id,
-            submittedData?.current_entity?.id,
-            entity?.id,
-            item.licenseable_id,
-            typeof item.id === 'number' ? item.id : null
+        renew_target_id: renewTargetId,
+        display_name: displayName,
+        phone: firstNonEmpty(
+            resolvedEntity?.phone,
+            entity?.phone,
+            teacher?.phone,
+            item.phone
         ),
-        display_name: firstNonEmpty(
-            getLocalizedValue(entity?.name),
-            item.entity_name,
-            item.name,
-            getLocalizedValue(submittedData?.name)
-        ),
-        phone: firstNonEmpty(entity?.phone, teacher?.phone, item.phone),
         branch: firstNonEmpty(
             getLocalizedValue(branch?.name),
             getLocalizedValue(item.branch_name),
@@ -222,10 +344,14 @@ const normalizeEntityPendingItem = (item, index) => {
         main_program: firstNonEmpty(
             getLocalizedValue(mainProgram?.name),
             getLocalizedValue(item.main_program_name),
-            item.main_program_name
+            item.main_program_name,
+            getLocalizedValue(mainProgramFromId?.name)
         ),
         license_number: firstNonEmpty(
             item.license_number,
+            license?.license_number,
+            license?.number,
+            resolvedEntity?.license_number,
             entity?.license_number,
             item.current_license_number,
             submittedData?.license_number
@@ -233,13 +359,23 @@ const normalizeEntityPendingItem = (item, index) => {
         expiration_date: firstNonEmpty(
             getDisplayDate(item.expiration_date),
             getDisplayDate(item.license_expiration_date),
+            getDisplayDate(item.expiry_date),
+            getDisplayDate(license?.expiration_date),
+            getDisplayDate(license?.expiry_date),
+            getDisplayDate(license?.expires_at),
+            getDisplayDate(license?.end_date),
+            getDisplayDate(resolvedEntity?.license_expiration_date),
             getDisplayDate(entity?.license_expiration_date),
-            getDisplayDate(submittedData?.expiration_date)
+            getDisplayDate(entity?.license?.expiration_date),
+            getDisplayDate(submittedData?.expiration_date),
+            getDisplayDate(submittedData?.expiry_date)
         ),
         status: firstNonEmpty(
             item.status,
             item.status_text,
             item.license_status,
+            license?.status,
+            resolvedEntity?.status,
             entity?.status,
             'pending'
         )
@@ -256,6 +392,54 @@ export default function LicenseRenewals() {
         usePagination();
     const { pagination: entitiesPagination, setPagination: setEntitiesPagination } =
         usePagination();
+    const { data: mainProgramsResponse } = useMainProgramsQuery(allData);
+    const { data: entitiesResponse } = useEntitiesQuery(allData);
+    const { data: unlicensedEntitiesResponse } = useUnlicensedEntitiesQuery(allData);
+    const { data: teachersResponse } = useTeachersQuery(allData);
+    const { data: unlicensedTeachersResponse } = useUnlicensedTeachersQuery(allData);
+    const mainPrograms = useMemo(
+        () =>
+            Array.isArray(mainProgramsResponse?.data)
+                ? mainProgramsResponse.data
+                : [],
+        [mainProgramsResponse]
+    );
+    const entities = useMemo(
+        () => {
+            const entityRecords = [
+                ...extractCollection(entitiesResponse),
+                ...extractCollection(unlicensedEntitiesResponse)
+            ];
+            const entitiesById = new Map();
+
+            entityRecords.forEach(entity => {
+                if (entity?.id != null) {
+                    entitiesById.set(String(entity.id), entity);
+                }
+            });
+
+            return [...entitiesById.values()];
+        },
+        [entitiesResponse, unlicensedEntitiesResponse]
+    );
+    const teachers = useMemo(
+        () => {
+            const teacherRecords = [
+                ...extractCollection(teachersResponse),
+                ...extractCollection(unlicensedTeachersResponse)
+            ];
+            const teachersById = new Map();
+
+            teacherRecords.forEach(teacher => {
+                if (teacher?.id != null) {
+                    teachersById.set(String(teacher.id), teacher);
+                }
+            });
+
+            return [...teachersById.values()];
+        },
+        [teachersResponse, unlicensedTeachersResponse]
+    );
 
     const {
         data: pendingTeachersResponse,
@@ -277,12 +461,18 @@ export default function LicenseRenewals() {
         useRenewEntityLicenseMutation();
 
     const pendingTeachers = useMemo(
-        () => extractCollection(pendingTeachersResponse).map(normalizeTeacherPendingItem),
-        [pendingTeachersResponse]
+        () =>
+            extractCollection(pendingTeachersResponse).map((item, index) =>
+                normalizeTeacherPendingItem(item, index, mainPrograms, teachers)
+            ),
+        [pendingTeachersResponse, mainPrograms, teachers]
     );
     const pendingEntities = useMemo(
-        () => extractCollection(pendingEntitiesResponse).map(normalizeEntityPendingItem),
-        [pendingEntitiesResponse]
+        () =>
+            extractCollection(pendingEntitiesResponse).map((item, index) =>
+                normalizeEntityPendingItem(item, index, mainPrograms, entities)
+            ),
+        [pendingEntitiesResponse, mainPrograms, entities]
     );
 
     const teacherColumns = useMemo(
