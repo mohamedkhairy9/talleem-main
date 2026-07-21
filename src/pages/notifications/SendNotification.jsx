@@ -8,13 +8,12 @@ import useRFH from '@/utils/hooks/global/useRFH';
 import useLocale from '@/utils/hooks/global/useLocale';
 import { useTriggerNotificationMutation } from '@/api/hooks/useNotifications';
 import { getSendNotificationSchema } from '@/utils/yup/notificationSchema';
-import { sendingMethods } from './configs';
 import { createAsyncLoadOptions } from '@/utils/helpers/asyncSelectHelpers';
 import { usersService } from '@/api/services/users.service';
 
 const defaultValues = {
     user_id: null,
-    sending_type: null,
+    sending_type: 'inbox',
     title_ar: '',
     title_en: '',
     description_ar: '',
@@ -31,11 +30,12 @@ export default function SendNotification({ onClose }) {
     });
 
     const sendingTypeOptions = useMemo(
-        () =>
-            sendingMethods.map(method => ({
-                value: method.key,
-                label: t(method.labelKey)
-            })),
+        () => [
+            {
+                value: 'inbox',
+                label: t('table_headers.inbox')
+            }
+        ],
         [t]
     );
 
@@ -47,17 +47,14 @@ export default function SendNotification({ onClose }) {
                     user.name?.en ||
                     user.name?.ar ||
                     user.name ||
-                    user.email ||
+                    user.full_name ||
+                    user.username ||
                     `#${user.id}`;
-                const secondaryText = user.email || user.phone || `#${user.id}`;
 
                 return {
                     value: user.id,
                     id: user.id,
-                    label:
-                        secondaryText && secondaryText !== userName
-                            ? `${userName} - ${secondaryText}`
-                            : userName
+                    label: userName
                 };
             }),
         [currentLang]
@@ -77,7 +74,8 @@ export default function SendNotification({ onClose }) {
                 filters: {
                     user_id: Number(data.user_id)
                 },
-                sending_type: data.sending_type
+                // Inbox is the only enabled delivery method for direct sends.
+                sending_type: 'inbox'
             },
             {
                 onSuccess: () => {
@@ -117,6 +115,7 @@ export default function SendNotification({ onClose }) {
                         name="sending_type"
                         placeholder="notifications.sending_method"
                         options={sendingTypeOptions}
+                        disabled={true}
                         required={true}
                     />
                 </div>
