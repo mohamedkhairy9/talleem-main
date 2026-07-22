@@ -380,7 +380,10 @@ export const getStatusClasses = statusKey => {
 
 export const formatTimeRange = exam => {
     if (!exam?.timeFrom && !exam?.timeTo) return '-';
-    if (exam?.timeFrom && exam?.timeTo) return `${exam.timeFrom} - ${exam.timeTo}`;
+    if (exam?.timeFrom && exam?.timeTo) {
+        const [startTime, endTime] = [exam.timeFrom, exam.timeTo].sort();
+        return `${startTime} - ${endTime}`;
+    }
     return exam?.timeFrom || exam?.timeTo || '-';
 };
 

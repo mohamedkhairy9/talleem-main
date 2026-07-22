@@ -17,7 +17,11 @@ import {
     normalizeTemplateItem
 } from './helpers';
 import StartExamModal from './StartExamModal';
-import { getExamStartAvailability } from './examTiming';
+import {
+    getExamEarlyStartMinutes,
+    getExamStartAvailability
+} from './examTiming';
+import { useConfigurationsQuery } from '@/api/hooks/useConfigurations';
 
 const Info = ({ label, value }) => (
     <div>
@@ -39,6 +43,7 @@ export default function ConductExamDetails() {
         enabled: Boolean(scheduledExamId)
     });
     const templatesQuery = useConductExamEvaluationTemplatesQuery();
+    const configurationsQuery = useConfigurationsQuery('tahfiz');
     const startMutation = useStartConductExamMutation();
     const exam = useMemo(
         () => (detailsQuery.data ? normalizeExamDetails(detailsQuery.data) : null),
@@ -48,16 +53,33 @@ export default function ConductExamDetails() {
         () => extractCollection(templatesQuery.data).map(normalizeTemplateItem),
         [templatesQuery.data]
     );
-    const startAvailability = useMemo(() => getExamStartAvailability(exam, now), [exam, now]);
+    const earlyStartMinutes = useMemo(
+        () => getExamEarlyStartMinutes(configurationsQuery.data),
+        [configurationsQuery.data]
+    );
+    const startAvailability = useMemo(
+        () => getExamStartAvailability(exam, now, earlyStartMinutes),
+        [exam, now, earlyStartMinutes]
+    );
     const startAvailabilityMessage = useMemo(() => {
         if (startAvailability.isAvailable) {
             return isArabic ? 'الامتحان متاح الآن ويمكن بدء تقييم الطلاب.' : 'The exam is currently available for student evaluation.';
         }
         if (startAvailability.reason === 'not_started') {
+            if (startAvailability.earlyStartMinutes > 0) {
+                return isArabic
+                    ? `يمكن بدء الامتحان قبل موعده بـ ${startAvailability.earlyStartMinutes} دقيقة. لم يبدأ وقت الإتاحة بعد.`
+                    : `The exam can start ${startAvailability.earlyStartMinutes} minutes early. The start window has not opened yet.`;
+            }
             return isArabic ? 'لا يمكن بدء الامتحان قبل موعد بدايته.' : 'The exam cannot be started before its scheduled time.';
         }
         return isArabic ? 'انتهى وقت الامتحان، ولا يمكن بدء تقييم جديد.' : 'The exam time has ended, so a new evaluation cannot be started.';
-    }, [isArabic, startAvailability.isAvailable, startAvailability.reason]);
+    }, [
+        isArabic,
+        startAvailability.earlyStartMinutes,
+        startAvailability.isAvailable,
+        startAvailability.reason
+    ]);
     const isExamEnded = startAvailability.reason === 'ended';
 
     useEffect(() => {
@@ -157,6 +179,12 @@ export default function ConductExamDetails() {
                     <Info label={isArabic ? 'الفرع' : 'Branch'} value={exam.branchName} />
                     <Info label={isArabic ? 'التاريخ' : 'Date'} value={exam.examDate} />
                     <Info label={isArabic ? 'الوقت' : 'Time'} value={formatTimeRange(exam)} />
+                    {earlyStartMinutes > 0 ? (
+                        <Info
+                            label={isArabic ? 'متاح للبدء قبل' : 'Early start access'}
+                            value={isArabic ? `${earlyStartMinutes} دقيقة` : `${earlyStartMinutes} minutes`}
+                        />
+                    ) : null}
                     <Info label={isArabic ? 'المكان' : 'Location'} value={exam.location} />
                     <Info label={isArabic ? 'طريقة التقديم' : 'Method'} value={exam.method} />
                     <Info label={isArabic ? 'المسؤول' : 'Responsible'} value={exam.responsible} />

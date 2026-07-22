@@ -14,10 +14,14 @@ import {
     normalizeEntityItem,
     normalizeExamItem
 } from './helpers';
-import { getExamStartAvailability } from './examTiming';
+import {
+    getExamEarlyStartMinutes,
+    getExamStartAvailability
+} from './examTiming';
+import { useConfigurationsQuery } from '@/api/hooks/useConfigurations';
 
-const getScheduleState = (exam, now, isArabic) => {
-    const availability = getExamStartAvailability(exam, now);
+const getScheduleState = (exam, now, isArabic, earlyStartMinutes = 0) => {
+    const availability = getExamStartAvailability(exam, now, earlyStartMinutes);
 
     if (availability.reason === 'not_started') {
         return {
@@ -50,6 +54,7 @@ export default function ConductExams() {
         selectedBranchId ? { branch_id: selectedBranchId } : {}
     );
     const todayQuery = useConductExamTodayQuery();
+    const configurationsQuery = useConfigurationsQuery('tahfiz');
 
     const branches = useMemo(
         () => extractCollection(branchesQuery.data).map(normalizeBranchItem),
@@ -62,6 +67,10 @@ export default function ConductExams() {
     const todayExams = useMemo(
         () => extractCollection(todayQuery.data).map(normalizeExamItem),
         [todayQuery.data]
+    );
+    const earlyStartMinutes = useMemo(
+        () => getExamEarlyStartMinutes(configurationsQuery.data),
+        [configurationsQuery.data]
     );
     const filteredTodayExams = useMemo(
         () => todayExams.filter(exam => (
@@ -171,7 +180,12 @@ export default function ConductExams() {
                             </div>
                             <div className="flex items-center gap-3">
                                 {(() => {
-                                    const scheduleState = getScheduleState(exam, now, isArabic);
+                                    const scheduleState = getScheduleState(
+                                        exam,
+                                        now,
+                                        isArabic,
+                                        earlyStartMinutes
+                                    );
                                     return (
                                         <span className={`rounded-full px-3 py-1 text-xs font-semibold ${scheduleState.className}`}>
                                             {scheduleState.label}
