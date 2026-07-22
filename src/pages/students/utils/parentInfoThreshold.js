@@ -1,6 +1,9 @@
 export const DEFAULT_PARENT_INFO_AGE_THRESHOLD = 18;
+export const GUARDIAN_DATA_REQUIRED_BELOW_AGE_KEY =
+    'guardian_data_required_below_age';
 
 const PARENT_INFO_THRESHOLD_KEY_ALIASES = new Set([
+    GUARDIAN_DATA_REQUIRED_BELOW_AGE_KEY,
     'parent_info_age_threshold',
     'guardian_info_age_threshold',
     'parent_information_age_threshold',
@@ -87,7 +90,12 @@ function isParentInfoThresholdConfig(config) {
 
 export function resolveParentInfoAgeThreshold(configGroups) {
     const configs = flattenConfigGroups(configGroups);
-    const matchedConfig = configs.find(isParentInfoThresholdConfig);
+    const matchedConfig =
+        configs.find(
+            config =>
+                normalizeText(config?.key) ===
+                GUARDIAN_DATA_REQUIRED_BELOW_AGE_KEY
+        ) || configs.find(isParentInfoThresholdConfig);
     const resolvedValue = parsePositiveAgeThreshold(matchedConfig?.value);
     return resolvedValue ?? DEFAULT_PARENT_INFO_AGE_THRESHOLD;
 }
