@@ -450,7 +450,7 @@ export default function FormEntity({
                                 {isImage ? (
                                     <img
                                         src={licenseImagePreview}
-                                        alt="License Preview"
+                                        alt="Permit Preview"
                                         className="h-32 w-32 object-cover rounded border-2 border-gray-300"
                                     />
                                 ) : isPdf ? (
@@ -458,7 +458,7 @@ export default function FormEntity({
                                         <svg className="w-8 h-8 text-red-500" fill="currentColor" viewBox="0 0 20 20">
                                             <path fillRule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4z" clipRule="evenodd" />
                                         </svg>
-                                        <span className="text-sm text-gray-700">{typeof licenseImagePreview === 'string' && licenseImagePreview.includes('.pdf') ? licenseImagePreview : 'PDF File'}</span>
+                                                    <span className="text-sm text-gray-700">{typeof licenseImagePreview === 'string' && licenseImagePreview.includes('.pdf') ? licenseImagePreview : 'Permit PDF'}</span>
                                     </div>
                                 ) : null}
                             </div>

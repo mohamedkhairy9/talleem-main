@@ -105,37 +105,66 @@ const normalizeStatus = value => {
 const getStatusStyles = status => {
     const normalized = normalizeStatus(status);
 
-    if (normalized.includes('active')) return 'bg-green-100 text-green-800 border-green-200';
+    if (
+        normalized.includes('active') ||
+        normalized.includes('authorized') ||
+        normalized.includes('licensed')
+    ) {
+        return 'bg-green-100 text-green-800 border-green-200';
+    }
+    if (normalized.includes('unauthorized') || normalized.includes('unlicensed')) {
+        return 'bg-amber-100 text-amber-800 border-amber-200';
+    }
     if (normalized.includes('expired')) return 'bg-red-100 text-red-800 border-red-200';
     if (normalized.includes('pending')) return 'bg-yellow-100 text-yellow-800 border-yellow-200';
 
     return 'bg-gray-100 text-gray-700 border-gray-200';
 };
 
-const getLocalizedStatus = (status, currentLocale) => {
+const getLocalizedStatus = (status, currentLocale, subjectType) => {
     const normalized = normalizeStatus(status);
+    const isEntity = subjectType === 'entity';
+    const isNotPermitted =
+        normalized.includes('unauthorized') ||
+        normalized.includes('unlicensed') ||
+        normalized.includes('not permitted') ||
+        normalized.includes('not licensed');
+    const isPermitted =
+        !isNotPermitted &&
+        (normalized.includes('active') ||
+            normalized.includes('authorized') ||
+            normalized.includes('licensed') ||
+            normalized.includes('permitted'));
+
+    if (isPermitted) {
+        if (currentLocale === 'ar') return isEntity ? 'مصرح' : 'مرخص';
+        return isEntity ? 'Permitted' : 'Licensed';
+    }
+
+    if (isNotPermitted) {
+        if (currentLocale === 'ar') return isEntity ? 'غير مصرح' : 'غير مرخص';
+        return isEntity ? 'Not Permitted' : 'Not Licensed';
+    }
 
     if (currentLocale === 'ar') {
-        if (normalized.includes('active')) return 'نشط';
         if (normalized.includes('expired')) return 'منتهية';
         if (normalized.includes('pending')) return 'قيد التجديد';
     }
 
-    if (normalized.includes('active')) return 'Active';
     if (normalized.includes('expired')) return 'Expired';
     if (normalized.includes('pending')) return 'Pending Renewal';
 
     return status || '-';
 };
 
-function StatusBadge({ status, currentLocale }) {
+function StatusBadge({ status, currentLocale, subjectType }) {
     return (
         <span
             className={`inline-flex rounded-full border px-3 py-1 text-xs font-semibold ${getStatusStyles(
                 status
             )}`}
         >
-            {getLocalizedStatus(status, currentLocale)}
+            {getLocalizedStatus(status, currentLocale, subjectType)}
         </span>
     );
 }
@@ -507,6 +536,7 @@ export default function LicenseRenewals() {
                     <StatusBadge
                         status={info.getValue()}
                         currentLocale={currentLocale}
+                        subjectType="teacher"
                     />
                 )
             }),
@@ -556,7 +586,7 @@ export default function LicenseRenewals() {
                 cell: info => <Cell value={info.getValue() || '-'} />
             }),
             columnHelper.accessor('license_number', {
-                header: 'table_headers.license_number',
+                header: 'entity_permit.number',
                 cell: info => <Cell value={info.getValue() || '-'} />
             }),
             columnHelper.accessor('expiration_date', {
@@ -569,6 +599,7 @@ export default function LicenseRenewals() {
                     <StatusBadge
                         status={info.getValue()}
                         currentLocale={currentLocale}
+                        subjectType="entity"
                     />
                 )
             }),
@@ -618,8 +649,8 @@ export default function LicenseRenewals() {
             : {
                   title:
                       currentLocale === 'ar'
-                          ? 'الرخص المعلقة للكيانات'
-                          : 'Pending Entity Renewals',
+                          ? 'التصاريح المعلقة للكيانات'
+                          : 'Pending Entity Permit Renewals',
                   data: pendingEntities,
                   columns: entityColumns,
                   loading: isEntitiesLoading,
@@ -668,8 +699,8 @@ export default function LicenseRenewals() {
                     setActionError(
                         getLocalizedErrorMessage(error) ||
                             (currentLocale === 'ar'
-                                ? 'فشل تجديد رخصة الكيان.'
-                                : 'Failed to renew entity license.')
+                                ? 'فشل تجديد تصريح الكيان.'
+                                : 'Failed to renew entity permit.')
                     );
                 }
             }
@@ -683,13 +714,13 @@ export default function LicenseRenewals() {
                     <div>
                         <h1 className="text-2xl font-bold text-gray-900">
                             {currentLocale === 'ar'
-                                ? 'إدارة تجديد الرخص'
-                                : 'License Renewals'}
+                                ? 'إدارة تجديد الرخص والتصاريح'
+                                : 'License & Permit Renewals'}
                         </h1>
                         <p className="mt-2 text-sm text-gray-600">
                             {currentLocale === 'ar'
-                                ? 'تابع كل الرخص المعلقة وجدّدها من مكان واحد للمدرسين والكيانات.'
-                                : 'Track all pending licenses and renew them from one place for teachers and entities.'}
+                                ? 'تابع رخص المدرسين وتصاريح الكيانات المعلقة وجدّدها من مكان واحد.'
+                                : 'Track pending teacher licenses and entity permits, then renew them from one place.'}
                         </p>
                     </div>
 
@@ -801,10 +832,10 @@ export default function LicenseRenewals() {
                     isPending={isRenewingEntity}
                     title={
                         currentLocale === 'ar'
-                            ? 'تجديد رخصة الكيان'
-                            : 'Renew Entity License'
+                            ? 'تجديد تصريح الكيان'
+                            : 'Renew Entity Permit'
                     }
-                    submitLabel={currentLocale === 'ar' ? 'تجديد الرخصة' : 'Renew License'}
+                    submitLabel={currentLocale === 'ar' ? 'تجديد التصريح' : 'Renew Permit'}
                     notesLabel={currentLocale === 'ar' ? 'ملاحظات' : 'Notes'}
                     issueDateLabel={
                         currentLocale === 'ar' ? 'تاريخ الإصدار' : 'Issue Date'

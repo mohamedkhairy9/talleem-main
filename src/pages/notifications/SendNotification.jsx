@@ -13,7 +13,7 @@ import { usersService } from '@/api/services/users.service';
 
 const defaultValues = {
     user_id: null,
-    sending_type: 'inbox',
+    sending_type: 'in-app-inbox',
     title_ar: '',
     title_en: '',
     description_ar: '',
@@ -32,7 +32,7 @@ export default function SendNotification({ onClose }) {
     const sendingTypeOptions = useMemo(
         () => [
             {
-                value: 'inbox',
+                value: 'in-app-inbox',
                 label: t('table_headers.inbox')
             }
         ],
@@ -75,7 +75,7 @@ export default function SendNotification({ onClose }) {
                     user_id: Number(data.user_id)
                 },
                 // Inbox is the only enabled delivery method for direct sends.
-                sending_type: 'inbox'
+                sending_type: 'in-app-inbox'
             },
             {
                 onSuccess: () => {

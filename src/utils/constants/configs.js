@@ -225,6 +225,12 @@ export const sideMenuTabs = [
                 requiredPermission: { resource: 'evaluation_parameters', action: 'r' }
             },
             {
+                titleKey: 'sidebar.evaluations',
+                path: '/evaluations',
+                icon: VscDebugBreakpointLog,
+                requiredPermission: { resource: 'evaluation_parameters', action: 'r' }
+            },
+            {
                 titleKey: 'sidebar.policies_and_banners',
                 icon: HiDocumentText,
                 subMenu: [

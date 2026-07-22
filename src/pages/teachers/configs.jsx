@@ -1,5 +1,5 @@
 import Cell from '@/components/common/table/cells/Cell';
-import ActiveCell from '@/components/common/table/cells/ActiveCell';
+import TeacherLicenseStatusCell from './TeacherLicenseStatusCell';
 import DateCell from '@/components/common/table/cells/DateCell';
 import NameCell from '@/components/common/table/cells/NameCell';
 import { createColumnHelper } from '@tanstack/react-table';
@@ -14,7 +14,7 @@ export const teacherLicenseFilterOptions = [
         value: 'licensed'
     },
     {
-        label: { ar: '\u063a\u064a\u0631 \u0645\u0631\u062e\u0635', en: 'Unlicensed' },
+        label: { ar: '\u063a\u064a\u0631 \u0645\u0631\u062e\u0635', en: 'Not Licensed' },
         value: 'unlicensed'
     }
 ];
@@ -46,8 +46,8 @@ export const teachersColumns = [
         cell: info => <Cell value={info.row.original.main_program} />
     }),
     columnHelper.accessor('status', {
-        header: 'table_headers.status',
-        cell: info => <ActiveCell info={info} />
+        header: 'teacher_license.status.label',
+        cell: info => <TeacherLicenseStatusCell info={info} />
     }),
     columnHelper.accessor('registration_date', {
         header: 'table_headers.registration_date',

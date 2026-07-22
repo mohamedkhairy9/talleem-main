@@ -5,10 +5,10 @@ import { generateOptions } from '@/utils/helpers/global.fns';
 import FilterText from '@/components/common/inputs/FilterText';
 
 const statusOptions = [
-    { label: { ar: 'نشط', en: 'Active' }, value: 'active' },
+    { label: { ar: 'مصرح', en: 'Permitted' }, value: 'active' },
     { label: { ar: 'معلق', en: 'Suspended' }, value: 'suspended' },
     { label: { ar: 'ملغاة', en: 'Cancelled' }, value: 'Cancelled' },
-    { label: { ar: 'غير مصرح', en: 'Unauthorized' }, value: 'unauthorized' }
+    { label: { ar: 'غير مصرح', en: 'Not Permitted' }, value: 'unauthorized' }
 ];
 
 export default function Filters({ filters, handleFilter }) {

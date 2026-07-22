@@ -16,10 +16,10 @@ import { useEntityQuery } from '@/api/hooks/useEntities';
 import { onlyDate } from '@/utils/helpers/global.fns';
 
 const statusOptions = [
-    { label: { ar: 'نشط', en: 'Active' }, value: 'active' },
+    { label: { ar: 'مصرح', en: 'Permitted' }, value: 'active' },
     { label: { ar: 'معلق', en: 'Suspended' }, value: 'suspended' },
     { label: { ar: 'ملغاة', en: 'Canceled' }, value: 'canceled' },
-    { label: { ar: 'غير مصرح', en: 'Unauthorized' }, value: 'unauthorized' }
+    { label: { ar: 'غير مصرح', en: 'Not Permitted' }, value: 'unauthorized' }
 ];
 
 const entryTypeOptions = [
@@ -28,7 +28,7 @@ const entryTypeOptions = [
         value: 'new_with_approval'
     },
     {
-        label: { ar: 'نشط برخصة', en: 'Active with License' },
+        label: { ar: 'مصرح بتصريح', en: 'Permitted with Permit' },
         value: 'active_with_license'
     }
 ];
@@ -191,8 +191,8 @@ export default function ViewEntity({ onClose, oldData }) {
                                 className="rounded-lg bg-primary px-4 py-2 text-sm font-medium text-white transition hover:opacity-90"
                             >
                                 {currentLocale === 'ar'
-                                    ? 'إصدار رخصة'
-                                    : 'Issue License'}
+                                    ? 'إصدار تصريح'
+                                    : 'Issue Permit'}
                             </button>
                         )}
                     </div>

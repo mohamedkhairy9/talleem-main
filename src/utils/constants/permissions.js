@@ -136,6 +136,7 @@ export const RESOURCE_BY_PATH = {
     '/activity-logs': 'activity_logs',
     '/import-errors': 'import_errors',
     '/evaluation-parameters': 'evaluation_parameters',
+    '/evaluations': 'evaluation_parameters',
     '/main-programs': 'main_programs',
     '/countries': 'countries',
     '/nationalities': 'nationalities',

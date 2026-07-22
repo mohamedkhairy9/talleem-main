@@ -11,7 +11,7 @@ export default function Filters({ filters, handleFilter }) {
     );
     const teacherLicenseFilterOptions = [
         { label: { ar: 'مرخص', en: 'Licensed' }, value: 'licensed' },
-        { label: { ar: 'غير مرخص', en: 'Unlicensed' }, value: 'unlicensed' }
+        { label: { ar: 'غير مرخص', en: 'Not Licensed' }, value: 'unlicensed' }
     ];
 
     const options = {

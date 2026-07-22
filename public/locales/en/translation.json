@@ -1,4 +1,21 @@
 {
+    "entity_permit": {
+        "number": "Permit Number",
+        "image": "Permit Image",
+        "issue_date": "Permit Issue Date",
+        "status": {
+            "label": "Permit Status",
+            "permitted": "Permitted",
+            "not_permitted": "Not Permitted"
+        }
+    },
+    "teacher_license": {
+        "status": {
+            "label": "License Status",
+            "licensed": "Licensed",
+            "not_licensed": "Not Licensed"
+        }
+    },
     "validation": {
         "required": "This field is required",
         "required_field": {
@@ -740,10 +757,10 @@
             "min": "Please select a valid main program"
         },
         "license_number": {
-            "label": "Licence Number",
-            "placeholder": "Enter licence number",
-            "min": "Licence number must be at least 3 characters",
-            "max": "Licence number must not exceed 50 characters"
+            "label": "License Number",
+            "placeholder": "Enter license number",
+            "min": "License number must be at least 3 characters",
+            "max": "License number must not exceed 50 characters"
         },
         "education_program_entity_type_id": {
             "label": "Education Program Entity Type",
@@ -1322,6 +1339,7 @@
         "instructional_supervision": "Instructional Supervision",
         "evaluation-parameters": "Evaluation Parameters",
         "evaluation_model_builder": "Evaluation Model Builder",
+        "evaluations": "Evaluations",
         "resources": "Resources",
         "notifications_system": "Notification Management",
         "notification_templates": "System Notifications",
@@ -1597,7 +1615,7 @@
         "national_id": "National ID",
         "years_of_experience": "Years of Experience",
         "date_of_birth": "Date of Birth",
-        "license_number": "Licence Number",
+        "license_number": "License Number",
         "main_program": "Main Program",
         "program": "Program",
         "gender": "Gender",

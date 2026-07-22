@@ -13,15 +13,15 @@ import {
 } from '@/utils/constants/options';
 
 const statusOptions = [
-    { label: { ar: 'نشط', en: 'Active' }, value: 'active' },
+    { label: { ar: 'مصرح', en: 'Permitted' }, value: 'active' },
     { label: { ar: 'معلق', en: 'Suspended' }, value: 'suspended' },
     { label: { ar: 'ملغاة', en: 'Cancelled' }, value: 'Cancelled' },
-    { label: { ar: 'غير مصرح', en: 'Unauthorized' }, value: 'unauthorized' }
+    { label: { ar: 'غير مصرح', en: 'Not Permitted' }, value: 'unauthorized' }
 ];
 
 const entryTypeOptions = [
     { label: { ar: 'جديد بالموافقة', en: 'New with Approval' }, value: 'new_with_approval' },
-    { label: { ar: 'نشط برخصة', en: 'Active with License' }, value: 'active_with_license' }
+    { label: { ar: 'مصرح بتصريح', en: 'Permitted with Permit' }, value: 'active_with_license' }
 ];
 
 export default function CreateEntity({ onClose }) {

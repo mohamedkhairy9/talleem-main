@@ -2,5 +2,5 @@ import { teacherStatusOptions } from '../../utils/constants/options.js';
 
 export const teacherReadonlyStatusOptions = [
     ...teacherStatusOptions,
-    { label: { ar: 'غير مرخص', en: 'Unlicensed' }, value: 'unlicensed' }
+    { label: { ar: 'غير مرخص', en: 'Not Licensed' }, value: 'unlicensed' }
 ];

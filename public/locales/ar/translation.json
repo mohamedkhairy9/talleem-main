@@ -1,4 +1,21 @@
 {
+    "entity_permit": {
+        "number": "رقم التصريح",
+        "image": "صورة التصريح",
+        "issue_date": "تاريخ إصدار التصريح",
+        "status": {
+            "label": "حالة التصريح",
+            "permitted": "مصرح",
+            "not_permitted": "غير مصرح"
+        }
+    },
+    "teacher_license": {
+        "status": {
+            "label": "حالة الرخصة",
+            "licensed": "مرخص",
+            "not_licensed": "غير مرخص"
+        }
+    },
     "validation": {
         "required": "هذا الحقل مطلوب",
         "required_field":{
@@ -1294,6 +1311,7 @@
         "exam_segments_count": "عدد المقاطع المطلوبة للاختبار",
         "evaluation-parameters": "معايير التقييم",
         "evaluation_model_builder": "بناء نماذج التقييم",
+        "evaluations": "التقييمات",
         "resources": "الموارد",
         "notifications_system": "إدارة الإشعارات",
         "notification_templates": "الإشعارات النظامية",

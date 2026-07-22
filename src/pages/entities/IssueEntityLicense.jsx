@@ -10,12 +10,12 @@ export default function IssueEntityLicense({ entityId, onClose, onIssued }) {
     const labels = {
         title:
             currentLocale === 'ar'
-                ? 'إصدار رخصة للكيان'
-                : 'Issue Entity License',
+                ? 'إصدار تصريح للكيان'
+                : 'Issue Entity Permit',
         submit:
             currentLocale === 'ar'
-                ? 'إصدار الرخصة'
-                : 'Issue License',
+                ? 'إصدار التصريح'
+                : 'Issue Permit',
         issueDate:
             currentLocale === 'ar'
                 ? 'تاريخ الإصدار'

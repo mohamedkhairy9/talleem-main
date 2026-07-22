@@ -130,6 +130,14 @@ export const API_URLS = {
         UPDATE: id => `/evaluation-parameters/${id}`,
         DELETE: id => `/evaluation-parameters/${id}`
     },
+    EVALUATIONS: {
+        CREATE: '/evaluations',
+        LIST: '/evaluations',
+        RECEIVED: '/evaluations/received',
+        TEMPLATES: '/evaluations/templates',
+        TEMPLATE_DETAILS: id => `/evaluations/templates/${id}`,
+        DETAILS: id => `/evaluations/${id}`
+    },
     SESSION_MODES: {
         LIST: '/session-modes',
         DETAILS: id => `/session-modes/${id}`,
@@ -478,6 +486,7 @@ export const API_KEYS = {
     EXAM_SEGMENTS_COUNT: 'required-exam-segments',
     ATTENDANCES_TYPES: 'attendances-types',
     EVALUATION_PARAMETERS: 'evaluation-parameters',
+    EVALUATIONS: 'evaluations',
     MEMORIZATION_PROGRAM_ENTITY_TYPES: 'memorization-program-entity-types',
     EDUCATION_PROGRAM_ENTITY_TYPES: 'education-program-entity-types',
     KINSHIPS: 'kinships',
@@ -509,7 +518,6 @@ export const API_KEYS = {
     ENTITY_ACTIVITIES: 'entity-activities',
     MAJORS: 'majors',
     REMOTELY_ATTENDANCE_PLATFORMS: 'remotely-attendance-platforms',
-    EXAM_SEGMENTS_COUNT: 'required-exam-segments',
     IMPORT_ERRORS: 'import-errors',
     REQUEST_TYPES: 'request-types',
     PHASES: 'phases',

@@ -1,11 +1,8 @@
-import i18next from 'i18next';
-import Cell from '@/components/common/table/cells/Cell';
 import ActiveCell from '@/components/common/table/cells/ActiveCell';
 import DateCell from '@/components/common/table/cells/DateCell';
 import NameCell from '@/components/common/table/cells/NameCell';
 import { createColumnHelper } from '@tanstack/react-table';
 import React from 'react';
-import { enabledDisabledOptions } from '@/utils/constants/options';
 
 const columnHelper = createColumnHelper();
 
@@ -13,10 +10,6 @@ export const rolesColumns = [
     columnHelper.accessor('name', {
         header: 'table_headers.role',
         cell: info => <NameCell directValue={info.row.original.display_name} />
-    }),
-    columnHelper.accessor('guard_name', {
-        header: 'table_headers.guard',
-        cell: info => <Cell value={info.getValue()} />
     }),
     columnHelper.accessor('status', {
         header: 'table_headers.status',

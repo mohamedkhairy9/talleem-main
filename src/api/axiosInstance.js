@@ -116,7 +116,11 @@ const responseErrorInterceptor = error => {
         rawMessage: getRawErrorMessage(error),
         data: error.response?.data
     };
-    if (error.response?.status === 401) {
+    // Evaluation endpoints can return 401 when their dashboard guard or
+    // permission is not configured, even though the current admin session is
+    // still valid. Keep the session and surface the endpoint error instead.
+    const isEvaluationRequest = error.config?.url?.startsWith('/evaluations');
+    if (error.response?.status === 401 && !isEvaluationRequest) {
         useUserStore.getState().clearUser();
     }
     return Promise.reject(normalizedError);

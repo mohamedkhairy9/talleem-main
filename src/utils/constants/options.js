@@ -32,6 +32,6 @@ export const timeUnitOptions = [
 
 export const teacherStatusOptions = [
     { label: { ar: 'ملغاة', en: 'Cancelled' }, value: 'cancelled' },
-    { label: { ar: 'نشط', en: 'Active' }, value: 'active' },
-    { label: { ar: 'غير مصرح', en: 'Unauthorized' }, value: 'unauthorized' }
+    { label: { ar: 'مرخص', en: 'Licensed' }, value: 'active' },
+    { label: { ar: 'غير مرخص', en: 'Not Licensed' }, value: 'unauthorized' }
 ];

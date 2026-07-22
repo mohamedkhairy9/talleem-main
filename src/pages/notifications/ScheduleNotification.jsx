@@ -26,6 +26,15 @@ const getLocalizedText = (value, locale) => {
     return value[locale] || value[locale?.split('-')[0]] || value.en || value.ar || '';
 };
 
+const getRoleIdentifier = role => {
+    if (typeof role?.name === 'string') return role.name;
+    if (typeof role?.slug === 'string') return role.slug;
+    if (typeof role?.key === 'string') return role.key;
+    if (typeof role?.name?.en === 'string') return role.name.en;
+    if (typeof role?.name?.ar === 'string') return role.name.ar;
+    return null;
+};
+
 export default function ScheduleNotification({ onClose }) {
     const { currentLocale } = useLocale();
     const isArabic = currentLocale === 'ar';
@@ -78,11 +87,16 @@ export default function ScheduleNotification({ onClose }) {
         [templatesResponse, currentLocale]
     );
 
+    const roles = useMemo(
+        () => extractCollection(rolesResponse),
+        [rolesResponse]
+    );
+
     const roleOptions = useMemo(
         () =>
-            extractCollection(rolesResponse)
+            roles
                 .map(role => {
-                    const value = role.name || role.slug || role.key;
+                    const value = getRoleIdentifier(role);
                     return {
                         value,
                         label:
@@ -93,14 +107,30 @@ export default function ScheduleNotification({ onClose }) {
                     };
                 })
                 .filter(role => role.value),
-        [rolesResponse, currentLocale]
+        [roles, currentLocale]
     );
 
     const onSubmit = data => {
+        const selectedRoleValues = Array.isArray(data.roles)
+            ? data.roles
+            : [data.roles];
+        const roleNames = selectedRoleValues
+            .map(value => {
+                const matchedRole = roles.find(
+                    role =>
+                        String(role.id) === String(value) ||
+                        getRoleIdentifier(role) === value
+                );
+
+                return getRoleIdentifier(matchedRole) ||
+                    (typeof value === 'string' ? value : null);
+            })
+            .filter(Boolean);
+
         mutate(
             {
                 template_id: Number(data.template_id),
-                roles: data.roles,
+                roles: roleNames,
                 scheduled_date: data.scheduled_date,
                 scheduled_time: data.scheduled_time
             },

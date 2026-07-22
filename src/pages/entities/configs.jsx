@@ -1,6 +1,6 @@
 import { API_KEYS } from '@/api/endpoints';
 import Cell from '@/components/common/table/cells/Cell';
-import ActiveCell from '@/components/common/table/cells/ActiveCell';
+import EntityPermitStatusCell from './EntityPermitStatusCell';
 import DateCell from '@/components/common/table/cells/DateCell';
 import NameCell from '@/components/common/table/cells/NameCell';
 import { createColumnHelper } from '@tanstack/react-table';
@@ -31,8 +31,8 @@ export const entitiesColumns = [
         cell: info => <Cell value={info.row.original.main_program} />
     }),
     columnHelper.accessor('status', {
-        header: 'table_headers.status',
-        cell: info => <ActiveCell info={info} />
+        header: 'entity_permit.status.label',
+        cell: info => <EntityPermitStatusCell info={info} />
     }),
     columnHelper.accessor('created_at', {
         header: 'table_headers.created_at',
@@ -61,7 +61,7 @@ export const entitiesFields = [
     },
     {
         name: 'status',
-        label: 'validation.status.label',
+        label: 'entity_permit.status.label',
         type: 'select',
         placeholder: 'validation.status.placeholder',
         defaultValue: 'active',
@@ -78,9 +78,9 @@ export const entitiesFields = [
     },
     {
         name: 'license_number',
-        label: 'validation.license_number.label',
+        label: 'entity_permit.number',
         type: 'text',
-        placeholder: 'validation.license_number.placeholder',
+        placeholder: 'entity_permit.number',
         editMode: true,
         viewMode: true,
         conditional: true,
@@ -88,9 +88,9 @@ export const entitiesFields = [
     },
     {
         name: 'license_image',
-        label: 'validation.license_image.label',
+        label: 'entity_permit.image',
         type: 'file',
-        placeholder: 'validation.license_image.placeholder',
+        placeholder: 'entity_permit.image',
         editMode: true,
         viewMode: true,
         conditional: true,
@@ -99,9 +99,9 @@ export const entitiesFields = [
     },
     {
         name: 'license_issue_date',
-        label: 'validation.license_issue_date.label',
+        label: 'entity_permit.issue_date',
         type: 'date',
-        placeholder: 'validation.license_issue_date.placeholder',
+        placeholder: 'entity_permit.issue_date',
         editMode: true,
         viewMode: true,
         conditional: true,

@@ -46,6 +46,7 @@ import Majors from '@/pages/majors/Majors';
 import RemotelyAttendancePlatforms from '@/pages/remotely-attendance-platforms/RemotelyAttendancePlatforms';
 import WarningReasons from '@/pages/warning-reasons/WarningReasons';
 import EvaluationParameters from '@/pages/evaluation-parameters/EvaluationParameters';
+import Evaluations from '@/pages/evaluations/Evaluations';
 import Configurations from '@/pages/configurations/Configurations';
 import InspectorAssignments from '@/pages/inspector-assignments/Inspectorassignments';
 import IssuingWarnings from '@/pages/issuing-warnings/Warnings';
@@ -134,6 +135,10 @@ export const routes = [
     {
         path: '/evaluation-parameters',
         element: <EvaluationParameters />
+    },
+    {
+        path: '/evaluations',
+        element: <Evaluations />
     },
     {
         path: '/quoran-parts',
