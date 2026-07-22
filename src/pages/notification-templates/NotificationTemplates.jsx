@@ -11,6 +11,7 @@ import Actions from './Actions';
 import TriggerNotification from './TriggerNotification';
 import ScheduleNotification from './ScheduleNotification';
 import ViewNotificationTemplate from './ViewNotificationTemplate';
+import EditNotificationTemplate from './EditNotificationTemplate';
 
 const extractTemplatesCollection = response => {
     if (Array.isArray(response)) return response;
@@ -65,7 +66,7 @@ export default function NotificationTemplates() {
                 filters={filters}
                 Actions={Actions}
                 enableAdd={false}
-                enableEdit={false}
+                enableEdit={true}
                 enableDelete={false}
                 enableCopy={false}
                 enableView={true}
@@ -74,6 +75,12 @@ export default function NotificationTemplates() {
                 <ViewNotificationTemplate
                     onClose={toggle.view}
                     template={getOriginalObject(isOpen.view, tableData)}
+                />
+            )}
+            {isOpen.edit && (
+                <EditNotificationTemplate
+                    onClose={toggle.edit}
+                    template={getOriginalObject(isOpen.edit, tableData)}
                 />
             )}
             {isOpen.trigger && (

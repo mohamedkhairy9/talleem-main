@@ -12,5 +12,12 @@ export const notificationTemplatesService = {
         return await axiosInstance.get(
             API_URLS.NOTIFICATION_TEMPLATES.DETAILS(id)
         );
+    },
+
+    updateNotificationTemplate: async (id, data) => {
+        return await axiosInstance.put(
+            API_URLS.NOTIFICATION_TEMPLATES.UPDATE(id),
+            data
+        );
     }
 };
