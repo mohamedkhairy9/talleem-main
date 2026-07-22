@@ -4,10 +4,10 @@ import useFiltering from '@/utils/hooks/global/useFiltering';
 import useIsOpen from '@/utils/hooks/global/useIsOpen';
 import useLocale from '@/utils/hooks/global/useLocale';
 import {
+    useAvailableEvaluationParametersQuery,
     useEvaluationsQuery,
     useReceivedEvaluationsQuery
 } from '@/api/hooks/useEvaluations';
-import { useEvaluationParametersQuery } from '@/api/hooks/useEvaluationParameters';
 import { getEvaluationColumns, getTemplateColumns } from './configs';
 import { extractCollection, resolveTotalCount } from './helpers';
 import CreateEvaluation from './CreateEvaluation';
@@ -28,15 +28,15 @@ export default function Evaluations() {
     const receivedQuery = useReceivedEvaluationsQuery(filters, {
         enabled: activeTab === 'received'
     });
-    const evaluationParametersQuery = useEvaluationParametersQuery(
+    const availableParametersQuery = useAvailableEvaluationParametersQuery(
         { page: pagination.page, per_page: pagination.per_page },
         { enabled: activeTab === 'templates' }
     );
     const sourceQuery =
         activeTab === 'received'
-            ? receivedQuery
+                ? receivedQuery
             : activeTab === 'templates'
-                ? evaluationParametersQuery
+                ? availableParametersQuery
                 : evaluationsQuery;
     const sourceData = sourceQuery.data;
     const allTableData = extractCollection(sourceData);

@@ -8,6 +8,9 @@ export const evaluationsService = {
     getReceivedEvaluations: async params =>
         axiosInstance.get(API_URLS.EVALUATIONS.RECEIVED, { params }),
 
+    getAvailableParameters: async params =>
+        axiosInstance.get(API_URLS.EVALUATIONS.AVAILABLE_PARAMETERS, { params }),
+
     getEvaluationTemplates: async params =>
         axiosInstance.get(API_URLS.EVALUATIONS.TEMPLATES, { params }),
 

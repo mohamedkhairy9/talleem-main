@@ -18,6 +18,13 @@ export const useReceivedEvaluationsQuery = (params = {}, options = {}) =>
         ...options
     });
 
+export const useAvailableEvaluationParametersQuery = (params = {}, options = {}) =>
+    useCustomQuery({
+        queryKey: [API_KEYS.EVALUATIONS, 'available-parameters', params],
+        queryFn: () => evaluationsService.getAvailableParameters(params),
+        ...options
+    });
+
 export const useEvaluationTemplatesQuery = (params = {}, options = {}) =>
     useCustomQuery({
         queryKey: [API_KEYS.EVALUATIONS, 'templates', params],

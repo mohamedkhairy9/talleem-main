@@ -135,6 +135,7 @@ export const API_URLS = {
         CREATE: '/evaluations',
         LIST: '/evaluations',
         RECEIVED: '/evaluations/received',
+        AVAILABLE_PARAMETERS: '/evaluations/available-parameters',
         TEMPLATES: '/evaluations/templates',
         TEMPLATE_DETAILS: id => `/evaluations/templates/${id}`,
         DETAILS: id => `/evaluations/${id}`

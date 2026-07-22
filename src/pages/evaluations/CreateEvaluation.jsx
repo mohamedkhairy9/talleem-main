@@ -3,11 +3,13 @@ import Modal from '@/components/common/form/Modal';
 import ModalHeader from '@/components/common/form/ModalHeader';
 import Btn from '@/components/common/buttons/Btn';
 import useLocale from '@/utils/hooks/global/useLocale';
-import { useCreateEvaluationMutation } from '@/api/hooks/useEvaluations';
+import {
+    useAvailableEvaluationParametersQuery,
+    useCreateEvaluationMutation
+} from '@/api/hooks/useEvaluations';
 import { useEntitiesQuery } from '@/api/hooks/useEntities';
 import { useTeachersQuery } from '@/api/hooks/useTeachers';
 import { useStudentsQuery } from '@/api/hooks/useStudents';
-import { useEvaluationParametersQuery } from '@/api/hooks/useEvaluationParameters';
 import { useUserStore } from '@/utils/stores/user.store';
 import {
     canSubmitEvaluationTemplate,
@@ -55,9 +57,9 @@ export default function CreateEvaluation({ onClose }) {
     const [formError, setFormError] = useState('');
 
     const {
-        data: evaluationParametersResponse,
+        data: availableParametersResponse,
         isLoading: templatesLoading
-    } = useEvaluationParametersQuery({ page: 1, per_page: 100 });
+    } = useAvailableEvaluationParametersQuery({ page: 1, per_page: 100 });
     const { data: entitiesResponse } = useEntitiesQuery(
         { page: 1, per_page: 100 },
         { enabled: form.evaluated_type === 'entity' }
@@ -71,7 +73,7 @@ export default function CreateEvaluation({ onClose }) {
         { enabled: form.evaluated_type === 'student' }
     );
 
-    const templates = extractCollection(evaluationParametersResponse);
+    const templates = extractCollection(availableParametersResponse);
     const availableTemplates = useMemo(
         () =>
             templates.filter(template =>
