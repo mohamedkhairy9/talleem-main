@@ -719,6 +719,14 @@
             "placeholder": "أدخل العنوان التفصيلي",
             "min": "يجب أن يكون العنوان التفصيلي على الأقل 5 أحرف"
         },
+        "residential_city": {
+            "label": "مدينة السكن",
+            "placeholder": "اختر مدينة السكن"
+        },
+        "national_address": {
+            "label": "العنوان الوطني",
+            "placeholder": "أدخل العنوان الوطني"
+        },
         "map_location": {
             "label": "الموقع على الخريطة"
         },

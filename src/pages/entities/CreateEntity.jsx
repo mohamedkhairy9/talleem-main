@@ -11,6 +11,7 @@ import {
     enabledDisabledOptions,
     genderOptions
 } from '@/utils/constants/options';
+import { normalizeSessionModeOptions } from '@/utils/helpers/sessionModeLabels';
 
 const statusOptions = [
     { label: { ar: 'مصرح', en: 'Permitted' }, value: 'active' },
@@ -69,7 +70,7 @@ export default function CreateEntity({ onClose }) {
                     education_program_entity_type_id:
                         educationProgramEntityTypesData?.data,
                     nationality_id: nationalitiesData?.data,
-                    session_mode_id: sessionModesData?.data,
+                    session_mode_id: normalizeSessionModeOptions(sessionModesData?.data),
                     academic_level_id: academicLevelsData?.data,
                     specification_id: specificationsData?.data,
                     gender: genderOptions,

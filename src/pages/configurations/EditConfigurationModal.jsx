@@ -12,6 +12,7 @@ import * as yup from 'yup';
 import { weekDaysOptions } from './configs';
 import { API_KEYS } from '@/api/endpoints';
 import useApiCalls from './useApiCalls';
+import { getSessionModeDisplayName } from '@/utils/helpers/sessionModeLabels';
 
 export default function EditConfigurationModal({ config, onClose }) {
     const { t } = useLocale();
@@ -61,9 +62,9 @@ export default function EditConfigurationModal({ config, onClose }) {
             const name = sessionMode.name?.[currentLang] || sessionMode.name?.ar || sessionMode.name?.en || sessionMode.name;
             return {
                 value: sessionMode.id, // Use ID as value for proper tracking
-                label: name,
+                label: getSessionModeDisplayName(sessionMode.name, currentLang),
                 id: sessionMode.id,
-                name: name,
+                name: getSessionModeDisplayName(sessionMode.name, currentLang),
                 sessionModeName: name // Store the display name
             };
         });

@@ -727,6 +727,14 @@
             "placeholder": "Enter address",
             "min": "Address must be at least 5 characters"
         },
+        "residential_city": {
+            "label": "Residential City",
+            "placeholder": "Select residential city"
+        },
+        "national_address": {
+            "label": "National Address",
+            "placeholder": "Enter national address"
+        },
         "map_location": {
             "label": "Map Location"
         },

@@ -10,6 +10,10 @@ import DeleteSessionMode from './DeleteSessionMode';
 import useLocale from '@/utils/hooks/global/useLocale';
 import i18next from 'i18next';
 import { getOriginalObject } from '@/utils/helpers/global.fns';
+import {
+    getSessionModeDisplayName,
+    normalizeSessionModeOptions
+} from '@/utils/helpers/sessionModeLabels';
 import ViewSessionMode from './ViewSessionMode';
 import Filters from './Filters';
 
@@ -22,10 +26,10 @@ export default function SessionModes() {
 
     const tableData = data?.data?.map(item => ({
         ...item,
-        name: item.name?.[i18next.language]
+        name: getSessionModeDisplayName(item.name, i18next.language)
     }));
 
-    const formData = data?.data?.map(item => ({
+    const formData = normalizeSessionModeOptions(data?.data).map(item => ({
         id: item.id,
         name: item.name,
         status: item.status

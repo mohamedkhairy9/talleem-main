@@ -100,9 +100,9 @@ export const employeesFields = [
     },
     {
         name: 'city_id',
-        label: 'validation.city_id.label',
+        label: 'validation.residential_city.label',
         type: 'select',
-        placeholder: 'validation.city_id.placeholder',
+        placeholder: 'validation.residential_city.placeholder',
         editMode: true,
         viewMode: true
     },
@@ -111,7 +111,6 @@ export const employeesFields = [
         label: 'validation.branch_id.label',
         type: 'select',
         placeholder: 'validation.branch_id.placeholder',
-        info: 'info.branch_id',
         editMode: true,
         viewMode: true,
         isMulti: true
@@ -176,9 +175,9 @@ export const employeesFields = [
     },
     {
         name: 'address',
-        label: 'validation.address.label',
+        label: 'validation.national_address.label',
         type: 'textarea',
-        placeholder: 'validation.address.placeholder',
+        placeholder: 'validation.national_address.placeholder',
         editMode: true,
         viewMode: true
     },

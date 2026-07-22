@@ -194,7 +194,6 @@ export const entitiesFields = [
         placeholder: 'validation.branch_id.placeholder',
         editMode: true,
         viewMode: true,
-        info: 'info.branch_id'
     },
     // Facility Details
     {

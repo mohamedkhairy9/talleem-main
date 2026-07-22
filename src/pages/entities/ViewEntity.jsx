@@ -14,6 +14,7 @@ import IssueEntityLicense from './IssueEntityLicense';
 import UpdateEntityLicenseActivities from './UpdateEntityLicenseActivities';
 import { useEntityQuery } from '@/api/hooks/useEntities';
 import { onlyDate } from '@/utils/helpers/global.fns';
+import { normalizeSessionModeOptions } from '@/utils/helpers/sessionModeLabels';
 
 const statusOptions = [
     { label: { ar: 'مصرح', en: 'Permitted' }, value: 'active' },
@@ -223,7 +224,7 @@ export default function ViewEntity({ onClose, oldData }) {
                             academic_level_id: academicLevelsData?.data,
                             specification_id: specificationsData?.data,
                             gender: genderOptions,
-                            session_mode_id: sessionModesData?.data,
+                            session_mode_id: normalizeSessionModeOptions(sessionModesData?.data),
                             entry_type: entryTypeOptions,
                             'manager.city_id': citiesData?.data,
                             'manager.nationality_id': nationalitiesData?.data,

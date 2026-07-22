@@ -8,6 +8,7 @@ import { API_KEYS } from '@/api/endpoints';
 import useApiCalls from './useApiCalls';
 import i18next from 'i18next';
 import { getVisibleConfigurationGroups } from './configurationVisibility';
+import { getSessionModeDisplayName } from '@/utils/helpers/sessionModeLabels';
 
 export default function Configurations() {
     const { t } = useLocale();
@@ -54,7 +55,7 @@ export default function Configurations() {
 
         const map = {};
         sessionModesData.data.forEach(sessionMode => {
-            const name = sessionMode.name?.[currentLang] || sessionMode.name?.ar || sessionMode.name?.en || sessionMode.name;
+            const name = getSessionModeDisplayName(sessionMode.name, currentLang);
             map[sessionMode.id] = name;
         });
 

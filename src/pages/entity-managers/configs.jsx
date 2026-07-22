@@ -88,7 +88,6 @@ export const entityManagersFields = [
         placeholder: 'validation.branch_id.placeholder',
         editMode: true,
         viewMode: true,
-        info: 'info.branch_id'
     },
     {
         name: 'entity_ids',

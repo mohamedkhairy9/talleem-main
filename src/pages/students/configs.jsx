@@ -90,7 +90,6 @@ export const studentsFields = [
         placeholder: 'validation.branch_id.placeholder',
         editMode: true,
         viewMode: true,
-        info: 'info.branch_id'
     },
 
     {
@@ -175,17 +174,17 @@ export const studentsFields = [
     },
     {
         name: 'city_id',
-        label: 'validation.city_id.label',
+        label: 'validation.residential_city.label',
         type: 'select',
-        placeholder: 'validation.city_id.placeholder',
+        placeholder: 'validation.residential_city.placeholder',
         editMode: true,
         viewMode: true
     },
     {
         name: 'address',
-        label: 'validation.address.label',
+        label: 'validation.national_address.label',
         type: 'textarea',
-        placeholder: 'validation.address.placeholder',
+        placeholder: 'validation.national_address.placeholder',
         editMode: true,
         viewMode: true
     },
