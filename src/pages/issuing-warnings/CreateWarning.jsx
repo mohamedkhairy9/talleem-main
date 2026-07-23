@@ -8,9 +8,13 @@ import Loader from '@/components/common/Loader';
 import useApiCalls from './useApiCalls';
 import { enabledDisabledOptions } from '@/utils/constants/options';
 import ErrorBoundary from '@/components/common/ErrorBoundary';
+import { useUserStore } from '@/utils/stores/user.store';
+import { getBranchManagerAssignedBranchId } from '@/utils/helpers/branchManagerScope';
 
 export default function CreateWarning({ onClose }) {
     const { mutate, isPending } = useCreateWarningMutation();
+    const currentUser = useUserStore(state => state.user);
+    const assignedBranchId = getBranchManagerAssignedBranchId(currentUser);
 
     const {
         branchesData,
@@ -37,10 +41,18 @@ export default function CreateWarning({ onClose }) {
                     options={{
                         warning_type: warningTypeOptions,
                         program_id: mainProgramsData?.data,
-                        branch_id: branchesData?.data,
+                        branch_id: assignedBranchId
+                            ? (branchesData?.data || []).filter(
+                                  branch => String(branch.id) === String(assignedBranchId)
+                              )
+                            : branchesData?.data,
                         status: enabledDisabledOptions
                     }}
-                    oldData={warningsDefaultValues}
+                    oldData={{
+                        ...warningsDefaultValues,
+                        branch_id: assignedBranchId || ''
+                    }}
+                    assignedBranchId={assignedBranchId}
                 />
             </ErrorBoundary>
         </Modal>

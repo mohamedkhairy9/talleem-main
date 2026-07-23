@@ -17,7 +17,8 @@ export default function FormCertificate({
     viewMode,
     isPending,
     mutate,
-    options
+    options,
+    assignedBranchId
 }) {
     const [certificateImagePreview, setCertificateImagePreview] = useState(
         oldData?.file || null
@@ -33,6 +34,12 @@ export default function FormCertificate({
         schema,
         defaultValues
     });
+
+    useEffect(() => {
+        if (assignedBranchId && !editMode && !viewMode) {
+            setValue('branch_id', assignedBranchId);
+        }
+    }, [assignedBranchId, editMode, setValue, viewMode]);
 
     const mainProgramId = watch('main_program_id');
     const branchId = watch('branch_id');
@@ -126,6 +133,8 @@ export default function FormCertificate({
     // Helper function to determine if a field should be disabled
     const isFieldDisabled = (fieldName) => {
         if (viewMode) return true;
+
+        if (fieldName === 'branch_id' && assignedBranchId) return true;
 
         // Entity disabled until branch AND program are selected
         if (fieldName === 'entity_id' && (!branchId || !mainProgramId)) {

@@ -34,7 +34,8 @@ export default function FormWarning({
     viewMode,
     isPending,
     mutate,
-    options
+    options,
+    assignedBranchId
 }) {
     const { t } = useLocale();
     const lang = i18next.language;
@@ -52,6 +53,12 @@ export default function FormWarning({
             note: ''
         }
     });
+
+    React.useEffect(() => {
+        if (assignedBranchId && !editMode && !viewMode) {
+            setValue('branch_id', assignedBranchId);
+        }
+    }, [assignedBranchId, editMode, setValue, viewMode]);
 
     const warningType = watch('warning_type');
     const selectedEntityId = watch('entity_id');
@@ -224,6 +231,7 @@ export default function FormWarning({
                                     placeholder={field.placeholder}
                                     disabled={
                                         viewMode ||
+                                        (field.name === 'branch_id' && Boolean(assignedBranchId)) ||
                                         (field.name === 'entity_id' && (!programIdForQuery || !branchIdForQuery)) ||
                                         (field.name === 'student_id' && !selectedEntityId) ||
                                         (field.name === 'teacher_id' && !selectedEntityId) ||

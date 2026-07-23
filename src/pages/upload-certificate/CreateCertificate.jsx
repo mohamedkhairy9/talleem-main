@@ -6,9 +6,13 @@ import { useCreateCertificateMutation } from '@/api/hooks/useCertificates';
 import { apiCalls, certificatesDefaultValues } from './configs';
 import Loader from '@/components/common/Loader';
 import useApiCalls from './useApiCalls';
+import { useUserStore } from '@/utils/stores/user.store';
+import { getBranchManagerAssignedBranchId } from '@/utils/helpers/branchManagerScope';
 
 export default function CreateCertificate({ onClose }) {
     const { mutate, isPending } = useCreateCertificateMutation();
+    const currentUser = useUserStore(state => state.user);
+    const assignedBranchId = getBranchManagerAssignedBranchId(currentUser);
 
     const {
         mainProgramsData,
@@ -23,13 +27,21 @@ export default function CreateCertificate({ onClose }) {
             <ModalHeader onClose={onClose} header="certificates.create" />
             <FormCertificate
                 onClose={onClose}
-                oldData={certificatesDefaultValues}
+                oldData={{
+                    ...certificatesDefaultValues,
+                    branch_id: assignedBranchId || ''
+                }}
                 mutate={mutate}
                 isPending={isPending}
                 options={{
                     main_program_id: mainProgramsData?.data,
-                    branch_id: branchesData?.data
+                    branch_id: assignedBranchId
+                        ? (branchesData?.data || []).filter(
+                              branch => String(branch.id) === String(assignedBranchId)
+                          )
+                        : branchesData?.data
                 }}
+                assignedBranchId={assignedBranchId}
             />
         </Modal>
     );
