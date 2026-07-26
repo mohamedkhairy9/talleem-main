@@ -10,6 +10,7 @@ import ModalContent from '@/components/common/form/ModalContent';
 import ModalFooter from '@/components/common/form/ModalFooter';
 import { isFieldRequired } from '@/utils/helpers/schemaHelpers';
 import { useRolesQuery } from '@/api/hooks/useRoles';
+import { useAssignUserRoleMutation } from '@/api/hooks/useUsers';
 import { isAssignableRole } from '@/utils/helpers/assignableRoles';
 import {
     buildUserSubmissionPayload,
@@ -21,6 +22,16 @@ function getSelectionKey(value) {
         .map(item => String(item))
         .sort()
         .join(',');
+}
+
+function getSavedUserId(response, fallbackId) {
+    return (
+        fallbackId ??
+        response?.id ??
+        response?.data?.id ??
+        response?.data?.data?.id ??
+        null
+    );
 }
 
 // Resolve role to a single id for the async select (API may return role_id or roles array)
@@ -90,6 +101,7 @@ export default function FormUser({
         schema,
         defaultValues: normalizedDefaultValues
     });
+    const assignUserRoleMutation = useAssignUserRoleMutation();
     const branchId = watch('branch_id');
 
     const { resolvedRoleId, rolesReady } = useResolvedRoleId(oldData);
@@ -128,6 +140,11 @@ export default function FormUser({
 
     function onSubmit(data) {
         const submitData = buildUserSubmissionPayload(data, oldData);
+        const selectedRoleId = Number(data.role_id);
+
+        // Roles are assigned through the dedicated user-role endpoint after
+        // the user has been created or updated.
+        delete submitData.role_id;
 
         // Edit mode: password is optional; don't send empty password
         if (editMode && (!submitData.password || submitData.password.trim() === '')) {
@@ -135,9 +152,19 @@ export default function FormUser({
         }
 
         mutate(submitData, {
-            onSuccess: () => {
-                onClose();
-            }
+            onSuccess: response => {
+                const userId = getSavedUserId(response, oldData?.id);
+
+                if (!selectedRoleId || !userId) {
+                    onClose();
+                    return;
+                }
+
+                assignUserRoleMutation.mutate(
+                    { userId, roleId: selectedRoleId },
+                    { onSuccess: onClose }
+                );
+            },
         });
     }
 
@@ -222,7 +249,7 @@ export default function FormUser({
             {!viewMode && (
                 <ModalFooter>
                     <Btn
-                        loading={isPending}
+                        loading={isPending || assignUserRoleMutation.isPending}
                         className="py-[10px] w-full"
                         type="submit"
                         label="common.submit"

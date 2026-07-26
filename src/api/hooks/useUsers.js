@@ -58,3 +58,25 @@ export const useDeleteUserMutation = () => {
         }
     });
 };
+
+export const useAssignUserRoleMutation = () => {
+    const queryClient = useQueryClient();
+
+    return useCustomMutation({
+        mutationFn: ({ userId, roleId }) => usersService.assignRole(userId, roleId),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: [API_KEYS.USERS] });
+        }
+    });
+};
+
+export const useRemoveUserRoleMutation = () => {
+    const queryClient = useQueryClient();
+
+    return useCustomMutation({
+        mutationFn: ({ userId, roleId }) => usersService.removeRole(userId, roleId),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: [API_KEYS.USERS] });
+        }
+    });
+};

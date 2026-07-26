@@ -20,5 +20,17 @@ export const usersService = {
 
     deleteUser: async id => {
         return await axiosInstance.delete(API_URLS.USERS.DELETE(id));
+    },
+
+    assignRole: async (userId, roleId) => {
+        return await axiosInstance.post(
+            API_URLS.ROLE_ASSIGNMENT.ADD(userId, roleId)
+        );
+    },
+
+    removeRole: async (userId, roleId) => {
+        return await axiosInstance.delete(
+            API_URLS.ROLE_ASSIGNMENT.REMOVE(userId, roleId)
+        );
     }
 };
