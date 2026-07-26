@@ -611,7 +611,12 @@ export default function FormTeacher({
                                     options={generateOptions(enhancedOptions[field.name] || [])}
                                     defaultValue={defaultValues[field.name] || field.defaultValue}
                                     isMulti={field.isMulti}
-                                    isAsync={false}
+                                    fieldParams={{
+                                        entity_ids: {
+                                            branch_id: branchId,
+                                            main_program_id: mainProgramId
+                                        }
+                                    }}
                                     required={isFieldRequired(schema, field.name)}
                                     oldData={oldData}
                                 />
