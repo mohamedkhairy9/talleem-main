@@ -68,6 +68,10 @@
             "label": "عنوان السكن",
             "placeholder": "أدخل عنوان السكن"
         },
+        "entity_manager_id": {
+            "label": "مدير جهة حالي",
+            "placeholder": "اختر مدير الجهة"
+        },
         "certificate_name_ar": {
             "label": "الإسم العربي",
             "placeholder": "أدخل اسم الشهادة بالعربي"

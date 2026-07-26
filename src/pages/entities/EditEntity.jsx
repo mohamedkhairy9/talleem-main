@@ -11,6 +11,8 @@ import {
     genderOptions
 } from '@/utils/constants/options';
 import { normalizeSessionModeOptions } from '@/utils/helpers/sessionModeLabels';
+import { useEntityManagersQuery } from '@/api/hooks/useEntityManagers';
+import { allData } from '@/utils/constants/global.constants';
 
 const statusOptions = [
     { label: { ar: 'مصرح', en: 'Permitted' }, value: 'active' },
@@ -27,6 +29,8 @@ const entryTypeOptions = [
 export default function EditEntity({ onClose, oldData }) {
     console.log("old data: ", oldData)
     const { mutate, isPending } = useUpdateEntityMutation();
+    const { data: entityManagersData, isLoading: entityManagersLoading } =
+        useEntityManagersQuery({ ...allData, status: true });
 
     const {
         branchesData,
@@ -46,18 +50,22 @@ export default function EditEntity({ onClose, oldData }) {
         isLoading
     } = useApiCalls({ apiCalls, mainProgramId: oldData?.main_program_id });
 
-    if (isLoading) return <Loader />;
+    if (isLoading || entityManagersLoading) return <Loader />;
 
     return (
         <Modal onClose={onClose} size="5xl">
             <ModalHeader onClose={onClose} header="entities.edit" />
             <FormEntity
                 onClose={onClose}
-                oldData={oldData}
+                oldData={{
+                    ...oldData,
+                    entity_manager_id: oldData?.manager?.id ?? ''
+                }}
                 editMode={true}
                 mutate={mutate}
                 isPending={isPending}
                 options={{
+                    entity_manager_id: entityManagersData?.data,
                     user_id: usersData?.data,
                     branch_id: branchesData?.data,
                     main_program_id: mainProgramsData?.data,

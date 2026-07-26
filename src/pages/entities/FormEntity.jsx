@@ -63,17 +63,19 @@ export default function FormEntity({
         }
     );
 
+    const existingManagerId = watch('entity_manager_id');
+
 
     useEffect(() => {
-        if(openSections.managerInfo){
+        if (openSections.managerInfo && !existingManagerId) {
             setAdjustedSchema(schema);
-        }else{
-            // exclude the manager field when manger section isn't open
+        } else {
+            // The manager details are only required when creating a new manager.
             const { manager, ...filteredFields } = schema.fields;
             const newSchema = yup.object(filteredFields);
             setAdjustedSchema(newSchema);
         }
-    }, [openSections.managerInfo])
+    }, [openSections.managerInfo, existingManagerId]);
 
     // Update license image preview when oldData changes (for view/edit mode)
     useEffect(() => {
@@ -122,13 +124,21 @@ export default function FormEntity({
             delete submitData.license_issue_date;
         }
 
+        const shouldCreateManager =
+            openSections.managerInfo && !submitData.entity_manager_id;
+
+        if (shouldCreateManager) {
+            submitData.manager = {
+                ...submitData.manager,
+                status: submitData.manager?.status ? 1 : 0
+            };
+        } else {
+            delete submitData.manager;
+        }
+
         mutate(
             {
                 ...submitData,
-                manager: {
-                    ...submitData.manager,
-                    status: submitData.manager.status ? 1 : 0
-                },
                 status: submitData.status,
                 ...(submitData.main_program_id == 1
                     ? {
@@ -340,6 +350,7 @@ export default function FormEntity({
 
     // Manager-specific options mapping
     const managerOptions = {
+        entity_manager_id: options.entity_manager_id,
         'manager.nationality_id':
             options['manager.nationality_id'] || options.nationality_id,
         'manager.city_id': options['manager.city_id'] || options.city_id,
@@ -613,9 +624,10 @@ export default function FormEntity({
 
     const filteredManagerFields = managerFields.filter(
         field =>
-            (editMode && field.editMode) ||
-            (viewMode && field.viewMode) ||
-            (!editMode && !viewMode)
+            ((editMode && field.editMode) ||
+                (viewMode && field.viewMode) ||
+                (!editMode && !viewMode)) &&
+            (!existingManagerId || field.name === 'entity_manager_id')
     );
 
     return (

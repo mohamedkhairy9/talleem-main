@@ -64,6 +64,10 @@
             "label": "Entity Living Address",
             "placeholder": "Enter the living address"
         },
+        "entity_manager_id": {
+            "label": "Existing Entity Manager",
+            "placeholder": "Select an entity manager"
+        },
         "certificate_names": {
             "label": "Certificate Name",
             "placeholder": "Enter certificate name",

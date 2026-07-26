@@ -293,6 +293,15 @@ export const entitiesFields = [
 
 export const managerFields = [
     {
+        name: 'entity_manager_id',
+        label: 'validation.entity_manager_id.label',
+        type: 'select',
+        placeholder: 'validation.entity_manager_id.placeholder',
+        editMode: true,
+        viewMode: true,
+        section: 'manager'
+    },
+    {
         name: 'manager.name.ar',
         label: 'validation.name.label.ar',
         type: 'text',
@@ -466,7 +475,8 @@ export const entitiesDefaultValues = {
     min_acceptance_age: 1,
     manager: {
         status: true
-    }
+    },
+    entity_manager_id: ''
 };
 
 export const entitiesFilters = [
