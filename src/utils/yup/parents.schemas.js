@@ -16,6 +16,7 @@ export const parentsSchema = yup.object({
                 .max(100, t('validation.name.ar_max'))
         })
         .required(t('validation.required')),
+    national_id: yup.string().trim().required(t('validation.required')),
     phone_1: yup
         .string()
         .required(t('validation.required'))

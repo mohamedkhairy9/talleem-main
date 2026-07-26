@@ -25,6 +25,10 @@ export const parentsColumns = [
         header: 'table_headers.name',
         cell: info => <NameCell directValue={info.row.original.name} />
     }),
+    columnHelper.accessor('national_id', {
+        header: 'table_headers.national_id',
+        cell: info => <Cell value={info.getValue() || '-'} />
+    }),
     columnHelper.accessor('phone_1', {
         header: 'table_headers.phone_1',
         cell: info => <Cell value={info.getValue()} />
@@ -68,6 +72,14 @@ export const parentsFields = [
         viewMode: true
     },
     {
+        name: 'national_id',
+        label: 'validation.national_id.label',
+        type: 'text',
+        placeholder: 'validation.national_id.placeholder',
+        editMode: true,
+        viewMode: true
+    },
+    {
         name: 'phone_1',
         label: 'validation.phone_1.label',
         type: 'text',
@@ -90,6 +102,7 @@ export const parentsDefaultValues = {
         en: '',
         ar: ''
     },
+    national_id: '',
     phone_1: '',
     phone_2: ''
 };

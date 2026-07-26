@@ -29,8 +29,19 @@ export default function FormParent({
     function onSubmit(data) {
         const payload =
             editMode && oldData?.id
-                ? { id: oldData.id, name: data.name, phone_1: data.phone_1, phone_2: data.phone_2 }
-                : { name: data.name, phone_1: data.phone_1, phone_2: data.phone_2 };
+                ? {
+                      id: oldData.id,
+                      name: data.name,
+                      national_id: data.national_id,
+                      phone_1: data.phone_1,
+                      phone_2: data.phone_2
+                  }
+                : {
+                      name: data.name,
+                      national_id: data.national_id,
+                      phone_1: data.phone_1,
+                      phone_2: data.phone_2
+                  };
         mutate(payload, {
             onSuccess: () => {
                 onClose();
@@ -50,7 +61,10 @@ export default function FormParent({
                             (!editMode && !viewMode)
                     )
                     .map(field => (
-                        <div key={field.name}>
+                        <div
+                            key={field.name}
+                            className={field.name === 'phone_2' ? 'md:col-span-2' : ''}
+                        >
                             <InputRFH
                                 p="px-3 py-3"
                                 control={control}
