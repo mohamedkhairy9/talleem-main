@@ -200,6 +200,17 @@ export const studentsFields = [
     },
     // Parent Information Fields (grouped in separate section)
     {
+        name: 'parent_national_id',
+        label: 'validation.national_id.label',
+        type: 'text',
+        placeholder: 'validation.national_id.placeholder',
+        editMode: true,
+        viewMode: true,
+        conditional: true,
+        showWhen: { isMinor: true },
+        section: 'parent'
+    },
+    {
         name: 'parent_name.en',
         label: 'validation.parent_name.label_en',
         type: 'text',
@@ -370,6 +381,8 @@ export const studentsDefaultValues = {
         en: '',
         ar: ''
     },
+    parent_id: null,
+    parent_national_id: '',
     qualification: {
         has_high_school: 0,
         high_school_grade: 0,

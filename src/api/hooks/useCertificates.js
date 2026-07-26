@@ -65,3 +65,11 @@ export const useDeleteCertificateMutation = () => {
         }
     });
 };
+
+export const useCertificateFormContextQuery = (options = {}) => {
+    return useCustomQuery({
+        queryKey: [API_KEYS.CERTIFICATE_FORM_CONTEXT],
+        queryFn: certificatesService.getFormContext,
+        ...options
+    });
+};

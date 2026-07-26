@@ -10,7 +10,11 @@ export default function ParentInformationSection({
     errors,
     viewMode,
     options,
-    isConditionallyRequired
+    isConditionallyRequired,
+    existingParent,
+    isLookingUpParent,
+    onParentNationalIdBlur,
+    onParentNationalIdChange
 }) {
     const { t } = useLocale();
 
@@ -21,6 +25,11 @@ export default function ParentInformationSection({
             <h3 className="text-lg font-semibold text-gray-800">
                 {t('students.parent_information')}
             </h3>
+            {existingParent && (
+                <p className="text-sm text-emerald-700">
+                    {t('students.existing_parent_found')}
+                </p>
+            )}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 p-4 border border-gray-200 rounded-lg">
                 {fields.map(field => (
                     <div key={field.name}>
@@ -31,12 +40,27 @@ export default function ParentInformationSection({
                             error={getNestedError(errors, field.name)}
                             type={field.type}
                             placeholder={field.placeholder}
-                            disabled={viewMode}
+                            disabled={
+                                viewMode ||
+                                (Boolean(existingParent) &&
+                                    ['parent_name.en', 'parent_name.ar', 'parent_phone_1', 'parent_phone_2'].includes(field.name))
+                            }
                             label={field.label}
                             name={field.name}
                             info={field.info}
                             options={generateOptions(options[field.name])}
                             required={isConditionallyRequired(field)}
+                            loading={field.name === 'parent_national_id' && isLookingUpParent}
+                            onBlur={
+                                field.name === 'parent_national_id'
+                                    ? onParentNationalIdBlur
+                                    : undefined
+                            }
+                            onChange={
+                                field.name === 'parent_national_id'
+                                    ? onParentNationalIdChange
+                                    : undefined
+                            }
                         />
                     </div>
                 ))}
@@ -44,4 +68,3 @@ export default function ParentInformationSection({
         </div>
     );
 }
-

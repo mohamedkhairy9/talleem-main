@@ -1,4 +1,4 @@
-import React, { useMemo, useCallback, useRef } from 'react';
+import React, { useMemo, useCallback, useRef, useState } from 'react';
 import useRFH from '@/utils/hooks/global/useRFH';
 import { studentsSchema } from '@/utils/yup/students.schemas';
 import Btn from '@/components/common/buttons/Btn';
@@ -24,6 +24,8 @@ import { useConfigurationsQuery } from '@/api/hooks/useConfigurations';
 import useLocale from '@/utils/hooks/global/useLocale';
 import toastService from '@/utils/helpers/Toastservice';
 import Loader from '@/components/common/Loader';
+import { parentsService } from '@/api/services/parents.service';
+import calculateAge from '@/utils/helpers/ageCalculation';
 import {
     getActiveHalaqaInfo,
     hasSegmentationAffectingChange,
@@ -127,6 +129,9 @@ function StudentFormContent({
         schema,
         defaultValues: defaultValuesRef.current || {}
     });
+    const [existingParent, setExistingParent] = useState(null);
+    const [isLookingUpParent, setIsLookingUpParent] = useState(false);
+    const parentLookupRequestRef = useRef(0);
 
     // Watch form values
     const hasHighSchool = watch('qualification.has_high_school');
@@ -147,7 +152,6 @@ function StudentFormContent({
         entities,
         entitiesLoading,
         selectedEntityEducationType,
-        shouldShowParentFields,
         mainProgramId,
         branchId,
         entityLoadOptions,
@@ -157,11 +161,17 @@ function StudentFormContent({
         editMode,
         viewMode,
         watch,
+        control,
         setValue,
         parentInfoAgeThreshold
     });
 
     const { data: requiredDocsData } = useRequiredDocumentsHint('student', mainProgramId);
+    const [studentAge, setStudentAge] = useState(() =>
+        calculateAge(onlyDate(oldData?.date_of_birth))
+    );
+    const shouldShowParentFields =
+        Number.isFinite(studentAge) && studentAge < parentInfoAgeThreshold;
     const filesSupportingHint = useMemo(() => {
         const docs = requiredDocsData?.documents;
         if (!docs?.length) return undefined;
@@ -212,6 +222,85 @@ function StudentFormContent({
         }
     }, [setProfileImageChanged, setProfileImagePreview]);
 
+    const clearParentDetails = useCallback(() => {
+        setExistingParent(null);
+        setValue('parent_id', null, { shouldDirty: true });
+        setValue('parent_name.en', '', { shouldValidate: true });
+        setValue('parent_name.ar', '', { shouldValidate: true });
+        setValue('parent_phone_1', '', { shouldValidate: true });
+        setValue('parent_phone_2', '', { shouldValidate: true });
+    }, [setValue]);
+
+    const handleDateOfBirthChange = useCallback(event => {
+        const age = calculateAge(event.target.value);
+        setStudentAge(age);
+
+        // The guardian section must disappear immediately when the selected
+        // date makes the student old enough according to the configuration.
+        if (!Number.isFinite(age) || age >= parentInfoAgeThreshold) {
+            clearParentDetails();
+        }
+    }, [clearParentDetails, parentInfoAgeThreshold]);
+
+    const handleParentNationalIdChange = useCallback(event => {
+        // Invalidate a pending lookup as soon as the ID changes, so old data
+        // can never be linked to the new ID.
+        parentLookupRequestRef.current += 1;
+
+        if (existingParent) {
+            clearParentDetails();
+        }
+
+        if (!event.target.value?.trim()) {
+            clearParentDetails();
+        }
+    }, [clearParentDetails, existingParent]);
+
+    const handleParentNationalIdBlur = useCallback(async event => {
+        const nationalId = event.target.value?.trim();
+        const requestId = ++parentLookupRequestRef.current;
+
+        clearParentDetails();
+
+        if (!nationalId) {
+            return;
+        }
+
+        setIsLookingUpParent(true);
+        try {
+            const response = await parentsService.lookupByNationalId(nationalId);
+            const lookup = response?.data ?? response;
+            const parentId = lookup?.parent_id ?? lookup?.id;
+
+            const parentExists = response?.exists ?? lookup?.exists;
+
+            if (requestId !== parentLookupRequestRef.current) {
+                return;
+            }
+
+            if (!parentExists || !parentId) {
+                return;
+            }
+
+            const parentName = lookup.parent_name ?? lookup.name ?? {};
+            setExistingParent(lookup);
+            setValue('parent_id', parentId, { shouldValidate: true, shouldDirty: true });
+            setValue('parent_name.en', parentName.en ?? '', { shouldValidate: true });
+            setValue('parent_name.ar', parentName.ar ?? '', { shouldValidate: true });
+            setValue('parent_phone_1', lookup.parent_phone_1 ?? lookup.phone_1 ?? '', { shouldValidate: true });
+            setValue('parent_phone_2', lookup.parent_phone_2 ?? lookup.phone_2 ?? '', { shouldValidate: true });
+        } catch {
+            // A failed lookup must not block adding a genuinely new guardian.
+            if (requestId === parentLookupRequestRef.current) {
+                clearParentDetails();
+            }
+        } finally {
+            if (requestId === parentLookupRequestRef.current) {
+                setIsLookingUpParent(false);
+            }
+        }
+    }, [clearParentDetails, setValue]);
+
     // Handle form submission
     const onSubmit = useCallback((data) => {
         if (
@@ -228,7 +317,23 @@ function StudentFormContent({
             return;
         }
 
-        const finalData = prepareSubmissionData(data, editMode, profileImageChanged);
+        const dataForSubmission = shouldShowParentFields
+            ? data
+            : {
+                ...data,
+                parent_id: null,
+                parent_national_id: null,
+                parent_name: null,
+                parent_phone_1: null,
+                parent_phone_2: null,
+                kinship_id: null,
+            };
+
+        const finalData = prepareSubmissionData(
+            dataForSubmission,
+            editMode,
+            profileImageChanged
+        );
         mutate(finalData, {
             onSuccess: () => {
                 onClose();
@@ -241,6 +346,7 @@ function StudentFormContent({
         onClose,
         profileImageChanged,
         segmentationChangeLocked,
+        shouldShowParentFields,
         t
     ]);
 
@@ -276,6 +382,7 @@ function StudentFormContent({
                             setValue={setValue}
                             filesSupportingHint={filesSupportingHint}
                             segmentationChangeLocked={segmentationChangeLocked}
+                            onDateOfBirthChange={handleDateOfBirthChange}
                         />
                     ))}
                 </div>
@@ -289,6 +396,10 @@ function StudentFormContent({
                         viewMode={viewMode}
                         options={options}
                         isConditionallyRequired={isConditionallyRequired}
+                        existingParent={existingParent}
+                        isLookingUpParent={isLookingUpParent}
+                        onParentNationalIdBlur={handleParentNationalIdBlur}
+                        onParentNationalIdChange={handleParentNationalIdChange}
                     />
                 )}
 
@@ -322,7 +433,8 @@ function StudentFormContent({
 }
 
 export default function FormStudent(props) {
-    const { data: configurationsData, isLoading: configurationsLoading } = useConfigurationsQuery('general');
+    // The guardian-age rule belongs to the Memorization program settings.
+    const { data: configurationsData, isLoading: configurationsLoading } = useConfigurationsQuery('tahfiz');
 
     const parentInfoAgeThreshold = useMemo(
         () => resolveParentInfoAgeThreshold(configurationsData?.data),

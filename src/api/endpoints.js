@@ -358,6 +358,7 @@ export const API_URLS = {
     },
     CERTIFICATES: {
         LIST: '/certificates',
+        FORM_CONTEXT: '/certificates/form-context',
         DETAILS: id => `/certificates/${id}`,
         CREATE: '/certificates',
         UPDATE: id => `/certificates/${id}`,
@@ -373,6 +374,7 @@ export const API_URLS = {
     PARENTS: {
         CREATE: '/parents',
         LIST: '/parents',
+        LOOKUP: '/parents/lookup',
         DETAILS: id => `/parents/${id}`,
         UPDATE: id => `/parents/${id}`,
         DELETE: id => `/parents/${id}`,
@@ -482,6 +484,7 @@ export const API_KEYS = {
     WARNINGS: 'warnings',
     CERTIFICATE_NAMES: 'certification-names',
     CERTIFICATES: 'certificates',
+    CERTIFICATE_FORM_CONTEXT: 'certificate-form-context',
     BRANCHES: 'branches',
     MAIN_PROGRAMS: 'main-programs',
     QUORAN_PARTS: 'quoran-parts',

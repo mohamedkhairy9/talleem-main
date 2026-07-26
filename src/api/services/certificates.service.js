@@ -2,6 +2,10 @@ import { axiosInstance } from '../axiosInstance';
 import { API_URLS } from '../endpoints';
 
 export const certificatesService = {
+    getFormContext: async () => {
+        return await axiosInstance.get(API_URLS.CERTIFICATES.FORM_CONTEXT);
+    },
+
     getCertificates: async params => {
         return await axiosInstance.get(API_URLS.CERTIFICATES.LIST, {
             params

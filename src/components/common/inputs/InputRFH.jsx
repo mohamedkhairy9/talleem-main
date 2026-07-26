@@ -17,6 +17,7 @@ export default function InputRFH({
     defaultValue,
     p = 'px-4 py-3',
     onChange,
+    onBlur,
     disabled,
     accept,
     isMulti = false,
@@ -159,6 +160,20 @@ export default function InputRFH({
                 onChange: e => {
                     registered.onChange(e);
                     onChange(e);
+                }
+            };
+        }
+
+        if (onChange || onBlur) {
+            return {
+                ...registered,
+                onChange: e => {
+                    registered.onChange(e);
+                    onChange?.(e);
+                },
+                onBlur: e => {
+                    registered.onBlur(e);
+                    onBlur?.(e);
                 }
             };
         }

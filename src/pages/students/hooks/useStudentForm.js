@@ -6,6 +6,7 @@ import calculateAge from '@/utils/helpers/ageCalculation';
 import i18next from 'i18next';
 import { entitiesService } from '@/api/services/entities.service';
 import { createAsyncLoadOptionsWithIncluded } from '@/utils/helpers/asyncSelectHelpers';
+import { useWatch } from 'react-hook-form';
 
 // Helper to extract education entity type data from oldData
 const extractEducationEntityTypeData = (oldData) => {
@@ -35,7 +36,7 @@ const getStudentEntityIds = student => {
         .filter(value => value !== null && value !== undefined && value !== '');
 };
 
-export function useStudentForm({ oldData, editMode, viewMode, watch, setValue, parentInfoAgeThreshold }) {
+export function useStudentForm({ oldData, editMode, viewMode, watch, control, setValue, parentInfoAgeThreshold }) {
     const lang = i18next.language;
     const previousParamsRef = useRef(null);
     const previousBranchIdRef = useRef(null);
@@ -58,7 +59,9 @@ export function useStudentForm({ oldData, editMode, viewMode, watch, setValue, p
     const branchId = watch('branch_id');
     const entityIds = watch('entity_ids');
     const entityId = Array.isArray(entityIds) ? entityIds[0] : entityIds;
-    const dateOfBirth = watch('date_of_birth');
+    // useWatch subscribes directly to the field, so the guardian-age rule is
+    // recalculated immediately for every date change.
+    const dateOfBirth = useWatch({ control, name: 'date_of_birth' });
 
     // Calculate age and determine if parent fields should be shown
     const studentAge = useMemo(() => calculateAge(dateOfBirth), [dateOfBirth]);
@@ -323,6 +326,7 @@ export function useStudentForm({ oldData, editMode, viewMode, watch, setValue, p
         entitiesLoading,
         selectedEntityEducationType,
         selectedEntityMemorizationType,
+        studentAge,
         shouldShowParentFields,
         mainProgramId,
         branchId,

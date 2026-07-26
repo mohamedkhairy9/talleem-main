@@ -2,7 +2,10 @@ import React from 'react';
 import FormCertificate from './FormCertificate';
 import Modal from '@/components/common/form/Modal';
 import ModalHeader from '@/components/common/form/ModalHeader';
-import { useCreateCertificateMutation } from '@/api/hooks/useCertificates';
+import {
+    useCertificateFormContextQuery,
+    useCreateCertificateMutation
+} from '@/api/hooks/useCertificates';
 import { apiCalls, certificatesDefaultValues } from './configs';
 import Loader from '@/components/common/Loader';
 import useApiCalls from './useApiCalls';
@@ -11,8 +14,13 @@ import { getBranchManagerAssignedBranchId } from '@/utils/helpers/branchManagerS
 
 export default function CreateCertificate({ onClose }) {
     const { mutate, isPending } = useCreateCertificateMutation();
+    const { data: formContextData, isLoading: isLoadingFormContext } =
+        useCertificateFormContextQuery();
     const currentUser = useUserStore(state => state.user);
-    const assignedBranchId = getBranchManagerAssignedBranchId(currentUser);
+    const formContext = formContextData?.data ?? formContextData;
+    const assignedBranchId =
+        (formContext?.branch_locked ? formContext?.branch?.id : null) ||
+        getBranchManagerAssignedBranchId(currentUser);
 
     const {
         mainProgramsData,
@@ -20,7 +28,7 @@ export default function CreateCertificate({ onClose }) {
         isLoading
     } = useApiCalls({ apiCalls });
 
-    if (isLoading) return <Loader />;
+    if (isLoading || isLoadingFormContext) return <Loader />;
 
     return (
         <Modal onClose={onClose} size="3xl">
@@ -29,7 +37,8 @@ export default function CreateCertificate({ onClose }) {
                 onClose={onClose}
                 oldData={{
                     ...certificatesDefaultValues,
-                    branch_id: assignedBranchId || ''
+                    branch_id: assignedBranchId || '',
+                    issued_from: formContext?.issued_from || ''
                 }}
                 mutate={mutate}
                 isPending={isPending}
@@ -42,6 +51,7 @@ export default function CreateCertificate({ onClose }) {
                         : branchesData?.data
                 }}
                 assignedBranchId={assignedBranchId}
+                issuedFrom={formContext?.issued_from}
             />
         </Modal>
     );

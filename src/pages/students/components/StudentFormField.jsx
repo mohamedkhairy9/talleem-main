@@ -25,7 +25,8 @@ export default function StudentFormField({
     oldData,
     setValue,
     filesSupportingHint,
-    segmentationChangeLocked
+    segmentationChangeLocked,
+    onDateOfBirthChange
 }) {
     const { t } = useLocale();
     const lang = i18next.language;
@@ -218,6 +219,11 @@ export default function StudentFormField({
                     min={field.min}
                     max={field.max}
                     required={isConditionallyRequired(field)}
+                    onChange={
+                        field.name === 'date_of_birth'
+                            ? onDateOfBirthChange
+                            : undefined
+                    }
                 />
             )}
         </div>

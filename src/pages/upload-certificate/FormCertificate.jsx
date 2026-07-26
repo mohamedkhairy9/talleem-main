@@ -18,7 +18,8 @@ export default function FormCertificate({
     isPending,
     mutate,
     options,
-    assignedBranchId
+    assignedBranchId,
+    issuedFrom
 }) {
     const [certificateImagePreview, setCertificateImagePreview] = useState(
         oldData?.file || null
@@ -60,9 +61,13 @@ export default function FormCertificate({
                 ...(program ? { main_program_id: program } : {}),
                 status: true
             },
-            certificate_name_id: {} // no filters; paginated + search via async select
+            // The issuing source is determined by the logged-in user's form context.
+            // Certificate types must never be mixed across entity, branch, and main administration.
+            certificate_name_id: issuedFrom
+                ? { issued_from: issuedFrom, status: true }
+                : {}
         };
-    }, [branchId, mainProgramId, entityId, oldData?.branch_id, oldData?.main_program_id, oldData?.entity_id]);
+    }, [branchId, mainProgramId, entityId, issuedFrom, oldData?.branch_id, oldData?.main_program_id, oldData?.entity_id]);
 
     // Reset dependents when program or branch changes
     useEffect(() => {
@@ -90,8 +95,9 @@ export default function FormCertificate({
         branch_id: options.branch_id || [],
         // Empty when deps not met so we never call API without filters; async uses fieldParams when deps met
         entity_id: branchId && mainProgramId ? undefined : [],
-        student_id: mainProgramId && entityId ? undefined : []
-    }), [options, branchId, mainProgramId, entityId]);
+        student_id: mainProgramId && entityId ? undefined : [],
+        certificate_name_id: issuedFrom ? undefined : []
+    }), [options, branchId, mainProgramId, entityId, issuedFrom]);
 
     function onSubmit(data) {
         // Remove filter-only fields from submission
@@ -199,7 +205,8 @@ export default function FormCertificate({
                     const useStaticOptionsOnly =
                         ['branch_id', 'main_program_id'].includes(field.name) ||
                         (field.name === 'entity_id' && (!branchId || !mainProgramId)) ||
-                        (field.name === 'student_id' && (!mainProgramId || !entityId));
+                        (field.name === 'student_id' && (!mainProgramId || !entityId)) ||
+                        (field.name === 'certificate_name_id' && !issuedFrom);
 
                     // Remount when deps change so async select gets fresh loadOptions with correct filters
                     const fieldKey =

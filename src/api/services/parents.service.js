@@ -1,8 +1,14 @@
-import { axiosInstance } from '../axiosInstance';
+import { axiosInstance, axiosInstanceFront } from '../axiosInstance';
 import { API_URLS } from '../endpoints';
 import { multipartFormData } from '@/utils/constants/global.constants';
 
 export const parentsService = {
+    lookupByNationalId: async nationalId => {
+        return await axiosInstanceFront.get(API_URLS.PARENTS.LOOKUP, {
+            params: { national_id: nationalId }
+        });
+    },
+
     getParents: async params => {
         return await axiosInstance.get(API_URLS.PARENTS.LIST, { params });
     },

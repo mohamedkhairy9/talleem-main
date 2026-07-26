@@ -160,6 +160,15 @@ export const studentsSchema = (parentInfoAgeThreshold = DEFAULT_PARENT_INFO_AGE_
     date_of_birth: yup
         .string()
         .required(t('validation.date_of_birth.required')),
+
+    parent_national_id: yup
+        .string()
+        .nullable()
+        .when('date_of_birth', {
+            is: dateOfBirth => shouldRequireParentInfo(dateOfBirth, parentInfoAgeThreshold),
+            then: schema => schema.required(t('validation.required')),
+            otherwise: schema => schema.nullable().optional()
+        }),
     
     // Parent information is required when student age is below the configured threshold.
     parent_name: yup

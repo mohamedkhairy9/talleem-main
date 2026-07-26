@@ -1237,6 +1237,7 @@
         "view": "View Student",
         "qualification": "Qualification",
         "parent_information": "Parent/Guardian Information",
+        "existing_parent_found": "An existing guardian was found and will be linked to this student.",
         "import": "Import Students",
         "import_info": "Make sure your Excel file matches the example format. Download the example file to see the correct format.",
         "example_downloaded": "Example file downloaded successfully"
