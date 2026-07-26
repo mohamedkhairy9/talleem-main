@@ -1212,6 +1212,7 @@
     },
     "teachers": {
         "create": "Create Teacher",
+        "edit": "Edit Teacher",
         "update": "Update Teacher",
         "view": "View Teacher",
         "import": "Import Teachers",
