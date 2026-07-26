@@ -655,6 +655,10 @@
             "invalid": "يرجى اختيار نوع مستخدم صحيح"
         },
         "users": {
+            "username": {
+                "label": "اسم المستخدم",
+                "placeholder": "أدخل اسم المستخدم"
+            },
             "name": {
                 "label": "الاسم",
                 "placeholder": "أدخل الاسم"

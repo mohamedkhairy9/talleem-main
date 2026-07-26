@@ -58,7 +58,7 @@ export const usersColumns = [
 export const usersFields = [
     {
         name: 'name.en',
-        label: 'validation.users.name.label',
+        label: 'validation.users.username.label',
         type: 'text',
         placeholder: 'validation.users.name.placeholder',
         editMode: true,

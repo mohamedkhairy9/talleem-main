@@ -418,13 +418,17 @@ export default function FormEntity({
                 );
             }
             if (field.name === 'license_image') {
-                const isImage = licenseImagePreview && 
-                    (typeof licenseImagePreview === 'string' && 
-                     (licenseImagePreview.startsWith('data:image') || 
-                      licenseImagePreview.match(/\.(jpg|jpeg|png|gif)$/i)));
+                const previewUrl =
+                    typeof licenseImagePreview === 'string'
+                        ? licenseImagePreview.split('?')[0]
+                        : '';
+                const isImage = licenseImagePreview &&
+                    typeof licenseImagePreview === 'string' &&
+                    (licenseImagePreview.startsWith('data:image') ||
+                        previewUrl.match(/\.(jpg|jpeg|png|gif|webp)$/i));
                 const isPdf = licenseImagePreview && 
                     typeof licenseImagePreview === 'string' && 
-                    (licenseImagePreview.includes('.pdf') || licenseImagePreview.startsWith('data:application/pdf'));
+                    (previewUrl.includes('.pdf') || licenseImagePreview.startsWith('data:application/pdf'));
                 
                 return (
                     <div className="space-y-2">
@@ -465,12 +469,17 @@ export default function FormEntity({
                                         className="h-32 w-32 object-cover rounded border-2 border-gray-300"
                                     />
                                 ) : isPdf ? (
-                                    <div className="flex items-center gap-2 p-2 border-2 border-gray-300 rounded">
+                                    <a
+                                        href={licenseImagePreview}
+                                        target="_blank"
+                                        rel="noreferrer"
+                                        className="flex items-center gap-2 p-2 border-2 border-gray-300 rounded hover:border-primary"
+                                    >
                                         <svg className="w-8 h-8 text-red-500" fill="currentColor" viewBox="0 0 20 20">
                                             <path fillRule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4z" clipRule="evenodd" />
                                         </svg>
-                                                    <span className="text-sm text-gray-700">{typeof licenseImagePreview === 'string' && licenseImagePreview.includes('.pdf') ? licenseImagePreview : 'Permit PDF'}</span>
-                                    </div>
+                                        <span className="text-sm text-gray-700">{previewUrl || 'Permit PDF'}</span>
+                                    </a>
                                 ) : null}
                             </div>
                         )}

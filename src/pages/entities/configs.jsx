@@ -109,6 +109,16 @@ export const entitiesFields = [
         max: getTodayDate()
     },
     {
+        name: 'license_expiration_date',
+        label: 'entity_permit.expiry_date',
+        type: 'date',
+        placeholder: 'entity_permit.expiry_date',
+        editMode: true,
+        viewMode: true,
+        conditional: true,
+        showWhen: { entry_type: 'active_with_license' }
+    },
+    {
         name: 'registration_date',
         label: 'validation.registration_date.label',
         type: 'date',

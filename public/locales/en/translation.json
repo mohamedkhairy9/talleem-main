@@ -663,6 +663,10 @@
             "invalid": "Please select a valid user type"
         },
         "users": {
+            "username": {
+                "label": "Username",
+                "placeholder": "Enter username"
+            },
             "name": {
                 "label": "Name",
                 "placeholder": "Enter name"

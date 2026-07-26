@@ -37,6 +37,9 @@ const entryTypeOptions = [
 const normalizeEntityFormData = item => {
     if (!item) return null;
 
+    const license =
+        item.license && typeof item.license === 'object' ? item.license : null;
+
     return {
         id: item.id,
         name: {
@@ -68,10 +71,19 @@ const normalizeEntityFormData = item => {
         activity_ids: item.activities?.map(activity => activity.id),
         activities: item.activities,
         registration_date: item.registration_date,
-        entry_type: item.entry_type,
-        license_number: item.license_number,
-        license_image: item.license_image,
-        license_issue_date: item.license_issue_date,
+        // A permit can be issued after a "new with approval" entity is
+        // created. In view mode, show its permit details whenever a current
+        // permit exists, regardless of the original creation entry type.
+        entry_type: license ? 'active_with_license' : item.entry_type,
+        license_number: license?.license_number ?? item.license_number,
+        license_image:
+            license?.document?.url ?? license?.document_url ?? item.license_image,
+        license_issue_date: onlyDate(
+            license?.issue_date ?? item.license_issue_date
+        ),
+        license_expiration_date: onlyDate(
+            license?.expiration_date ?? item.license_expiration_date
+        ),
         files: item.files,
         latitude: item.latitude,
         longitude: item.longitude,
