@@ -224,6 +224,10 @@ export default function JoinRequests() {
                 setFilters={setFilters}
                 filters={filters}
                 toggleModals={toggle}
+                // Request approvals are a review queue. New entity, teacher,
+                // and student requests are initiated from their own modules,
+                // not from this list.
+                enableAdd={false}
                 enableEdit={false}
                 enableDelete={false}
             />
