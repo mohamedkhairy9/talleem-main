@@ -3,6 +3,7 @@
         "number": "Permit Number",
         "image": "Permit Image",
         "issue_date": "Permit Issue Date",
+        "expiry_date": "Permit Expiry Date",
         "status": {
             "label": "Permit Status",
             "permitted": "Permitted",
