@@ -11,6 +11,21 @@ import Loader from '@/components/common/Loader';
 import useApiCalls from './useApiCalls';
 import { useUserStore } from '@/utils/stores/user.store';
 import { getBranchManagerAssignedBranchId } from '@/utils/helpers/branchManagerScope';
+import { isGeneralManagerUser, isSuperAdminUser } from '@/api/axiosInstance';
+
+function getFallbackIssuedFrom(currentUser) {
+    if (isSuperAdminUser() || isGeneralManagerUser()) {
+        return 'high management';
+    }
+
+    if (currentUser?.roles?.some(role =>
+        String(role?.name ?? role).trim().toLowerCase() === 'branch manager'
+    )) {
+        return 'branch management';
+    }
+
+    return '';
+}
 
 export default function CreateCertificate({ onClose }) {
     const { mutate, isPending } = useCreateCertificateMutation();
@@ -18,6 +33,7 @@ export default function CreateCertificate({ onClose }) {
         useCertificateFormContextQuery();
     const currentUser = useUserStore(state => state.user);
     const formContext = formContextData?.data ?? formContextData;
+    const issuedFrom = formContext?.issued_from || getFallbackIssuedFrom(currentUser);
     const assignedBranchId =
         (formContext?.branch_locked ? formContext?.branch?.id : null) ||
         getBranchManagerAssignedBranchId(currentUser);
@@ -38,7 +54,7 @@ export default function CreateCertificate({ onClose }) {
                 oldData={{
                     ...certificatesDefaultValues,
                     branch_id: assignedBranchId || '',
-                    issued_from: formContext?.issued_from || ''
+                    issued_from: issuedFrom
                 }}
                 mutate={mutate}
                 isPending={isPending}
@@ -51,7 +67,7 @@ export default function CreateCertificate({ onClose }) {
                         : branchesData?.data
                 }}
                 assignedBranchId={assignedBranchId}
-                issuedFrom={formContext?.issued_from}
+                issuedFrom={issuedFrom}
             />
         </Modal>
     );
