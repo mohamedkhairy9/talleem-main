@@ -12,14 +12,90 @@ import { getLocalizedRequestTypeName } from './joinRequestTypeDisplay';
 
 const columnHelper = createColumnHelper();
 
-export const joinRequestsColumns = (requestTypesMap, currentLocale = 'en') => [
+const hasNameValue = value => {
+    if (typeof value === 'string') return value.trim().length > 0;
+
+    return Boolean(
+        value &&
+            typeof value === 'object' &&
+            [value.ar, value.en].some(item =>
+                typeof item === 'string' && item.trim().length > 0
+            )
+    );
+};
+
+const getNameFromRecord = value => {
+    if (!value) return null;
+
+    if (hasNameValue(value)) return value;
+
+    return hasNameValue(value.name) ? value.name : null;
+};
+
+/**
+ * The form payload is different for each request category.  New requests keep
+ * the name at the root, whereas transfer/renewal requests reference the target
+ * record (teacher, student, or entity).  Resolve the visible subject name so
+ * the name column is never tied to one form shape only.
+ */
+export const getJoinRequestSubjectName = (submittedData = {}, category) => {
+    const namesByCategory = {
+        entities: [
+            submittedData.name,
+            submittedData.entity,
+            submittedData.new_entity,
+            submittedData.current_entity,
+            submittedData.manager
+        ],
+        teachers: [
+            submittedData.name,
+            submittedData.teacher,
+            submittedData.new_teacher,
+            submittedData.entity
+        ],
+        supervisors: [
+            submittedData.name,
+            submittedData.supervisor,
+            submittedData.student,
+            submittedData.teacher,
+            submittedData.entity
+        ]
+    };
+
+    const candidates =
+        namesByCategory[category] ||
+        [
+            submittedData.name,
+            submittedData.teacher,
+            submittedData.student,
+            submittedData.supervisor,
+            submittedData.entity,
+            submittedData.new_entity,
+            submittedData.manager
+        ];
+
+    return candidates.map(getNameFromRecord).find(hasNameValue) || null;
+};
+
+export const joinRequestsColumns = (
+    requestTypesMap,
+    currentLocale = 'en',
+    category
+) => [
     columnHelper.accessor('id', {
         header: 'table_headers.id',
         cell: info => <Cell value={info.getValue()} />
     }),
     columnHelper.accessor('submitted_data.name', {
         header: 'table_headers.name',
-        cell: info => <NameCell directValue={info.row.original.submitted_data?.name} />
+        cell: info => (
+            <NameCell
+                directValue={getJoinRequestSubjectName(
+                    info.row.original.submitted_data,
+                    category
+                )}
+            />
+        )
     }),
     columnHelper.accessor('request_type_id', {
         header: 'table_headers.request_type',
