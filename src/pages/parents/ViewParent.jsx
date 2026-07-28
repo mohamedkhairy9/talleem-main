@@ -8,6 +8,7 @@ import { useKinshipsQuery } from '@/api/hooks/useKinships';
 import useLocale from '@/utils/hooks/global/useLocale';
 import Btn from '@/components/common/buttons/Btn';
 import i18next from 'i18next';
+import { allData } from '@/utils/constants/global.constants';
 
 export default function ViewParent({ onClose, oldData }) {
     const { t } = useLocale();
@@ -15,7 +16,7 @@ export default function ViewParent({ onClose, oldData }) {
     const { data: parentData } = useParentQuery(oldData?.id, {
         enabled: !!oldData?.id
     });
-    const { data: kinshipsData } = useKinshipsQuery({ per_page: 0 }, { enabled: true });
+    const { data: kinshipsData } = useKinshipsQuery(allData, { enabled: true });
     const { mutate: removeStudent } = useRemoveStudentFromParentMutation();
 
     const parent = parentData?.data ?? oldData;
