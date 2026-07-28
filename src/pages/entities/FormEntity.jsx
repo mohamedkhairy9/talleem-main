@@ -128,12 +128,20 @@ export default function FormEntity({
             openSections.managerInfo && !submitData.entity_manager_id;
 
         if (shouldCreateManager) {
+            submitData.manager_type = 'new';
             submitData.manager = {
                 ...submitData.manager,
                 status: submitData.manager?.status ? 1 : 0
             };
+        } else if (submitData.entity_manager_id) {
+            // The API requires an explicit manager type when an existing
+            // manager is assigned to an entity.
+            submitData.manager_type = 'existing';
+            delete submitData.manager;
         } else {
             delete submitData.manager;
+            delete submitData.manager_type;
+            delete submitData.entity_manager_id;
         }
 
         mutate(
