@@ -3,6 +3,7 @@ import {
     buildUserSubmissionPayload,
     filterUserAssignableRoles
 } from './userFormPolicy.js';
+import { getReservedSystemRole } from '../../utils/helpers/assignableRoles.js';
 
 const disallowedRoles = [
     { id: 1, name: 'student', display_name: { en: 'Student' } },
@@ -20,6 +21,12 @@ assert.deepEqual(
     ]).map(role => role.name),
     ['super-admin', 'branch manager'],
     'users role dropdown should hide mobile-app roles only exposing dashboard roles'
+);
+
+assert.equal(
+    getReservedSystemRole(['super_admin', 'student']),
+    'student',
+    'a reserved role should be detected even when another role is also present'
 );
 
 assert.deepEqual(

@@ -45,6 +45,17 @@ function containsAllWords(text, words) {
 
 const SUPERVISOR_ROLE_MATCHER = text => text.includes('supervisor') || text === 'مشرف';
 
+const RESERVED_SYSTEM_ROLE_MATCHERS = [
+    text => text.includes('teacher') || text === 'معلم' || text === 'مدرس',
+    text => text.includes('student') || text === 'طالب',
+    SUPERVISOR_ROLE_MATCHER,
+    text =>
+        containsAllWords(text, ['entity', 'manager']) ||
+        containsAllWords(text, ['مدير', 'جهة']) ||
+        containsAllWords(text, ['مدير', 'كيان']) ||
+        containsAllWords(text, ['مسؤول', 'جهة'])
+];
+
 const EXCLUDED_ROLE_MATCHERS = [
     text => text.includes('teacher') || text === 'معلم' || text === 'مدرس',
     text => text.includes('student') || text === 'طالب',
@@ -94,6 +105,28 @@ export function isAssignableRole(role) {
 export function filterAssignableRoles(roles) {
     if (!Array.isArray(roles)) return [];
     return roles.filter(isAssignableRole);
+}
+
+/**
+ * Reserved profile roles are assigned by their own business workflows and
+ * must not be edited from the Users page.
+ */
+export function isReservedSystemRole(role) {
+    const searchableTexts = extractSearchableTexts(
+        role?.name ?? role,
+        role?.display_name,
+        role?.label,
+        role?.slug
+    );
+
+    return searchableTexts.some(text =>
+        RESERVED_SYSTEM_ROLE_MATCHERS.some(matchesRole => matchesRole(text))
+    );
+}
+
+export function getReservedSystemRole(roles) {
+    const roleList = Array.isArray(roles) ? roles : [roles];
+    return roleList.find(isReservedSystemRole) ?? null;
 }
 
 export function isEmployeeAssignableRole(role) {

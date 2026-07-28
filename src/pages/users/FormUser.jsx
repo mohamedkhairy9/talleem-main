@@ -6,12 +6,16 @@ import InputRFH from '@/components/common/inputs/InputRFH';
 import Btn from '@/components/common/buttons/Btn';
 import { getNestedError } from '@/utils/helpers/getNestedError';
 import { generateOptions } from '@/utils/helpers/global.fns';
+import useLocale from '@/utils/hooks/global/useLocale';
 import ModalContent from '@/components/common/form/ModalContent';
 import ModalFooter from '@/components/common/form/ModalFooter';
 import { isFieldRequired } from '@/utils/helpers/schemaHelpers';
 import { useRolesQuery } from '@/api/hooks/useRoles';
 import { useAssignUserRoleMutation } from '@/api/hooks/useUsers';
-import { isAssignableRole } from '@/utils/helpers/assignableRoles';
+import {
+    getReservedSystemRole,
+    isAssignableRole
+} from '@/utils/helpers/assignableRoles';
 import {
     buildUserSubmissionPayload,
     normalizeSelectedIds
@@ -32,6 +36,33 @@ function getSavedUserId(response, fallbackId) {
         response?.data?.data?.id ??
         null
     );
+}
+
+function getSystemRoleLabel(role, locale) {
+    if (role && typeof role === 'object') {
+        return (
+            role.display_name?.[locale] ||
+            role.name?.[locale] ||
+            role.label?.[locale] ||
+            role.display_name?.en ||
+            role.name?.en ||
+            role.label?.en ||
+            role.name ||
+            role.label ||
+            ''
+        );
+    }
+
+    const normalizedRole = String(role ?? '').trim().toLowerCase();
+    const roleLabels = {
+        teacher: { ar: 'معلم', en: 'Teacher' },
+        student: { ar: 'طالب', en: 'Student' },
+        supervisor: { ar: 'مشرف', en: 'Supervisor' },
+        entity_manager: { ar: 'مدير جهة', en: 'Entity Manager' },
+        'entity manager': { ar: 'مدير جهة', en: 'Entity Manager' }
+    };
+
+    return roleLabels[normalizedRole]?.[locale] || String(role ?? '');
 }
 
 // Resolve role to a single id for the async select (API may return role_id or roles array)
@@ -87,6 +118,23 @@ export default function FormUser({
     mutate,
     options
 }) {
+    const { currentLocale } = useLocale();
+    const reservedSystemRole = React.useMemo(() => {
+        const roleCandidates = Array.isArray(oldData?.roles)
+            ? oldData.roles
+            : oldData?.roles
+            ? [oldData.roles]
+            : [];
+
+        // Some API responses expose the reserved profile through user_type
+        // rather than roles. Treat both shapes as system-managed.
+        if (oldData?.user_type) {
+            roleCandidates.push(oldData.user_type);
+        }
+
+        return getReservedSystemRole(roleCandidates);
+    }, [oldData?.roles, oldData?.user_type]);
+    const isReservedSystemUser = Boolean(reservedSystemRole);
     const normalizedDefaultValues = React.useMemo(() => ({
         ...oldData,
         branch_id: normalizeSelectedIds(
@@ -140,7 +188,9 @@ export default function FormUser({
 
     function onSubmit(data) {
         const submitData = buildUserSubmissionPayload(data, oldData);
-        const selectedRoleId = Number(data.role_id);
+        const selectedRoleId = isReservedSystemUser
+            ? null
+            : Number(data.role_id);
 
         // Roles are assigned through the dedicated user-role endpoint after
         // the user has been created or updated.
@@ -155,7 +205,7 @@ export default function FormUser({
             onSuccess: response => {
                 const userId = getSavedUserId(response, oldData?.id);
 
-                if (!selectedRoleId || !userId) {
+                if (!selectedRoleId || !userId || isReservedSystemUser) {
                     onClose();
                     return;
                 }
@@ -193,6 +243,29 @@ export default function FormUser({
                         const isFieldDisabled =
                             viewMode ||
                             (field.name === 'entity_id' && !hasBranchSelection);
+
+                        if (field.name === 'role_id' && isReservedSystemUser) {
+                            return (
+                                <div key={field.name}>
+                                    <label className="mb-2 block text-sm font-medium text-gray-700">
+                                        {currentLocale === 'ar' ? 'دور النظام' : 'System Role'}
+                                    </label>
+                                    <div className="rounded-lg border border-gray-200 bg-gray-50 px-3 py-3 text-sm text-gray-700">
+                                        {getSystemRoleLabel(
+                                            reservedSystemRole,
+                                            currentLocale
+                                        )}
+                                    </div>
+                                    {!viewMode && (
+                                        <p className="mt-1 text-xs text-gray-500">
+                                            {currentLocale === 'ar'
+                                                ? 'هذا الدور يُدار تلقائيًا من خلال إجراءات النظام ولا يمكن تعديله هنا.'
+                                                : 'This role is managed by system workflows and cannot be changed here.'}
+                                        </p>
+                                    )}
+                                </div>
+                            );
+                        }
 
                         return (
                             <div

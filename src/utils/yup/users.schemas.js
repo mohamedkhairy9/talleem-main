@@ -24,8 +24,7 @@ export const usersSchema = yup.object().shape({
                 .integer(t('validation.branch_id.integer'))
                 .min(1, t('validation.branch_id.min'))
         )
-        .min(1, t('validation.required'))
-        .required(t('validation.required')),
+        .optional(),
     entity_id: yup
         .array()
         .of(
@@ -35,7 +34,6 @@ export const usersSchema = yup.object().shape({
                 .integer(t('validation.entity_id.integer'))
                 .min(1, t('validation.entity_id.min'))
         )
-        .min(1, t('validation.required'))
-        .required(t('validation.required')),
-    role_id: yup.number().required(t('validation.required')).integer().min(1, t('validation.required')),
+        .optional(),
+    role_id: yup.number().nullable().optional().integer().min(1, t('validation.required')),
 });
