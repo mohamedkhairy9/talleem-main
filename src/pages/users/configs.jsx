@@ -64,14 +64,14 @@ export const usersFields = [
         editMode: true,
         viewMode: true
     },
-    {
-        name: 'national_id',
-        label: 'validation.national_id.label',
-        type: 'text',
-        placeholder: 'validation.national_id.placeholder',
-        editMode: true,
-        viewMode: true
-    },
+  {
+    name: 'national_id',
+    label: 'validation.users.national_id.label',
+    type: 'text',
+    placeholder: 'validation.users.national_id.placeholder',
+    editMode: true,
+    viewMode: true
+  },
     {
         name: 'password',
         label: 'validation.users.password.label',

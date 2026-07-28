@@ -664,11 +664,15 @@
             "invalid": "Please select a valid user type"
         },
         "users": {
-            "username": {
-                "label": "Username",
-                "placeholder": "Enter username"
-            },
-            "name": {
+      "username": {
+        "label": "Employee / Student Name",
+        "placeholder": "Enter employee / student name"
+      },
+      "national_id": {
+        "label": "Username / National ID",
+        "placeholder": "Enter username / national ID"
+      },
+      "name": {
                 "label": "Name",
                 "placeholder": "Enter name"
             },
