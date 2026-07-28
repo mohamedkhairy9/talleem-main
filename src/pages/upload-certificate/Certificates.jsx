@@ -23,6 +23,7 @@ export default function Certificates() {
     const tableData = data?.data?.map(item => {
         const certificateName = item.certificate_name;
         const localizedCertificateName =
+            (typeof certificateName === 'string' ? certificateName : '') ||
             certificateName?.[i18next.language] ||
             certificateName?.name?.[i18next.language] ||
             certificateName?.[i18next.language?.split('-')?.[0]] ||

@@ -17,7 +17,7 @@ export default function FormCertificate({
     viewMode,
     isPending,
     mutate,
-    options,
+    options = {},
     assignedBranchId,
     issuedFrom,
     allowAllCertificateNames = false
@@ -91,14 +91,29 @@ export default function FormCertificate({
         }
     }, [entityId, oldData?.entity_id, setValue, editMode, viewMode]);
 
-    const enhancedOptions = useMemo(() => ({
-        ...options,
-        branch_id: options.branch_id || [],
-        // Empty when deps not met so we never call API without filters; async uses fieldParams when deps met
-        entity_id: branchId && mainProgramId ? undefined : [],
-        student_id: mainProgramId && entityId ? undefined : [],
-        certificate_name_id: issuedFrom || allowAllCertificateNames ? undefined : []
-    }), [options, branchId, mainProgramId, entityId, issuedFrom, allowAllCertificateNames]);
+    const enhancedOptions = useMemo(() => {
+        // View mode must use the exact options built from the details endpoint.
+        // This avoids a blank disabled select when the selected record is not in
+        // the first page of a paginated lookup response.
+        if (viewMode) {
+            return {
+                ...options,
+                branch_id: options.branch_id || [],
+                entity_id: options.entity_id || [],
+                student_id: options.student_id || [],
+                certificate_name_id: options.certificate_name_id || []
+            };
+        }
+
+        return {
+            ...options,
+            branch_id: options.branch_id || [],
+            // Empty when deps not met so we never call API without filters; async uses fieldParams when deps met
+            entity_id: branchId && mainProgramId ? undefined : [],
+            student_id: mainProgramId && entityId ? undefined : [],
+            certificate_name_id: issuedFrom || allowAllCertificateNames ? undefined : []
+        };
+    }, [options, branchId, mainProgramId, entityId, issuedFrom, allowAllCertificateNames, viewMode]);
 
     const viewCertificateNameOptions = useMemo(() => {
         const certificateName = oldData?.certificate_name;
@@ -226,6 +241,7 @@ export default function FormCertificate({
 
                     // branch_id, main_program_id: always static. entity_id / student_id: static (empty) until deps met, then async paginated+search
                     const useStaticOptionsOnly =
+                        viewMode ||
                         ['branch_id', 'main_program_id'].includes(field.name) ||
                         (field.name === 'entity_id' && (!branchId || !mainProgramId)) ||
                         (field.name === 'student_id' && (!mainProgramId || !entityId)) ||
