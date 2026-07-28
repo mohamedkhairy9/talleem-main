@@ -33,7 +33,10 @@ export default function CreateCertificate({ onClose }) {
         useCertificateFormContextQuery();
     const currentUser = useUserStore(state => state.user);
     const formContext = formContextData?.data ?? formContextData;
-    const issuedFrom = formContext?.issued_from || getFallbackIssuedFrom(currentUser);
+    const isSuperAdmin = isSuperAdminUser();
+    const issuedFrom = isSuperAdmin
+        ? ''
+        : formContext?.issued_from || getFallbackIssuedFrom(currentUser);
     const assignedBranchId =
         (formContext?.branch_locked ? formContext?.branch?.id : null) ||
         getBranchManagerAssignedBranchId(currentUser);
@@ -68,6 +71,7 @@ export default function CreateCertificate({ onClose }) {
                 }}
                 assignedBranchId={assignedBranchId}
                 issuedFrom={issuedFrom}
+                allowAllCertificateNames={isSuperAdmin || formContext?.all_certificate_sources}
             />
         </Modal>
     );

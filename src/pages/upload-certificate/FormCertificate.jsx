@@ -19,7 +19,8 @@ export default function FormCertificate({
     mutate,
     options,
     assignedBranchId,
-    issuedFrom
+    issuedFrom,
+    allowAllCertificateNames = false
 }) {
     const [certificateImagePreview, setCertificateImagePreview] = useState(
         oldData?.file || null
@@ -96,8 +97,24 @@ export default function FormCertificate({
         // Empty when deps not met so we never call API without filters; async uses fieldParams when deps met
         entity_id: branchId && mainProgramId ? undefined : [],
         student_id: mainProgramId && entityId ? undefined : [],
-        certificate_name_id: issuedFrom ? undefined : []
-    }), [options, branchId, mainProgramId, entityId, issuedFrom]);
+        certificate_name_id: issuedFrom || allowAllCertificateNames ? undefined : []
+    }), [options, branchId, mainProgramId, entityId, issuedFrom, allowAllCertificateNames]);
+
+    const viewCertificateNameOptions = useMemo(() => {
+        const certificateName = oldData?.certificate_name;
+        const certificateNameId = oldData?.certificate_name_id;
+
+        if (!viewMode || !certificateNameId || !certificateName) return [];
+
+        const label =
+            (typeof certificateName === 'object'
+                ? certificateName?.ar || certificateName?.en || certificateName?.name
+                : certificateName) || '';
+
+        return label
+            ? [{ id: certificateNameId, value: certificateNameId, label }]
+            : [];
+    }, [oldData?.certificate_name, oldData?.certificate_name_id, viewMode]);
 
     function onSubmit(data) {
         // Remove filter-only fields from submission
@@ -108,7 +125,13 @@ export default function FormCertificate({
             ...submissionData
         } = data;
 
-        submissionData.is_active = data.is_active ?? oldData?.is_active ?? 1;
+        // Multipart form data serializes booleans as "true" / "false", while
+        // Laravel's boolean validator accepts the string forms "1" and "0".
+        const isActive = data.is_active ?? oldData?.is_active ?? true;
+        submissionData.is_active =
+            isActive === false || isActive === 0 || isActive === '0' || isActive === 'false'
+                ? 0
+                : 1;
 
         // Handle file - make sure it's a single file, not an array
         if (submissionData.file) {
@@ -206,7 +229,8 @@ export default function FormCertificate({
                         ['branch_id', 'main_program_id'].includes(field.name) ||
                         (field.name === 'entity_id' && (!branchId || !mainProgramId)) ||
                         (field.name === 'student_id' && (!mainProgramId || !entityId)) ||
-                        (field.name === 'certificate_name_id' && !issuedFrom);
+                        (field.name === 'certificate_name_id' && viewMode) ||
+                        (field.name === 'certificate_name_id' && !issuedFrom && !allowAllCertificateNames);
 
                     // Remount when deps change so async select gets fresh loadOptions with correct filters
                     const fieldKey =
@@ -226,7 +250,11 @@ export default function FormCertificate({
                                 disabled={isFieldDisabled(field.name)}
                                 label={field.label}
                                 name={field.name}
-                                options={generateOptions(enhancedOptions[field.name])}
+                                options={
+                                    field.name === 'certificate_name_id' && viewMode
+                                        ? viewCertificateNameOptions
+                                        : generateOptions(enhancedOptions[field.name])
+                                }
                                 isAsync={useStaticOptionsOnly ? false : undefined}
                                 defaultValue={defaultValues[field.name] || field.defaultValue}
                                 max={field.max}

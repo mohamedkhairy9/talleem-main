@@ -20,24 +20,40 @@ export default function Certificates() {
     const { data, isLoading, refresh } = useCertificatesQuery(filters);
     const { t } = useLocale();
 
-    const tableData = data?.data?.map(item => ({
-        ...item,
-        student_name: item.student?.name?.[i18next.language],
-        certificate_name: item.certificate_name?.[i18next.language], // Changed: removed .name
-        issued_from: item.issued_from,
-        is_active: item.is_active
-    }));
+    const tableData = data?.data?.map(item => {
+        const certificateName = item.certificate_name;
+        const localizedCertificateName =
+            certificateName?.[i18next.language] ||
+            certificateName?.name?.[i18next.language] ||
+            certificateName?.[i18next.language?.split('-')?.[0]] ||
+            certificateName?.name?.[i18next.language?.split('-')?.[0]] ||
+            certificateName?.ar ||
+            certificateName?.en ||
+            certificateName?.name ||
+            item.certificate_name_name ||
+            '-';
+
+        return {
+            ...item,
+            student_name: item.student?.name?.[i18next.language],
+            certificate_name: localizedCertificateName,
+            issued_from: item.issued_from,
+            is_active: item.is_active
+        };
+    });
 
     const formData = data?.data?.map(item => ({
         id: item.id,
-        main_program_id: item.main_program?.id,
-        branch_id: item.branch?.id,
-        entity_id: item.entity?.id,
-        student_id: item.student?.id,
-        certificate_name_id: item.certificate_name?.id,
+        main_program_id: item.main_program_id ?? item.student?.main_program_id,
+        branch_id: item.branch_id ?? item.student?.branch?.id,
+        entity_id: item.entity_id ?? item.student?.primary_entity_id,
+        student_id: item.student_id ?? item.student?.id,
+        certificate_name_id: item.certificate_name_id ?? item.certificate_name?.id,
+        certificate_name: item.certificate_name,
         issued_date: item.issued_date,
         is_active: item.is_active,
-        file: item.image_url  // Changed: use image_url from response
+        file: item.image_url,
+        issued_from_value: item.issued_from_value
     }));
 
     return (

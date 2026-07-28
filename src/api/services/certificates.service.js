@@ -29,7 +29,9 @@ export const certificatesService = {
     },
 
     updateCertificate: async (id, data) => {
-        return await axiosInstance.put(
+        // The dashboard route is explicitly registered as POST for updates
+        // to support multipart certificate uploads.
+        return await axiosInstance.post(
             API_URLS.CERTIFICATES.UPDATE(id),
             data,
             {

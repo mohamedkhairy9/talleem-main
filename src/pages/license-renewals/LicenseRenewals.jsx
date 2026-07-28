@@ -6,6 +6,8 @@ import Cell from '@/components/common/table/cells/Cell';
 import DateCell from '@/components/common/table/cells/DateCell';
 import WarningModal from '@/components/common/form/WarningModal';
 import IssueLicenseModal from '@/components/licenses/IssueLicenseModal';
+import IssueTeacherLicense from '@/pages/teachers/IssueTeacherLicense';
+import IssueEntityLicense from '@/pages/entities/IssueEntityLicense';
 import useLocale from '@/utils/hooks/global/useLocale';
 import usePagination from '@/utils/hooks/global/usePagination';
 import { getLocalizedErrorMessage } from '@/utils/helpers/localizedMessages';
@@ -413,7 +415,8 @@ const normalizeEntityPendingItem = (item, index, mainPrograms, entities) => {
 
 export default function LicenseRenewals() {
     const { currentLocale } = useLocale();
-    const [activeTab, setActiveTab] = useState('teachers');
+    const [activeTab, setActiveTab] = useState('issuance');
+    const [activeSubject, setActiveSubject] = useState('teachers');
     const [selectedTeacher, setSelectedTeacher] = useState(null);
     const [selectedEntity, setSelectedEntity] = useState(null);
     const [actionError, setActionError] = useState('');
@@ -476,14 +479,28 @@ export default function LicenseRenewals() {
         refresh: refreshTeachers,
         hasError: hasTeachersError,
         errorMessage: teachersErrorMessage
-    } = usePendingTeacherLicensesQuery();
+    } = usePendingTeacherLicensesQuery({ ...allData, request_type: 'renewal' });
+    const {
+        data: issuanceTeachersResponse,
+        isLoading: isIssuanceTeachersLoading,
+        refresh: refreshIssuanceTeachers,
+        hasError: hasIssuanceTeachersError,
+        errorMessage: issuanceTeachersErrorMessage
+    } = usePendingTeacherLicensesQuery({ ...allData, request_type: 'join' });
     const {
         data: pendingEntitiesResponse,
         isLoading: isEntitiesLoading,
         refresh: refreshEntities,
         hasError: hasEntitiesError,
         errorMessage: entitiesErrorMessage
-    } = usePendingEntityLicensesQuery();
+    } = usePendingEntityLicensesQuery({ ...allData, request_type: 'renewal' });
+    const {
+        data: issuanceEntitiesResponse,
+        isLoading: isIssuanceEntitiesLoading,
+        refresh: refreshIssuanceEntities,
+        hasError: hasIssuanceEntitiesError,
+        errorMessage: issuanceEntitiesErrorMessage
+    } = usePendingEntityLicensesQuery({ ...allData, request_type: 'join' });
     const { mutate: renewTeacherLicense, isPending: isRenewingTeacher } =
         useRenewTeacherLicenseMutation();
     const { mutate: renewEntityLicense, isPending: isRenewingEntity } =
@@ -502,6 +519,20 @@ export default function LicenseRenewals() {
                 normalizeEntityPendingItem(item, index, mainPrograms, entities)
             ),
         [pendingEntitiesResponse, mainPrograms, entities]
+    );
+    const issuanceTeachers = useMemo(
+        () =>
+            extractCollection(issuanceTeachersResponse).map((item, index) =>
+                normalizeTeacherPendingItem(item, index, mainPrograms, teachers)
+            ),
+        [issuanceTeachersResponse, mainPrograms, teachers]
+    );
+    const issuanceEntities = useMemo(
+        () =>
+            extractCollection(issuanceEntitiesResponse).map((item, index) =>
+                normalizeEntityPendingItem(item, index, mainPrograms, entities)
+            ),
+        [issuanceEntitiesResponse, mainPrograms, entities]
     );
 
     const teacherColumns = useMemo(
@@ -630,8 +661,98 @@ export default function LicenseRenewals() {
         [currentLocale, isRenewingEntity]
     );
 
+    const teacherIssuanceColumns = useMemo(
+        () => [
+            ...teacherColumns.slice(0, -1),
+            columnHelper.display({
+                id: 'issue_action',
+                header: currentLocale === 'ar' ? 'إصدار الرخصة' : 'Issue License',
+                cell: info => {
+                    const row = info.row.original;
+                    const canIssue = !!row.renew_target_id;
+
+                    return (
+                        <button
+                            type="button"
+                            disabled={!canIssue}
+                            onClick={() => setSelectedTeacher(row)}
+                            className={`rounded-lg px-3 py-2 text-sm font-semibold transition ${
+                                canIssue
+                                    ? 'bg-primary text-white hover:opacity-90'
+                                    : 'cursor-not-allowed bg-gray-200 text-gray-500'
+                            }`}
+                        >
+                            {currentLocale === 'ar' ? 'إصدار' : 'Issue'}
+                        </button>
+                    );
+                }
+            })
+        ],
+        [currentLocale, teacherColumns]
+    );
+
+    const entityIssuanceColumns = useMemo(
+        () => [
+            ...entityColumns.slice(0, -1),
+            columnHelper.display({
+                id: 'issue_action',
+                header: currentLocale === 'ar' ? 'إصدار التصريح' : 'Issue Permit',
+                cell: info => {
+                    const row = info.row.original;
+                    const canIssue = !!row.renew_target_id;
+
+                    return (
+                        <button
+                            type="button"
+                            disabled={!canIssue}
+                            onClick={() => setSelectedEntity(row)}
+                            className={`rounded-lg px-3 py-2 text-sm font-semibold transition ${
+                                canIssue
+                                    ? 'bg-primary text-white hover:opacity-90'
+                                    : 'cursor-not-allowed bg-gray-200 text-gray-500'
+                            }`}
+                        >
+                            {currentLocale === 'ar' ? 'إصدار' : 'Issue'}
+                        </button>
+                    );
+                }
+            })
+        ],
+        [currentLocale, entityColumns]
+    );
+
     const currentConfig =
-        activeTab === 'teachers'
+        activeTab === 'issuance' && activeSubject === 'teachers'
+            ? {
+                  title:
+                      currentLocale === 'ar'
+                          ? 'المعلمون بانتظار إصدار الرخصة'
+                          : 'Teachers Awaiting License Issuance',
+                  data: issuanceTeachers,
+                  columns: teacherIssuanceColumns,
+                  loading: isIssuanceTeachersLoading,
+                  pagination: teachersPagination,
+                  setPagination: setTeachersPagination,
+                  refresh: refreshIssuanceTeachers,
+                  hasError: hasIssuanceTeachersError,
+                  errorMessage: issuanceTeachersErrorMessage
+              }
+            : activeTab === 'issuance' && activeSubject === 'entities'
+              ? {
+                    title:
+                        currentLocale === 'ar'
+                            ? 'الجهات بانتظار إصدار التصريح'
+                            : 'Entities Awaiting Permit Issuance',
+                    data: issuanceEntities,
+                    columns: entityIssuanceColumns,
+                    loading: isIssuanceEntitiesLoading,
+                    pagination: entitiesPagination,
+                    setPagination: setEntitiesPagination,
+                    refresh: refreshIssuanceEntities,
+                    hasError: hasIssuanceEntitiesError,
+                    errorMessage: issuanceEntitiesErrorMessage
+                }
+              : activeSubject === 'teachers'
             ? {
                   title:
                       currentLocale === 'ar'
@@ -714,13 +835,13 @@ export default function LicenseRenewals() {
                     <div>
                         <h1 className="text-2xl font-bold text-gray-900">
                             {currentLocale === 'ar'
-                                ? 'إدارة تجديد الرخص والتصاريح'
-                                : 'License & Permit Renewals'}
+                                ? 'إصدار وتجديد الرخص'
+                                : 'License Issuance & Renewal'}
                         </h1>
                         <p className="mt-2 text-sm text-gray-600">
                             {currentLocale === 'ar'
-                                ? 'تابع رخص المدرسين وتصاريح الكيانات المعلقة وجدّدها من مكان واحد.'
-                                : 'Track pending teacher licenses and entity permits, then renew them from one place.'}
+                                ? 'أصدر الرخص والتصاريح لأول مرة، وتابع طلبات التجديد من مكان واحد.'
+                                : 'Issue new licenses and permits, then manage their renewals from one place.'}
                         </p>
                     </div>
 
@@ -728,38 +849,67 @@ export default function LicenseRenewals() {
                         <button
                             type="button"
                             onClick={() => {
-                                setActiveTab('teachers');
+                                setActiveTab('issuance');
                                 setActionError('');
                             }}
                             className={`rounded-xl border px-4 py-3 text-sm font-semibold transition ${
-                                activeTab === 'teachers'
+                                activeTab === 'issuance'
                                     ? 'border-primary bg-primary text-white'
                                     : 'border-gray-200 bg-white text-gray-700 hover:border-primary/40'
                             }`}
                         >
                             {currentLocale === 'ar'
-                                ? `المدرسون (${pendingTeachers.length})`
-                                : `Teachers (${pendingTeachers.length})`}
+                                ? 'إصدار الرخص'
+                                : 'License Issuance'}
                         </button>
 
                         <button
                             type="button"
                             onClick={() => {
-                                setActiveTab('entities');
+                                setActiveTab('renewal');
                                 setActionError('');
                             }}
                             className={`rounded-xl border px-4 py-3 text-sm font-semibold transition ${
-                                activeTab === 'entities'
+                                activeTab === 'renewal'
                                     ? 'border-primary bg-primary text-white'
                                     : 'border-gray-200 bg-white text-gray-700 hover:border-primary/40'
                             }`}
                         >
                             {currentLocale === 'ar'
-                                ? `الكيانات (${pendingEntities.length})`
-                                : `Entities (${pendingEntities.length})`}
+                                ? 'تجديد الرخص'
+                                : 'License Renewal'}
                         </button>
                     </div>
                 </div>
+            </div>
+
+            <div className="flex flex-wrap gap-3">
+                <button
+                    type="button"
+                    onClick={() => setActiveSubject('teachers')}
+                    className={`rounded-lg px-4 py-2 text-sm font-semibold transition ${
+                        activeSubject === 'teachers'
+                            ? 'bg-primary/10 text-primary'
+                            : 'bg-white text-gray-600 ring-1 ring-gray-200 hover:ring-primary/40'
+                    }`}
+                >
+                    {currentLocale === 'ar'
+                        ? `المعلمون (${activeTab === 'issuance' ? issuanceTeachers.length : pendingTeachers.length})`
+                        : `Teachers (${activeTab === 'issuance' ? issuanceTeachers.length : pendingTeachers.length})`}
+                </button>
+                <button
+                    type="button"
+                    onClick={() => setActiveSubject('entities')}
+                    className={`rounded-lg px-4 py-2 text-sm font-semibold transition ${
+                        activeSubject === 'entities'
+                            ? 'bg-primary/10 text-primary'
+                            : 'bg-white text-gray-600 ring-1 ring-gray-200 hover:ring-primary/40'
+                    }`}
+                >
+                    {currentLocale === 'ar'
+                        ? `الجهات (${activeTab === 'issuance' ? issuanceEntities.length : pendingEntities.length})`
+                        : `Entities (${activeTab === 'issuance' ? issuanceEntities.length : pendingEntities.length})`}
+                </button>
             </div>
 
             {currentConfig.hasError && (
@@ -796,6 +946,12 @@ export default function LicenseRenewals() {
             />
 
             {selectedTeacher && (
+                activeTab === 'issuance' ? (
+                    <IssueTeacherLicense
+                        teacherId={selectedTeacher.renew_target_id}
+                        onClose={() => setSelectedTeacher(null)}
+                    />
+                ) : (
                 <WarningModal
                     onConfirm={handleTeacherRenew}
                     onCancel={() => setSelectedTeacher(null)}
@@ -823,9 +979,16 @@ export default function LicenseRenewals() {
                     confirmLabel={currentLocale === 'ar' ? 'تجديد' : 'Renew'}
                     cancelLabel="common.cancel"
                 />
+                )
             )}
 
             {selectedEntity && (
+                activeTab === 'issuance' ? (
+                    <IssueEntityLicense
+                        entityId={selectedEntity.renew_target_id}
+                        onClose={() => setSelectedEntity(null)}
+                    />
+                ) : (
                 <IssueLicenseModal
                     onClose={() => setSelectedEntity(null)}
                     onSubmit={handleEntityRenew}
@@ -851,6 +1014,7 @@ export default function LicenseRenewals() {
                             : 'Select issue date'
                     }
                 />
+                )
             )}
         </div>
     );

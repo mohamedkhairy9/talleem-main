@@ -291,12 +291,6 @@ export const sideMenuTabs = [
                 requiredPermission: { resource: 'teachers', action: 'r' }
             },
             {
-                titleKey: 'sidebar.license_renewals',
-                path: '/license-renewals',
-                icon: HiDocumentText,
-                requiredPermission: { resource: 'licenses', action: 'r' }
-            },
-            {
                 titleKey: 'sidebar.students',
                 path: '/students',
                 icon: HiUserGroup,
@@ -482,6 +476,12 @@ export const sideMenuTabs = [
         titleKey: 'sidebar.request_management',
         icon: HiDocumentAdd,
         subMenu: [
+            {
+                titleKey: 'sidebar.license_renewals',
+                path: '/license-renewals',
+                icon: HiDocumentText,
+                requiredPermission: { resource: 'licenses', action: 'r' }
+            },
             {
                 titleKey: 'sidebar.join_requests_settings',
                 icon: HiCog,

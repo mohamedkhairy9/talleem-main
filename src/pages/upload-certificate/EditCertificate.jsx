@@ -6,6 +6,7 @@ import { useUpdateCertificateMutation } from '@/api/hooks/useCertificates';
 import { apiCalls } from './configs';
 import Loader from '@/components/common/Loader';
 import useApiCalls from './useApiCalls';
+import { isSuperAdminUser } from '@/api/axiosInstance';
 
 export default function EditCertificate({ onClose, oldData }) {
     const { mutate, isPending } = useUpdateCertificateMutation();
@@ -31,6 +32,8 @@ export default function EditCertificate({ onClose, oldData }) {
                     main_program_id: mainProgramsData?.data,
                     branch_id: branchesData?.data
                 }}
+                issuedFrom={oldData?.issued_from_value}
+                allowAllCertificateNames={isSuperAdminUser()}
             />
         </Modal>
     );
