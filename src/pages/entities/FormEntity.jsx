@@ -160,7 +160,6 @@ export default function FormEntity({
         );
     }
 
-    const branchId = watch('branch_id');
     const cityId = watch('city_id');
     const mainProgramId = watch('main_program_id');
     const { data: requiredDocsData } = useRequiredDocumentsHint('entity', mainProgramId);
@@ -180,44 +179,6 @@ export default function FormEntity({
         queryFn: () => activitiesService.getActivities({ ...allData, main_program_id: mainProgramId }),
         enabled: !!mainProgramId
     });
-
-    // Get selected branch data to extract city
-    const selectedBranch = useMemo(() => {
-        if (!branchId || !options?.branch_id) return null;
-        return options.branch_id.find(branch => branch.id === branchId);
-    }, [branchId, options?.branch_id]);
-
-    // Get city from selected branch
-    const branchCity = useMemo(() => {
-        return selectedBranch?.city || null;
-    }, [selectedBranch]);
-
-    // Create cities array with only the branch's city
-    // In edit/view mode, include the city from oldData if it exists
-    const filteredCities = useMemo(() => {
-        const cities = [];
-        
-        // Add branch's city if available
-        if (branchCity) {
-            cities.push({
-                id: branchCity.id,
-                name: branchCity.name,
-                ...branchCity
-            });
-        }
-        
-        // In view/edit mode, include selected city from oldData if not already in list
-        if ((viewMode || editMode) && oldData?.city_id && options?.city_id) {
-            const selectedCity = options.city_id.find(
-                c => c.id === oldData.city_id
-            );
-            if (selectedCity && !cities.some(c => c.id === selectedCity.id)) {
-                cities.push(selectedCity);
-            }
-        }
-        
-        return cities;
-    }, [branchCity, viewMode, editMode, oldData?.city_id, options?.city_id]);
 
     // Fetch neighborhoods dynamically based on selected city
     const { data: neighborhoodsData } = useNeighborhoodsQuery(
@@ -259,7 +220,7 @@ export default function FormEntity({
 
     const enhancedOptions = {
         ...options,
-        city_id: filteredCities,
+        city_id: options.city_id || [],
         neighborhood_id: filteredNeighborhoods,
         // Education: options are full list with name as label, id as value
         education_program_entity_type_classification:
@@ -315,32 +276,6 @@ export default function FormEntity({
             // For 'active_with_license', don't auto-set - let user choose
         }
     }, [entryType, viewMode, setValue]);
-
-    // Initialize city from branch in edit/view mode
-    useEffect(() => {
-        if ((editMode || viewMode) && oldData?.branch_id && !cityId && selectedBranch?.city?.id) {
-            setValue('city_id', selectedBranch.city.id, { shouldValidate: false });
-        }
-    }, [editMode, viewMode, oldData?.branch_id, cityId, selectedBranch, setValue]);
-
-    // Auto-set city_id from selected branch's city when branch changes
-    useEffect(() => {
-        if (branchId && selectedBranch?.city?.id) {
-            const branchCityId = selectedBranch.city.id;
-            // Set city_id to branch's city (will override any existing value when branch changes)
-            if (cityId !== branchCityId) {
-                setValue('city_id', branchCityId, { shouldValidate: false });
-                // Reset neighborhood when city changes (unless in view mode)
-                if (!viewMode) {
-                    setValue('neighborhood_id', '');
-                }
-            }
-        } else if (!branchId && !viewMode && !editMode) {
-            // Reset city and neighborhood when branch is cleared (only in create mode)
-            setValue('city_id', '');
-            setValue('neighborhood_id', '');
-        }
-    }, [branchId, selectedBranch, cityId, viewMode, editMode, setValue]);
 
     useEffect(() => {
         if ((cityId && cityId != oldData?.city_id) || !oldData?.city_id) {
@@ -557,8 +492,6 @@ export default function FormEntity({
 
         // Disable activity_ids field if main_program_id is not selected
         const isActivityFieldDisabled = fieldName === 'activity_ids' && !mainProgramId;
-        // Always disable city_id field (it's auto-filled from branch)
-        const isCityFieldDisabled = fieldName === 'city_id';
         // Disable neighborhood_id field if city_id is not selected
         const isNeighborhoodFieldDisabled = fieldName === 'neighborhood_id' && !cityId;
         const canActivateSuspendedEntity =
@@ -571,7 +504,7 @@ export default function FormEntity({
             (entryType === 'new_with_approval' ||
                 (editMode && !canActivateSuspendedEntity));
         // Check if field has disabled property
-        const isFieldDisabled = field.disabled || viewMode || isActivityFieldDisabled || isCityFieldDisabled || isNeighborhoodFieldDisabled || isStatusFieldDisabled;
+        const isFieldDisabled = field.disabled || viewMode || isActivityFieldDisabled || isNeighborhoodFieldDisabled || isStatusFieldDisabled;
 
         // Use sync selects when options are intentionally pre-filtered in this form.
         const forceSyncField =
