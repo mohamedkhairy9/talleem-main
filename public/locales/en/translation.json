@@ -1522,6 +1522,7 @@
         "column_settings": "Column Settings",
         "column_visibility": "Column Visibility",
         "export": "Export",
+        "exporting": "Exporting all records...",
         "export_as_csv": "Export as CSV",
         "export_as_json": "Export as JSON",
         "print_table": "Print Table",

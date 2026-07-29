@@ -179,7 +179,8 @@ const normalizeTeacherPendingItem = (item, index, mainPrograms, teachers) => {
         item.teacher_data,
         item.profile,
         item.user,
-        submittedData?.teacher
+        submittedData?.teacher,
+        item
     );
     const renewTargetId = firstNonEmpty(
         item.teacher_id,
@@ -312,7 +313,8 @@ const normalizeEntityPendingItem = (item, index, mainPrograms, entities) => {
         item.organization,
         submittedData?.entity,
         submittedData?.new_entity,
-        submittedData?.current_entity
+        submittedData?.current_entity,
+        item
     );
     const teacher = firstObject(submittedData?.teacher);
     const renewTargetId = firstNonEmpty(
@@ -450,9 +452,21 @@ export default function LicenseRenewals() {
         usePagination();
     const { data: mainProgramsResponse } = useMainProgramsQuery(allData);
     const { data: entitiesResponse } = useEntitiesQuery(allData);
-    const { data: unlicensedEntitiesResponse } = useUnlicensedEntitiesQuery(allData);
+    const {
+        data: unlicensedEntitiesResponse,
+        isLoading: isUnlicensedEntitiesLoading,
+        refresh: refreshUnlicensedEntities,
+        hasError: hasUnlicensedEntitiesError,
+        errorMessage: unlicensedEntitiesErrorMessage
+    } = useUnlicensedEntitiesQuery(allData);
     const { data: teachersResponse } = useTeachersQuery(allData);
-    const { data: unlicensedTeachersResponse } = useUnlicensedTeachersQuery(allData);
+    const {
+        data: unlicensedTeachersResponse,
+        isLoading: isUnlicensedTeachersLoading,
+        refresh: refreshUnlicensedTeachers,
+        hasError: hasUnlicensedTeachersError,
+        errorMessage: unlicensedTeachersErrorMessage
+    } = useUnlicensedTeachersQuery(allData);
     const mainPrograms = useMemo(
         () =>
             Array.isArray(mainProgramsResponse?.data)
@@ -505,26 +519,12 @@ export default function LicenseRenewals() {
         errorMessage: teachersErrorMessage
     } = usePendingTeacherLicensesQuery({ ...allData, request_type: 'renewal' });
     const {
-        data: issuanceTeachersResponse,
-        isLoading: isIssuanceTeachersLoading,
-        refresh: refreshIssuanceTeachers,
-        hasError: hasIssuanceTeachersError,
-        errorMessage: issuanceTeachersErrorMessage
-    } = usePendingTeacherLicensesQuery({ ...allData, request_type: 'join' });
-    const {
         data: pendingEntitiesResponse,
         isLoading: isEntitiesLoading,
         refresh: refreshEntities,
         hasError: hasEntitiesError,
         errorMessage: entitiesErrorMessage
     } = usePendingEntityLicensesQuery({ ...allData, request_type: 'renewal' });
-    const {
-        data: issuanceEntitiesResponse,
-        isLoading: isIssuanceEntitiesLoading,
-        refresh: refreshIssuanceEntities,
-        hasError: hasIssuanceEntitiesError,
-        errorMessage: issuanceEntitiesErrorMessage
-    } = usePendingEntityLicensesQuery({ ...allData, request_type: 'join' });
     const { mutate: renewTeacherLicense, isPending: isRenewingTeacher } =
         useRenewTeacherLicenseMutation();
     const { mutate: renewEntityLicense, isPending: isRenewingEntity } =
@@ -546,17 +546,17 @@ export default function LicenseRenewals() {
     );
     const issuanceTeachers = useMemo(
         () =>
-            extractCollection(issuanceTeachersResponse).map((item, index) =>
+            extractCollection(unlicensedTeachersResponse).map((item, index) =>
                 normalizeTeacherPendingItem(item, index, mainPrograms, teachers)
             ),
-        [issuanceTeachersResponse, mainPrograms, teachers]
+        [unlicensedTeachersResponse, mainPrograms, teachers]
     );
     const issuanceEntities = useMemo(
         () =>
-            extractCollection(issuanceEntitiesResponse).map((item, index) =>
+            extractCollection(unlicensedEntitiesResponse).map((item, index) =>
                 normalizeEntityPendingItem(item, index, mainPrograms, entities)
             ),
-        [issuanceEntitiesResponse, mainPrograms, entities]
+        [unlicensedEntitiesResponse, mainPrograms, entities]
     );
 
     const teacherColumns = useMemo(
@@ -806,12 +806,12 @@ export default function LicenseRenewals() {
                           : 'Teachers Awaiting License Issuance',
                   data: issuanceTeachers,
                   columns: teacherIssuanceColumns,
-                  loading: isIssuanceTeachersLoading,
+                  loading: isUnlicensedTeachersLoading,
                   pagination: teachersPagination,
                   setPagination: setTeachersPagination,
-                  refresh: refreshIssuanceTeachers,
-                  hasError: hasIssuanceTeachersError,
-                  errorMessage: issuanceTeachersErrorMessage
+                  refresh: refreshUnlicensedTeachers,
+                  hasError: hasUnlicensedTeachersError,
+                  errorMessage: unlicensedTeachersErrorMessage
               }
             : activeTab === 'issuance' && activeSubject === 'entities'
               ? {
@@ -821,12 +821,12 @@ export default function LicenseRenewals() {
                             : 'Entities Awaiting Permit Issuance',
                     data: issuanceEntities,
                     columns: entityIssuanceColumns,
-                    loading: isIssuanceEntitiesLoading,
+                    loading: isUnlicensedEntitiesLoading,
                     pagination: entitiesPagination,
                     setPagination: setEntitiesPagination,
-                    refresh: refreshIssuanceEntities,
-                    hasError: hasIssuanceEntitiesError,
-                    errorMessage: issuanceEntitiesErrorMessage
+                    refresh: refreshUnlicensedEntities,
+                    hasError: hasUnlicensedEntitiesError,
+                    errorMessage: unlicensedEntitiesErrorMessage
                 }
               : activeSubject === 'teachers'
             ? {

@@ -1488,6 +1488,7 @@
         "column_settings": "إعدادات العمود",
         "column_visibility": "إعدادات العمود",
         "export": "تصدير",
+        "exporting": "جاري تصدير كل السجلات...",
         "export_as_csv": "تصدير ك CSV",
         "export_as_json": "تصدير ك JSON",
         "print_table": "طباعة الجدول",

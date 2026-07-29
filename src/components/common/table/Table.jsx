@@ -1,4 +1,10 @@
-import React, { useState, useEffect, useMemo, useRef } from 'react';
+import React, {
+    useState,
+    useEffect,
+    useMemo,
+    useRef,
+    useCallback
+} from 'react';
 import i18next from 'i18next';
 import {
     useReactTable,
@@ -104,6 +110,7 @@ const Table = ({
     const [showColumnSettings, setShowColumnSettings] = useState(false);
     const [showExportMenu, setShowExportMenu] = useState(false);
     const [showSelectedExportMenu, setShowSelectedExportMenu] = useState(false);
+    const [pendingExport, setPendingExport] = useState(null);
     const [isFullscreen, setIsFullscreen] = useState(false);
     const [density, setDensity] = useState('normal');
     const [showFiltersModal, setShowFiltersModal] = useState(false);
@@ -487,72 +494,143 @@ const Table = ({
     };
 
     // Export functions
-    const exportToCSV = () => {
+    const downloadCSV = useCallback(rowsToExport => {
+        const visibleColumns = table
+            .getVisibleFlatColumns()
+            .filter(col => col.id !== 'select' && col.id !== 'actions');
+        const headers = visibleColumns
+            .map(col => t(col.columnDef.header))
+            .join(',');
+        const rows = rowsToExport.map(row =>
+            visibleColumns
+                .map(col => {
+                    const value = row.original[col.id];
+
+                    return typeof value === 'string' && value.includes(',')
+                        ? `"${value}"`
+                        : getObjectName(value) || '';
+                })
+                .join(',')
+        );
+
+        const csvContent = [headers, ...rows].join('\n');
+        const BOM = '\uFEFF'; // UTF-8 BOM
+        const blob = new Blob([BOM + csvContent], {
+            type: 'text/csv;charset=utf-8;'
+        });
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `${title.replace(/\s+/g, '_')}_${
+            new Date().toISOString().split('T')[0]
+        }.csv`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        window.URL.revokeObjectURL(url);
+    }, [table, t, title]);
+
+    const downloadJSON = useCallback(rowsToExport => {
+        const exportData = rowsToExport.map(row => row.original);
+        const jsonContent = JSON.stringify(exportData, null, 2);
+        const blob = new Blob([jsonContent], { type: 'application/json' });
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `${title.replace(/\s+/g, '_')}_${
+            new Date().toISOString().split('T')[0]
+        }.json`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        window.URL.revokeObjectURL(url);
+    }, [title]);
+
+    const executeExport = useCallback((format, rowsToExport) => {
         try {
-            const visibleColumns = table
-                .getVisibleFlatColumns()
-                .filter(col => col.id !== 'select' && col.id !== 'actions');
-            const headers = visibleColumns
-                .map(col => t(col.columnDef.header))
-                .join(',');
-            const rows = table.getFilteredRowModel().rows.map(row =>
-                visibleColumns
-                    .map(col => {
-                        const value = row.original[col.id];
-                        console.log(col.id, value);
-
-                        return typeof value === 'string' && value.includes(',')
-                            ? `"${value}"`
-                            : getObjectName(value) || '';
-                    })
-                    .join(',')
-            );
-
-            const csvContent = [headers, ...rows].join('\n');
-            const BOM = '\uFEFF'; // UTF-8 BOM
-            const blob = new Blob([BOM + csvContent], {
-                type: 'text/csv;charset=utf-8;'
-            });
-            const url = window.URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `${title.replace(/\s+/g, '_')}_${
-                new Date().toISOString().split('T')[0]
-            }.csv`;
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            window.URL.revokeObjectURL(url);
+            if (format === 'json') {
+                downloadJSON(rowsToExport);
+            } else {
+                downloadCSV(rowsToExport);
+            }
             setShowExportMenu(false);
         } catch (error) {
             console.error('Export failed:', error);
             alert('Export failed. Please try again.');
         }
+    }, [downloadCSV, downloadJSON]);
+
+    const requestExport = format => {
+        const currentRows = table.getFilteredRowModel().rows;
+        const normalizedTotal = Number(totalCount) || currentRows.length;
+        const shouldLoadAllRecords =
+            serverPagination &&
+            typeof setPagination === 'function' &&
+            normalizedTotal > currentRows.length;
+
+        if (!shouldLoadAllRecords) {
+            executeExport(format, currentRows);
+            return;
+        }
+
+        const targetPageSize = Math.max(
+            normalizedTotal,
+            Number(pagination?.per_page) || 10
+        );
+
+        setPendingExport({
+            format,
+            originalPagination: { ...pagination },
+            previousData: data,
+            targetPageSize
+        });
+        setShowExportMenu(false);
+        setPagination({
+            ...pagination,
+            page: 1,
+            per_page: targetPageSize
+        });
     };
 
-    const exportToJSON = () => {
-        try {
-            const data = table
-                .getFilteredRowModel()
-                .rows.map(row => row.original);
-            const jsonContent = JSON.stringify(data, null, 2);
-            const blob = new Blob([jsonContent], { type: 'application/json' });
-            const url = window.URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `${title.replace(/\s+/g, '_')}_${
-                new Date().toISOString().split('T')[0]
-            }.json`;
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            window.URL.revokeObjectURL(url);
-            setShowExportMenu(false);
-        } catch (error) {
-            console.error('Export failed:', error);
-            alert('Export failed. Please try again.');
+    const exportToCSV = () => requestExport('csv');
+    const exportToJSON = () => requestExport('json');
+
+    useEffect(() => {
+        if (!pendingExport || loading) return;
+
+        const requestedPaginationIsActive =
+            Number(pagination?.page) === 1 &&
+            Number(pagination?.per_page) === pendingExport.targetPageSize;
+
+        if (
+            !requestedPaginationIsActive ||
+            data === pendingExport.previousData
+        ) {
+            return;
         }
-    };
+
+        const rowsToExport = table.getFilteredRowModel().rows;
+
+        if (!Array.isArray(data)) {
+            setPendingExport(null);
+            setPagination(pendingExport.originalPagination);
+            alert('Export failed. Please try again.');
+            return;
+        }
+
+        executeExport(pendingExport.format, rowsToExport);
+        setPendingExport(null);
+        setPagination(pendingExport.originalPagination);
+    }, [
+        data,
+        executeExport,
+        loading,
+        pagination?.page,
+        pagination?.per_page,
+        pendingExport,
+        setPagination,
+        table
+    ]);
 
     const getPrintableColumns = rowsTable =>
         rowsTable
@@ -1328,12 +1406,21 @@ const Table = ({
                                                     !showExportMenu
                                                 )
                                             }
-                                            className="flex items-center space-x-1 sm:space-x-2 px-2 sm:px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors"
+                                            disabled={Boolean(pendingExport)}
+                                            className="flex items-center space-x-1 sm:space-x-2 px-2 sm:px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors disabled:opacity-60 disabled:cursor-wait"
                                             title={t('table.export')}
                                         >
-                                            <MdDownload className="w-4 h-4 flex-shrink-0" />
+                                            <MdDownload
+                                                className={`w-4 h-4 flex-shrink-0 ${
+                                                    pendingExport
+                                                        ? 'animate-pulse'
+                                                        : ''
+                                                }`}
+                                            />
                                             <span className="text-sm font-medium hidden sm:inline">
-                                                {t('table.export')}
+                                                {pendingExport
+                                                    ? t('table.exporting')
+                                                    : t('table.export')}
                                             </span>
                                             <MdExpandMore className="w-4 h-4 flex-shrink-0 hidden sm:block" />
                                         </button>
