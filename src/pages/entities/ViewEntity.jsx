@@ -16,6 +16,7 @@ import { useEntityQuery } from '@/api/hooks/useEntities';
 import { onlyDate } from '@/utils/helpers/global.fns';
 import { normalizeSessionModeOptions } from '@/utils/helpers/sessionModeLabels';
 import { getEntityPermitFormData } from './entityPermitDetails';
+import { formatDateForDisplay } from '@/utils/helpers/dateObjectHelpers';
 
 const statusOptions = [
     { label: { ar: 'مصرح', en: 'Permitted' }, value: 'active' },
@@ -68,6 +69,9 @@ const normalizeEntityFormData = item => {
         lecture_halls_count: item.lecture_halls_count ?? 0,
         activity_ids: item.activities?.map(activity => activity.id),
         activities: item.activities,
+        manager_assignment_history: Array.isArray(item.manager_assignment_history)
+            ? item.manager_assignment_history
+            : [],
         registration_date: onlyDate(item.registration_date),
         // A permit can be issued after a "new with approval" entity is
         // created. Show its permit details whenever a current permit exists.
@@ -103,11 +107,19 @@ const normalizeEntityFormData = item => {
     };
 };
 
+const getManagerName = (manager, locale) => {
+    const name = manager?.name;
+
+    if (typeof name === 'string') return name;
+
+    return name?.[locale] || name?.ar || name?.en || '-';
+};
+
 export default function ViewEntity({ onClose, oldData }) {
     const [isIssueLicenseOpen, setIsIssueLicenseOpen] = useState(false);
     const [issuedInSession, setIssuedInSession] = useState(false);
     const [activeTab, setActiveTab] = useState('details');
-    const { currentLocale } = useLocale();
+    const { currentLocale, t } = useLocale();
 
     const { data: entityDetailsResponse, isLoading: isEntityDetailsLoading } =
         useEntityQuery(oldData?.id, {
@@ -122,6 +134,8 @@ export default function ViewEntity({ onClose, oldData }) {
 
     const hasLicenseNumber = !!resolvedEntity?.license_number;
     const canIssueLicense = !hasLicenseNumber && !issuedInSession;
+    const managerAssignmentHistory =
+        resolvedEntity?.manager_assignment_history || [];
 
     const {
         branchesData,
@@ -183,6 +197,17 @@ export default function ViewEntity({ onClose, oldData }) {
                                     ? 'أنشطة الجهة'
                                     : 'Entity Activities'}
                             </button>
+                            <button
+                                type="button"
+                                onClick={() => setActiveTab('manager-history')}
+                                className={`border-b-2 px-1 pb-3 text-sm font-semibold transition ${
+                                    activeTab === 'manager-history'
+                                        ? 'border-primary text-primary'
+                                        : 'border-transparent text-gray-500 hover:text-gray-700'
+                                }`}
+                            >
+                                {t('entities.manager_assignment_history')}
+                            </button>
                         </nav>
 
                         {activeTab === 'details' && canIssueLicense && (
@@ -235,11 +260,65 @@ export default function ViewEntity({ onClose, oldData }) {
                             'manager.status': enabledDisabledOptions
                         }}
                     />
-                ) : (
+                ) : activeTab === 'activities' ? (
                     <UpdateEntityLicenseActivities
                         entityId={resolvedEntity?.id}
                         oldData={resolvedEntity}
                     />
+                ) : (
+                    <div className="p-5">
+                        {managerAssignmentHistory.length ? (
+                            <div className="overflow-x-auto rounded-lg border border-gray-200">
+                                <table className="min-w-full divide-y divide-gray-200 text-sm">
+                                    <thead className="bg-gray-50 text-gray-700">
+                                        <tr>
+                                            <th className="px-4 py-3 text-start font-semibold">
+                                                {t('entities.manager_name')}
+                                            </th>
+                                            <th className="px-4 py-3 text-start font-semibold">
+                                                {t('entities.assignment_start_date')}
+                                            </th>
+                                            <th className="px-4 py-3 text-start font-semibold">
+                                                {t('entities.assignment_end_date')}
+                                            </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody className="divide-y divide-gray-100 bg-white text-gray-700">
+                                        {managerAssignmentHistory.map(assignment => (
+                                            <tr key={assignment.id}>
+                                                <td className="px-4 py-3 font-medium">
+                                                    {getManagerName(
+                                                        assignment.manager,
+                                                        currentLocale
+                                                    )}
+                                                </td>
+                                                <td className="px-4 py-3">
+                                                    {formatDateForDisplay(
+                                                        assignment.assignment_start_date
+                                                    )}
+                                                </td>
+                                                <td className="px-4 py-3">
+                                                    {assignment.assignment_end_date ? (
+                                                        formatDateForDisplay(
+                                                            assignment.assignment_end_date
+                                                        )
+                                                    ) : (
+                                                        <span className="inline-flex rounded-full bg-green-50 px-2.5 py-1 text-xs font-medium text-green-700">
+                                                            {t('entities.current_assignment')}
+                                                        </span>
+                                                    )}
+                                                </td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            </div>
+                        ) : (
+                            <div className="rounded-lg border border-dashed border-gray-300 px-4 py-10 text-center text-sm text-gray-500">
+                                {t('entities.manager_assignment_history_empty')}
+                            </div>
+                        )}
+                    </div>
                 )}
             </Modal>
 

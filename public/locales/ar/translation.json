@@ -1776,6 +1776,12 @@
         "add_activity": "إضافة نشاط",
         "activity": "نشاط",
         "entity_information": "المعلومات الشخصية للجهة",
+        "manager_assignment_history": "سجل مدراء الجهة",
+        "manager_name": "اسم المدير",
+        "assignment_start_date": "تاريخ بداية الإسناد",
+        "assignment_end_date": "تاريخ انتهاء الإسناد",
+        "current_assignment": "الإسناد الحالي",
+        "manager_assignment_history_empty": "لا يوجد سجل إسناد لمدراء هذه الجهة حتى الآن.",
         "import": "استيراد جهات",
         "import_info": "تأكد من تطابق ملف Excel الخاص بك مع تنسيق المثال. قم بتنزيل ملف المثال لمعرفة التنسيق الصحيح.",
         "example_downloaded": "تم تنزيل ملف المثال بنجاح"

@@ -1238,6 +1238,12 @@
         "add_activity": "Add Activity",
         "activity": "Activity",
         "entity_information": "Entity Information",
+        "manager_assignment_history": "Manager Assignment History",
+        "manager_name": "Manager Name",
+        "assignment_start_date": "Assignment Start Date",
+        "assignment_end_date": "Assignment End Date",
+        "current_assignment": "Current Assignment",
+        "manager_assignment_history_empty": "No manager assignment history is available for this entity yet.",
         "import": "Import Entities",
         "import_info": "Make sure your Excel file matches the example format. Download the example file to see the correct format.",
         "example_downloaded": "Example file downloaded successfully"
