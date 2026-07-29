@@ -207,7 +207,7 @@ export function useStudentForm({ oldData, editMode, viewMode, watch, control, se
     useEffect(() => {
         if (viewMode) return;
 
-        if (Number(mainProgramId) !== 2 || !normalizedEntityId || !selectedEntityMemorizationType) {
+        if (Number(mainProgramId) !== 2 || !normalizedEntityId) {
             setValue('memorization_program_entity_type', '', {
                 shouldValidate: true,
                 shouldDirty: true
@@ -218,6 +218,11 @@ export function useStudentForm({ oldData, editMode, viewMode, watch, control, se
             });
             return;
         }
+
+        // The entity list can be returned before its relation is hydrated.
+        // Keep the saved student value while the entity type is still loading
+        // instead of clearing a read-only field in edit mode.
+        if (!selectedEntityMemorizationType) return;
 
         const entityTypeName = selectedEntityMemorizationType.name?.[lang] ||
             selectedEntityMemorizationType.name?.en ||

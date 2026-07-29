@@ -249,7 +249,11 @@ export default function ViewEntity({ onClose, oldData }) {
                     onClose={setIsIssueLicenseOpen}
                     onIssued={() => {
                         setIssuedInSession(true);
-                        setActiveTab('activities');
+                        // Issuing a permit must not send the user to the
+                        // activities editor. Activities already belong to the
+                        // entity profile and are not a required part of the
+                        // permit-issuance flow.
+                        setActiveTab('details');
                     }}
                 />
             )}

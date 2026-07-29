@@ -37,7 +37,7 @@ export const evaluationParametersSchema = yup.object().shape({
                 .integer('validation.total_grade.integer'),
             otherwise: (schema) => schema.nullable().optional()
         }),
-    pass_grade: yup
+    passing_grade: yup
         .number()
         .required('validation.pass_grade.required')
         .positive('validation.pass_grade.positive')

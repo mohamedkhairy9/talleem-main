@@ -30,7 +30,7 @@ export default function FormEvaluationParameter({
         if (!oldData) return {
             is_active: true,
             include_attachments: false,
-            pass_grade: '',
+            passing_grade: '',
             criteria: [{ criteria_name: { en: '', ar: '' }, degree: '' }]
         };
 
@@ -41,6 +41,8 @@ export default function FormEvaluationParameter({
             model_type: oldData.model_type?.en || oldData.model_type || '',
             evaluation_for: oldData.evaluation_for?.en || oldData.evaluation_for || '',
             evaluation_system: evaluationSystem,
+            // The API uses `passing_grade`; keep the legacy key as a read fallback only.
+            passing_grade: oldData.passing_grade ?? oldData.pass_grade ?? '',
             // Set total_grade to 100 if evaluation_system is percentage
             total_grade: evaluationSystem === 'percentage' ? 100 : oldData.total_grade,
             dashboards: Array.isArray(oldData.dashboards)
@@ -260,6 +262,9 @@ export default function FormEvaluationParameter({
         setHasSubmitted(true);
         console.log('Form data before transformation:', data);
 
+        const formData = { ...data };
+        delete formData.pass_grade;
+
         // Helper function to transform value to bilingual object
         const toBilingualObject = (value, optionsArray) => {
             const option = optionsArray.find(r => r.value === value);
@@ -271,20 +276,21 @@ export default function FormEvaluationParameter({
 
         // Transform data to match API expectations
         const transformedData = {
-            ...data,
-            model_type: data.model_type,
-            evaluation_for: toBilingualObject(data.evaluation_for, evaluationForOptions),
+            ...formData,
+            passing_grade: Number(formData.passing_grade),
+            model_type: formData.model_type,
+            evaluation_for: toBilingualObject(formData.evaluation_for, evaluationForOptions),
             evaluation_system: {
-                en: data.evaluation_system,
-                ar: evaluationSystemOptions.find(s => s.value === data.evaluation_system)?.label.ar || data.evaluation_system
+                en: formData.evaluation_system,
+                ar: evaluationSystemOptions.find(s => s.value === formData.evaluation_system)?.label.ar || formData.evaluation_system
             },
             // Set total_grade to 100 if evaluation_system is percentage
-            total_grade: data.evaluation_system === 'percentage' ? 100 : data.total_grade,
-            dashboards: Array.isArray(data.dashboards)
-                ? data.dashboards.map(value => toBilingualObject(value, dashboardOptions))
+            total_grade: formData.evaluation_system === 'percentage' ? 100 : formData.total_grade,
+            dashboards: Array.isArray(formData.dashboards)
+                ? formData.dashboards.map(value => toBilingualObject(value, dashboardOptions))
                 : [],
-            receivers: Array.isArray(data.receivers)
-                ? data.receivers.map(value => toBilingualObject(value, dashboardOptions))
+            receivers: Array.isArray(formData.receivers)
+                ? formData.receivers.map(value => toBilingualObject(value, dashboardOptions))
                 : []
         };
 
@@ -410,13 +416,13 @@ export default function FormEvaluationParameter({
                     p="px-3 py-3"
                     control={control}
                     register={register}
-                    error={getNestedError(errors, 'pass_grade')}
+                    error={getNestedError(errors, 'passing_grade')}
                     type="number"
                     placeholder={t('validation.pass_grade.placeholder')}
                     label={t('validation.pass_grade.label')}
-                    name="pass_grade"
+                    name="passing_grade"
                     disabled={viewMode}
-                    required={isFieldRequired(schema, "pass_grade")}/>
+                    required={isFieldRequired(schema, "passing_grade")}/>
 
                 {/* Receivers (Multi-Select) - Filtered to exclude evaluation_for */}
                 <InputRFH

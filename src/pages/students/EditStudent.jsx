@@ -117,6 +117,21 @@ export default function EditStudent({ onClose, oldData }) {
     const studentEntities = Array.isArray(studentDetails?.entities) && studentDetails.entities.length > 0
         ? studentDetails.entities
         : oldData?.entities || (oldData?.entity ? [oldData.entity] : []);
+    const studentMainProgramId =
+        studentDetails?.main_program_id?.id ??
+        studentDetails?.main_program?.id ??
+        studentDetails?.main_program_id ??
+        oldData?.main_program_id;
+    const studentBranchId =
+        studentDetails?.branch?.id ?? studentDetails?.branch_id ?? oldData?.branch_id;
+    const memorizationEntityTypeId =
+        studentDetails?.memorization_program_entity_type_id ??
+        oldData?.memorization_program_entity_type_id ??
+        null;
+    const memorizationEntityType =
+        studentDetails?.memorization_program_entity_type ??
+        oldData?.memorization_program_entity_type ??
+        null;
 
     return (
         <Modal onClose={onClose} size="5xl">
@@ -125,8 +140,15 @@ export default function EditStudent({ onClose, oldData }) {
                 onClose={onClose}
                 oldData={{
                     ...oldData,
+                    ...studentDetails,
+                    main_program_id: studentMainProgramId,
+                    branch_id: studentBranchId,
                     entity_ids: studentEntityIds,
-                    entities: studentEntities
+                    entities: studentEntities,
+                    entity:
+                        studentDetails?.entity ?? oldData?.entity ?? studentEntities[0] ?? null,
+                    memorization_program_entity_type_id: memorizationEntityTypeId,
+                    memorization_program_entity_type: memorizationEntityType
                 }}
                 activeHalaqaRecord={studentDetails}
                 editMode={true}

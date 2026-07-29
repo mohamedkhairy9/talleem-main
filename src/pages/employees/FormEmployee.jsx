@@ -17,7 +17,8 @@ import { allData } from '@/utils/constants/global.constants';
 import {
     buildEmployeeSubmissionPayload,
     getEmployeeJobPolicyState,
-    normalizeSelectedIds
+    normalizeSelectedIds,
+    resolveEmployeeJobPolicy
 } from './employeeJobPolicy';
 
 const RELATION_FIELDS_VIEW = [
@@ -46,7 +47,59 @@ function getLocalizedRoleName(role, lang) {
     );
 }
 
-function getRelationDisplayName(oldData, fieldName, lang, roleOptions = []) {
+function hasAllBranchEntitiesScope(oldData) {
+    const normalizeScope = value =>
+        String(value)
+            .trim()
+            .toLowerCase()
+            .replace(/[-_]+/g, ' ');
+
+    const explicitScope = [
+        oldData?.entity_scope,
+        oldData?.access_scope,
+        oldData?.assignment_scope,
+        oldData?.entity_assignment_type
+    ]
+        .filter(Boolean)
+        .map(normalizeScope);
+
+    if (
+        explicitScope.some(scope =>
+            [
+                'all branch entities',
+                'all entities in branch',
+                'branch entities',
+                'كل جهات الفرع',
+                'جميع جهات الفرع'
+            ].includes(scope)
+        )
+    ) {
+        return true;
+    }
+
+    const hasBranchManagerRole = (oldData?.roles ?? []).some(role => {
+        const roleName =
+            typeof role === 'object'
+                ? role?.name?.en || role?.name?.ar || role?.name
+                : role;
+        return ['branch manager', 'مدير فرع'].includes(
+            normalizeScope(roleName)
+        );
+    });
+
+    return (
+        hasBranchManagerRole ||
+        resolveEmployeeJobPolicy(oldData?.job) === 'branch_manager'
+    );
+}
+
+function getRelationDisplayName(
+    oldData,
+    fieldName,
+    lang,
+    roleOptions = [],
+    allBranchEntitiesLabel = ''
+) {
     if (fieldName === 'roles') {
         const roles = oldData?.roles;
         if (!Array.isArray(roles) || roles.length === 0) return '---';
@@ -78,14 +131,29 @@ function getRelationDisplayName(oldData, fieldName, lang, roleOptions = []) {
         return names.length ? names.join(', ') : '---';
     }
 
+    if (fieldName === 'entity_id') {
+        if (hasAllBranchEntitiesScope(oldData)) {
+            return allBranchEntitiesLabel;
+        }
+
+        const entities = Array.isArray(oldData?.entities)
+            ? oldData.entities
+            : oldData?.entity
+              ? [oldData.entity]
+              : [];
+        const names = entities
+            .map(entity => getLocalizedName(entity?.name, lang))
+            .filter(Boolean);
+
+        return names.length ? names.join(', ') : '---';
+    }
+
     const relationValue =
         fieldName === 'nationality_id'
             ? oldData?.nationality
             : fieldName === 'city_id'
               ? oldData?.city
-              : fieldName === 'entity_id'
-                ? oldData?.entity
-                : fieldName === 'job_id'
+              : fieldName === 'job_id'
                   ? oldData?.job
                   : fieldName === 'academic_qualification_id'
                     ? oldData?.academic_qualification
@@ -281,7 +349,8 @@ export default function FormEmployee({
                 oldData,
                 fieldName,
                 lang,
-                options?.roles
+                options?.roles,
+                t('employees.all_branch_entities')
             );
             return (
                 <div key={`view-${fieldName}`} className="flex flex-col gap-px">

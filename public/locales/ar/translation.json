@@ -1991,7 +1991,8 @@
         "create": "إضافة موظف",
         "edit": "تعديل موظف",
         "update": "تعديل موظف",
-        "view": "عرض موظف"
+        "view": "عرض موظف",
+        "all_branch_entities": "كل جهات الفرع"
     },
     "configurations": {
         "title": "إعدادات النظام",

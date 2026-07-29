@@ -78,22 +78,15 @@ export const studentsSchema = (parentInfoAgeThreshold = DEFAULT_PARENT_INFO_AGE_
         .nullable()
         .optional(),
     
-    // Memorization program entity type ID (required when program is 2)
+    // The type is derived from the selected entity and is never chosen by the
+    // user in the student form.
     memorization_program_entity_type_id: yup
         .number()
         .nullable()
         .transform((value, originalValue) => 
             originalValue === '' || originalValue === null || originalValue === undefined ? null : value
         )
-        .when('main_program_id', {
-            is: value => Number(value) === 2,
-            then: schema =>
-                schema
-                    .required(t('validation.required'))
-                    .integer(t('validation.memorization_program_entity_type_id.integer'))
-                    .min(1, t('validation.memorization_program_entity_type_id.min')),
-            otherwise: schema => schema.nullable().optional()
-        }),
+        .optional(),
     
     // Academic qualification (required only for memorization program)
     // academic_qualification_id: yup

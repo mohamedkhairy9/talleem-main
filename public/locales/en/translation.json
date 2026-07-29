@@ -1977,7 +1977,8 @@
         "create": "Create Employee",
         "edit": "Edit Employee",
         "update": "Update Employee",
-        "view": "View Employee"
+        "view": "View Employee",
+        "all_branch_entities": "All Entities in the Branch"
     },
     "configurations": {
         "title": "System Configuration",

@@ -52,6 +52,39 @@ const extractEducationEntityTypeData = (oldData) => {
     return { id: educationEntityType, classification: null, name: null };
 };
 
+const extractMemorizationEntityTypeData = oldData => {
+    const memorizationEntityTypeId =
+        oldData?.memorization_program_entity_type_id;
+    const memorizationEntityType =
+        oldData?.memorization_program_entity_type;
+
+    if (!memorizationEntityTypeId && !memorizationEntityType) {
+        return { id: null, name: null };
+    }
+
+    if (typeof memorizationEntityTypeId === 'object') {
+        return {
+            id: memorizationEntityTypeId.id ?? null,
+            name:
+                memorizationEntityTypeId.name ??
+                memorizationEntityType?.name ??
+                memorizationEntityType ??
+                null
+        };
+    }
+
+    return {
+        id: memorizationEntityTypeId ?? memorizationEntityType?.id ?? null,
+        name: memorizationEntityType?.name ?? memorizationEntityType ?? null
+    };
+};
+
+const getLocalizedRelationName = (name, locale) => {
+    if (typeof name === 'string') return name;
+
+    return name?.[locale] ?? name?.en ?? name?.ar ?? '';
+};
+
 const getStudentEntityIds = student => {
     const values = Array.isArray(student?.entity_ids) && student.entity_ids.length > 0
         ? student.entity_ids
@@ -84,6 +117,7 @@ function StudentFormContent({
 
     if (defaultValuesRef.current === null || oldDataIdRef.current !== oldData?.id) {
         const educationEntityTypeInfo = extractEducationEntityTypeData(oldData);
+        const memorizationEntityTypeInfo = extractMemorizationEntityTypeData(oldData);
         const baseValues = {
             ...oldData,
             date_of_birth: onlyDate(oldData?.date_of_birth),
@@ -108,6 +142,24 @@ function StudentFormContent({
                     educationEntityTypeInfo.name[lang] ||
                     educationEntityTypeInfo.name.en ||
                     educationEntityTypeInfo.name.ar;
+            }
+        }
+
+        // This is derived from the student's assigned entity.  It is a
+        // read-only value, but retaining both its text and id means the edit
+        // form never asks the user to select it again.
+        if ((editMode || viewMode) && memorizationEntityTypeInfo.id) {
+            baseValues.memorization_program_entity_type_id =
+                memorizationEntityTypeInfo.id;
+
+            const memorizationEntityTypeName = getLocalizedRelationName(
+                memorizationEntityTypeInfo.name,
+                lang
+            );
+
+            if (memorizationEntityTypeName) {
+                baseValues.memorization_program_entity_type =
+                    memorizationEntityTypeName;
             }
         }
 

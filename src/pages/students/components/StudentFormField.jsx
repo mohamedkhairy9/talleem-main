@@ -4,7 +4,6 @@ import ProfileImageField from './ProfileImageField';
 import { getNestedError } from '@/utils/helpers/getNestedError';
 import { generateOptions } from '@/utils/helpers/global.fns';
 import useLocale from '@/utils/hooks/global/useLocale';
-import i18next from 'i18next';
 
 export default function StudentFormField({
     field,
@@ -29,7 +28,6 @@ export default function StudentFormField({
     onDateOfBirthChange
 }) {
     const { t } = useLocale();
-    const lang = i18next.language;
 
     // Hide issue_description if has_medical_issues is not 1
     if (field.name === 'issue_description' && watch('has_medical_issues') !== 1) {
@@ -98,6 +96,10 @@ export default function StudentFormField({
                     placeholder={t(field.placeholder)}
                 />
                 <input type="hidden" {...register('memorization_program_entity_type')} />
+                <input
+                    type="hidden"
+                    {...register('memorization_program_entity_type_id')}
+                />
                 <p className="mt-1 h-4 text-xs text-red-600" role="alert">
                     {t(getNestedError(errors, field.name)) || ''}
                 </p>
