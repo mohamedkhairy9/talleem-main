@@ -29,7 +29,7 @@ export default function Evaluations() {
         enabled: activeTab === 'received'
     });
     const availableParametersQuery = useAvailableEvaluationParametersQuery(
-        { page: pagination.page, per_page: pagination.per_page },
+        pagination,
         { enabled: activeTab === 'templates' }
     );
     const sourceQuery =

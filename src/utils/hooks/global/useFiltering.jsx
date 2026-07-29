@@ -7,6 +7,7 @@ export default function useFiltering(defaultFilters = {}) {
 
     function handleFilter(name, value) {
         setFilters(old => ({ ...old, [name]: value }));
+        setPagination(old => ({ ...old, page: 1 }));
     }
 
     function setter(id) {

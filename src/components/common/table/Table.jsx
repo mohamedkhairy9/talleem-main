@@ -324,17 +324,44 @@ const Table = ({
         if (typeof updater === 'function') {
             const newTanstackPagination = updater(tanstackPagination);
             const newPagination = {
+                ...pagination,
                 page: newTanstackPagination.pageIndex + 1, // Convert 0-based index to 1-based page
                 per_page: newTanstackPagination.pageSize
             };
             setPagination(newPagination);
         } else {
             const newPagination = {
+                ...pagination,
                 page: updater.pageIndex + 1, // Convert 0-based index to 1-based page
                 per_page: updater.pageSize
             };
             setPagination(newPagination);
         }
+    };
+
+    const handleSortingChange = updater => {
+        const nextSorting =
+            typeof updater === 'function' ? updater(sorting) : updater;
+
+        setSorting(nextSorting);
+
+        // A server-paginated table only contains one page of records. Applying
+        // TanStack's local sorting here would therefore produce a misleading
+        // order that changes only the visible page. Send the selected column to
+        // the list query instead, then return to page one for the sorted result.
+        if (!serverPagination || !setPagination) return;
+
+        const activeSort = nextSorting?.[0];
+        setPagination(currentPagination => ({
+            ...(currentPagination || pagination),
+            page: 1,
+            sort_by: activeSort?.id || 'created_at',
+            sort_direction: activeSort
+                ? activeSort.desc
+                    ? 'desc'
+                    : 'asc'
+                : 'desc'
+        }));
     };
 
     // Use optimistic data if available, otherwise use original data
@@ -346,12 +373,12 @@ const Table = ({
         columns,
         getCoreRowModel: getCoreRowModel(),
         getFilteredRowModel: getFilteredRowModel(),
-        getSortedRowModel: getSortedRowModel(),
+        getSortedRowModel: serverPagination ? undefined : getSortedRowModel(),
         getPaginationRowModel: serverPagination
             ? undefined
             : getPaginationRowModel(),
         onPaginationChange: handlePaginationChange,
-        onSortingChange: setSorting,
+        onSortingChange: handleSortingChange,
         onColumnFiltersChange: setColumnFilters,
         onGlobalFilterChange: setGlobalFilter,
         onColumnVisibilityChange: setColumnVisibility,
@@ -369,7 +396,7 @@ const Table = ({
             ? Math.ceil(totalCount / pagination.per_page)
             : undefined,
         manualPagination: serverPagination,
-        manualSorting: false, // Keep client-side sorting enabled
+        manualSorting: serverPagination,
         manualFiltering: false, // Keep client-side filtering enabled
         enableRowSelection: enableRowSelection
     });
