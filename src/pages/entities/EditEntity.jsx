@@ -1,8 +1,8 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import FormEntity from './FormEntity';
 import Modal from '@/components/common/form/Modal';
 import ModalHeader from '@/components/common/form/ModalHeader';
-import { useUpdateEntityMutation } from '@/api/hooks/useEntities';
+import { useEntityQuery, useUpdateEntityMutation } from '@/api/hooks/useEntities';
 import Loader from '@/components/common/Loader';
 import useApiCalls from './useApiCalls';
 import { apiCalls } from './configs';
@@ -13,6 +13,7 @@ import {
 import { normalizeSessionModeOptions } from '@/utils/helpers/sessionModeLabels';
 import { useEntityManagersQuery } from '@/api/hooks/useEntityManagers';
 import { allData } from '@/utils/constants/global.constants';
+import { getEntityPermitFormData } from './entityPermitDetails';
 
 const statusOptions = [
     { label: { ar: 'مصرح', en: 'Permitted' }, value: 'active' },
@@ -27,10 +28,22 @@ const entryTypeOptions = [
 ];
 
 export default function EditEntity({ onClose, oldData }) {
-    console.log("old data: ", oldData)
     const { mutate, isPending } = useUpdateEntityMutation();
+    const { data: entityDetailsResponse, isLoading: isEntityDetailsLoading } =
+        useEntityQuery(oldData?.id, { enabled: !!oldData?.id });
     const { data: entityManagersData, isLoading: entityManagersLoading } =
         useEntityManagersQuery({ ...allData, status: true });
+
+    const detailedEntity = entityDetailsResponse?.data || entityDetailsResponse || null;
+    const resolvedOldData = useMemo(
+        () => ({
+            ...oldData,
+            ...(detailedEntity
+                ? getEntityPermitFormData(detailedEntity, oldData)
+                : {})
+        }),
+        [detailedEntity, oldData]
+    );
 
     const {
         branchesData,
@@ -48,9 +61,9 @@ export default function EditEntity({ onClose, oldData }) {
         specificationsData,
         sessionModesData,
         isLoading
-    } = useApiCalls({ apiCalls, mainProgramId: oldData?.main_program_id });
+    } = useApiCalls({ apiCalls, mainProgramId: resolvedOldData?.main_program_id });
 
-    if (isLoading || entityManagersLoading) return <Loader />;
+    if (isLoading || entityManagersLoading || isEntityDetailsLoading) return <Loader />;
 
     return (
         <Modal onClose={onClose} size="5xl">
@@ -58,8 +71,8 @@ export default function EditEntity({ onClose, oldData }) {
             <FormEntity
                 onClose={onClose}
                 oldData={{
-                    ...oldData,
-                    entity_manager_id: oldData?.manager?.id ?? ''
+                    ...resolvedOldData,
+                    entity_manager_id: resolvedOldData?.manager?.id ?? ''
                 }}
                 editMode={true}
                 mutate={mutate}

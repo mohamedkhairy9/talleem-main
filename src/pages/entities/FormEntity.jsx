@@ -365,13 +365,15 @@ export default function FormEntity({
                     typeof licenseImagePreview === 'string'
                         ? licenseImagePreview.split('?')[0]
                         : '';
-                const isImage = licenseImagePreview &&
-                    typeof licenseImagePreview === 'string' &&
-                    (licenseImagePreview.startsWith('data:image') ||
-                        previewUrl.match(/\.(jpg|jpeg|png|gif|webp)$/i));
                 const isPdf = licenseImagePreview && 
                     typeof licenseImagePreview === 'string' && 
                     (previewUrl.includes('.pdf') || licenseImagePreview.startsWith('data:application/pdf'));
+                // Permit uploads accept images or PDFs. API media URLs do not always
+                // retain an image extension, so every non-PDF URL must be rendered as
+                // an image instead of relying on `.png`/`.jpg` detection.
+                const isImage = licenseImagePreview &&
+                    typeof licenseImagePreview === 'string' &&
+                    !isPdf;
                 
                 return (
                     <div className="space-y-2">
