@@ -115,50 +115,13 @@ export default function Configurations() {
             displayValue = config.value;
         }
 
-        // Icon based on type
-        const getTypeIcon = () => {
-            switch (config.type) {
-                case 'checkbox':
-                    return (
-                        <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                        </svg>
-                    );
-                case 'number':
-                    return (
-                        <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 20l4-16m2 16l4-16M6 9h14M4 15h14" />
-                        </svg>
-                    );
-                case 'select':
-                case 'multiselect':
-                    return (
-                        <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-                        </svg>
-                    );
-                default:
-                    return (
-                        <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h8m-8 6h16" />
-                        </svg>
-                    );
-            }
-        };
-
         return (
             <div
                 key={config.id}
                 onClick={() => setEditingConfig(config)}
                 className="p-4 border rounded-lg hover:bg-gray-50 hover:border-blue-300 cursor-pointer transition-all group shadow-sm hover:shadow-md"
             >
-                <div className="flex justify-between items-start mb-2">
-                    <div className="flex items-center gap-2">
-                        {getTypeIcon()}
-                        <span className="text-xs px-2 py-1 bg-gray-100 rounded text-gray-600 font-medium">
-                            {config.type}
-                        </span>
-                    </div>
+                <div className="flex justify-end items-start mb-2">
                     <button className="text-blue-500 hover:text-blue-700 opacity-0 group-hover:opacity-100 transition-opacity">
                         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />

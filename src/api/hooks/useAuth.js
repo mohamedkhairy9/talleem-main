@@ -12,10 +12,29 @@ export const useLoginMutation = () => {
         mutationFn: data => authService.login(data),
         onSuccess: async ({ data }) => {
             console.log('data', data);
-            setUser(data.user, data.access_token);
+
+            // Save the token first: the follow-up /user request is authenticated
+            // through the axios interceptor. This makes the dashboard use the
+            // latest roles and effective permissions before rendering its menus.
+            let authenticatedUser = data.user;
+            setUser(authenticatedUser, data.access_token);
+
+            try {
+                const currentUserResponse = await authService.getUser();
+                const currentUser = currentUserResponse?.data?.user;
+
+                if (currentUser?.id) {
+                    authenticatedUser = currentUser;
+                    setUser(authenticatedUser, data.access_token);
+                }
+            } catch (error) {
+                // Do not block a successful login when refreshing the profile
+                // fails. The login payload remains the safe fallback.
+                console.warn('Could not refresh the authenticated user after login.', error);
+            }
             
             // Handle user locale after login - always set from server response
-            const userLocale = data.user?.locale  // || data.user?.current_app_locale ;
+            const userLocale = authenticatedUser?.locale  // || authenticatedUser?.current_app_locale ;
             console.log('User locale from login response:', userLocale);
             
             if (userLocale) {

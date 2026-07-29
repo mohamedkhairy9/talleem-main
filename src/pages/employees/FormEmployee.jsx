@@ -37,17 +37,31 @@ function getLocalizedName(value, lang) {
     return value[lang] || value.en || value.ar || '';
 }
 
-function getRelationDisplayName(oldData, fieldName, lang) {
+function getLocalizedRoleName(role, lang) {
+    if (!role) return '';
+
+    return (
+        getLocalizedName(role.display_name, lang) ||
+        getLocalizedName(role.name, lang)
+    );
+}
+
+function getRelationDisplayName(oldData, fieldName, lang, roleOptions = []) {
     if (fieldName === 'roles') {
         const roles = oldData?.roles;
         if (!Array.isArray(roles) || roles.length === 0) return '---';
         const names = roles
-            .map(role =>
-                getLocalizedName(
-                    typeof role === 'string' ? role : role?.name,
-                    lang
-                )
-            )
+            .map(role => {
+                if (typeof role === 'object') {
+                    return getLocalizedRoleName(role, lang);
+                }
+
+                const matchedRole = roleOptions.find(
+                    option => String(option?.id) === String(role) || option?.name === role
+                );
+
+                return getLocalizedRoleName(matchedRole, lang) || role;
+            })
             .filter(Boolean);
         return names.length ? names.join(', ') : '---';
     }
@@ -263,7 +277,12 @@ export default function FormEmployee({
         }
 
         if (viewMode && RELATION_FIELDS_VIEW.includes(fieldName)) {
-            const displayName = getRelationDisplayName(oldData, fieldName, lang);
+            const displayName = getRelationDisplayName(
+                oldData,
+                fieldName,
+                lang,
+                options?.roles
+            );
             return (
                 <div key={`view-${fieldName}`} className="flex flex-col gap-px">
                     <label className="flex items-center gap-2 font-medium text-gray-700 font-montserrat mb-1">
@@ -365,7 +384,13 @@ export default function FormEmployee({
                 name={fieldName}
                 isMulti={fieldName === 'branch_id' ? true : field.isMulti}
                 options={
-                    fieldName === 'entity_id'
+                    fieldName === 'roles'
+                        ? (options?.roles || []).map(role => ({
+                              value: role.id,
+                              label: getLocalizedRoleName(role, lang),
+                              name: getLocalizedRoleName(role, lang)
+                          }))
+                        : fieldName === 'entity_id'
                         ? generateOptions(entityOptions)
                         : generateOptions(options?.[fieldName])
                 }
