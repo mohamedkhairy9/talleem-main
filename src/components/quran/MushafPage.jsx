@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import './MushafPage.css';
 
 /**
@@ -25,8 +25,36 @@ const MushafPage = ({
     onWordClick = null,
     isVerseUsed = null,
     editingSegment = null,
-    isFontLoading = false
+    isFontLoading = false,
+    compact = false
 }) => {
+    const compactContainerRef = useRef(null);
+    const [compactScale, setCompactScale] = useState(0.5);
+
+    useEffect(() => {
+        if (!compact || !compactContainerRef.current) return undefined;
+
+        const container = compactContainerRef.current;
+        const updateScale = () => {
+            const { clientWidth, clientHeight } = container;
+
+            if (!clientWidth || !clientHeight) return;
+
+            // Keep the complete 600 × 900 page visible in the exam viewport.
+            setCompactScale(Math.min(0.72, clientWidth / 600, clientHeight / 900));
+        };
+
+        updateScale();
+        const resizeObserver = new ResizeObserver(updateScale);
+        resizeObserver.observe(container);
+
+        return () => resizeObserver.disconnect();
+    }, [compact]);
+
+    const mushafPageClassName = `mushaf-page${compact ? ' mushaf-page--compact' : ''}`;
+    const mushafPageStyle = compact
+        ? { '--mushaf-compact-scale': compactScale }
+        : undefined;
     /**
      * Get words for line
      */
@@ -151,7 +179,11 @@ const MushafPage = ({
 
     if (isFontLoading) {
         return (
-            <div className="mushaf-page">
+            <div
+                ref={compact ? compactContainerRef : undefined}
+                className={mushafPageClassName}
+                style={mushafPageStyle}
+            >
                 <div className="mushaf-border">
                     <div className="font-loading">
                         <div className="spinner"></div>
@@ -163,7 +195,11 @@ const MushafPage = ({
     }
 
     return (
-        <div className="mushaf-page">
+        <div
+            ref={compact ? compactContainerRef : undefined}
+            className={mushafPageClassName}
+            style={mushafPageStyle}
+        >
             <div className="mushaf-border">
                 <svg className="border-svg" viewBox="0 0 600 900" preserveAspectRatio="none">
                     {/* Outer border - main frame */}

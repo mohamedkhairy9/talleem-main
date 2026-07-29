@@ -8,6 +8,26 @@
     direction: rtl;
 }
 
+/* Preserve the authentic 600 × 900 Mushaf layout, while scaling it only in
+   the exam session so its complete page is visible without an internal scroll. */
+.mushaf-page--compact {
+    position: relative;
+    height: min(60vh, 600px);
+    min-height: 300px;
+    overflow: hidden;
+}
+
+.mushaf-page--compact .mushaf-border {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    width: 600px;
+    min-height: 900px;
+    max-width: none;
+    transform: translateX(-50%) scale(var(--mushaf-compact-scale, 0.5));
+    transform-origin: top center;
+}
+
 .mushaf-border {
     position: relative;
     width: 600px;
@@ -187,6 +207,11 @@
 
 /* Responsive */
 @media (max-width: 768px) {
+    .mushaf-page--compact {
+        height: min(58vh, 480px);
+        min-height: 250px;
+    }
+
     .mushaf-border {
         width: 100%;
         max-width: 600px;

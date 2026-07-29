@@ -93,7 +93,7 @@ export default function InteractiveExamMushaf({ segments = [], activeSegmentId, 
     if (error) return <div className="rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-700">{error}</div>;
 
     return (
-        <div className="space-y-4">
+        <div className="space-y-3">
             {segments.length ? (
                 <div className="flex gap-2 overflow-x-auto pb-1">
                     {segments.map((segment, index) => {
@@ -110,7 +110,7 @@ export default function InteractiveExamMushaf({ segments = [], activeSegmentId, 
                 </div>
             ) : null}
 
-            <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-gray-200 bg-gray-50 p-3">
+            <div className="flex flex-wrap items-center justify-between gap-2 rounded-xl border border-gray-200 bg-gray-50 p-2">
                 <button type="button" disabled={currentPage <= 1} onClick={() => setCurrentPage(page => page - 1)} className="rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm font-semibold text-gray-700 disabled:opacity-40">السابق</button>
                 <label className="flex items-center gap-2 text-sm font-semibold text-gray-700">
                     الصفحة
@@ -120,8 +120,8 @@ export default function InteractiveExamMushaf({ segments = [], activeSegmentId, 
                 <button type="button" disabled={currentPage >= 604} onClick={() => setCurrentPage(page => page + 1)} className="rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm font-semibold text-gray-700 disabled:opacity-40">التالي</button>
             </div>
 
-            <div className="max-h-[68vh] overflow-auto rounded-2xl border border-amber-100 bg-[#fbfaf4] p-3">
-                <MushafPage pageLines={pageLines} currentPage={currentPage} wordsDb={wordsDb} surahData={surahData} isFontLoading={isFontLoading} />
+            <div className="overflow-hidden rounded-2xl border border-amber-100 bg-[#fbfaf4] p-2">
+                <MushafPage compact pageLines={pageLines} currentPage={currentPage} wordsDb={wordsDb} surahData={surahData} isFontLoading={isFontLoading} />
             </div>
         </div>
     );

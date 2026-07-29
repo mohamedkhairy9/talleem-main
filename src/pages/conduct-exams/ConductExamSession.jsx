@@ -99,7 +99,6 @@ export default function ConductExamSession() {
     const [grades, setGrades] = useState({});
     const [errors, setErrors] = useState({});
     const [pageError, setPageError] = useState('');
-    const [showGradesStep, setShowGradesStep] = useState(false);
     const [isMushafOpen, setIsMushafOpen] = useState(false);
     const [activeSegmentId, setActiveSegmentId] = useState(null);
 
@@ -386,8 +385,12 @@ export default function ConductExamSession() {
                     </button>
                     <button
                         type="button"
-                        onClick={() => setShowGradesStep(true)}
-                        disabled={!hasActiveSession}
+                        onClick={() =>
+                            document
+                                .getElementById('exam-grading')
+                                ?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+                        }
+                        disabled={!hasActiveSession || !segments.length || !criteria.length}
                         className="rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-white transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-40"
                     >
                         {isArabic ? 'إنهاء الامتحان وإدخال الدرجات' : 'Finish Exam & Enter Grades'}
@@ -461,8 +464,20 @@ export default function ConductExamSession() {
                         </thead>
                         <tbody className="divide-y divide-gray-200 bg-white">
                             {segments.length ? (
-                                segments.map(segment => (
-                                    <tr key={segment.id}>
+                                segments.map(segment => {
+                                    const isActiveSegment =
+                                        String(segment.id) === String(activeSegmentId);
+
+                                    return (
+                                    <tr
+                                        key={segment.id}
+                                        onClick={() => setActiveSegmentId(segment.id)}
+                                        className={`cursor-pointer transition-colors ${
+                                            isActiveSegment
+                                                ? 'bg-primary/10 ring-1 ring-inset ring-primary/40'
+                                                : 'hover:bg-sky-50/60'
+                                        }`}
+                                    >
                                         <td className="px-4 py-3 text-sm text-gray-900">
                                             {segment.order ?? '-'}
                                         </td>
@@ -491,7 +506,8 @@ export default function ConductExamSession() {
                                             </button>
                                         </td>
                                     </tr>
-                                ))
+                                    );
+                                })
                             ) : (
                                 <tr>
                                     <td
@@ -509,8 +525,8 @@ export default function ConductExamSession() {
                 </div>
             </section>
 
-            {showGradesStep ? (
-                <section className="space-y-6">
+            {segments.length && criteria.length ? (
+                <section id="exam-grading" className="space-y-6">
                     <div className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
                         <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
                             <div>
@@ -538,11 +554,20 @@ export default function ConductExamSession() {
                         </div>
                     </div>
 
-                    {segments.map(segment => (
-                        <div
-                            key={segment.id}
-                            className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm"
-                        >
+                    {segments.map(segment => {
+                        const isActiveSegment =
+                            String(segment.id) === String(activeSegmentId);
+
+                        return (
+                            <div
+                                key={segment.id}
+                                onFocusCapture={() => setActiveSegmentId(segment.id)}
+                                className={`rounded-2xl border p-5 shadow-sm transition ${
+                                    isActiveSegment
+                                        ? 'border-primary bg-primary/[0.04] ring-2 ring-primary/20'
+                                        : 'border-sky-200 bg-white hover:border-primary/50'
+                                }`}
+                            >
                             <div className="flex flex-col gap-3 border-b border-gray-100 pb-4 md:flex-row md:items-start md:justify-between">
                                 <div>
                                     <h2 className="text-lg font-semibold text-gray-900">
@@ -613,14 +638,15 @@ export default function ConductExamSession() {
                                     );
                                 })}
                             </div>
-                        </div>
-                    ))}
+                            </div>
+                        );
+                    })}
 
                     {segments.length ? (
                         <div className="flex justify-end gap-3">
                             <button
                                 type="button"
-                                onClick={() => setShowGradesStep(false)}
+                                onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
                                 disabled={submitMutation.isPending}
                                 className="rounded-lg border border-gray-300 px-4 py-2 text-sm font-semibold text-gray-700 transition hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-70"
                             >
@@ -646,15 +672,15 @@ export default function ConductExamSession() {
             ) : null}
 
             {isMushafOpen ? (
-                <div className="fixed inset-0 z-[60] overflow-y-auto">
+                <div className="fixed inset-0 z-[60] overflow-hidden">
                     <div
                         className="fixed inset-0 bg-black/50"
                         aria-hidden="true"
                         onClick={() => setIsMushafOpen(false)}
                     />
-                    <div className="relative flex min-h-full items-center justify-center p-4 pt-20 md:pt-24">
-                        <div className="relative z-10 max-h-[90vh] w-full max-w-3xl overflow-hidden rounded-2xl bg-white shadow-xl">
-                            <div className="flex items-center justify-between border-b border-gray-200 px-6 py-4">
+                    <div className="relative flex min-h-full items-center justify-center p-4">
+                        <div className="relative z-10 w-full max-w-xl overflow-hidden rounded-2xl bg-white shadow-xl">
+                            <div className="flex items-center justify-between border-b border-gray-200 px-4 py-3">
                                 <div>
                                     <h3 className="text-lg font-semibold text-gray-900">
                                         {isArabic ? 'المصحف' : 'Mushaf'}
@@ -674,7 +700,7 @@ export default function ConductExamSession() {
                                 </button>
                             </div>
 
-                            <div className="overflow-y-auto p-6">
+                            <div className="p-4">
                                 <InteractiveExamMushaf
                                     segments={segments}
                                     activeSegmentId={activeSegmentId}
