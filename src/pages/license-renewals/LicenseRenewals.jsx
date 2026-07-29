@@ -221,6 +221,12 @@ const normalizeTeacherPendingItem = (item, index, mainPrograms, teachers) => {
         teacher?.license,
         submittedData?.license
     );
+    const licenseStatus = firstNonEmpty(
+        item.license_status,
+        license?.status,
+        resolvedTeacher?.license_status,
+        teacher?.license_status
+    );
     const mainProgramId = firstNonEmpty(
         getRelationId(mainProgram),
         item.main_program_id,
@@ -234,9 +240,23 @@ const normalizeTeacherPendingItem = (item, index, mainPrograms, teachers) => {
         program => String(program.id) === String(mainProgramId)
     );
 
+    const licenseNumber = firstNonEmpty(
+        item.license_number,
+        license?.license_number,
+        license?.number,
+        resolvedTeacher?.license_number,
+        teacher?.license_number,
+        item.current_license_number,
+        submittedData?.license_number
+    );
+    const hasExistingLicense =
+        String(licenseStatus || '').toLowerCase() !== 'not_issued' &&
+        Boolean(licenseNumber || licenseStatus);
+
     return {
         id: firstNonEmpty(item.id, `teacher-license-${index}`),
         renew_target_id: renewTargetId,
+        has_existing_license: hasExistingLicense,
         display_name: displayName,
         phone: firstNonEmpty(
             resolvedTeacher?.phone,
@@ -256,15 +276,7 @@ const normalizeTeacherPendingItem = (item, index, mainPrograms, teachers) => {
             item.main_program_name,
             getLocalizedValue(mainProgramFromId?.name)
         ),
-        license_number: firstNonEmpty(
-            item.license_number,
-            license?.license_number,
-            license?.number,
-            resolvedTeacher?.license_number,
-            teacher?.license_number,
-            item.current_license_number,
-            submittedData?.license_number
-        ),
+        license_number: licenseNumber,
         expiration_date: firstNonEmpty(
             getDisplayDate(item.expiration_date),
             getDisplayDate(item.license_expiration_date),
@@ -344,6 +356,12 @@ const normalizeEntityPendingItem = (item, index, mainPrograms, entities) => {
         entity?.license,
         submittedData?.license
     );
+    const licenseStatus = firstNonEmpty(
+        item.license_status,
+        license?.status,
+        resolvedEntity?.license_status,
+        entity?.license_status
+    );
     const mainProgramId = firstNonEmpty(
         getRelationId(mainProgram),
         item.main_program_id,
@@ -357,9 +375,23 @@ const normalizeEntityPendingItem = (item, index, mainPrograms, entities) => {
         program => String(program.id) === String(mainProgramId)
     );
 
+    const licenseNumber = firstNonEmpty(
+        item.license_number,
+        license?.license_number,
+        license?.number,
+        resolvedEntity?.license_number,
+        entity?.license_number,
+        item.current_license_number,
+        submittedData?.license_number
+    );
+    const hasExistingLicense =
+        String(licenseStatus || '').toLowerCase() !== 'not_issued' &&
+        Boolean(licenseNumber || licenseStatus);
+
     return {
         id: firstNonEmpty(item.id, `entity-license-${index}`),
         renew_target_id: renewTargetId,
+        has_existing_license: hasExistingLicense,
         display_name: displayName,
         phone: firstNonEmpty(
             resolvedEntity?.phone,
@@ -378,15 +410,7 @@ const normalizeEntityPendingItem = (item, index, mainPrograms, entities) => {
             item.main_program_name,
             getLocalizedValue(mainProgramFromId?.name)
         ),
-        license_number: firstNonEmpty(
-            item.license_number,
-            license?.license_number,
-            license?.number,
-            resolvedEntity?.license_number,
-            entity?.license_number,
-            item.current_license_number,
-            submittedData?.license_number
-        ),
+        license_number: licenseNumber,
         expiration_date: firstNonEmpty(
             getDisplayDate(item.expiration_date),
             getDisplayDate(item.license_expiration_date),
@@ -576,17 +600,43 @@ export default function LicenseRenewals() {
                 header: currentLocale === 'ar' ? 'التجديد' : 'Renew',
                 cell: info => {
                     const row = info.row.original;
-                    const canRenew = !!row.renew_target_id;
+                    const canRenew =
+                        !!row.renew_target_id && row.has_existing_license;
+                    const canIssue =
+                        !!row.renew_target_id && !row.has_existing_license;
 
                     return (
                         <button
                             type="button"
-                            disabled={!canRenew || isRenewingTeacher}
-                            onClick={() => setSelectedTeacher(row)}
+                            data-label={
+                                canIssue
+                                    ? currentLocale === 'ar'
+                                        ? 'إصدار الرخصة'
+                                        : 'Issue License'
+                                    : undefined
+                            }
+                            disabled={(!canRenew && !canIssue) || isRenewingTeacher}
+                            onClick={() => {
+                                setActionError('');
+
+                                if (canRenew) {
+                                    setSelectedTeacher(row);
+                                    return;
+                                }
+
+                                if (canIssue) {
+                                    setActiveTab('issuance');
+                                    setSelectedTeacher(row);
+                                }
+                            }}
                             className={`rounded-lg px-3 py-2 text-sm font-semibold transition ${
-                                canRenew
+                                canRenew || canIssue
                                     ? 'bg-primary text-white hover:opacity-90'
                                     : 'cursor-not-allowed bg-gray-200 text-gray-500'
+                            } ${
+                                canIssue
+                                    ? 'relative text-transparent after:absolute after:inset-0 after:flex after:items-center after:justify-center after:text-white after:content-[attr(data-label)]'
+                                    : ''
                             }`}
                         >
                             {currentLocale === 'ar' ? 'تجديد' : 'Renew'}
@@ -639,17 +689,43 @@ export default function LicenseRenewals() {
                 header: currentLocale === 'ar' ? 'التجديد' : 'Renew',
                 cell: info => {
                     const row = info.row.original;
-                    const canRenew = !!row.renew_target_id;
+                    const canRenew =
+                        !!row.renew_target_id && row.has_existing_license;
+                    const canIssue =
+                        !!row.renew_target_id && !row.has_existing_license;
 
                     return (
                         <button
                             type="button"
-                            disabled={!canRenew || isRenewingEntity}
-                            onClick={() => setSelectedEntity(row)}
+                            data-label={
+                                canIssue
+                                    ? currentLocale === 'ar'
+                                        ? 'إصدار التصريح'
+                                        : 'Issue Permit'
+                                    : undefined
+                            }
+                            disabled={(!canRenew && !canIssue) || isRenewingEntity}
+                            onClick={() => {
+                                setActionError('');
+
+                                if (canRenew) {
+                                    setSelectedEntity(row);
+                                    return;
+                                }
+
+                                if (canIssue) {
+                                    setActiveTab('issuance');
+                                    setSelectedEntity(row);
+                                }
+                            }}
                             className={`rounded-lg px-3 py-2 text-sm font-semibold transition ${
-                                canRenew
+                                canRenew || canIssue
                                     ? 'bg-primary text-white hover:opacity-90'
                                     : 'cursor-not-allowed bg-gray-200 text-gray-500'
+                            } ${
+                                canIssue
+                                    ? 'relative text-transparent after:absolute after:inset-0 after:flex after:items-center after:justify-center after:text-white after:content-[attr(data-label)]'
+                                    : ''
                             }`}
                         >
                             {currentLocale === 'ar' ? 'تجديد' : 'Renew'}
@@ -785,6 +861,17 @@ export default function LicenseRenewals() {
     const handleTeacherRenew = () => {
         if (!selectedTeacher?.renew_target_id) return;
 
+        if (!selectedTeacher.has_existing_license) {
+            setSelectedTeacher(null);
+            setActiveTab('issuance');
+            setActionError(
+                currentLocale === 'ar'
+                    ? 'لا يمكن تجديد رخصة لم تُصدر بعد. استخدم إصدار الرخصة أولاً.'
+                    : 'A license must be issued before it can be renewed. Use License Issuance first.'
+            );
+            return;
+        }
+
         setActionError('');
 
         renewTeacherLicense(selectedTeacher.renew_target_id, {
@@ -804,6 +891,17 @@ export default function LicenseRenewals() {
 
     const handleEntityRenew = values => {
         if (!selectedEntity?.renew_target_id) return;
+
+        if (!selectedEntity.has_existing_license) {
+            setSelectedEntity(null);
+            setActiveTab('issuance');
+            setActionError(
+                currentLocale === 'ar'
+                    ? 'لا يمكن تجديد تصريح لم يُصدر بعد. استخدم إصدار التصريح أولاً.'
+                    : 'A permit must be issued before it can be renewed. Use Permit Issuance first.'
+            );
+            return;
+        }
 
         setActionError('');
 

@@ -13,11 +13,12 @@ import { isFieldRequired } from '@/utils/helpers/schemaHelpers';
 import { useRolesQuery } from '@/api/hooks/useRoles';
 import { useAssignUserRoleMutation } from '@/api/hooks/useUsers';
 import {
-    getReservedSystemRole,
     isAssignableRole
 } from '@/utils/helpers/assignableRoles';
 import {
     buildUserSubmissionPayload,
+    getUserEditPolicy,
+    isUserFieldEditable,
     normalizeSelectedIds
 } from './userFormPolicy';
 
@@ -119,21 +120,11 @@ export default function FormUser({
     options
 }) {
     const { currentLocale } = useLocale();
-    const reservedSystemRole = React.useMemo(() => {
-        const roleCandidates = Array.isArray(oldData?.roles)
-            ? oldData.roles
-            : oldData?.roles
-            ? [oldData.roles]
-            : [];
-
-        // Some API responses expose the reserved profile through user_type
-        // rather than roles. Treat both shapes as system-managed.
-        if (oldData?.user_type) {
-            roleCandidates.push(oldData.user_type);
-        }
-
-        return getReservedSystemRole(roleCandidates);
-    }, [oldData?.roles, oldData?.user_type]);
+    const editPolicy = React.useMemo(
+        () => getUserEditPolicy(oldData),
+        [oldData]
+    );
+    const reservedSystemRole = editPolicy.reservedSystemRole;
     const isReservedSystemUser = Boolean(reservedSystemRole);
     const normalizedDefaultValues = React.useMemo(() => ({
         ...oldData,
@@ -187,7 +178,10 @@ export default function FormUser({
     }, [branchId, setValue, viewMode]);
 
     function onSubmit(data) {
-        const submitData = buildUserSubmissionPayload(data, oldData);
+        const submitData = buildUserSubmissionPayload(data, oldData, {
+            editMode,
+            editPolicy
+        });
         const selectedRoleId = isReservedSystemUser
             ? null
             : Number(data.role_id);
@@ -240,8 +234,11 @@ export default function FormUser({
                                 : oldData?.[field.name] ?? field.defaultValue;
                         const hasBranchSelection =
                             normalizeSelectedIds(branchId).length > 0;
+                        const isEditableInEditMode =
+                            !editMode || isUserFieldEditable(field.name, editPolicy);
                         const isFieldDisabled =
                             viewMode ||
+                            !isEditableInEditMode ||
                             (field.name === 'entity_id' && !hasBranchSelection);
 
                         if (field.name === 'role_id' && isReservedSystemUser) {
