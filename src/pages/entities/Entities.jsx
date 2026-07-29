@@ -35,6 +35,18 @@ const extractCollection = response => {
     return [];
 };
 
+const getLocalizedName = value => {
+    if (!value) return '';
+    if (typeof value === 'string') return value;
+
+    return (
+        value?.[i18next.language] ||
+        value?.ar ||
+        value?.en ||
+        ''
+    );
+};
+
 export default function Entities() {
     const { isOpen, toggle } = useIsOpen();
     const { pagination, handleFilter, filters, setter, setFilters } =
@@ -93,9 +105,24 @@ export default function Entities() {
     
     const tableData = scopedDataList.map(item => ({
         ...item,
-        name: item.name?.[i18next.language],
-        branch: item.branch?.name?.[i18next.language],
-        main_program: item.main_program?.name?.[i18next.language]
+        name: getLocalizedName(item.name),
+        branch: getLocalizedName(item.branch?.name ?? item.branch),
+        main_program: getLocalizedName(
+            item.main_program?.name ?? item.main_program
+        ),
+        location_type: getLocalizedName(
+            item.location_type?.name ??
+                item.locationType?.name ??
+                item.site_type?.name ??
+                item.site_type
+        ),
+        manager_city: getLocalizedName(
+            item.manager?.city?.name ??
+                item.manager?.manager_city?.name ??
+                item.manager?.city_name ??
+                item.manager_city?.name ??
+                item.manager_city
+        )
     }));
 
     const formData = scopedDataList.map(item => ({

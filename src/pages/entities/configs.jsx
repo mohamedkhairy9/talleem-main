@@ -30,6 +30,14 @@ export const entitiesColumns = [
         header: 'table_headers.main_program',
         cell: info => <Cell value={info.row.original.main_program} />
     }),
+    columnHelper.accessor('location_type', {
+        header: 'table_headers.site_type',
+        cell: info => <Cell value={info.getValue()} />
+    }),
+    columnHelper.accessor('manager_city', {
+        header: 'table_headers.manager_city',
+        cell: info => <Cell value={info.getValue()} />
+    }),
     columnHelper.accessor('status', {
         header: 'entity_permit.status.label',
         cell: info => <EntityPermitStatusCell info={info} />
