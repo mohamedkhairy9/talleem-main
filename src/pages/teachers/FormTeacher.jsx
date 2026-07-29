@@ -153,6 +153,8 @@ export default function FormTeacher({
             ...oldData,
             dob: onlyDate(oldData?.dob),
             registration_date: onlyDate(oldData?.registration_date),
+            license_issue_date: onlyDate(oldData?.license_issue_date),
+            license_expiration_date: onlyDate(oldData?.license_expiration_date),
             entity_ids: entityIds
         };
 
@@ -708,24 +710,28 @@ export default function FormTeacher({
                                     />
                                     {licenseImagePreview && (
                                         <div className="mt-2">
-                                            {licenseImagePreview && 
-                                             (typeof licenseImagePreview === 'string' && 
-                                              (licenseImagePreview.startsWith('data:image') || 
-                                               licenseImagePreview.match(/\.(jpg|jpeg|png|gif)$/i))) ? (
+                                            {typeof licenseImagePreview === 'string' &&
+                                            !licenseImagePreview.split('?')[0].toLowerCase().includes('.pdf') &&
+                                            !licenseImagePreview.startsWith('data:application/pdf') ? (
                                                 <img
                                                     src={licenseImagePreview}
                                                     alt="License Preview"
                                                     className="h-32 w-32 object-cover rounded border-2 border-gray-300"
                                                 />
-                                            ) : licenseImagePreview && 
-                                              typeof licenseImagePreview === 'string' && 
-                                              (licenseImagePreview.includes('.pdf') || licenseImagePreview.startsWith('data:application/pdf')) ? (
-                                                <div className="flex items-center gap-2 p-2 border-2 border-gray-300 rounded">
+                                            ) : typeof licenseImagePreview === 'string' &&
+                                              (licenseImagePreview.split('?')[0].toLowerCase().includes('.pdf') ||
+                                                licenseImagePreview.startsWith('data:application/pdf')) ? (
+                                                <a
+                                                    href={licenseImagePreview}
+                                                    target="_blank"
+                                                    rel="noreferrer"
+                                                    className="flex items-center gap-2 p-2 border-2 border-gray-300 rounded hover:border-primary"
+                                                >
                                                     <svg className="w-8 h-8 text-red-500" fill="currentColor" viewBox="0 0 20 20">
                                                         <path fillRule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4z" clipRule="evenodd" />
                                                     </svg>
                                                     <span className="text-sm text-gray-700">{typeof licenseImagePreview === 'string' && licenseImagePreview.includes('.pdf') ? licenseImagePreview : 'PDF File'}</span>
-                                                </div>
+                                                </a>
                                             ) : null}
                                         </div>
                                     )}

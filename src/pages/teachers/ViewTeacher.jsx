@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import FormTeacher from './FormTeacher';
 import Modal from '@/components/common/form/Modal';
 import ModalHeader from '@/components/common/form/ModalHeader';
@@ -24,16 +24,49 @@ import { useMemorizationProgramEntityTypesQuery } from '@/api/hooks/useMemorizat
 import { useMajorsQuery } from '@/api/hooks/useMajors';
 import useLocale from '@/utils/hooks/global/useLocale';
 import IssueTeacherLicense from './IssueTeacherLicense';
+import { useTeacherQuery } from '@/api/hooks/useTeachers';
+import { getTeacherLicenseFormData } from './teacherLicenseDetails';
 
 export default function ViewTeacher({ onClose, oldData }) {
     const [isIssueLicenseOpen, setIsIssueLicenseOpen] = useState(false);
     const [issuedInSession, setIssuedInSession] = useState(false);
     const { currentLocale } = useLocale();
-    const normalizedStatus = String(oldData?.status ?? '').toLowerCase();
+    const { data: teacherDetailsResponse, isLoading: teacherDetailsLoading } =
+        useTeacherQuery(oldData?.id, {
+            enabled: !!oldData?.id
+        });
+
+    const detailedTeacher =
+        teacherDetailsResponse?.data || teacherDetailsResponse || null;
+    const resolvedTeacher = useMemo(() => {
+        const teacher = detailedTeacher || oldData;
+        const entities = Array.isArray(teacher?.entities) && teacher.entities.length > 0
+            ? teacher.entities
+            : oldData?.entities || (oldData?.entity ? [oldData.entity] : []);
+
+        return {
+            ...oldData,
+            ...teacher,
+            branch_id: teacher?.branch?.id ?? teacher?.branch_id ?? oldData?.branch_id,
+            city_id: teacher?.city?.id ?? teacher?.city_id ?? oldData?.city_id,
+            main_program_id:
+                teacher?.main_program?.id ??
+                teacher?.main_program_id ??
+                oldData?.main_program_id,
+            entity_ids: entities
+                .map(entity => entity?.id ?? entity?.value ?? entity)
+                .filter(entity => entity !== null && entity !== undefined && entity !== ''),
+            entities,
+            status: String(teacher?.status ?? oldData?.status ?? '').toLowerCase(),
+            ...getTeacherLicenseFormData(teacher, oldData)
+        };
+    }, [detailedTeacher, oldData]);
+
+    const normalizedStatus = String(resolvedTeacher?.status ?? '').toLowerCase();
     const canIssueLicense =
         !issuedInSession &&
         normalizedStatus !== 'active' &&
-        !oldData?.license_number;
+        !resolvedTeacher?.license_number;
 
     // Fetch all available options
     const { data: branchesData, isLoading: branchesLoading } =
@@ -76,7 +109,8 @@ export default function ViewTeacher({ onClose, oldData }) {
         usersLoading ||
         majorsLoading ||
         entitiesLoading ||
-        memorizationProgramEntityTypesLoading;
+        memorizationProgramEntityTypesLoading ||
+        teacherDetailsLoading;
 
     if (isLoading) return <Loader />;
 
@@ -97,7 +131,7 @@ export default function ViewTeacher({ onClose, oldData }) {
             )}
             <FormTeacher
                 onClose={onClose}
-                oldData={{ ...oldData, status: oldData.status?.toLowerCase() }}
+                oldData={resolvedTeacher}
                 viewMode={true}
                 mutate={() => {}}
                 isPending={false}
@@ -123,7 +157,7 @@ export default function ViewTeacher({ onClose, oldData }) {
         </Modal>
         {isIssueLicenseOpen && (
             <IssueTeacherLicense
-                teacherId={oldData?.id}
+                teacherId={resolvedTeacher?.id}
                 onClose={setIsIssueLicenseOpen}
                 onIssued={() => setIssuedInSession(true)}
             />
