@@ -26,6 +26,13 @@ import {
 import Filters from './Filters';
 import useExportExample from '@/utils/hooks/global/useExportExample';
 import FilterSelect from '@/components/common/inputs/FilterSelect';
+import { allData } from '@/utils/constants/global.constants';
+import { useUserStore } from '@/utils/stores/user.store';
+import {
+    filterProfilesByBranch,
+    getBranchManagerAssignedBranchId,
+    isBranchManagerScopedUser
+} from '@/utils/helpers/branchManagerScope';
 
 const extractCollection = response => {
     if (Array.isArray(response)) return response;
@@ -40,25 +47,44 @@ export default function Teachers() {
     const { isOpen, toggle } = useIsOpen();
     const { pagination, handleFilter, filters, setter, setFilters } =
         useFiltering(filtersDefaultValues);
+    const currentUser = useUserStore(state => state.user);
+    const isBranchManager = isBranchManagerScopedUser(currentUser);
+    const assignedBranchId = getBranchManagerAssignedBranchId(currentUser);
+    const canLoadProfiles = !isBranchManager || Boolean(assignedBranchId);
     const isUnlicensedView = filters?.license_filter === 'unlicensed';
     const { license_filter: _licenseFilter, ...teacherListFilters } = filters;
     const unlicensedTeacherFilters = { ...teacherListFilters };
 
     delete unlicensedTeacherFilters.status;
 
+    const scopedTeacherListFilters = isBranchManager
+        ? {
+              ...teacherListFilters,
+              branch_id: assignedBranchId,
+              ...allData
+          }
+        : teacherListFilters;
+    const scopedUnlicensedTeacherFilters = isBranchManager
+        ? {
+              ...unlicensedTeacherFilters,
+              branch_id: assignedBranchId,
+              ...allData
+          }
+        : unlicensedTeacherFilters;
+
     const {
         data: teachersResponse,
         isLoading: isTeachersLoading,
         refresh: refreshTeachers
-    } = useTeachersQuery(teacherListFilters, {
-        enabled: !isUnlicensedView
+    } = useTeachersQuery(scopedTeacherListFilters, {
+        enabled: !isUnlicensedView && canLoadProfiles
     });
     const {
         data: unlicensedTeachersResponse,
         isLoading: isUnlicensedTeachersLoading,
         refresh: refreshUnlicensedTeachers
-    } = useUnlicensedTeachersQuery(unlicensedTeacherFilters, {
-        enabled: isUnlicensedView
+    } = useUnlicensedTeachersQuery(scopedUnlicensedTeacherFilters, {
+        enabled: isUnlicensedView && canLoadProfiles
     });
     const { t } = useLocale();
     const { mutate } = useExportExampleFileMutation();
@@ -87,6 +113,9 @@ export default function Teachers() {
         ? unlicensedTeachersResponse
         : teachersResponse;
     const dataList = extractCollection(sourceResponse);
+    const scopedDataList = isBranchManager
+        ? filterProfilesByBranch(dataList, assignedBranchId)
+        : dataList;
     const isLoading = isUnlicensedView
         ? isUnlicensedTeachersLoading
         : isTeachersLoading;
@@ -99,14 +128,14 @@ export default function Teachers() {
         sourceResponse?.data?.length ??
         dataList.length;
 
-    const tableData = dataList.map(item => ({
+    const tableData = scopedDataList.map(item => ({
         ...item,
         name: item.name?.[i18next.language],
         branch: item.branch?.[i18next.language],
         main_program: item.main_program?.name?.[i18next.language]
     }));
 
-    const formData = dataList.map(item => {
+    const formData = scopedDataList.map(item => {
         // Map gender from Arabic text to value
         let genderValue = item.gender;
         if (typeof item.gender === 'string') {
@@ -184,8 +213,8 @@ export default function Teachers() {
                 refresh={refresh}
                 loading={isLoading}
                 data={tableData}
-                serverPagination={true}
-                totalCount={totalCount}
+                serverPagination={!isBranchManager}
+                totalCount={isBranchManager ? scopedDataList.length : totalCount}
                 columns={teachersColumns}
                 toggleModals={toggle}
                 pagination={pagination}

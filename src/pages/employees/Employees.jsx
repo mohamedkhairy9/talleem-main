@@ -16,12 +16,36 @@ import ImportEmployee from './ImportEmployee';
 import { useExportExampleFileMutation } from '@/api/hooks/useEmployees';
 import useExportExample from '@/utils/hooks/global/useExportExample';
 import { normalizeSelectedIds } from './employeeJobPolicy';
+import { allData } from '@/utils/constants/global.constants';
+import { useUserStore } from '@/utils/stores/user.store';
+import {
+    filterProfilesByBranch,
+    getBranchManagerAssignedBranchId,
+    isBranchManagerScopedUser
+} from '@/utils/helpers/branchManagerScope';
 
 export default function Employees() {
     const { isOpen, toggle } = useIsOpen();
     const { pagination, handleFilter, filters, setter, setFilters } =
         useFiltering(filtersDefaultValues);
-    const { data, isLoading, refresh } = useEmployeesQuery(filters);
+    const currentUser = useUserStore(state => state.user);
+    const isBranchManager = isBranchManagerScopedUser(currentUser);
+    const assignedBranchId = getBranchManagerAssignedBranchId(currentUser);
+    const canLoadProfiles = !isBranchManager || Boolean(assignedBranchId);
+    const scopedFilters = React.useMemo(
+        () =>
+            isBranchManager
+                ? {
+                      ...filters,
+                      branch_id: assignedBranchId,
+                      ...allData
+                  }
+                : filters,
+        [assignedBranchId, filters, isBranchManager]
+    );
+    const { data, isLoading, refresh } = useEmployeesQuery(scopedFilters, {
+        enabled: canLoadProfiles
+    });
     const { t } = useLocale();
     const { mutate } = useExportExampleFileMutation();
     const { handleExportExample } = useExportExample({ mutate, filename: 'employees_example.xlsx' });
@@ -39,7 +63,12 @@ export default function Employees() {
             .join(', ');
     };
 
-    const tableData = data?.data?.map(item => ({
+    const sourceData = data?.data ?? [];
+    const scopedData = isBranchManager
+        ? filterProfilesByBranch(sourceData, assignedBranchId)
+        : sourceData;
+
+    const tableData = scopedData.map(item => ({
         ...item,
         job: {
             ...item.job,
@@ -51,7 +80,7 @@ export default function Employees() {
         }
     }));
 
-    const formData = data?.data?.map(item => ({
+    const formData = scopedData.map(item => ({
         ...item,
         user_id: item.user?.id,
         job_id: item.job?.id,
@@ -86,8 +115,8 @@ export default function Employees() {
                 refresh={refresh}
                 loading={isLoading}
                 data={tableData}
-                serverPagination={true}
-                totalCount={data?.meta?.total}
+                serverPagination={!isBranchManager}
+                totalCount={isBranchManager ? scopedData.length : data?.meta?.total}
                 columns={employeesColumns}
                 toggleModals={toggle}
                 pagination={pagination}
@@ -112,7 +141,7 @@ export default function Employees() {
             {isOpen.view && (
                 <ViewEmployee
                     onClose={toggle.view}
-                    oldData={getOriginalObject(isOpen.view, data?.data ?? [])}
+                    oldData={getOriginalObject(isOpen.view, formData)}
                 />
             )}
             {isOpen.delete && (

@@ -1126,7 +1126,9 @@
     "jobs": {
         "create": "Create Job",
         "update": "Update Job",
-        "view": "View Job"
+        "view": "View Job",
+        "delete_blocked_by_employees": "This job position cannot be deleted because it is assigned to one or more employees.",
+        "delete_reference_check_failed": "Unable to verify whether this job position is assigned. Please try again."
     },
     "cities": {
         "create": "Create City",

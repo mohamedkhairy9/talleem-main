@@ -30,9 +30,13 @@ const getFirstBranchId = values => {
     return null;
 };
 
-export const getBranchManagerAssignedBranchId = user => {
+const getNormalizedRoles = user => {
     const roles = Array.isArray(user?.roles) ? user.roles : [];
-    const normalizedRoles = roles.map(normalizeRole).filter(Boolean);
+    return roles.map(normalizeRole).filter(Boolean);
+};
+
+export const isBranchManagerScopedUser = user => {
+    const normalizedRoles = getNormalizedRoles(user);
     const isBranchManager = normalizedRoles.includes(
         normalizeRole(ROLE_BRANCH_ADMIN)
     );
@@ -40,7 +44,11 @@ export const getBranchManagerAssignedBranchId = user => {
         normalizedRoles.includes(normalizeRole(ROLE_SUPER_ADMIN)) ||
         normalizedRoles.some(role => GENERAL_MANAGER_ROLES.has(role));
 
-    if (!isBranchManager || hasUnrestrictedRole) return null;
+    return isBranchManager && !hasUnrestrictedRole;
+};
+
+export const getBranchManagerAssignedBranchId = user => {
+    if (!isBranchManagerScopedUser(user)) return null;
 
     return getFirstBranchId([
         user?.branch_id,
@@ -54,3 +62,64 @@ export const getBranchManagerAssignedBranchId = user => {
         user?.employee?.branch
     ]);
 };
+
+const collectBranchIds = value => {
+    if (value === null || value === undefined || value === '') return [];
+
+    if (Array.isArray(value)) {
+        return value.flatMap(collectBranchIds);
+    }
+
+    const id = getId(value);
+    return id === null || id === undefined || id === '' ? [] : [id];
+};
+
+/**
+ * Returns every branch that can be resolved from a profile record.  Profiles
+ * may expose the branch directly, through their user, or through an assigned
+ * entity, depending on the endpoint that supplied the row.
+ */
+export const getProfileBranchIds = profile => {
+    if (!profile || typeof profile !== 'object') return [];
+
+    const directBranches = [
+        profile.branch_id,
+        profile.branch,
+        profile.branches,
+        profile.branch_ids,
+        profile.user?.branch_id,
+        profile.user?.branch,
+        profile.user?.branches,
+        profile.user?.branch_ids
+    ];
+
+    const entityBranches = [profile.entity, ...(profile.entities || [])].flatMap(
+        entity =>
+            entity && typeof entity === 'object'
+                ? collectBranchIds([
+                      entity.branch_id,
+                      entity.branch,
+                      entity.branches,
+                      entity.branch_ids
+                  ])
+                : []
+    );
+
+    return [...new Set([...collectBranchIds(directBranches), ...entityBranches])];
+};
+
+export const isProfileInBranch = (profile, branchId) => {
+    if (branchId === null || branchId === undefined || branchId === '') {
+        return false;
+    }
+
+    const normalizedBranchId = String(branchId);
+    return getProfileBranchIds(profile).some(
+        profileBranchId => String(profileBranchId) === normalizedBranchId
+    );
+};
+
+export const filterProfilesByBranch = (profiles, branchId) =>
+    Array.isArray(profiles)
+        ? profiles.filter(profile => isProfileInBranch(profile, branchId))
+        : [];

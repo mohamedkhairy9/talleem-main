@@ -18,6 +18,13 @@ import { getOriginalObject, onlyDate } from '@/utils/helpers/global.fns';
 import Filters from './Filters';
 import useExportExample from '@/utils/hooks/global/useExportExample';
 import i18next from 'i18next';
+import { allData } from '@/utils/constants/global.constants';
+import { useUserStore } from '@/utils/stores/user.store';
+import {
+    filterProfilesByBranch,
+    getBranchManagerAssignedBranchId,
+    isBranchManagerScopedUser
+} from '@/utils/helpers/branchManagerScope';
 
 const extractCollection = response => {
     if (Array.isArray(response)) return response;
@@ -32,20 +39,35 @@ export default function Entities() {
     const { isOpen, toggle } = useIsOpen();
     const { pagination, handleFilter, filters, setter, setFilters } =
         useFiltering(filtersDefaultValues);
+    const currentUser = useUserStore(state => state.user);
+    const isBranchManager = isBranchManagerScopedUser(currentUser);
+    const assignedBranchId = getBranchManagerAssignedBranchId(currentUser);
+    const canLoadProfiles = !isBranchManager || Boolean(assignedBranchId);
+    const scopedFilters = React.useMemo(
+        () =>
+            isBranchManager
+                ? {
+                      ...filters,
+                      branch_id: assignedBranchId,
+                      ...allData
+                  }
+                : filters,
+        [assignedBranchId, filters, isBranchManager]
+    );
     const isUnauthorizedView = filters?.status === 'unauthorized';
     const {
         data: entitiesResponse,
         isLoading: isEntitiesLoading,
         refresh: refreshEntities
-    } = useEntitiesQuery(filters, {
-        enabled: !isUnauthorizedView
+    } = useEntitiesQuery(scopedFilters, {
+        enabled: !isUnauthorizedView && canLoadProfiles
     });
     const {
         data: unlicensedEntitiesResponse,
         isLoading: isUnlicensedEntitiesLoading,
         refresh: refreshUnlicensedEntities
-    } = useUnlicensedEntitiesQuery(filters, {
-        enabled: isUnauthorizedView
+    } = useUnlicensedEntitiesQuery(scopedFilters, {
+        enabled: isUnauthorizedView && canLoadProfiles
     });
     const { t } = useLocale();
     const { mutate } = useExportExampleFileMutation();
@@ -54,6 +76,9 @@ export default function Entities() {
         ? unlicensedEntitiesResponse
         : entitiesResponse;
     const dataList = extractCollection(sourceResponse);
+    const scopedDataList = isBranchManager
+        ? filterProfilesByBranch(dataList, assignedBranchId)
+        : dataList;
     const isLoading = isUnauthorizedView
         ? isUnlicensedEntitiesLoading
         : isEntitiesLoading;
@@ -66,14 +91,14 @@ export default function Entities() {
         sourceResponse?.data?.length ??
         dataList.length;
     
-    const tableData = dataList.map(item => ({
+    const tableData = scopedDataList.map(item => ({
         ...item,
         name: item.name?.[i18next.language],
         branch: item.branch?.name?.[i18next.language],
         main_program: item.main_program?.name?.[i18next.language]
     }));
 
-    const formData = dataList.map(item => ({
+    const formData = scopedDataList.map(item => ({
         id: item.id,
         name: {
             en: item.name?.en,
@@ -140,8 +165,8 @@ export default function Entities() {
                 refresh={refresh}
                 loading={isLoading}
                 data={tableData}
-                serverPagination={true}
-                totalCount={totalCount}
+                serverPagination={!isBranchManager}
+                totalCount={isBranchManager ? scopedDataList.length : totalCount}
                 columns={entitiesColumns}
                 toggleModals={toggle}
                 pagination={pagination}

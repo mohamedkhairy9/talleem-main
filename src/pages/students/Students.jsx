@@ -16,19 +16,47 @@ import useLocale from '@/utils/hooks/global/useLocale';
 import { getOriginalObject } from '@/utils/helpers/global.fns';
 import Filters from './Filters';
 import useExportExample from '@/utils/hooks/global/useExportExample';
+import { allData } from '@/utils/constants/global.constants';
+import { useUserStore } from '@/utils/stores/user.store';
+import {
+    filterProfilesByBranch,
+    getBranchManagerAssignedBranchId,
+    isBranchManagerScopedUser
+} from '@/utils/helpers/branchManagerScope';
 
 export default function Students() {
     const { isOpen, toggle } = useIsOpen();
     const { pagination, handleFilter, filters, setter, setFilters } =
         useFiltering(filtersDefaultValues);
-    const { data, isLoading, refresh } = useStudentsQuery(filters);
+    const currentUser = useUserStore(state => state.user);
+    const isBranchManager = isBranchManagerScopedUser(currentUser);
+    const assignedBranchId = getBranchManagerAssignedBranchId(currentUser);
+    const canLoadProfiles = !isBranchManager || Boolean(assignedBranchId);
+    const scopedFilters = React.useMemo(
+        () =>
+            isBranchManager
+                ? {
+                      ...filters,
+                      branch_id: assignedBranchId,
+                      ...allData
+                  }
+                : filters,
+        [assignedBranchId, filters, isBranchManager]
+    );
+    const { data, isLoading, refresh } = useStudentsQuery(scopedFilters, {
+        enabled: canLoadProfiles
+    });
     const { t } = useLocale();
     const { mutate } = useExportExampleFileMutation();
     const { handleExportExample } = useExportExample({mutate, filename: 'students_example.xlsx'});
 
-    const tableData = data?.data;
+    const sourceData = data?.data ?? [];
+    const scopedData = isBranchManager
+        ? filterProfilesByBranch(sourceData, assignedBranchId)
+        : sourceData;
+    const tableData = scopedData;
 
-    const formData = data?.data?.map(item => {
+    const formData = scopedData.map(item => {
         const entityIds = Array.isArray(item.entity_ids) && item.entity_ids.length > 0
             ? item.entity_ids.map(entity => entity?.id ?? entity?.value ?? entity)
             : Array.isArray(item.entities) && item.entities.length > 0
@@ -99,8 +127,8 @@ export default function Students() {
                 refresh={refresh}
                 loading={isLoading}
                 data={tableData}
-                serverPagination={true}
-                totalCount={data?.meta?.total}
+                serverPagination={!isBranchManager}
+                totalCount={isBranchManager ? scopedData.length : data?.meta?.total}
                 columns={studentsColumns}
                 toggleModals={toggle}
                 pagination={pagination}
