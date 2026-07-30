@@ -42,6 +42,7 @@ export default function ConductExamDetails() {
         exam_type: 'maqata3',
         evaluation_parameter_id: ''
     });
+    const [locallySavedExamModel, setLocallySavedExamModel] = useState(null);
 
     const detailsQuery = useConductExamDetailsQuery(scheduledExamId, {
         enabled: Boolean(scheduledExamId)
@@ -86,21 +87,25 @@ export default function ConductExamDetails() {
         startAvailability.reason
     ]);
     const isExamEnded = startAvailability.reason === 'ended';
-    const savedExamType = exam?.examType;
-    const savedEvaluationParameterId = exam?.evaluationParameterId;
+    const savedExamType =
+        locallySavedExamModel?.exam_type || exam?.examType;
+    const savedEvaluationParameterId =
+        locallySavedExamModel?.evaluation_parameter_id ||
+        exam?.evaluationParameterId;
     const hasSavedExamModel = Boolean(
-        exam?.evaluationParameterId && exam?.examType
+        savedEvaluationParameterId && savedExamType
     );
     const hasStartedStudents = exam?.students?.some(
         student => student.statusKey === 'started' || student.statusKey === 'submitted'
     );
+    const isExamModelLocked = Boolean(hasStartedStudents && hasSavedExamModel);
     const selectedExamTemplate = useMemo(
         () =>
             templates.find(
                 template =>
-                    String(template.id) === String(exam?.evaluationParameterId)
+                    String(template.id) === String(savedEvaluationParameterId)
             ) || null,
-        [exam?.evaluationParameterId, templates]
+        [savedEvaluationParameterId, templates]
     );
     const examModelRequiredMessage = isArabic
         ? 'اختر نموذج الاختبار العام واحفظه قبل بدء تقييم الطلاب.'
@@ -120,8 +125,12 @@ export default function ConductExamDetails() {
         });
     }, [savedExamType, savedEvaluationParameterId]);
 
+    useEffect(() => {
+        setLocallySavedExamModel(null);
+    }, [scheduledExamId]);
+
     const handleSaveExamModel = () => {
-        if (!examModel.evaluation_parameter_id || hasStartedStudents) return;
+        if (!examModel.evaluation_parameter_id || isExamModelLocked) return;
 
         setPageError('');
         setExamModelMutation.mutate(
@@ -135,6 +144,14 @@ export default function ConductExamDetails() {
                 }
             },
             {
+                onSuccess: () => {
+                    setLocallySavedExamModel({
+                        exam_type: examModel.exam_type,
+                        evaluation_parameter_id: Number(
+                            examModel.evaluation_parameter_id
+                        )
+                    });
+                },
                 onError: error => {
                     setPageError(
                         getLocalizedErrorMessage(error) ||
@@ -173,9 +190,9 @@ export default function ConductExamDetails() {
                                 startData,
                                 selectedTemplate: selectedExamTemplate,
                                 startPayload: {
-                                    exam_type: exam.examType,
+                                    exam_type: savedExamType,
                                     evaluation_parameter_id:
-                                        exam.evaluationParameterId
+                                        savedEvaluationParameterId
                                 }
                             }
                         }
@@ -277,7 +294,7 @@ export default function ConductExamDetails() {
                     ) : null}
                 </div>
 
-                {hasStartedStudents ? (
+                {isExamModelLocked ? (
                     <div className="mt-4 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
                         {isArabic
                             ? 'لا يمكن تغيير نموذج الاختبار بعد بدء تقييم أحد الطلاب.'
@@ -298,7 +315,7 @@ export default function ConductExamDetails() {
                                     <button
                                         key={type}
                                         type="button"
-                                        disabled={hasStartedStudents}
+                                        disabled={isExamModelLocked}
                                         onClick={() =>
                                             setExamModel(current => ({
                                                 ...current,
@@ -330,7 +347,7 @@ export default function ConductExamDetails() {
                         </label>
                         <select
                             value={examModel.evaluation_parameter_id}
-                            disabled={hasStartedStudents}
+                            disabled={isExamModelLocked}
                             onChange={event =>
                                 setExamModel(current => ({
                                     ...current,
@@ -365,7 +382,7 @@ export default function ConductExamDetails() {
                         type="button"
                         onClick={handleSaveExamModel}
                         disabled={
-                            hasStartedStudents ||
+                            isExamModelLocked ||
                             !examModel.evaluation_parameter_id ||
                             setExamModelMutation.isPending
                         }

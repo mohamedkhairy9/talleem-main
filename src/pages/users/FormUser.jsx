@@ -66,6 +66,26 @@ function getSystemRoleLabel(role, locale) {
     return roleLabels[normalizedRole]?.[locale] || String(role ?? '');
 }
 
+function getSystemRoleLabels(roles, fallbackRole, locale) {
+    const candidates = Array.isArray(roles)
+        ? roles
+        : roles
+        ? [roles]
+        : [];
+
+    if (fallbackRole) {
+        candidates.push(fallbackRole);
+    }
+
+    return [
+        ...new Set(
+            candidates
+                .map(role => getSystemRoleLabel(role, locale))
+                .filter(Boolean)
+        )
+    ];
+}
+
 // Resolve role to a single id for the async select (API may return role_id or roles array)
 function useResolvedRoleId(oldData) {
     const { data: rolesData } = useRolesQuery({ per_page: 100 });
@@ -126,6 +146,15 @@ export default function FormUser({
     );
     const reservedSystemRole = editPolicy.reservedSystemRole;
     const isReservedSystemUser = Boolean(reservedSystemRole);
+    const displayedRoles = React.useMemo(
+        () =>
+            getSystemRoleLabels(
+                oldData?.roles,
+                reservedSystemRole,
+                currentLocale
+            ),
+        [currentLocale, oldData?.roles, reservedSystemRole]
+    );
     const normalizedDefaultValues = React.useMemo(() => ({
         ...oldData,
         branch_id: normalizeSelectedIds(
@@ -241,16 +270,33 @@ export default function FormUser({
                             !isEditableInEditMode ||
                             (field.name === 'entity_id' && !hasBranchSelection);
 
-                        if (field.name === 'role_id' && isReservedSystemUser) {
+                        if (
+                            field.name === 'role_id' &&
+                            (isReservedSystemUser || viewMode)
+                        ) {
                             return (
                                 <div key={field.name}>
                                     <label className="mb-2 block text-sm font-medium text-gray-700">
-                                        {currentLocale === 'ar' ? 'دور النظام' : 'System Role'}
+                                        {isReservedSystemUser
+                                            ? currentLocale === 'ar'
+                                                ? 'دور النظام'
+                                                : 'System Role'
+                                            : currentLocale === 'ar'
+                                            ? 'الأدوار'
+                                            : 'Roles'}
                                     </label>
-                                    <div className="rounded-lg border border-gray-200 bg-gray-50 px-3 py-3 text-sm text-gray-700">
-                                        {getSystemRoleLabel(
-                                            reservedSystemRole,
-                                            currentLocale
+                                    <div className="flex min-h-12 flex-wrap items-center gap-2 rounded-lg border border-gray-200 bg-gray-50 px-3 py-2 text-sm text-gray-700">
+                                        {displayedRoles.length ? (
+                                            displayedRoles.map(role => (
+                                                <span
+                                                    key={role}
+                                                    className="rounded-md bg-white px-2 py-1 font-medium text-gray-700 shadow-sm"
+                                                >
+                                                    {role}
+                                                </span>
+                                            ))
+                                        ) : (
+                                            '-'
                                         )}
                                     </div>
                                     {!viewMode && (

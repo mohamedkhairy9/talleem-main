@@ -13,7 +13,6 @@ import {
     extractCollection,
     extractRecord,
     firstNonEmpty,
-    formatTimeRange,
     normalizeExamDetails,
     normalizeTemplateItem,
     resolveTemplateForStudent
@@ -205,6 +204,14 @@ export default function ConductExamSession() {
         }
     }, [activeSegmentId, segments]);
 
+    const activeSegment = useMemo(
+        () =>
+            segments.find(
+                segment => String(segment.id) === String(activeSegmentId)
+            ) || null,
+        [activeSegmentId, segments]
+    );
+
     const handleBack = () => navigate('/conduct-exams');
 
     const handleGradeChange = (segmentId, criteriaId, value) => {
@@ -379,21 +386,10 @@ export default function ConductExamSession() {
                     <button
                         type="button"
                         onClick={() => setIsMushafOpen(true)}
-                        className="rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-white transition hover:opacity-90"
-                    >
-                        {isArabic ? 'فتح المصحف' : 'Open Mushaf'}
-                    </button>
-                    <button
-                        type="button"
-                        onClick={() =>
-                            document
-                                .getElementById('exam-grading')
-                                ?.scrollIntoView({ behavior: 'smooth', block: 'start' })
-                        }
-                        disabled={!hasActiveSession || !segments.length || !criteria.length}
+                        disabled={!segments.length || !criteria.length}
                         className="rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-white transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-40"
                     >
-                        {isArabic ? 'إنهاء الامتحان وإدخال الدرجات' : 'Finish Exam & Enter Grades'}
+                        {isArabic ? 'فتح المقطع والتقييم' : 'Open Segment & Evaluate'}
                     </button>
                 </div>
 
@@ -502,7 +498,7 @@ export default function ConductExamSession() {
                                                 }}
                                                 className="rounded-lg border border-gray-300 px-3 py-2 text-xs font-semibold text-gray-700 transition hover:bg-gray-50"
                                             >
-                                                {isArabic ? 'عرض في المصحف' : 'Show in Mushaf'}
+                                                {isArabic ? 'فتح المقطع والتقييم' : 'Open & Evaluate'}
                                             </button>
                                         </td>
                                     </tr>
@@ -526,148 +522,26 @@ export default function ConductExamSession() {
             </section>
 
             {segments.length && criteria.length ? (
-                <section id="exam-grading" className="space-y-6">
-                    <div className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
-                        <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
-                            <div>
-                                <h2 className="text-lg font-semibold text-gray-900">
-                                    {isArabic ? 'إنهاء الامتحان وإدخال الدرجات' : 'Finish Exam & Enter Grades'}
-                                </h2>
-                                <p className="mt-1 text-sm text-gray-500">
-                                    {isArabic
-                                        ? 'راجع الدرجات ثم أنهِ الامتحان بحفظ النتيجة النهائية.'
-                                        : 'Enter each criterion grade for every segment, then submit the final result.'}
-                                </p>
-                            </div>
-                            <div className="rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 text-sm text-gray-600">
-                                <p>
-                                    {isArabic
-                                        ? `الجهة: ${examDetails.entityName || '-'}`
-                                        : `Entity: ${examDetails.entityName || '-'}`}
-                                </p>
-                                <p className="mt-1">
-                                    {isArabic
-                                        ? `الوقت: ${formatTimeRange(examDetails)}`
-                                        : `Time: ${formatTimeRange(examDetails)}`}
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-
-                    {segments.map(segment => {
-                        const isActiveSegment =
-                            String(segment.id) === String(activeSegmentId);
-
-                        return (
-                            <div
-                                key={segment.id}
-                                onFocusCapture={() => setActiveSegmentId(segment.id)}
-                                className={`rounded-2xl border p-5 shadow-sm transition ${
-                                    isActiveSegment
-                                        ? 'border-primary bg-primary/[0.04] ring-2 ring-primary/20'
-                                        : 'border-sky-200 bg-white hover:border-primary/50'
-                                }`}
-                            >
-                            <div className="flex flex-col gap-3 border-b border-gray-100 pb-4 md:flex-row md:items-start md:justify-between">
-                                <div>
-                                    <h2 className="text-lg font-semibold text-gray-900">
-                                        {isArabic
-                                            ? `المقطع ${segment.order}`
-                                            : `Segment ${segment.order}`}
-                                    </h2>
-                                    <p className="mt-1 text-sm text-gray-500">
-                                        {isArabic
-                                            ? `الجزء ${segment.juzNumber || '-'}`
-                                            : `Juz ${segment.juzNumber || '-'}`}
-                                    </p>
-                                    {segment.firstVerseKey || segment.lastVerseKey ? (
-                                        <p className="mt-1 text-xs text-gray-500">
-                                            {segment.firstVerseKey || '-'} -{' '}
-                                            {segment.lastVerseKey || '-'}
-                                        </p>
-                                    ) : null}
-                                </div>
-
-                                <span className="rounded-full bg-primary/10 px-3 py-1 text-xs font-semibold text-primary">
-                                    {isArabic
-                                        ? `المجموع ${segment.columnTotal || 0}`
-                                        : `Total ${segment.columnTotal || 0}`}
-                                </span>
-                            </div>
-
-                            <div className="mt-4 grid gap-4 md:grid-cols-2">
-                                {criteria.map(criterion => {
-                                    const gradeKey = buildGradeKey(segment.id, criterion.id);
-
-                                    return (
-                                        <div
-                                            key={criterion.id}
-                                            className="rounded-xl border border-gray-200 bg-gray-50 p-4"
-                                        >
-                                            <label className="mb-2 block text-sm font-semibold text-gray-900">
-                                                {criterion.displayName}
-                                            </label>
-                                            <p className="mb-2 text-xs text-gray-500">
-                                                {isArabic
-                                                    ? `الحد الأقصى ${criterion.degree}`
-                                                    : `Max ${criterion.degree}`}
-                                            </p>
-                                            <input
-                                                type="number"
-                                                min="0"
-                                                max={criterion.degree}
-                                                step="0.1"
-                                                value={grades[gradeKey] ?? ''}
-                                                onChange={event =>
-                                                    handleGradeChange(
-                                                        segment.id,
-                                                        criterion.id,
-                                                        event.target.value
-                                                    )
-                                                }
-                                                className={`h-12 w-full rounded-lg border bg-white px-3 text-sm outline-none transition ${
-                                                    errors[gradeKey]
-                                                        ? 'border-red-400 focus:border-red-500'
-                                                        : 'border-gray-300 focus:border-primary'
-                                                }`}
-                                            />
-                                            <p className="mt-2 min-h-4 text-xs text-red-600">
-                                                {errors[gradeKey] || ''}
-                                            </p>
-                                        </div>
-                                    );
-                                })}
-                            </div>
-                            </div>
-                        );
-                    })}
-
-                    {segments.length ? (
-                        <div className="flex justify-end gap-3">
-                            <button
-                                type="button"
-                                onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-                                disabled={submitMutation.isPending}
-                                className="rounded-lg border border-gray-300 px-4 py-2 text-sm font-semibold text-gray-700 transition hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-70"
-                            >
-                                {isArabic ? 'الرجوع للملخص' : 'Back to Summary'}
-                            </button>
-                            <button
-                                type="button"
-                                onClick={handleSubmit}
-                                disabled={submitMutation.isPending}
-                                className="rounded-lg bg-primary px-5 py-2 text-sm font-semibold text-white transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-70"
-                            >
-                                {submitMutation.isPending
-                                    ? isArabic
-                                        ? 'جارٍ الإرسال...'
-                                        : 'Submitting...'
-                                    : isArabic
-                                    ? 'إنهاء الامتحان وحفظ الدرجات'
-                                    : 'Submit Grades'}
-                            </button>
-                        </div>
-                    ) : null}
+                <section className="flex flex-col gap-3 rounded-2xl border border-gray-200 bg-white p-5 shadow-sm sm:flex-row sm:items-center sm:justify-between">
+                    <p className="text-sm text-gray-600">
+                        {isArabic
+                            ? 'افتح كل مقطع لإدخال درجات معايير تقييمه، ثم احفظ النتيجة النهائية.'
+                            : 'Open every segment to enter its criterion scores, then submit the final result.'}
+                    </p>
+                    <button
+                        type="button"
+                        onClick={handleSubmit}
+                        disabled={submitMutation.isPending}
+                        className="shrink-0 rounded-lg bg-primary px-5 py-2 text-sm font-semibold text-white transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-70"
+                    >
+                        {submitMutation.isPending
+                            ? isArabic
+                                ? 'جارٍ الإرسال...'
+                                : 'Submitting...'
+                            : isArabic
+                            ? 'إنهاء الامتحان وحفظ الدرجات'
+                            : 'Submit Grades'}
+                    </button>
                 </section>
             ) : null}
 
@@ -679,7 +553,7 @@ export default function ConductExamSession() {
                         onClick={() => setIsMushafOpen(false)}
                     />
                     <div className="relative flex min-h-full items-center justify-center p-4">
-                        <div className="relative z-10 w-full max-w-xl overflow-hidden rounded-2xl bg-white shadow-xl">
+                        <div className="relative z-10 flex max-h-[calc(100vh-2rem)] w-full max-w-4xl flex-col overflow-hidden rounded-2xl bg-white shadow-xl">
                             <div className="flex items-center justify-between border-b border-gray-200 px-4 py-3">
                                 <div>
                                     <h3 className="text-lg font-semibold text-gray-900">
@@ -687,8 +561,8 @@ export default function ConductExamSession() {
                                     </h3>
                                     <p className="mt-1 text-sm text-gray-500">
                                         {isArabic
-                                            ? 'راجع المقطع المحدد قبل الانتقال للتقييم.'
-                                            : 'Review the selected segment before continuing to grading.'}
+                                            ? 'راجع المقطع المحدد ثم أدخل درجات معايير التقييم الخاصة به.'
+                                            : 'Review the selected segment, then enter its evaluation criteria scores.'}
                                     </p>
                                 </div>
                                 <button
@@ -700,12 +574,83 @@ export default function ConductExamSession() {
                                 </button>
                             </div>
 
-                            <div className="p-4">
+                            <div className="space-y-5 overflow-y-auto p-4">
                                 <InteractiveExamMushaf
                                     segments={segments}
                                     activeSegmentId={activeSegmentId}
                                     onSegmentChange={setActiveSegmentId}
                                 />
+
+                                {activeSegment && criteria.length ? (
+                                    <section className="rounded-2xl border border-primary/30 bg-primary/[0.03] p-4">
+                                        <div className="flex flex-col gap-2 border-b border-primary/15 pb-3 sm:flex-row sm:items-center sm:justify-between">
+                                            <div>
+                                                <h4 className="font-semibold text-gray-900">
+                                                    {isArabic
+                                                        ? `تقييم المقطع ${activeSegment.order}`
+                                                        : `Evaluate Segment ${activeSegment.order}`}
+                                                </h4>
+                                                <p className="mt-1 text-xs text-gray-500">
+                                                    {isArabic
+                                                        ? `الجزء ${activeSegment.juzNumber || '-'}`
+                                                        : `Juz ${activeSegment.juzNumber || '-'}`}
+                                                </p>
+                                            </div>
+                                            <span className="w-fit rounded-full bg-primary/10 px-3 py-1 text-xs font-semibold text-primary">
+                                                {isArabic
+                                                    ? 'المعايير مرتبطة بهذا المقطع'
+                                                    : 'Criteria linked to this segment'}
+                                            </span>
+                                        </div>
+
+                                        <div className="mt-4 grid gap-4 md:grid-cols-2">
+                                            {criteria.map(criterion => {
+                                                const gradeKey = buildGradeKey(
+                                                    activeSegment.id,
+                                                    criterion.id
+                                                );
+
+                                                return (
+                                                    <div
+                                                        key={criterion.id}
+                                                        className="rounded-xl border border-gray-200 bg-white p-4"
+                                                    >
+                                                        <label className="mb-2 block text-sm font-semibold text-gray-900">
+                                                            {criterion.displayName}
+                                                        </label>
+                                                        <p className="mb-2 text-xs text-gray-500">
+                                                            {isArabic
+                                                                ? `الحد الأقصى ${criterion.degree}`
+                                                                : `Max ${criterion.degree}`}
+                                                        </p>
+                                                        <input
+                                                            type="number"
+                                                            min="0"
+                                                            max={criterion.degree}
+                                                            step="0.1"
+                                                            value={grades[gradeKey] ?? ''}
+                                                            onChange={event =>
+                                                                handleGradeChange(
+                                                                    activeSegment.id,
+                                                                    criterion.id,
+                                                                    event.target.value
+                                                                )
+                                                            }
+                                                            className={`h-12 w-full rounded-lg border bg-white px-3 text-sm outline-none transition ${
+                                                                errors[gradeKey]
+                                                                    ? 'border-red-400 focus:border-red-500'
+                                                                    : 'border-gray-300 focus:border-primary'
+                                                            }`}
+                                                        />
+                                                        <p className="mt-2 min-h-4 text-xs text-red-600">
+                                                            {errors[gradeKey] || ''}
+                                                        </p>
+                                                    </div>
+                                                );
+                                            })}
+                                        </div>
+                                    </section>
+                                ) : null}
                             </div>
                         </div>
                     </div>
