@@ -21,7 +21,8 @@ export default function IssueLicenseModal({
     notesLabel,
     issueDateLabel,
     notesPlaceholder,
-    issueDatePlaceholder
+    issueDatePlaceholder,
+    errorMessage = ''
 }) {
     const { t } = useLocale();
 
@@ -54,6 +55,15 @@ export default function IssueLicenseModal({
             <ModalHeader onClose={onClose} header={title} />
             <form onSubmit={handleSubmit(handleFormSubmit)} className="flex h-full flex-col">
                 <ModalContent className="space-y-4">
+                    {errorMessage && (
+                        <div
+                            role="alert"
+                            className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700"
+                        >
+                            {errorMessage}
+                        </div>
+                    )}
+
                     <InputRFH
                         control={control}
                         register={register}

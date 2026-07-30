@@ -171,7 +171,13 @@ function StatusBadge({ status, currentLocale, subjectType }) {
     );
 }
 
-const normalizeTeacherPendingItem = (item, index, mainPrograms, teachers) => {
+const normalizeTeacherPendingItem = (
+    item,
+    index,
+    mainPrograms,
+    teachers,
+    teacherIdOverride
+) => {
     const submittedData = firstObject(item.submitted_data, item.submittedData, item.payload);
     const teacher = firstObject(
         item.teacher,
@@ -183,6 +189,7 @@ const normalizeTeacherPendingItem = (item, index, mainPrograms, teachers) => {
         item
     );
     const renewTargetId = firstNonEmpty(
+        teacherIdOverride,
         item.teacher_id,
         teacher?.id,
         item.teacherId,
@@ -547,7 +554,13 @@ export default function LicenseRenewals() {
     const issuanceTeachers = useMemo(
         () =>
             extractCollection(unlicensedTeachersResponse).map((item, index) =>
-                normalizeTeacherPendingItem(item, index, mainPrograms, teachers)
+                normalizeTeacherPendingItem(
+                    item,
+                    index,
+                    mainPrograms,
+                    teachers,
+                    item.id
+                )
             ),
         [unlicensedTeachersResponse, mainPrograms, teachers]
     );
@@ -1019,7 +1032,7 @@ export default function LicenseRenewals() {
                 </div>
             )}
 
-            {actionError && (
+            {actionError && !(activeTab === 'renewal' && selectedEntity) && (
                 <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
                     {actionError}
                 </div>
@@ -1088,9 +1101,13 @@ export default function LicenseRenewals() {
                     />
                 ) : (
                 <IssueLicenseModal
-                    onClose={() => setSelectedEntity(null)}
+                    onClose={() => {
+                        setActionError('');
+                        setSelectedEntity(null);
+                    }}
                     onSubmit={handleEntityRenew}
                     isPending={isRenewingEntity}
+                    errorMessage={actionError}
                     title={
                         currentLocale === 'ar'
                             ? 'تجديد تصريح الكيان'
