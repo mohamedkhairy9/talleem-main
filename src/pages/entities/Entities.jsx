@@ -1,7 +1,6 @@
 import React from 'react';
 import {
     useEntitiesQuery,
-    useUnlicensedEntitiesQuery,
     useExportExampleFileMutation
 } from '@/api/hooks/useEntities';
 import Table from '@/components/common/table/Table';
@@ -56,47 +55,45 @@ export default function Entities() {
     const assignedBranchId = getBranchManagerAssignedBranchId(currentUser);
     const canLoadProfiles = !isBranchManager || Boolean(assignedBranchId);
     const scopedFilters = React.useMemo(
-        () =>
-            isBranchManager
+        () => {
+            const isUnauthorizedView = filters?.status === 'unauthorized';
+            const { status, ...entityListFilters } = filters;
+            const indexedEntityFilters = {
+                ...entityListFilters,
+                licensed: isUnauthorizedView ? 0 : 1
+            };
+
+            // "Unauthorized" is a license filter, not an entity status sent to
+            // the index endpoint. Keep all other status selections intact.
+            if (!isUnauthorizedView) {
+                indexedEntityFilters.status = status;
+            }
+
+            return isBranchManager
                 ? {
-                      ...filters,
+                      ...indexedEntityFilters,
                       branch_id: assignedBranchId,
                       ...allData
                   }
-                : filters,
+                : indexedEntityFilters;
+        },
         [assignedBranchId, filters, isBranchManager]
     );
-    const isUnauthorizedView = filters?.status === 'unauthorized';
     const {
         data: entitiesResponse,
         isLoading: isEntitiesLoading,
         refresh: refreshEntities
-    } = useEntitiesQuery(scopedFilters, {
-        enabled: !isUnauthorizedView && canLoadProfiles
-    });
-    const {
-        data: unlicensedEntitiesResponse,
-        isLoading: isUnlicensedEntitiesLoading,
-        refresh: refreshUnlicensedEntities
-    } = useUnlicensedEntitiesQuery(scopedFilters, {
-        enabled: isUnauthorizedView && canLoadProfiles
-    });
+    } = useEntitiesQuery(scopedFilters, { enabled: canLoadProfiles });
     const { t } = useLocale();
     const { mutate } = useExportExampleFileMutation();
     const { handleExportExample } = useExportExample({mutate, filename: 'entities_example.xlsx'});
-    const sourceResponse = isUnauthorizedView
-        ? unlicensedEntitiesResponse
-        : entitiesResponse;
+    const sourceResponse = entitiesResponse;
     const dataList = extractCollection(sourceResponse);
     const scopedDataList = isBranchManager
         ? filterProfilesByBranch(dataList, assignedBranchId)
         : dataList;
-    const isLoading = isUnauthorizedView
-        ? isUnlicensedEntitiesLoading
-        : isEntitiesLoading;
-    const refresh = isUnauthorizedView
-        ? refreshUnlicensedEntities
-        : refreshEntities;
+    const isLoading = isEntitiesLoading;
+    const refresh = refreshEntities;
     const totalCount =
         sourceResponse?.meta?.total ??
         sourceResponse?.total ??

@@ -1,7 +1,6 @@
 import React from 'react';
 import {
     useTeachersQuery,
-    useUnlicensedTeachersQuery,
     useExportExampleFileMutation
 } from '@/api/hooks/useTeachers';
 import Table from '@/components/common/table/Table';
@@ -53,39 +52,29 @@ export default function Teachers() {
     const canLoadProfiles = !isBranchManager || Boolean(assignedBranchId);
     const isUnlicensedView = filters?.license_filter === 'unlicensed';
     const { license_filter: _licenseFilter, ...teacherListFilters } = filters;
-    const unlicensedTeacherFilters = { ...teacherListFilters };
+    const indexedTeacherFilters = {
+        ...teacherListFilters,
+        licensed: isUnlicensedView ? 0 : 1
+    };
 
-    delete unlicensedTeacherFilters.status;
+    // The unlicensed index does not use the profile status filter.
+    if (isUnlicensedView) {
+        delete indexedTeacherFilters.status;
+    }
 
     const scopedTeacherListFilters = isBranchManager
         ? {
-              ...teacherListFilters,
+              ...indexedTeacherFilters,
               branch_id: assignedBranchId,
               ...allData
           }
-        : teacherListFilters;
-    const scopedUnlicensedTeacherFilters = isBranchManager
-        ? {
-              ...unlicensedTeacherFilters,
-              branch_id: assignedBranchId,
-              ...allData
-          }
-        : unlicensedTeacherFilters;
+        : indexedTeacherFilters;
 
     const {
         data: teachersResponse,
         isLoading: isTeachersLoading,
         refresh: refreshTeachers
-    } = useTeachersQuery(scopedTeacherListFilters, {
-        enabled: !isUnlicensedView && canLoadProfiles
-    });
-    const {
-        data: unlicensedTeachersResponse,
-        isLoading: isUnlicensedTeachersLoading,
-        refresh: refreshUnlicensedTeachers
-    } = useUnlicensedTeachersQuery(scopedUnlicensedTeacherFilters, {
-        enabled: isUnlicensedView && canLoadProfiles
-    });
+    } = useTeachersQuery(scopedTeacherListFilters, { enabled: canLoadProfiles });
     const { t } = useLocale();
     const { mutate } = useExportExampleFileMutation();
     const { handleExportExample } = useExportExample({
@@ -109,19 +98,13 @@ export default function Teachers() {
             />
         </div>
     );
-    const sourceResponse = isUnlicensedView
-        ? unlicensedTeachersResponse
-        : teachersResponse;
+    const sourceResponse = teachersResponse;
     const dataList = extractCollection(sourceResponse);
     const scopedDataList = isBranchManager
         ? filterProfilesByBranch(dataList, assignedBranchId)
         : dataList;
-    const isLoading = isUnlicensedView
-        ? isUnlicensedTeachersLoading
-        : isTeachersLoading;
-    const refresh = isUnlicensedView
-        ? refreshUnlicensedTeachers
-        : refreshTeachers;
+    const isLoading = isTeachersLoading;
+    const refresh = refreshTeachers;
     const totalCount =
         sourceResponse?.meta?.total ??
         sourceResponse?.total ??
