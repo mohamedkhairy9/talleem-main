@@ -7,7 +7,10 @@ const PARTS = ['first', 'father', 'grandfather', 'family'];
 const splitFullName = value => {
     const words = String(value || '')
         .trim()
-        .split(/\s+/)
+        // Mobile-app records can reach the dashboard as a single string
+        // separated by spaces or hyphens (for example: "أحمد-محمد-علي-العتيبي").
+        // Normalize both formats before distributing the name across its four fields.
+        .split(/[\s\-‐‑‒–—]+/)
         .filter(Boolean);
 
     return {
