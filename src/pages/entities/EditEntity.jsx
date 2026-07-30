@@ -35,15 +35,27 @@ export default function EditEntity({ onClose, oldData }) {
         useEntityManagersQuery({ ...allData, status: true });
 
     const detailedEntity = entityDetailsResponse?.data || entityDetailsResponse || null;
-    const resolvedOldData = useMemo(
-        () => ({
+    const resolvedOldData = useMemo(() => {
+        const permitData = detailedEntity
+            ? getEntityPermitFormData(detailedEntity, oldData)
+            : {};
+
+        return {
             ...oldData,
+            // The table can expose a derived license status. In edit mode we
+            // must always keep the entity's real status and registration date
+            // from its details record.
             ...(detailedEntity
-                ? getEntityPermitFormData(detailedEntity, oldData)
-                : {})
-        }),
-        [detailedEntity, oldData]
-    );
+                ? {
+                      status: detailedEntity.status ?? oldData?.status,
+                      registration_date:
+                          permitData.registration_date ??
+                          oldData?.registration_date
+                  }
+                : {}),
+            ...permitData
+        };
+    }, [detailedEntity, oldData]);
 
     const {
         branchesData,

@@ -286,16 +286,17 @@ export default function FormEntity({
         setValue
     ]);
 
-    // Auto-set status based on entry_type
+    // Auto-set status only while creating a new entity. Existing entities
+    // must retain the status returned by their details record in edit mode.
     useEffect(() => {
-        if (entryType && !viewMode) {
+        if (entryType && !viewMode && !editMode) {
             if (entryType === 'new_with_approval') {
                 // Set status to 'unauthorized' and it will be disabled
                 setValue('status', 'unauthorized', { shouldValidate: false });
             }
             // For 'active_with_license', don't auto-set - let user choose
         }
-    }, [entryType, viewMode, setValue]);
+    }, [entryType, viewMode, editMode, setValue]);
 
     useEffect(() => {
         if ((cityId && cityId != oldData?.city_id) || !oldData?.city_id) {

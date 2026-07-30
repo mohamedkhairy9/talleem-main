@@ -17,6 +17,7 @@ import { allData } from '@/utils/constants/global.constants';
 import {
     buildEmployeeSubmissionPayload,
     getEmployeeJobPolicyState,
+    getRoleSubmissionName,
     normalizeSelectedIds,
     resolveEmployeeJobPolicy
 } from './employeeJobPolicy';
@@ -45,6 +46,26 @@ function getLocalizedRoleName(role, lang) {
         getLocalizedName(role.display_name, lang) ||
         getLocalizedName(role.name, lang)
     );
+}
+
+// The employee API returns assigned roles as names, while the roles select
+// uses role IDs as values. Resolve the stored name back to its select value
+// so the current role is shown when the edit form opens.
+function resolveRoleId(role, roleOptions = []) {
+    if (role && typeof role === 'object' && role.id != null) {
+        return role.id;
+    }
+
+    const roleValue = String(role ?? '').trim();
+    if (!roleValue) return role;
+
+    const matchedRole = roleOptions.find(option => {
+        const optionId = String(option?.id ?? '');
+        const optionName = getRoleSubmissionName(option);
+        return optionId === roleValue || optionName === roleValue;
+    });
+
+    return matchedRole?.id ?? role;
 }
 
 function hasAllBranchEntitiesScope(oldData) {
@@ -194,13 +215,11 @@ export default function FormEmployee({
             ),
             roles: Array.isArray(oldData?.roles)
                 ? oldData.roles.map(role =>
-                      typeof role === 'object' && role?.id != null
-                          ? role.id
-                          : role
+                      resolveRoleId(role, options?.roles || [])
                   )
                 : oldData?.role_ids ?? []
         }),
-        [oldData]
+        [oldData, options?.roles]
     );
     const [profileImagePreview, setProfileImagePreview] = useState(
         oldData?.profile_picture || null
