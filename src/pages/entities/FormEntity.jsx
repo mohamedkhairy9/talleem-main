@@ -34,7 +34,9 @@ export default function FormEntity({
     hideActivityField = false,
     isPending,
     mutate,
-    options
+    options,
+    minStudentAge = 2,
+    isMinStudentAgeEditable = true
 }) {
     const { t } = useLocale();
     const currentUser = useUserStore(state => state.user);
@@ -122,6 +124,16 @@ export default function FormEntity({
             delete submitData.license_number;
             delete submitData.license_image;
             delete submitData.license_issue_date;
+        }
+
+        // When editing is disabled in the Tahfiz configuration, the value is
+        // server-controlled. Sending the configured value prevents a stale or
+        // manually changed browser value from falling out of sync.
+        if (
+            Number(submitData.main_program_id) === 2 &&
+            !isMinStudentAgeEditable
+        ) {
+            submitData.min_acceptance_age = minStudentAge;
         }
 
         const shouldCreateManager =
@@ -513,8 +525,12 @@ export default function FormEntity({
             fieldName === 'status' &&
             (entryType === 'new_with_approval' ||
                 (editMode && !canActivateSuspendedEntity));
+        const isMinimumAgeLocked =
+            fieldName === 'min_acceptance_age' &&
+            Number(mainProgramId) === 2 &&
+            !isMinStudentAgeEditable;
         // Check if field has disabled property
-        const isFieldDisabled = field.disabled || viewMode || isActivityFieldDisabled || isNeighborhoodFieldDisabled || isStatusFieldDisabled;
+        const isFieldDisabled = field.disabled || viewMode || isActivityFieldDisabled || isNeighborhoodFieldDisabled || isStatusFieldDisabled || isMinimumAgeLocked;
 
         // Use sync selects when options are intentionally pre-filtered in this form.
         const forceSyncField =
@@ -531,6 +547,12 @@ export default function FormEntity({
                 disabled={isFieldDisabled}
                 {...field}
                 name={fieldName}
+                min={
+                    fieldName === 'min_acceptance_age' &&
+                    Number(mainProgramId) === 2
+                        ? minStudentAge
+                        : field.min
+                }
                 options={generateOptions(statusOptions)}
                 defaultValue={defaultValue}
                 required={isFieldRequired(adjustedSchema, fieldName)}

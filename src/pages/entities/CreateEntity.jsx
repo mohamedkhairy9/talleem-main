@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import FormEntity from './FormEntity';
 import Modal from '@/components/common/form/Modal';
 import ModalHeader from '@/components/common/form/ModalHeader';
@@ -13,7 +13,9 @@ import {
 } from '@/utils/constants/options';
 import { normalizeSessionModeOptions } from '@/utils/helpers/sessionModeLabels';
 import { useEntityManagersQuery } from '@/api/hooks/useEntityManagers';
+import { useConfigurationsQuery } from '@/api/hooks/useConfigurations';
 import { allData } from '@/utils/constants/global.constants';
+import { resolveEntityAcceptanceAgeConfig } from './entityAcceptanceAgeConfig';
 
 const statusOptions = [
     { label: { ar: 'مصرح', en: 'Permitted' }, value: 'active' },
@@ -31,6 +33,19 @@ export default function CreateEntity({ onClose }) {
     const { mutate, isPending } = useCreateEntityMutation();
     const { data: entityManagersData, isLoading: entityManagersLoading } =
         useEntityManagersQuery({ ...allData, status: true });
+    const { data: configurationsData, isLoading: configurationsLoading } =
+        useConfigurationsQuery('tahfiz');
+    const acceptanceAgeConfig = useMemo(
+        () => resolveEntityAcceptanceAgeConfig(configurationsData?.data),
+        [configurationsData]
+    );
+    const defaultEntityValues = useMemo(
+        () => ({
+            ...entitiesDefaultValues,
+            min_acceptance_age: acceptanceAgeConfig.minStudentAge
+        }),
+        [acceptanceAgeConfig.minStudentAge]
+    );
 
     const {
         branchesData,
@@ -50,16 +65,22 @@ export default function CreateEntity({ onClose }) {
         isLoading
     } = useApiCalls({ apiCalls });
 
-    if (isLoading || entityManagersLoading) return <Loader />;
+    if (isLoading || entityManagersLoading || configurationsLoading) {
+        return <Loader />;
+    }
 
     return (
         <Modal onClose={onClose} size="5xl">
             <ModalHeader onClose={onClose} header="entities.create" />
             <FormEntity
                 onClose={onClose}
-                oldData={entitiesDefaultValues}
+                oldData={defaultEntityValues}
                 mutate={mutate}
                 isPending={isPending}
+                minStudentAge={acceptanceAgeConfig.minStudentAge}
+                isMinStudentAgeEditable={
+                    acceptanceAgeConfig.isMinStudentAgeEditable
+                }
                 options={{
                     entity_manager_id: entityManagersData?.data,
                     user_id: usersData?.data,

@@ -490,7 +490,9 @@ export const entitiesDefaultValues = {
     class_count: 0,
     management_rooms_count: 0,
     lecture_halls_count: 0,
-    min_acceptance_age: 1,
+    // This is the safe fallback. CreateEntity replaces it with the value
+    // returned from the Tahfiz configuration before the form is rendered.
+    min_acceptance_age: 2,
     manager: {
         status: true
     },
