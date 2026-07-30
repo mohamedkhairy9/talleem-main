@@ -16,7 +16,6 @@ import ImportEmployee from './ImportEmployee';
 import { useExportExampleFileMutation } from '@/api/hooks/useEmployees';
 import useExportExample from '@/utils/hooks/global/useExportExample';
 import { normalizeSelectedIds } from './employeeJobPolicy';
-import { allData } from '@/utils/constants/global.constants';
 import { useUserStore } from '@/utils/stores/user.store';
 import {
     filterProfilesByBranch,
@@ -37,8 +36,7 @@ export default function Employees() {
             isBranchManager
                 ? {
                       ...filters,
-                      branch_id: assignedBranchId,
-                      ...allData
+                      branch_id: assignedBranchId
                   }
                 : filters,
         [assignedBranchId, filters, isBranchManager]
@@ -115,8 +113,8 @@ export default function Employees() {
                 refresh={refresh}
                 loading={isLoading}
                 data={tableData}
-                serverPagination={!isBranchManager}
-                totalCount={isBranchManager ? scopedData.length : data?.meta?.total}
+                serverPagination={true}
+                totalCount={data?.meta?.total ?? scopedData.length}
                 columns={employeesColumns}
                 toggleModals={toggle}
                 pagination={pagination}

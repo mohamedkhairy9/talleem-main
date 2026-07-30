@@ -25,7 +25,6 @@ import {
 import Filters from './Filters';
 import useExportExample from '@/utils/hooks/global/useExportExample';
 import FilterSelect from '@/components/common/inputs/FilterSelect';
-import { allData } from '@/utils/constants/global.constants';
 import { useUserStore } from '@/utils/stores/user.store';
 import {
     filterProfilesByBranch,
@@ -65,8 +64,7 @@ export default function Teachers() {
     const scopedTeacherListFilters = isBranchManager
         ? {
               ...indexedTeacherFilters,
-              branch_id: assignedBranchId,
-              ...allData
+              branch_id: assignedBranchId
           }
         : indexedTeacherFilters;
 
@@ -196,8 +194,8 @@ export default function Teachers() {
                 refresh={refresh}
                 loading={isLoading}
                 data={tableData}
-                serverPagination={!isBranchManager}
-                totalCount={isBranchManager ? scopedDataList.length : totalCount}
+                serverPagination={true}
+                totalCount={totalCount}
                 columns={teachersColumns}
                 toggleModals={toggle}
                 pagination={pagination}

@@ -17,7 +17,6 @@ import { getOriginalObject, onlyDate } from '@/utils/helpers/global.fns';
 import Filters from './Filters';
 import useExportExample from '@/utils/hooks/global/useExportExample';
 import i18next from 'i18next';
-import { allData } from '@/utils/constants/global.constants';
 import { useUserStore } from '@/utils/stores/user.store';
 import {
     filterProfilesByBranch,
@@ -72,8 +71,7 @@ export default function Entities() {
             return isBranchManager
                 ? {
                       ...indexedEntityFilters,
-                      branch_id: assignedBranchId,
-                      ...allData
+                      branch_id: assignedBranchId
                   }
                 : indexedEntityFilters;
         },
@@ -189,8 +187,8 @@ export default function Entities() {
                 refresh={refresh}
                 loading={isLoading}
                 data={tableData}
-                serverPagination={!isBranchManager}
-                totalCount={isBranchManager ? scopedDataList.length : totalCount}
+                serverPagination={true}
+                totalCount={totalCount}
                 columns={entitiesColumns}
                 toggleModals={toggle}
                 pagination={pagination}

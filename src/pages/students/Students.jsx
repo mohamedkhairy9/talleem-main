@@ -16,7 +16,6 @@ import useLocale from '@/utils/hooks/global/useLocale';
 import { getOriginalObject } from '@/utils/helpers/global.fns';
 import Filters from './Filters';
 import useExportExample from '@/utils/hooks/global/useExportExample';
-import { allData } from '@/utils/constants/global.constants';
 import { useUserStore } from '@/utils/stores/user.store';
 import {
     filterProfilesByBranch,
@@ -37,8 +36,7 @@ export default function Students() {
             isBranchManager
                 ? {
                       ...filters,
-                      branch_id: assignedBranchId,
-                      ...allData
+                      branch_id: assignedBranchId
                   }
                 : filters,
         [assignedBranchId, filters, isBranchManager]
@@ -127,8 +125,8 @@ export default function Students() {
                 refresh={refresh}
                 loading={isLoading}
                 data={tableData}
-                serverPagination={!isBranchManager}
-                totalCount={isBranchManager ? scopedData.length : data?.meta?.total}
+                serverPagination={true}
+                totalCount={data?.meta?.total ?? scopedData.length}
                 columns={studentsColumns}
                 toggleModals={toggle}
                 pagination={pagination}
