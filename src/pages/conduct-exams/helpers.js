@@ -220,6 +220,7 @@ export const normalizeExamItem = (item, index) => {
             item?.evaluation_template_id,
             template?.id
         ),
+        examType: firstNonEmpty(item?.exam_type, item?.type),
         available: item?.available,
         teachers: extractCollection(item?.teachers),
         raw: item

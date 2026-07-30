@@ -68,6 +68,8 @@ export const API_URLS = {
         ENTITIES: '/oversight/conduct-exams/entities',
         TODAY: '/oversight/conduct-exams/today',
         DETAILS: scheduledExamId => `/oversight/conduct-exams/${scheduledExamId}`,
+        SET_EXAM_MODEL: scheduledExamId =>
+            `/oversight/conduct-exams/${scheduledExamId}/exam-model`,
         START_STUDENT: (scheduledExamId, studentId) =>
             `/oversight/conduct-exams/${scheduledExamId}/students/${studentId}/start`,
         SUBMIT_STUDENT: (scheduledExamId, studentId) =>

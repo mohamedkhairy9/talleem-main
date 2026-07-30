@@ -89,6 +89,21 @@ export const useStartConductExamMutation = () => {
     });
 };
 
+export const useSetConductExamModelMutation = () => {
+    const queryClient = useQueryClient();
+
+    return useCustomMutation({
+        mutationFn: ({ scheduledExamId, data }) =>
+            conductExamsService.setExamModel(scheduledExamId, data),
+        showErrorToast: false,
+        onSuccess: () => {
+            queryClient.invalidateQueries({
+                queryKey: [API_KEYS.CONDUCT_EXAMS]
+            });
+        }
+    });
+};
+
 export const useSubmitConductExamMutation = () => {
     const queryClient = useQueryClient();
 

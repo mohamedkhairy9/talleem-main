@@ -26,6 +26,13 @@ export const conductExamsService = {
         );
     },
 
+    setExamModel: async (scheduledExamId, data) => {
+        return await axiosInstance.post(
+            API_URLS.CONDUCT_EXAMS.SET_EXAM_MODEL(scheduledExamId),
+            data
+        );
+    },
+
     startStudentExam: async (scheduledExamId, studentId, data) => {
         return await axiosInstance.post(
             API_URLS.CONDUCT_EXAMS.START_STUDENT(scheduledExamId, studentId),

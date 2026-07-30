@@ -6,6 +6,7 @@ import { getLocalizedErrorMessage } from '@/utils/helpers/localizedMessages';
 import {
     useConductExamDetailsQuery,
     useConductExamEvaluationTemplatesQuery,
+    useSetConductExamModelMutation,
     useStartConductExamMutation
 } from '@/api/hooks/useConductExams';
 import {
@@ -14,9 +15,9 @@ import {
     getStatusClasses,
     getStatusLabel,
     normalizeExamDetails,
-    normalizeTemplateItem
+    normalizeTemplateItem,
+    EXAM_TYPES
 } from './helpers';
-import StartExamModal from './StartExamModal';
 import {
     getExamEarlyStartMinutes,
     getExamStartAvailability
@@ -35,9 +36,12 @@ export default function ConductExamDetails() {
     const { scheduledExamId } = useParams();
     const { currentLocale } = useLocale();
     const isArabic = currentLocale === 'ar';
-    const [selectedStudent, setSelectedStudent] = useState(null);
     const [pageError, setPageError] = useState('');
     const [now, setNow] = useState(() => new Date());
+    const [examModel, setExamModel] = useState({
+        exam_type: 'maqata3',
+        evaluation_parameter_id: ''
+    });
 
     const detailsQuery = useConductExamDetailsQuery(scheduledExamId, {
         enabled: Boolean(scheduledExamId)
@@ -45,6 +49,7 @@ export default function ConductExamDetails() {
     const templatesQuery = useConductExamEvaluationTemplatesQuery();
     const configurationsQuery = useConfigurationsQuery('tahfiz');
     const startMutation = useStartConductExamMutation();
+    const setExamModelMutation = useSetConductExamModelMutation();
     const exam = useMemo(
         () => (detailsQuery.data ? normalizeExamDetails(detailsQuery.data) : null),
         [detailsQuery.data]
@@ -81,35 +86,97 @@ export default function ConductExamDetails() {
         startAvailability.reason
     ]);
     const isExamEnded = startAvailability.reason === 'ended';
+    const savedExamType = exam?.examType;
+    const savedEvaluationParameterId = exam?.evaluationParameterId;
+    const hasSavedExamModel = Boolean(
+        exam?.evaluationParameterId && exam?.examType
+    );
+    const hasStartedStudents = exam?.students?.some(
+        student => student.statusKey === 'started' || student.statusKey === 'submitted'
+    );
+    const selectedExamTemplate = useMemo(
+        () =>
+            templates.find(
+                template =>
+                    String(template.id) === String(exam?.evaluationParameterId)
+            ) || null,
+        [exam?.evaluationParameterId, templates]
+    );
+    const examModelRequiredMessage = isArabic
+        ? 'اختر نموذج الاختبار العام واحفظه قبل بدء تقييم الطلاب.'
+        : 'Select and save the general exam model before starting student evaluations.';
 
     useEffect(() => {
         const timer = window.setInterval(() => setNow(new Date()), 30_000);
         return () => window.clearInterval(timer);
     }, []);
 
-    const handleStart = payload => {
-        if (!selectedStudent) return;
+    useEffect(() => {
+        setExamModel({
+            exam_type: savedExamType || 'maqata3',
+            evaluation_parameter_id: savedEvaluationParameterId
+                ? String(savedEvaluationParameterId)
+                : ''
+        });
+    }, [savedExamType, savedEvaluationParameterId]);
+
+    const handleSaveExamModel = () => {
+        if (!examModel.evaluation_parameter_id || hasStartedStudents) return;
+
+        setPageError('');
+        setExamModelMutation.mutate(
+            {
+                scheduledExamId,
+                data: {
+                    exam_type: examModel.exam_type,
+                    evaluation_parameter_id: Number(
+                        examModel.evaluation_parameter_id
+                    )
+                }
+            },
+            {
+                onError: error => {
+                    setPageError(
+                        getLocalizedErrorMessage(error) ||
+                            (isArabic
+                                ? 'تعذر حفظ نموذج الاختبار. حاول مرة أخرى.'
+                                : 'Unable to save the exam model. Please try again.')
+                    );
+                }
+            }
+        );
+    };
+
+    const handleStart = student => {
+        if (!student) return;
         if (!startAvailability.isAvailable) {
             setPageError(startAvailabilityMessage);
-            setSelectedStudent(null);
+            return;
+        }
+        if (!hasSavedExamModel) {
+            setPageError(examModelRequiredMessage);
             return;
         }
         setPageError('');
         startMutation.mutate(
-            { scheduledExamId, studentId: selectedStudent.id, data: payload },
+            { scheduledExamId, studentId: student.id, data: {} },
             {
                 onSuccess: response => {
                     const startData = response?.data?.data || response?.data || response;
 
                     navigate(
-                        `/conduct-exams/${scheduledExamId}/students/${selectedStudent.id}/conduct`,
+                        `/conduct-exams/${scheduledExamId}/students/${student.id}/conduct`,
                         {
                             state: {
-                                student: selectedStudent,
+                                student,
                                 exam,
                                 startData,
-                                selectedTemplate: templates.find(template => String(template.id) === String(payload.evaluation_parameter_id)),
-                                startPayload: payload
+                                selectedTemplate: selectedExamTemplate,
+                                startPayload: {
+                                    exam_type: exam.examType,
+                                    evaluation_parameter_id:
+                                        exam.evaluationParameterId
+                                }
                             }
                         }
                     );
@@ -121,8 +188,8 @@ export default function ConductExamDetails() {
                     const isCompletedExam = error?.status === 409 && rawMessage.includes('already completed');
 
                     if (isCompletedExam) {
-                        navigate(`/conduct-exams/${scheduledExamId}/students/${selectedStudent.id}/result`, {
-                            state: { student: selectedStudent, exam }
+                        navigate(`/conduct-exams/${scheduledExamId}/students/${student.id}/result`, {
+                            state: { student, exam }
                         });
                         return;
                     }
@@ -191,6 +258,134 @@ export default function ConductExamDetails() {
                 </div>
             </section>
 
+            <section className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
+                <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
+                    <div>
+                        <h2 className="text-lg font-semibold text-gray-900">
+                            {isArabic ? 'نموذج الاختبار العام' : 'General Exam Model'}
+                        </h2>
+                        <p className="mt-1 text-sm text-gray-500">
+                            {isArabic
+                                ? 'يُختار مرة واحدة ويُطبّق تلقائيًا على جميع الطلاب في هذا الامتحان.'
+                                : 'Select it once and it will be applied automatically to every student in this exam.'}
+                        </p>
+                    </div>
+                    {hasSavedExamModel ? (
+                        <span className="w-fit rounded-full bg-emerald-100 px-3 py-1 text-xs font-semibold text-emerald-700">
+                            {isArabic ? 'تم حفظ النموذج' : 'Model saved'}
+                        </span>
+                    ) : null}
+                </div>
+
+                {hasStartedStudents ? (
+                    <div className="mt-4 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
+                        {isArabic
+                            ? 'لا يمكن تغيير نموذج الاختبار بعد بدء تقييم أحد الطلاب.'
+                            : 'The exam model cannot be changed after a student evaluation has started.'}
+                    </div>
+                ) : null}
+
+                <div className="mt-5 grid gap-5 lg:grid-cols-2">
+                    <div className="space-y-2">
+                        <label className="block text-sm font-medium text-gray-700">
+                            {isArabic ? 'طريقة التسميع' : 'Listening Method'}
+                        </label>
+                        <div className="grid grid-cols-2 gap-3">
+                            {EXAM_TYPES.map(type => {
+                                const isSelected = examModel.exam_type === type;
+
+                                return (
+                                    <button
+                                        key={type}
+                                        type="button"
+                                        disabled={hasStartedStudents}
+                                        onClick={() =>
+                                            setExamModel(current => ({
+                                                ...current,
+                                                exam_type: type
+                                            }))
+                                        }
+                                        className={`rounded-xl border px-4 py-3 text-sm font-semibold transition disabled:cursor-not-allowed disabled:opacity-60 ${
+                                            isSelected
+                                                ? 'border-primary bg-primary/5 text-primary'
+                                                : 'border-gray-200 bg-white text-gray-700 hover:border-primary/40'
+                                        }`}
+                                    >
+                                        {type === 'maqata3'
+                                            ? isArabic
+                                                ? 'مقاطع'
+                                                : 'Maqata3'
+                                            : isArabic
+                                            ? 'سرد'
+                                            : 'Sard'}
+                                    </button>
+                                );
+                            })}
+                        </div>
+                    </div>
+
+                    <div className="space-y-2">
+                        <label className="block text-sm font-medium text-gray-700">
+                            {isArabic ? 'نموذج التقييم' : 'Evaluation Template'}
+                        </label>
+                        <select
+                            value={examModel.evaluation_parameter_id}
+                            disabled={hasStartedStudents}
+                            onChange={event =>
+                                setExamModel(current => ({
+                                    ...current,
+                                    evaluation_parameter_id: event.target.value
+                                }))
+                            }
+                            className="w-full rounded-lg border border-gray-300 px-3 py-3 outline-none focus:border-primary disabled:cursor-not-allowed disabled:bg-gray-100"
+                        >
+                            <option value="">
+                                {isArabic
+                                    ? 'اختر نموذج التقييم'
+                                    : 'Select evaluation template'}
+                            </option>
+                            {templates.map(template => (
+                                <option key={template.id} value={template.id}>
+                                    {template.displayName || template.display_name}
+                                </option>
+                            ))}
+                        </select>
+                        {hasSavedExamModel && selectedExamTemplate ? (
+                            <p className="text-xs text-emerald-700">
+                                {isArabic
+                                    ? `النموذج المطبق: ${selectedExamTemplate.displayName}`
+                                    : `Applied model: ${selectedExamTemplate.displayName}`}
+                            </p>
+                        ) : null}
+                    </div>
+                </div>
+
+                <div className="mt-5 flex justify-end">
+                    <button
+                        type="button"
+                        onClick={handleSaveExamModel}
+                        disabled={
+                            hasStartedStudents ||
+                            !examModel.evaluation_parameter_id ||
+                            setExamModelMutation.isPending
+                        }
+                        className="rounded-lg bg-primary px-5 py-2.5 text-sm font-semibold text-white transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
+                    >
+                        {setExamModelMutation.isPending
+                            ? isArabic
+                                ? 'جارٍ الحفظ...'
+                                : 'Saving...'
+                            : hasSavedExamModel
+                            ? isArabic
+                                ? 'تحديث النموذج'
+                                : 'Update Model'
+                            : isArabic
+                            ? 'حفظ نموذج الاختبار'
+                            : 'Save Exam Model'}
+                    </button>
+                </div>
+            </section>
+
             <section className={`rounded-2xl border p-4 text-sm ${startAvailability.isAvailable ? 'border-emerald-200 bg-emerald-50 text-emerald-800' : 'border-amber-200 bg-amber-50 text-amber-800'}`}>
                 <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
                     <p className="font-semibold">{startAvailabilityMessage}</p>
@@ -214,7 +409,11 @@ export default function ConductExamDetails() {
                         </thead>
                         <tbody className="divide-y divide-gray-100">
                             {exam.students.map(student => {
-                                const canStartStudent = student.statusKey !== 'submitted' && startAvailability.isAvailable;
+                                const canStartStudent =
+                                    student.statusKey !== 'submitted' &&
+                                    startAvailability.isAvailable &&
+                                    hasSavedExamModel &&
+                                    !startMutation.isPending;
                                 const canViewResult = student.statusKey === 'submitted';
                                 const actionLabel = canViewResult
                                     ? (isArabic ? 'عرض الدرجات' : 'View Grades')
@@ -227,6 +426,8 @@ export default function ConductExamDetails() {
                                     : (isArabic ? 'بدء الامتحان' : 'Start Exam');
                                 const actionTitle = canStartStudent || canViewResult
                                     ? undefined
+                                    : !hasSavedExamModel
+                                    ? examModelRequiredMessage
                                     : student.statusKey === 'not_started'
                                     ? startAvailabilityMessage
                                     : actionLabel;
@@ -249,7 +450,7 @@ export default function ConductExamDetails() {
                                                 if (canViewResult) {
                                                     navigate(`/conduct-exams/${scheduledExamId}/students/${student.id}/result`);
                                                 } else if (canStartStudent) {
-                                                    setSelectedStudent(student);
+                                                    handleStart(student);
                                                 }
                                             }}
                                             className={`rounded-lg px-3 py-2 text-xs font-semibold disabled:cursor-not-allowed disabled:opacity-40 ${
@@ -269,15 +470,6 @@ export default function ConductExamDetails() {
                     </table>
                 </div>
             </section>
-
-            {selectedStudent ? <StartExamModal
-                student={selectedStudent}
-                templates={templates}
-                isPending={startMutation.isPending}
-                errorMessage={pageError}
-                onClose={() => { setSelectedStudent(null); setPageError(''); }}
-                onSubmit={handleStart}
-            /> : null}
         </div>
     );
 }
