@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import FormTeacher from './FormTeacher';
 import Modal from '@/components/common/form/Modal';
 import ModalHeader from '@/components/common/form/ModalHeader';
@@ -23,11 +23,11 @@ const entryTypeOptions = [
 import { useMajorsQuery } from '@/api/hooks/useMajors';
 import { useEntitiesQuery } from '@/api/hooks/useEntities';
 import { useMemorizationProgramEntityTypesQuery } from '@/api/hooks/useMemorizationProgramEntityTypes';
+import { getTeacherLicenseFormData } from './teacherLicenseDetails';
 
 export default function EditTeacher({ onClose, oldData }) {
-    console.log('oldData', oldData);
     const { mutate, isPending } = useUpdateTeacherMutation();
-    const { data: teacherDetailsData } = useTeacherQuery(oldData?.id, {
+    const { data: teacherDetailsData, isLoading: teacherDetailsLoading } = useTeacherQuery(oldData?.id, {
         enabled: !!oldData?.id
     });
 
@@ -71,31 +71,50 @@ export default function EditTeacher({ onClose, oldData }) {
         usersLoading ||
         majorsLoading ||
         entitiesLoading ||
-        memorizationProgramEntityTypesLoading;
-
-    if (isLoading) return <Loader />;
+        memorizationProgramEntityTypesLoading ||
+        teacherDetailsLoading;
 
     const teacherDetails = teacherDetailsData?.data || teacherDetailsData || oldData;
-    const teacherEntityIds = Array.isArray(teacherDetails?.entity_ids) && teacherDetails.entity_ids.length > 0
-        ? teacherDetails.entity_ids.map(entity => entity?.id ?? entity?.value ?? entity)
-        : Array.isArray(teacherDetails?.entities) && teacherDetails.entities.length > 0
-            ? teacherDetails.entities.map(entity => entity?.id ?? entity?.value ?? entity)
-            : oldData?.entity_ids || (oldData?.entity_id != null ? [oldData.entity_id] : []);
-    const teacherEntities = Array.isArray(teacherDetails?.entities) && teacherDetails.entities.length > 0
-        ? teacherDetails.entities
-        : oldData?.entities || (oldData?.entity ? [oldData.entity] : []);
+    const resolvedTeacher = useMemo(() => {
+        const entities = Array.isArray(teacherDetails?.entities) && teacherDetails.entities.length > 0
+            ? teacherDetails.entities
+            : oldData?.entities || (oldData?.entity ? [oldData.entity] : []);
+        const entityIds = Array.isArray(teacherDetails?.entity_ids) && teacherDetails.entity_ids.length > 0
+            ? teacherDetails.entity_ids
+            : entities;
+
+        return {
+            ...oldData,
+            ...teacherDetails,
+            branch_id:
+                teacherDetails?.branch?.id ??
+                teacherDetails?.branch_id ??
+                oldData?.branch_id,
+            city_id:
+                teacherDetails?.city?.id ??
+                teacherDetails?.city_id ??
+                oldData?.city_id,
+            main_program_id:
+                teacherDetails?.main_program?.id ??
+                teacherDetails?.main_program_id ??
+                oldData?.main_program_id,
+            entity_ids: entityIds
+                .map(entity => entity?.id ?? entity?.value ?? entity)
+                .filter(entity => entity !== null && entity !== undefined && entity !== ''),
+            entities,
+            status: String(teacherDetails?.status ?? oldData?.status ?? '').toLowerCase(),
+            ...getTeacherLicenseFormData(teacherDetails, oldData)
+        };
+    }, [teacherDetails, oldData]);
+
+    if (isLoading) return <Loader />;
 
     return (
         <Modal onClose={onClose} size="5xl">
             <ModalHeader onClose={onClose} header="teachers.edit" />
             <FormTeacher
                 onClose={onClose}
-                oldData={{
-                    ...oldData,
-                    entity_ids: teacherEntityIds,
-                    entities: teacherEntities,
-                    status: oldData.status?.toLowerCase()
-                }}
+                oldData={resolvedTeacher}
                 activeHalaqaRecord={teacherDetails}
                 editMode={true}
                 mutate={mutate}
