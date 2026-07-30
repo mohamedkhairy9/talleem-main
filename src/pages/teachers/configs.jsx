@@ -21,7 +21,7 @@ export const teacherLicenseFilterOptions = [
 
 export const teachersColumns = [
     columnHelper.accessor('name', {
-        header: 'table_headers.name',
+        header: 'table_headers.full_name',
         cell: info => <NameCell directValue={info.row.original.name} />
     }),
     columnHelper.accessor('email', {
@@ -60,17 +60,17 @@ export const teachersFields = [
     // Right Column - Primary Information
     {
         name: 'name.ar',
-        label: 'validation.name.label.ar',
-        type: 'text',
-        placeholder: 'validation.name.placeholder.ar',
+        label: 'validation.full_name.label.ar',
+        type: 'four_part_name',
+        placeholder: 'validation.full_name.placeholder.ar',
         editMode: true,
         viewMode: true
     },
     {
         name: 'name.en',
-        label: 'validation.name.label.en',
-        type: 'text',
-        placeholder: 'validation.name.placeholder.en',
+        label: 'validation.full_name.label.en',
+        type: 'four_part_name',
+        placeholder: 'validation.full_name.placeholder.en',
         editMode: true,
         viewMode: true
     },

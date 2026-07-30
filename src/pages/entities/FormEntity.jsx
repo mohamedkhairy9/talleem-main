@@ -550,7 +550,8 @@ export default function FormEntity({
                 name={fieldName}
                 min={
                     fieldName === 'min_acceptance_age' &&
-                    Number(mainProgramId) === 2
+                    Number(mainProgramId) === 2 &&
+                    !isMinStudentAgeEditable
                         ? minStudentAge
                         : field.min
                 }

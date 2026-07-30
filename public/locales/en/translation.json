@@ -133,6 +133,22 @@
                 "ar": "Enter name in Arabic"
             }
         },
+        "full_name": {
+            "label": {
+                "en": "Full Name (English)",
+                "ar": "Full Name (Arabic)"
+            },
+            "placeholder": {
+                "en": "Enter full name in English",
+                "ar": "Enter full name in Arabic"
+            },
+            "parts": {
+                "first": "First Name",
+                "father": "Father's Name",
+                "grandfather": "Grandfather's Name",
+                "family": "Family Name"
+            }
+        },
         "entity_name": {
             "label": {
                 "en": "Entity Name (English)",
@@ -1582,6 +1598,7 @@
         "description": "Description",
         "fields_count": "Fields Count",
         "name": "Name",
+        "full_name": "Full Name",
         "request_type": "Request Type",
         "order": "Order",
         "steps_count": "Steps Count",

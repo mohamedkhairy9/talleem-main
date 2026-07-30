@@ -1,4 +1,5 @@
 import InputRFH from '@/components/common/inputs/InputRFH';
+import FourPartNameInput from '@/components/common/form/FourPartNameInput';
 import FileInputRFH from '@/components/common/inputs/FileInputRFH';
 import ProfileImageField from './ProfileImageField';
 import { getNestedError } from '@/utils/helpers/getNestedError';
@@ -28,6 +29,22 @@ export default function StudentFormField({
     onDateOfBirthChange
 }) {
     const { t } = useLocale();
+
+    if (field.type === 'four_part_name') {
+        return (
+            <FourPartNameInput
+                name={field.name}
+                label={field.label}
+                placeholder={field.placeholder}
+                value={watch(field.name)}
+                setValue={setValue}
+                register={register}
+                error={getNestedError(errors, field.name)}
+                disabled={viewMode}
+                required={isConditionallyRequired(field)}
+            />
+        );
+    }
 
     // Hide issue_description if has_medical_issues is not 1
     if (field.name === 'issue_description' && watch('has_medical_issues') !== 1) {

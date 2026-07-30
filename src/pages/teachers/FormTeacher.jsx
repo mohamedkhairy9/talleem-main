@@ -3,6 +3,7 @@ import { teachersSchema, teachersSchemaEdit } from '@/utils/yup/teachers.schemas
 import React, { useEffect, useMemo, useState } from 'react';
 import { teachersFields } from './configs';
 import InputRFH from '@/components/common/inputs/InputRFH';
+import FourPartNameInput from '@/components/common/form/FourPartNameInput';
 import FileInputRFH from '@/components/common/inputs/FileInputRFH';
 import Btn from '@/components/common/buttons/Btn';
 import { getNestedError } from '@/utils/helpers/getNestedError';
@@ -522,6 +523,23 @@ export default function FormTeacher({
             )}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {filteredTeacherFields.map(field => {
+                    if (field.type === 'four_part_name') {
+                        return (
+                            <FourPartNameInput
+                                key={field.name}
+                                name={field.name}
+                                label={field.label}
+                                placeholder={field.placeholder}
+                                value={watch(field.name)}
+                                setValue={setValue}
+                                register={register}
+                                error={getNestedError(errors, field.name)}
+                                disabled={viewMode}
+                                required={isFieldRequired(schema, field.name)}
+                            />
+                        );
+                    }
+
                     // Special handling for classification field (read-only, auto-filled)
                     if (field.name === 'education_program_entity_type_classification') {
                         return (
