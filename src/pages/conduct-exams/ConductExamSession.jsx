@@ -574,7 +574,15 @@ export default function ConductExamSession() {
                                 </button>
                             </div>
 
-                            <div className="space-y-5 overflow-y-auto p-4">
+                            <div className="min-h-0 flex-1 space-y-5 overflow-y-auto p-4">
+                                {pageError ? (
+                                    <div
+                                        role="alert"
+                                        className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700"
+                                    >
+                                        {pageError}
+                                    </div>
+                                ) : null}
                                 <InteractiveExamMushaf
                                     segments={segments}
                                     activeSegmentId={activeSegmentId}
@@ -651,6 +659,34 @@ export default function ConductExamSession() {
                                         </div>
                                     </section>
                                 ) : null}
+                            </div>
+
+                            <div className="flex flex-col-reverse gap-3 border-t border-gray-200 px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
+                                <button
+                                    type="button"
+                                    onClick={() => setIsMushafOpen(false)}
+                                    className="rounded-lg border border-gray-300 px-4 py-2 text-sm font-semibold text-gray-700 transition hover:bg-gray-50"
+                                >
+                                    {isArabic ? 'إغلاق' : 'Close'}
+                                </button>
+                                <button
+                                    type="button"
+                                    onClick={handleSubmit}
+                                    disabled={
+                                        submitMutation.isPending ||
+                                        !segments.length ||
+                                        !criteria.length
+                                    }
+                                    className="rounded-lg bg-primary px-5 py-2 text-sm font-semibold text-white transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-70"
+                                >
+                                    {submitMutation.isPending
+                                        ? isArabic
+                                            ? 'جارٍ حفظ الدرجات...'
+                                            : 'Saving grades...'
+                                        : isArabic
+                                        ? 'حفظ الدرجات وتسليم الامتحان'
+                                        : 'Save Grades & Submit Exam'}
+                                </button>
                             </div>
                         </div>
                     </div>
