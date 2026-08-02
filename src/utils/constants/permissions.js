@@ -47,6 +47,20 @@ export function parsePermissionActions(str) {
     return str.split(',').map(s => s.trim()).filter(Boolean);
 }
 
+function normalizePermissionAction(action) {
+    if (!action || typeof action !== 'string') return null;
+    const normalized = action.trim();
+    if (!normalized) return null;
+    return ACTION_NAME_TO_CODE[normalized] || normalized;
+}
+
+function getPermissionName(item) {
+    if (typeof item === 'string') return item;
+    if (!item || typeof item !== 'object') return '';
+
+    return item.name || item.permission || item.key || item.value || '';
+}
+
 /**
  * Parse a single "resource-action" or "resource.action" permission string into { resource, code }.
  * Backend may send "warning_reasons-create", "join_requests-read", "step_actions-update".
@@ -55,9 +69,28 @@ export function parsePermissionActions(str) {
  * @returns {{ resource: string, code: string }|null}
  */
 function parsePermissionString(item) {
-    if (!item || typeof item !== 'string') return null;
-    const s = item.trim();
+    if (
+        item &&
+        typeof item === 'object' &&
+        item.resource &&
+        (item.action || item.code)
+    ) {
+        const code = normalizePermissionAction(item.action || item.code);
+        return code ? { resource: String(item.resource).trim(), code } : null;
+    }
+
+    const name = getPermissionName(item);
+    if (!name || typeof name !== 'string') return null;
+    const s = name.trim();
     if (!s) return null;
+
+    // A few dashboard permissions are single capabilities rather than the
+    // usual `resource-action` format. `conduct-exams` is one of them; it
+    // grants access to the Conduct Exams module and must satisfy its read
+    // guard/menu check.
+    if (s === 'conduct-exams' || s === 'conduct_exams') {
+        return { resource: 'conduct-exams', code: 'r' };
+    }
 
     // Format "resource-action" (backend uses full action names; check longest first for "manage-plans")
     const actionNames = ['manage-plans', 'create', 'read', 'update', 'delete', 'export', 'import', 'assign', 'reset', 'status'];
@@ -78,7 +111,7 @@ function parsePermissionString(item) {
         const resource = s.slice(0, dot).trim();
         const action = s.slice(dot + 1).trim();
         if (!resource || !action) return null;
-        const code = ACTION_NAME_TO_CODE[action] || action;
+        const code = normalizePermissionAction(action);
         return { resource, code };
     }
 
@@ -109,14 +142,40 @@ export function normalizeUserPermissions(raw) {
     }
 
     if (typeof raw === 'object' && raw !== null) {
+        const singlePermission = parsePermissionString(raw);
+        if (singlePermission) {
+            map.set(
+                singlePermission.resource,
+                new Set([singlePermission.code])
+            );
+            return map;
+        }
+
         for (const [resource, value] of Object.entries(raw)) {
             if (!resource) continue;
             const actions = typeof value === 'string'
                 ? parsePermissionActions(value)
                 : Array.isArray(value)
-                    ? value.filter(a => typeof a === 'string')
-                    : [];
-            if (actions.length) map.set(resource, new Set(actions));
+                    ? value
+                        .map(action =>
+                            typeof action === 'string'
+                                ? action
+                                : action?.name || action?.code || action?.action
+                        )
+                        .filter(Boolean)
+                    : value && typeof value === 'object'
+                        ? [value.name || value.code || value.action].filter(Boolean)
+                        : value === true &&
+                            (resource === 'conduct-exams' ||
+                                resource === 'conduct_exams')
+                            ? ['r']
+                            : [];
+            const normalizedActions = actions
+                .map(normalizePermissionAction)
+                .filter(Boolean);
+            if (normalizedActions.length) {
+                map.set(resource, new Set(normalizedActions));
+            }
         }
         return map;
     }

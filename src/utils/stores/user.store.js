@@ -2,7 +2,10 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { normalizeRole } from '../constants/configs';
 import { ROLE_SUPER_ADMIN } from '../constants/configs';
-import { normalizeUserPermissions } from '../constants/permissions';
+import {
+    ACTION_NAME_TO_CODE,
+    normalizeUserPermissions
+} from '../constants/permissions';
 
 export const useUserStore = create(
     persist(
@@ -71,7 +74,11 @@ export const useUserStore = create(
 
                 return resourceAliases.some((alias) => {
                     const actions = permissionsMap.get(alias);
-                    return actions ? actions.has(action) : false;
+                    const normalizedAction =
+                        typeof action === 'string'
+                            ? ACTION_NAME_TO_CODE[action] || action
+                            : action;
+                    return actions ? actions.has(normalizedAction) : false;
                 });
             },
 

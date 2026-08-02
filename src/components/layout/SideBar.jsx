@@ -18,7 +18,12 @@ export default function SideBar() {
     const navigate = useNavigate();
     const { isRTL } = useLanguageStore();
     const { t } = useLocale();
-    const userRoles = useUserStore(useShallow(state => state.user?.roles ?? []));
+    const { userRoles, userPermissions } = useUserStore(
+        useShallow(state => ({
+            userRoles: state.user?.roles ?? [],
+            userPermissions: state.user?.permissions ?? []
+        }))
+    );
     const can = useUserStore(state => state.can);
     const hasRole = useUserStore(state => state.hasRole);
 
@@ -26,7 +31,7 @@ export default function SideBar() {
         if (hasRole(ROLE_SUPER_ADMIN)) return sideMenuTabs;
         const normalizedUserRoles = userRoles.map(normalizeRole).filter(Boolean);
         return filterMenuByVisibility(sideMenuTabs, normalizedUserRoles, can);
-    }, [userRoles, can, hasRole]);
+    }, [userRoles, userPermissions, can, hasRole]);
 
     useEffect(() => {
         const handleResize = () => {
