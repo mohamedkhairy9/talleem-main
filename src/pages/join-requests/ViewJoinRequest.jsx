@@ -17,7 +17,13 @@ import { getJoinRequestDisplayStatus, localizeJoinRequestStatusText } from './st
 import ResubmissionFormBuilder, { createDefaultResubmissionForm } from './ResubmissionFormBuilder';
 import { useRolesQuery } from '@/api/hooks/useRoles';
 import { useUserStore } from '@/utils/stores/user.store';
-import { ROLE_BRANCH_ADMIN, ROLE_ENTITY_MANAGER, ROLE_SUPER_ADMIN, normalizeRole } from '@/utils/constants/configs';
+import {
+    GENERAL_MANAGER_ROLE_ALIASES,
+    ROLE_BRANCH_ADMIN,
+    ROLE_ENTITY_MANAGER,
+    ROLE_SUPER_ADMIN,
+    normalizeRole
+} from '@/utils/constants/configs';
 
 const statusOptions = [
     { label: { ar: 'موافق', en: 'Approved' }, value: 1 },
@@ -134,12 +140,7 @@ const HISTORY_ARRAY_KEYS = [
     'audit_logs'
 ];
 
-const GENERAL_MANAGER_ROLE_KEYS = new Set([
-    normalizeRole('general manager'),
-    normalizeRole('ceo'),
-    normalizeRole('مدير عام'),
-    normalizeRole('مدير الإدارة العامة')
-]);
+const GENERAL_MANAGER_ROLE_KEYS = new Set(GENERAL_MANAGER_ROLE_ALIASES.map(normalizeRole));
 
 function getRoleKeys(value) {
     if (!value) return [];

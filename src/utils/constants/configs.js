@@ -17,6 +17,16 @@ import { IoGrid } from 'react-icons/io5';
 export const ROLE_SUPER_ADMIN = 'super-admin';
 export const ROLE_BRANCH_ADMIN = 'branch manager';
 export const ROLE_ENTITY_MANAGER = 'entity manager';
+// The API can return a role code, English name, or Arabic display name.
+// Keep every accepted representation centralized for consistent access checks.
+export const GENERAL_MANAGER_ROLE_ALIASES = [
+    'general manager',
+    'main administration manager',
+    'main_administration_manager',
+    'ceo',
+    'مدير عام',
+    'مدير الإدارة العامة'
+];
 
 export const normalizeRole = role => {
     const str = typeof role === 'string' ? role : role?.name ?? role?.display_name ?? '';

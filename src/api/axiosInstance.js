@@ -1,7 +1,12 @@
 import axios from 'axios';
 import { useUserStore } from '../utils/stores/user.store';
 import i18n from '../i18n';
-import { ROLE_SUPER_ADMIN, ROLE_BRANCH_ADMIN, normalizeRole } from '../utils/constants/configs';
+import {
+    GENERAL_MANAGER_ROLE_ALIASES,
+    ROLE_SUPER_ADMIN,
+    ROLE_BRANCH_ADMIN,
+    normalizeRole
+} from '../utils/constants/configs';
 import { getLocalizedErrorMessage, getRawErrorMessage } from '@/utils/helpers/localizedMessages';
 
 const baseURL =
@@ -61,12 +66,7 @@ export function isGeneralManagerUser() {
     const user = useUserStore.getState().user;
     if (!user?.roles?.length) return false;
 
-    const generalManagerRoles = new Set([
-        normalizeRole('general manager'),
-        normalizeRole('ceo'),
-        normalizeRole('مدير عام'),
-        normalizeRole('مدير الإدارة العامة')
-    ]);
+    const generalManagerRoles = new Set(GENERAL_MANAGER_ROLE_ALIASES.map(normalizeRole));
 
     return user.roles
         .map(normalizeRole)

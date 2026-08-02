@@ -1,15 +1,11 @@
 import {
+    GENERAL_MANAGER_ROLE_ALIASES,
     ROLE_BRANCH_ADMIN,
     ROLE_SUPER_ADMIN,
     normalizeRole
 } from '@/utils/constants/configs';
 
-const GENERAL_MANAGER_ROLES = new Set([
-    normalizeRole('general manager'),
-    normalizeRole('ceo'),
-    normalizeRole('مدير عام'),
-    normalizeRole('مدير الإدارة العامة')
-]);
+const GENERAL_MANAGER_ROLES = new Set(GENERAL_MANAGER_ROLE_ALIASES.map(normalizeRole));
 
 const getId = value => {
     if (value === null || value === undefined || value === '') return null;
