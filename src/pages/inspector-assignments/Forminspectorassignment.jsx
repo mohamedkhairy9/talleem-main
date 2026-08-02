@@ -360,6 +360,11 @@ export default function FormInspectorAssignment({
                                 label={field.label}
                                 name={field.name}
                                 options={generateOptions(fieldOptions)}
+                                // The entities here are already loaded with the
+                                // selected branch and main program. Keep these
+                                // scoped options instead of replacing them with
+                                // the global async entity lookup.
+                                isAsync={field.name === 'entity_ids' ? false : undefined}
                                 defaultValue={
                                     field.name === 'entity_ids' 
                                         ? (oldData?.entity_ids || [])
