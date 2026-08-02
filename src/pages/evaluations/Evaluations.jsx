@@ -4,8 +4,8 @@ import useFiltering from '@/utils/hooks/global/useFiltering';
 import useIsOpen from '@/utils/hooks/global/useIsOpen';
 import useLocale from '@/utils/hooks/global/useLocale';
 import {
-    useAvailableEvaluationParametersQuery,
     useEvaluationsQuery,
+    useEvaluationTemplatesQuery,
     useReceivedEvaluationsQuery
 } from '@/api/hooks/useEvaluations';
 import { getEvaluationColumns, getTemplateColumns } from './configs';
@@ -28,7 +28,9 @@ export default function Evaluations() {
     const receivedQuery = useReceivedEvaluationsQuery(filters, {
         enabled: activeTab === 'received'
     });
-    const availableParametersQuery = useAvailableEvaluationParametersQuery(
+    // The templates tab lists the templates visible to the signed-in dashboard.
+    // `available-parameters` is only used while creating an evaluation.
+    const templatesQuery = useEvaluationTemplatesQuery(
         pagination,
         { enabled: activeTab === 'templates' }
     );
@@ -36,7 +38,7 @@ export default function Evaluations() {
         activeTab === 'received'
                 ? receivedQuery
             : activeTab === 'templates'
-                ? availableParametersQuery
+                ? templatesQuery
                 : evaluationsQuery;
     const sourceData = sourceQuery.data;
     const allTableData = extractCollection(sourceData);

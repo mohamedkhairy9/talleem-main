@@ -42,7 +42,9 @@ const SECTION_KEYS = {
 };
 
 // Keys we never show (not user-readable)
-const HIDDEN_KEYS = new Set(['id', 'created_at', 'updated_at', 'code']);
+// IDs are implementation details.  The request details view should show the
+// human-readable relation (city, branch, entity, etc.), never a raw city ID.
+const HIDDEN_KEYS = new Set(['id', 'created_at', 'updated_at', 'code', 'city_id']);
 
 // Keys that indicate the object is "data" (e.g. manager), not a simple relation – do not collapse to name only
 const DATA_OBJECT_KEYS = new Set([
@@ -685,6 +687,14 @@ export default function ViewJoinRequest({ onClose, oldData, isReadOnly = false, 
 
     const getFieldLabel = (key) => {
         if (key === 'activity_ids') return t('table_headers.activities');
+
+        // Request payloads can contain fields which are not table columns.
+        // Keep their labels in the request-details namespace rather than
+        // exposing their API keys (e.g. "MIN ACCEPTANCE AGE") to users.
+        const requestFieldKey = `join_requests.field_labels.${key}`;
+        const requestFieldLabel = t(requestFieldKey);
+        if (requestFieldLabel !== requestFieldKey) return requestFieldLabel;
+
         const i18nKey = `table_headers.${key}`;
         const translated = t(i18nKey);
         return translated !== i18nKey ? translated : formatKey(key);

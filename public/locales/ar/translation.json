@@ -1899,7 +1899,7 @@
         "submitted_data": "البيانات المقدمة",
         "parent_info": "معلومات الوالد",
         "qualification": "المؤهلات",
-        "section_entity_info": "معلومات الجهة",
+        "section_entity_info": "معلومات مقدم الطلب",
         "section_location": "الموقع",
         "section_program": "البرنامج والجلسة",
         "section_manager": "معلومات المدير",
@@ -1919,7 +1919,22 @@
         "history_empty": "لا توجد سجلات متاحة لهذا الطلب حالياً.",
         "loading_latest_details": "جارٍ تحميل أحدث تفاصيل الطلب...",
         "finalized_read_only_log": "تم إنهاء هذا الطلب نهائياً وهو متاح الآن كسجل للعرض فقط.",
-        "unauthorized_read_only": "غير مصرح لك بتنفيذ إجراء على هذا الطلب. الطلب متاح للعرض فقط."
+        "unauthorized_read_only": "غير مصرح لك بتنفيذ إجراء على هذا الطلب. الطلب متاح للعرض فقط.",
+        "field_labels": {
+            "entry_type": "نوع الإدخال",
+            "dob": "تاريخ الميلاد",
+            "gregorian": "التاريخ الميلادي",
+            "hijri": "التاريخ الهجري",
+            "hijri_indic": "التاريخ الهجري",
+            "memorization_amount": "مقدار الحفظ",
+            "entity_ids": "الجهات",
+            "min_acceptance_age": "أقل سن لقبول الطالب",
+            "memorization_program_entity_type": "نوع جهة برنامج التحفيظ",
+            "education_program_entity_type": "نوع جهة برنامج التعليم",
+            "manager_email": "البريد الإلكتروني للمدير",
+            "manager_phone": "هاتف المدير",
+            "files": "الملفات"
+        }
     },
     "warnings": {
         "create": "إضافة إنذار",

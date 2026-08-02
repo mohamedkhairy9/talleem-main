@@ -1763,7 +1763,7 @@
         "submitted_data": "Submitted Data",
         "parent_info": "Parent Information",
         "qualification": "Qualification",
-        "section_entity_info": "Entity Information",
+        "section_entity_info": "Applicant Information",
         "section_location": "Location",
         "section_program": "Program & Session",
         "section_manager": "Manager Information",
@@ -1783,7 +1783,22 @@
         "history_empty": "No history entries are available for this request yet.",
         "loading_latest_details": "Loading latest request details...",
         "finalized_read_only_log": "This request has already been finalized and is now available as a read-only record.",
-        "unauthorized_read_only": "You are not authorized to perform an action on this request. It is available as a read-only record."
+        "unauthorized_read_only": "You are not authorized to perform an action on this request. It is available as a read-only record.",
+        "field_labels": {
+            "entry_type": "Entry Type",
+            "dob": "Date of Birth",
+            "gregorian": "Gregorian Date",
+            "hijri": "Hijri Date",
+            "hijri_indic": "Hijri Date",
+            "memorization_amount": "Memorization Amount",
+            "entity_ids": "Entities",
+            "min_acceptance_age": "Minimum Student Acceptance Age",
+            "memorization_program_entity_type": "Memorization Program Entity Type",
+            "education_program_entity_type": "Education Program Entity Type",
+            "manager_email": "Manager Email",
+            "manager_phone": "Manager Phone",
+            "files": "Files"
+        }
     },
     "warnings": {
         "create": "Add Warning",
