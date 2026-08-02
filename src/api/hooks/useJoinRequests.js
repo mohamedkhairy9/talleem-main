@@ -46,6 +46,16 @@ export const useProcessJoinRequestStepMutation = () => {
             queryClient.invalidateQueries({
                 queryKey: [API_KEYS.JOIN_REQUESTS]
             });
+
+            // A final approval for a teacher join request creates its Teacher
+            // profile and User account on the workflow API. These lists can
+            // otherwise remain fresh in React Query for up to five minutes.
+            queryClient.invalidateQueries({
+                queryKey: [API_KEYS.TEACHERS]
+            });
+            queryClient.invalidateQueries({
+                queryKey: [API_KEYS.USERS]
+            });
         }
     });
 };
