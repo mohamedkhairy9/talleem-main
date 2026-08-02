@@ -7,6 +7,7 @@ import { BrowserRouter } from 'react-router-dom';
 import AppRoutes from './routes/AppRoutes';
 import { ToastContainer } from 'react-toastify';
 import useLanguageStore from './utils/stores/language.store';
+import SupervisorEntityContextGate from './components/auth/SupervisorEntityContextGate';
 
 export default function App() {
     const { initializeLanguage } = useLanguageStore();
@@ -20,7 +21,9 @@ export default function App() {
             <ReactQueryDevtools initialIsOpen={false} />
             <BrowserRouter>
                 <ToastContainer autoClose={1000} />
-                <AppRoutes />
+                <SupervisorEntityContextGate>
+                    <AppRoutes />
+                </SupervisorEntityContextGate>
             </BrowserRouter>
         </QueryClientProvider>
     );

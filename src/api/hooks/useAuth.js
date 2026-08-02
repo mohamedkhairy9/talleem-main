@@ -7,6 +7,9 @@ import i18n from '../../i18n';
 
 export const useLoginMutation = () => {
     const setUser = useUserStore(state => state.setUser);
+    const clearSelectedSupervisorEntity = useUserStore(
+        state => state.clearSelectedSupervisorEntity
+    );
     
     return useCustomMutation({
         mutationFn: data => authService.login(data),
@@ -17,6 +20,9 @@ export const useLoginMutation = () => {
             // through the axios interceptor. This makes the dashboard use the
             // latest roles and effective permissions before rendering its menus.
             let authenticatedUser = data.user;
+            // A new login must always begin by choosing the supervisor context
+            // again, rather than inheriting a selection from a previous session.
+            clearSelectedSupervisorEntity();
             setUser(authenticatedUser, data.access_token);
 
             try {

@@ -105,6 +105,10 @@ export const API_URLS = {
         UPDATE: id => `/supervisor-assignments/${id}`,
         DELETE: id => `/supervisor-assignments/${id}`
     },
+    SUPERVISOR_CONTEXT: {
+        BRANCHES: '/supervisor/plans/lookup/branches',
+        ENTITIES: '/supervisor/plans/lookup/entities'
+    },
     MAIN_PROGRAMS: {
         CREATE: '/main-programs',
         LIST: '/main-programs',

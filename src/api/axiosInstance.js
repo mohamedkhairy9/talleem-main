@@ -83,13 +83,24 @@ export const axiosInstanceFront = axios.create({
     paramsSerializer
 });
 
-const requestInterceptor = config => {
+const requestInterceptor = (config, { includeSupervisorEntity = false } = {}) => {
     const token = useUserStore.getState().access_token;
     if (token) {
         config.headers.Authorization = `Bearer ${token}`;
     }
     const currentLanguage = i18n.language || 'en';
     config.headers['Accept-Language'] = currentLanguage;
+
+    // Supervisor-facing APIs use this header to scope requests to the entity
+    // chosen when the supervisor signed in. Dashboard APIs intentionally keep
+    // their existing behavior; only Front endpoints consume this context.
+    if (includeSupervisorEntity && !config.skipSupervisorEntityContext) {
+        const selectedEntity =
+            useUserStore.getState().selectedSupervisorEntity;
+        if (selectedEntity?.id) {
+            config.headers['X-Entity-Id'] = selectedEntity.id;
+        }
+    }
     if (config.params) {
         const cleanedParams = {};
         Object.keys(config.params).forEach(key => {
@@ -129,5 +140,8 @@ const responseErrorInterceptor = error => {
 axiosInstance.interceptors.request.use(requestInterceptor, error => Promise.reject(error));
 axiosInstance.interceptors.response.use(responseInterceptor, responseErrorInterceptor);
 
-axiosInstanceFront.interceptors.request.use(requestInterceptor, error => Promise.reject(error));
+axiosInstanceFront.interceptors.request.use(
+    config => requestInterceptor(config, { includeSupervisorEntity: true }),
+    error => Promise.reject(error)
+);
 axiosInstanceFront.interceptors.response.use(responseInterceptor, responseErrorInterceptor);

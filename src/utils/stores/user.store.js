@@ -11,6 +11,10 @@ export const useUserStore = create(
             user: null,
             access_token: null,
             isAuthenticated: false,
+            // The active entity is selected only for supervisors who are
+            // assigned to more than one entity. It is persisted so a refresh
+            // does not lose the current working context.
+            selectedSupervisorEntity: null,
 
             // ===== Actions =====
             setUser: (user, access_token) =>
@@ -24,8 +28,15 @@ export const useUserStore = create(
                 set({
                     user: null,
                     access_token: null,
-                    isAuthenticated: false
+                    isAuthenticated: false,
+                    selectedSupervisorEntity: null
                 }),
+
+            setSelectedSupervisorEntity: entity =>
+                set({ selectedSupervisorEntity: entity || null }),
+
+            clearSelectedSupervisorEntity: () =>
+                set({ selectedSupervisorEntity: null }),
 
             updateUser: updatedFields =>
                 set({
@@ -46,8 +57,22 @@ export const useUserStore = create(
                 if (!user) return false;
                 if (get().hasRole(ROLE_SUPER_ADMIN)) return true;
                 const permissionsMap = normalizeUserPermissions(user.permissions);
-                const actions = permissionsMap.get(resource);
-                return actions ? actions.has(action) : false;
+                if (!resource) return false;
+
+                // The permissions API can use snake_case while route guards
+                // and navigation use kebab-case. Both forms identify the same
+                // resource and must grant the same access.
+                const resourceName = String(resource).trim();
+                const resourceAliases = [
+                    resourceName,
+                    resourceName.replace(/-/g, "_"),
+                    resourceName.replace(/_/g, "-"),
+                ];
+
+                return resourceAliases.some((alias) => {
+                    const actions = permissionsMap.get(alias);
+                    return actions ? actions.has(action) : false;
+                });
             },
 
             /** Check if user has any of the given (resource, action) pairs. */
@@ -79,7 +104,8 @@ export const useUserStore = create(
             partialize: state => ({
                 user: state.user,
                 access_token: state.access_token,
-                isAuthenticated: state.isAuthenticated
+                isAuthenticated: state.isAuthenticated,
+                selectedSupervisorEntity: state.selectedSupervisorEntity
             })
         }
     )
