@@ -176,7 +176,7 @@ export const RESOURCE_BY_PATH = {
     '/education-program-entity-types': 'education_program_entity_types',
     '/specifications': 'specifications',
     '/inspector-assignments': 'supervisor_assignments',
-    '/conduct-exams': 'supervisor_assignments',
+    '/conduct-exams': 'conduct-exams',
     '/issuing-warnings': 'warnings',
     '/certificates': 'certificates',
     '/request-types': 'request_types',
@@ -206,7 +206,7 @@ export function getRequiredPermissionForPath(pathname) {
         return { resource, action: 'r' };
     }
     if (pathname.startsWith('/conduct-exams') || pathname.startsWith('conduct-exams')) {
-        return { resource: 'supervisor_assignments', action: 'r' };
+        return { resource: 'conduct-exams', action: 'r' };
     }
     if (pathname.startsWith('/join-requests') || pathname.startsWith('join-requests')) return { resource: 'join_requests', action: 'r' };
     if (pathname.startsWith('/phases') || pathname.startsWith('phases')) return { resource: 'phases', action: 'r' };

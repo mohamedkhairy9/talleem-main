@@ -448,7 +448,7 @@ export const sideMenuTabs = [
                 titleKey: 'sidebar.conduct_exams',
                 path: '/conduct-exams',
                 icon: VscDebugBreakpointLog,
-                requiredPermission: { resource: 'supervisor_assignments', action: 'r' }
+                requiredPermission: { resource: 'conduct-exams', action: 'r' }
             },
             {
                 titleKey: 'sidebar.inspector-assignments',

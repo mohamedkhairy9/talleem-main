@@ -50,16 +50,20 @@ export default function ConductExams() {
     const [now, setNow] = useState(() => new Date());
 
     const branchesQuery = useConductExamBranchesQuery();
+    const branches = extractCollection(branchesQuery.data).map(normalizeBranchItem);
+    // The API returns only the branches that the current account may access.
+    // A branch manager normally receives one branch, so make it the active
+    // scope immediately instead of initially querying every branch.
+    const effectiveBranchId =
+        selectedBranchId || (branches.length === 1 ? String(branches[0].id) : '');
     const entitiesQuery = useConductExamEntitiesQuery(
-        selectedBranchId ? { branch_id: selectedBranchId } : {}
+        effectiveBranchId ? { branch_id: effectiveBranchId } : {}
     );
-    const todayQuery = useConductExamTodayQuery();
+    const todayQuery = useConductExamTodayQuery(
+        effectiveBranchId ? { branch_id: effectiveBranchId } : {}
+    );
     const configurationsQuery = useConfigurationsQuery('tahfiz');
 
-    const branches = useMemo(
-        () => extractCollection(branchesQuery.data).map(normalizeBranchItem),
-        [branchesQuery.data]
-    );
     const entities = useMemo(
         () => extractCollection(entitiesQuery.data).map(normalizeEntityItem),
         [entitiesQuery.data]
@@ -74,11 +78,17 @@ export default function ConductExams() {
     );
     const filteredTodayExams = useMemo(
         () => todayExams.filter(exam => (
-            (!selectedBranchId || String(exam.branchId) === String(selectedBranchId)) &&
+            (!effectiveBranchId || String(exam.branchId) === String(effectiveBranchId)) &&
             (!selectedEntityId || String(exam.entityId) === String(selectedEntityId))
         )),
-        [todayExams, selectedBranchId, selectedEntityId]
+        [todayExams, effectiveBranchId, selectedEntityId]
     );
+
+    useEffect(() => {
+        if (!selectedBranchId && branches.length === 1) {
+            setSelectedBranchId(String(branches[0].id));
+        }
+    }, [branches, selectedBranchId]);
 
     useEffect(() => {
         if (
