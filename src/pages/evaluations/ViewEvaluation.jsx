@@ -6,26 +6,53 @@ import useLocale from '@/utils/hooks/global/useLocale';
 import { useEvaluationQuery } from '@/api/hooks/useEvaluations';
 import { extractRecord, getEvaluationTargetName, getLocalizedText, getTemplateName } from './helpers';
 
+const displayValue = value => {
+    if (value === null || value === undefined || value === '') return '-';
+    if (typeof value === 'string' || typeof value === 'number') return value;
+
+    if (Array.isArray(value)) {
+        return value.map(displayValue).filter(item => item !== '-').join(', ') || '-';
+    }
+
+    // Dashboard date values are returned as { gregorian, hijri, hijri_indic }.
+    // React cannot render that object directly, so always resolve it to text.
+    return value.gregorian || value.hijri || value.date || value.value || '-';
+};
+
 const Value = ({ label, value }) => (
     <div className="rounded-lg bg-gray-50 p-3">
         <p className="text-xs text-gray-500">{label}</p>
-        <p className="mt-1 font-medium text-gray-900">{value || '-'}</p>
+        <p className="mt-1 font-medium text-gray-900">{displayValue(value)}</p>
     </div>
 );
 
 export default function ViewEvaluation({ onClose, evaluation }) {
     const { currentLocale } = useLocale();
     const isArabic = currentLocale === 'ar';
-    const { data, isLoading } = useEvaluationQuery(evaluation?.id);
+    const { data, isLoading, isError, error } = useEvaluationQuery(evaluation?.id);
     const details = extractRecord(data) || evaluation;
-    const criteriaScores =
+    const rawCriteriaScores =
         details?.criteria_scores || details?.scores || details?.evaluation_scores || [];
+    // The received-evaluations endpoint and the details endpoint may return
+    // score collections in different shapes. Do not let a non-array value
+    // break the View modal while the details request is loading or fails.
+    const criteriaScores = Array.isArray(rawCriteriaScores)
+        ? rawCriteriaScores
+        : Object.values(rawCriteriaScores || {});
 
     return (
         <Modal onClose={onClose} size="3xl">
             <ModalHeader onClose={onClose} header={isArabic ? 'تفاصيل التقييم' : 'Evaluation Details'} />
             {isLoading ? (
                 <div className="p-10"><Loader /></div>
+            ) : isError ? (
+                <div className="p-6">
+                    <div className="rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-700">
+                        {isArabic
+                            ? error?.message || 'تعذر تحميل تفاصيل التقييم. حاول مرة أخرى.'
+                            : error?.message || 'Unable to load evaluation details. Please try again.'}
+                    </div>
+                </div>
             ) : (
                 <div className="space-y-5 overflow-y-auto p-6">
                     <div className="grid gap-3 md:grid-cols-2">
