@@ -4,15 +4,13 @@ import ModalHeader from '@/components/common/form/ModalHeader';
 import Btn from '@/components/common/buttons/Btn';
 import useLocale from '@/utils/hooks/global/useLocale';
 import {
-    useAvailableEvaluationParametersQuery,
-    useCreateEvaluationMutation
+    useCreateEvaluationMutation,
+    useEvaluationTemplatesQuery
 } from '@/api/hooks/useEvaluations';
 import { useEntitiesQuery } from '@/api/hooks/useEntities';
 import { useTeachersQuery } from '@/api/hooks/useTeachers';
 import { useStudentsQuery } from '@/api/hooks/useStudents';
-import { useUserStore } from '@/utils/stores/user.store';
 import {
-    canSubmitEvaluationTemplate,
     extractCollection,
     getLocalizedText
 } from './helpers';
@@ -44,7 +42,6 @@ const getEvaluationType = evaluationFor => {
 export default function CreateEvaluation({ onClose }) {
     const { currentLocale } = useLocale();
     const isArabic = currentLocale === 'ar';
-    const currentUser = useUserStore(state => state.user);
     const { mutate, isPending, error } = useCreateEvaluationMutation();
     const [form, setForm] = useState({
         evaluation_parameter_id: '',
@@ -57,9 +54,9 @@ export default function CreateEvaluation({ onClose }) {
     const [formError, setFormError] = useState('');
 
     const {
-        data: availableParametersResponse,
+        data: templatesResponse,
         isLoading: templatesLoading
-    } = useAvailableEvaluationParametersQuery({ page: 1, per_page: 100 });
+    } = useEvaluationTemplatesQuery({ page: 1, per_page: 100 });
     const { data: entitiesResponse } = useEntitiesQuery(
         { page: 1, per_page: 100 },
         { enabled: form.evaluated_type === 'entity' }
@@ -73,14 +70,10 @@ export default function CreateEvaluation({ onClose }) {
         { enabled: form.evaluated_type === 'student' }
     );
 
-    const templates = extractCollection(availableParametersResponse);
-    const availableTemplates = useMemo(
-        () =>
-            templates.filter(template =>
-                canSubmitEvaluationTemplate(template, currentUser)
-            ),
-        [currentUser, templates]
-    );
+    // This endpoint returns the evaluation templates available to the current
+    // dashboard, including their evaluated type and criteria.
+    const templates = extractCollection(templatesResponse);
+    const availableTemplates = templates;
     const selectedTemplate = templates.find(
         template => String(template.id) === String(form.evaluation_parameter_id)
     );
@@ -135,15 +128,6 @@ export default function CreateEvaluation({ onClose }) {
 
         if (!form.evaluation_parameter_id || !form.evaluated_id || !form.evaluation_date) {
             setFormError(isArabic ? 'يرجى استكمال الحقول المطلوبة.' : 'Please complete the required fields.');
-            return;
-        }
-
-        if (!canSubmitEvaluationTemplate(selectedTemplate, currentUser)) {
-            setFormError(
-                isArabic
-                    ? 'ليس لديك صلاحية لإرسال هذا التقييم.'
-                    : 'You do not have permission to submit this evaluation template.'
-            );
             return;
         }
 
