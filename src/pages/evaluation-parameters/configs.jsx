@@ -58,7 +58,6 @@ export const roleOptions = [
     },
     {
         value: 'entity',
-        apiValue: { en: 'Entity', ar: 'الجهة' },
         label: {
             en: 'Entity',
             ar: 'الجهة'
