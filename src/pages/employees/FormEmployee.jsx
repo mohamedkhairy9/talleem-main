@@ -245,21 +245,42 @@ export default function FormEmployee({
     );
     const selectedBranchIds = normalizeSelectedIds(branchId);
 
+    // The entities endpoint filters by `branch_id` (not `branches_id`).
+    // Keep the query aligned with that contract so "Select all entities"
+    // never starts from the full system-wide entities list.
+    const entitiesQueryParams = useMemo(() => {
+        if (selectedBranchIds.length === 0) {
+            return allData;
+        }
+
+        return {
+            ...allData,
+            branch_id: selectedBranchIds[0],
+            ...(selectedBranchIds.length > 1
+                ? { branch_ids: selectedBranchIds }
+                : {})
+        };
+    }, [selectedBranchIds.join(',')]);
+
     const [isRolesForced, setIsRolesForced] = useState(false);
     const [isCeoJob, setIsCeoJob] = useState(false);
     const {
         data: entitiesData,
         isLoading: entitiesLoading
     } = useEntitiesQuery(
-        {
-            ...allData,
-            branches_id: selectedBranchIds
-        },
+        entitiesQueryParams,
         {
             enabled: selectedBranchIds.length > 0 && !isCeoJob
         }
     );
-    const entityOptions = entitiesData?.data ?? [];
+    const entityOptions = useMemo(() => {
+        const allowedBranchIds = new Set(selectedBranchIds.map(String));
+
+        return (entitiesData?.data ?? []).filter(entity => {
+            const entityBranchId = entity?.branch_id ?? entity?.branch?.id;
+            return allowedBranchIds.has(String(entityBranchId));
+        });
+    }, [entitiesData?.data, selectedBranchIds.join(',')]);
 
     useEffect(() => {
         if (isCeoJob) {
@@ -492,10 +513,12 @@ export default function FormEmployee({
                 fieldParams={{
                     entity_id: hasBranchSelection
                         ? {
-                              branches_id: selectedBranchIds
+                              branch_id: selectedBranchIds[0]
                           }
                         : {
-                              branches_id: normalizedDefaultValues.branch_id
+                              branch_id: normalizeSelectedIds(
+                                  normalizedDefaultValues.branch_id
+                              )[0]
                           }
                 }}
             />
