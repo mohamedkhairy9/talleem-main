@@ -14,6 +14,22 @@ import { isFieldRequired } from '@/utils/helpers/schemaHelpers';
 import ModalContent from '@/components/common/form/ModalContent';
 import ModalFooter from '@/components/common/form/ModalFooter';
 
+const normalizeOptionValue = (item, options) => {
+    const rawValue = typeof item === 'object' && item !== null
+        ? item.en ?? item.ar ?? item.value
+        : item;
+
+    const option = options.find(candidate => [
+        candidate.value,
+        candidate.apiValue?.en,
+        candidate.apiValue?.ar,
+        candidate.label?.en,
+        candidate.label?.ar
+    ].some(value => String(value) === String(rawValue)));
+
+    return option?.value ?? rawValue ?? '';
+};
+
 export default function FormEvaluationParameter({
     onClose,
     oldData,
@@ -39,17 +55,17 @@ export default function FormEvaluationParameter({
         return {
             ...oldData,
             model_type: oldData.model_type?.en || oldData.model_type || '',
-            evaluation_for: oldData.evaluation_for?.en || oldData.evaluation_for || '',
+            evaluation_for: normalizeOptionValue(oldData.evaluation_for, evaluationForOptions),
             evaluation_system: evaluationSystem,
             // The API uses `passing_grade`; keep the legacy key as a read fallback only.
             passing_grade: oldData.passing_grade ?? oldData.pass_grade ?? '',
             // Set total_grade to 100 if evaluation_system is percentage
             total_grade: evaluationSystem === 'percentage' ? 100 : oldData.total_grade,
             dashboards: Array.isArray(oldData.dashboards)
-                ? oldData.dashboards.map(item => typeof item === 'object' ? item.en : item)
+                ? oldData.dashboards.map(item => normalizeOptionValue(item, dashboardOptions))
                 : [],
             receivers: Array.isArray(oldData.receivers)
-                ? oldData.receivers.map(item => typeof item === 'object' ? item.en : item)
+                ? oldData.receivers.map(item => normalizeOptionValue(item, dashboardOptions))
                 : []
         };
     }, [oldData]);
@@ -267,10 +283,12 @@ export default function FormEvaluationParameter({
 
         // Helper function to transform value to bilingual object
         const toBilingualObject = (value, optionsArray) => {
-            const option = optionsArray.find(r => r.value === value);
-            return {
-                en: value,
-                ar: option?.label.ar || value
+            const normalizedValue = normalizeOptionValue(value, optionsArray);
+            const option = optionsArray.find(candidate => candidate.value === normalizedValue);
+
+            return option?.apiValue || {
+                en: option?.label?.en || normalizedValue,
+                ar: option?.label?.ar || normalizedValue
             };
         };
 

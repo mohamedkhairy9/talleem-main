@@ -58,6 +58,7 @@ export const roleOptions = [
     },
     {
         value: 'entity',
+        apiValue: { en: 'Entity', ar: 'الجهة' },
         label: {
             en: 'Entity',
             ar: 'الجهة'
@@ -97,6 +98,7 @@ export const roleOptions = [
 export const dashboardOptions = [
     {
         value: 'entity',
+        apiValue: { en: 'Entity', ar: 'الجهة' },
         label: {
             en: 'Entity',
             ar: 'الجهة'
@@ -104,6 +106,7 @@ export const dashboardOptions = [
     },
     {
         value: 'teacher',
+        apiValue: { en: 'Teacher', ar: 'المعلم' },
         label: {
             en: 'Teacher',
             ar: 'المعلم'
@@ -111,6 +114,7 @@ export const dashboardOptions = [
     },
     {
         value: 'student',
+        apiValue: { en: 'Student', ar: 'الطالب' },
         label: {
             en: 'Student',
             ar: 'الطالب'
@@ -118,6 +122,7 @@ export const dashboardOptions = [
     },
     {
         value: 'branch-manager',
+        apiValue: { en: 'Supervisor', ar: 'مشرف' },
         label: {
             en: 'Inspector',
             ar: 'مشرف'
@@ -125,6 +130,7 @@ export const dashboardOptions = [
     },
     {
         value: 'admin-portal-branch',
+        apiValue: { en: 'Branch Management', ar: 'إدارة الفرع' },
         label: {
             en: 'Admin Portal/Branch',
             ar: 'البوابة الرئيسية / إدارة الفرع'
@@ -139,6 +145,7 @@ export const dashboardOptions = [
     // },
     {
         value: 'admin-portal-main-administration',
+        apiValue: { en: 'General Administration', ar: 'الإدارة العامة' },
         label: {
             en: 'Admin Portal/Main Administration',
             ar: 'البوابة الرئيسية / الإدارة العامة'
@@ -200,6 +207,7 @@ export const modelTypeOptions = [
 export const evaluationForOptions = [
     {
         value: 'entity',
+        apiValue: { en: 'Entity', ar: 'الجهة' },
         label: {
             en: 'Entity',
             ar: 'الجهة'
@@ -207,6 +215,7 @@ export const evaluationForOptions = [
     },
     {
         value: 'teacher',
+        apiValue: { en: 'Teacher', ar: 'المعلم' },
         label: {
             en: 'Teacher',
             ar: 'المعلم'
@@ -214,6 +223,7 @@ export const evaluationForOptions = [
     },
     {
         value: 'student',
+        apiValue: { en: 'Student', ar: 'الطالب' },
         label: {
             en: 'Student',
             ar: 'الطالب'

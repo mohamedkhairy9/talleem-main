@@ -155,7 +155,7 @@ export default function StudentFormField({
         const entityDefaultOptions = enhancedOptions._entityDefaultOptions;
         // Create a key that changes when params are ready to force reload
         const entityKey = `${field.name}-${branchId || ''}-${mainProgramId || ''}`;
-        
+
         return (
             <div key={entityKey}>
                 <InputRFH
