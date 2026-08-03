@@ -28,8 +28,10 @@ import {
 const statusOptions = [
     { label: { ar: 'موافق', en: 'Approved' }, value: 1 },
     { label: { ar: 'مرفوض', en: 'Rejected' }, value: 2 },
-    { label: { ar: 'يحتاج مراجعة', en: 'Need Review' }, value: 3 },
-    { label: { ar: 'يحتاج رفع', en: 'Need Upload' }, value: 4 }
+    // Keep the existing API values: 3 is the review state and 4 opens the
+    // resubmission form. Only their user-facing names are standardised.
+    { label: { ar: 'غير مكتمل', en: 'Incomplete' }, value: 4 },
+    { label: { ar: 'قيد المراجعة', en: 'Under Review' }, value: 3 }
 ];
 
 // Group submitted_data keys into logical sections for review
@@ -256,8 +258,8 @@ const STATUS_TEXT_MAP = {
     0: { en: 'Pending', ar: 'قيد الانتظار' },
     1: { en: 'Approved', ar: 'موافق' },
     2: { en: 'Rejected', ar: 'مرفوض' },
-    3: { en: 'Need Review', ar: 'يحتاج مراجعة' },
-    4: { en: 'Need Upload', ar: 'يحتاج رفع' }
+    3: { en: 'Under Review', ar: 'قيد المراجعة' },
+    4: { en: 'Incomplete', ar: 'غير مكتمل' }
 };
 
 function getLocalizedValue(value, currentLocale = 'en') {
@@ -494,8 +496,8 @@ function getHistoryBadgeClasses(statusText = '') {
     const text = statusText.toLowerCase();
     if (text.includes('approved') || text.includes('موافق') || text.includes('قبول')) return 'bg-green-100 text-green-800';
     if (text.includes('rejected') || text.includes('مرفوض')) return 'bg-red-100 text-red-800';
+    if (text.includes('incomplete') || text.includes('غير مكتمل') || text.includes('upload') || text.includes('رفع')) return 'bg-purple-100 text-purple-800';
     if (text.includes('review') || text.includes('مراجعة')) return 'bg-blue-100 text-blue-800';
-    if (text.includes('upload') || text.includes('رفع')) return 'bg-purple-100 text-purple-800';
     if (text.includes('pending') || text.includes('انتظار') || text.includes('قيد المراجعة')) return 'bg-yellow-100 text-yellow-800';
     return 'bg-gray-100 text-gray-700';
 }

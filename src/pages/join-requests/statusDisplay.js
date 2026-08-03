@@ -32,17 +32,17 @@ const STATUS_TEXT_MAP = {
     0: { en: 'Pending', ar: 'قيد الانتظار' },
     1: { en: 'Approved', ar: 'موافق' },
     2: { en: 'Rejected', ar: 'مرفوض' },
-    3: { en: 'Need Review', ar: 'يحتاج مراجعة' },
-    4: { en: 'Need Upload', ar: 'يحتاج رفع' }
+    3: { en: 'Under Review', ar: 'قيد المراجعة' },
+    4: { en: 'Incomplete', ar: 'غير مكتمل' }
 };
 
 const ARABIC_DISPLAY_STATUS_MAP = {
     new: 'جديد',
     pending: 'قيد المراجعة',
-    approved: 'تم القبول',
+    approved: 'موافق',
     rejected: 'مرفوض',
-    needReview: 'بحاجة لمراجعة',
-    needUpload: 'بحاجة لرفع'
+    underReview: 'قيد المراجعة',
+    incomplete: 'غير مكتمل'
 };
 
 function normalizeText(value) {
@@ -113,11 +113,11 @@ export function localizeJoinRequestStatusText(statusText, currentLocale = 'en') 
     if (normalized.includes('rejected') || normalized.includes('declined') || normalized.includes('مرفوض')) {
         return ARABIC_DISPLAY_STATUS_MAP.rejected;
     }
-    if (normalized.includes('review') || normalized.includes('مراجعه')) {
-        return ARABIC_DISPLAY_STATUS_MAP.needReview;
+    if (normalized.includes('incomplete') || normalized.includes('need upload') || normalized.includes('غير مكتمل') || normalized.includes('رفع')) {
+        return ARABIC_DISPLAY_STATUS_MAP.incomplete;
     }
-    if (normalized.includes('upload') || normalized.includes('رفع')) {
-        return ARABIC_DISPLAY_STATUS_MAP.needUpload;
+    if (normalized.includes('review') || normalized.includes('مراجعه')) {
+        return ARABIC_DISPLAY_STATUS_MAP.underReview;
     }
 
     return rawText;
@@ -314,7 +314,7 @@ export function getJoinRequestStatusBadgeClasses(statusKey = '') {
         return 'bg-blue-100 text-blue-800 border-blue-200';
     }
 
-    if (normalized.includes('upload') || normalized.includes('رفع')) {
+    if (normalized.includes('incomplete') || normalized.includes('upload') || normalized.includes('غير مكتمل') || normalized.includes('رفع')) {
         return 'bg-purple-100 text-purple-800 border-purple-200';
     }
 
