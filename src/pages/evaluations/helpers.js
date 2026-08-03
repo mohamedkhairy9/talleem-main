@@ -129,6 +129,82 @@ export const getEvaluationTargetName = (evaluation, locale) => {
     );
 };
 
+const getPersonName = (person, locale) => {
+    if (!person) return '';
+
+    return (
+        getLocalizedText(person?.name, locale) ||
+        getLocalizedText(person?.full_name, locale) ||
+        getLocalizedText(person?.display_name, locale) ||
+        getLocalizedText(person?.user?.name, locale) ||
+        getLocalizedText(person?.profile?.name, locale) ||
+        getLocalizedText(person, locale)
+    );
+};
+
+const isEntityManager = person => {
+    const roles = [
+        ...(Array.isArray(person?.roles) ? person.roles : []),
+        ...(Array.isArray(person?.user?.roles) ? person.user.roles : []),
+        person?.role,
+        person?.user_type,
+        person?.type
+    ];
+
+    return roles.some(role => {
+        const value = getLocalizedText(
+            typeof role === 'object' ? role?.name || role?.display_name || role?.slug : role,
+            'en'
+        ).toLowerCase();
+
+        return value.includes('entity manager') || value.includes('entity_manager') || value.includes('مدير جهة');
+    }) || Boolean(person?.entity_manager || person?.manager?.entity);
+};
+
+const getEntityManagerEntityName = (person, evaluation, locale) =>
+    getLocalizedText(person?.entity?.name, locale) ||
+    getLocalizedText(person?.user?.entity?.name, locale) ||
+    getLocalizedText(person?.entity_manager?.entity?.name, locale) ||
+    getLocalizedText(person?.manager?.entity?.name, locale) ||
+    getLocalizedText(evaluation?.evaluator_entity?.name, locale) ||
+    getLocalizedText(evaluation?.evaluator_entity_name, locale);
+
+// Evaluation responses are returned from different endpoints. Some expose the
+// evaluator as a user/profile object, while others return only a localized name.
+// Resolve all supported response shapes so the View modal always shows the name.
+export const getEvaluatorName = (evaluation, locale) => {
+    const candidates = [
+        evaluation?.evaluator,
+        evaluation?.evaluator_user,
+        evaluation?.evaluatorUser,
+        evaluation?.evaluated_by,
+        evaluation?.evaluatedBy,
+        evaluation?.created_by,
+        evaluation?.creator,
+        evaluation?.submitted_by
+    ];
+
+    for (const candidate of candidates) {
+        const name = getPersonName(candidate, locale);
+        if (!name) continue;
+
+        const entityName = getEntityManagerEntityName(candidate, evaluation, locale);
+        if (entityName && isEntityManager(candidate)) {
+            return `${name} — ${entityName}`;
+        }
+
+        return name;
+    }
+
+    return (
+        getLocalizedText(evaluation?.evaluator_name, locale) ||
+        getLocalizedText(evaluation?.evaluator_full_name, locale) ||
+        getLocalizedText(evaluation?.created_by_name, locale) ||
+        getLocalizedText(evaluation?.creator_name, locale) ||
+        '-'
+    );
+};
+
 export const getTemplateName = (item, locale) => {
     const template =
         item?.evaluation_parameter ||

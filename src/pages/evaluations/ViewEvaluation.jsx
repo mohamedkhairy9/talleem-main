@@ -4,7 +4,7 @@ import ModalHeader from '@/components/common/form/ModalHeader';
 import Loader from '@/components/common/Loader';
 import useLocale from '@/utils/hooks/global/useLocale';
 import { useEvaluationQuery } from '@/api/hooks/useEvaluations';
-import { extractRecord, getEvaluationTargetName, getLocalizedText, getTemplateName } from './helpers';
+import { extractRecord, getEvaluationTargetName, getEvaluatorName, getLocalizedText, getTemplateName } from './helpers';
 
 const displayValue = value => {
     if (value === null || value === undefined || value === '') return '-';
@@ -61,7 +61,7 @@ export default function ViewEvaluation({ onClose, evaluation }) {
                         <Value label={isArabic ? 'النوع' : 'Type'} value={details?.evaluated_type} />
                         <Value label={isArabic ? 'تاريخ التقييم' : 'Evaluation Date'} value={details?.evaluation_date} />
                         <Value label={isArabic ? 'النتيجة' : 'Score'} value={details?.total_score ?? details?.score ?? details?.final_score} />
-                        <Value label={isArabic ? 'المقيّم' : 'Evaluator'} value={getLocalizedText(details?.evaluator?.name, currentLocale) || details?.evaluator_name} />
+                        <Value label={isArabic ? 'المُقيِّم' : 'Evaluator'} value={getEvaluatorName(details, currentLocale)} />
                     </div>
 
                     {details?.notes && (
