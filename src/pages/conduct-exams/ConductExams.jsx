@@ -9,8 +9,10 @@ import {
 } from '@/api/hooks/useConductExams';
 import {
     extractCollection,
+    extractRecord,
     formatTimeRange,
     normalizeBranchItem,
+    normalizeExamDetails,
     normalizeEntityItem,
     normalizeExamItem
 } from './helpers';
@@ -19,8 +21,21 @@ import {
     getExamStartAvailability
 } from './examTiming';
 import { useConfigurationsQuery } from '@/api/hooks/useConfigurations';
+import { conductExamsService } from '@/api/services/conductExams.service';
+
+const isCompletedExam = exam => {
+    const status = String(exam?.status || '').trim().toLowerCase();
+    return ['completed', 'complete', 'finished', 'submitted'].includes(status);
+};
 
 const getScheduleState = (exam, now, isArabic, earlyStartMinutes = 0) => {
+    if (exam?.isCompleted || isCompletedExam(exam)) {
+        return {
+            label: isArabic ? 'مكتمل' : 'Completed',
+            className: 'bg-indigo-50 text-indigo-700 ring-1 ring-indigo-200'
+        };
+    }
+
     const availability = getExamStartAvailability(exam, now, earlyStartMinutes);
 
     if (availability.reason === 'not_started') {
@@ -48,6 +63,7 @@ export default function ConductExams() {
     const [selectedBranchId, setSelectedBranchId] = useState('');
     const [selectedEntityId, setSelectedEntityId] = useState('');
     const [now, setNow] = useState(() => new Date());
+    const [completedExamIds, setCompletedExamIds] = useState(() => new Set());
 
     const branchesQuery = useConductExamBranchesQuery();
     const branches = extractCollection(branchesQuery.data).map(normalizeBranchItem);
@@ -103,6 +119,60 @@ export default function ConductExams() {
         const timer = window.setInterval(() => setNow(new Date()), 30_000);
         return () => window.clearInterval(timer);
     }, []);
+
+    useEffect(() => {
+        let isActive = true;
+
+        const checkExamCompletion = async exam => {
+            if (!exam?.id) return null;
+            if (isCompletedExam(exam)) return String(exam.id);
+
+            try {
+                const details = normalizeExamDetails(
+                    await conductExamsService.getScheduledExam(exam.id)
+                );
+
+                if (!details.students.length) return null;
+
+                const studentStates = await Promise.all(
+                    details.students.map(async student => {
+                        if (student.isCompleted || student.statusKey === 'submitted') {
+                            return true;
+                        }
+
+                        try {
+                            const result = extractRecord(
+                                await conductExamsService.getStudentResult(exam.id, student.id)
+                            );
+                            return String(result?.status || '').toLowerCase() === 'completed';
+                        } catch {
+                            return false;
+                        }
+                    })
+                );
+
+                return studentStates.every(Boolean) ? String(exam.id) : null;
+            } catch {
+                return null;
+            }
+        };
+
+        if (!todayExams.length) {
+            setCompletedExamIds(new Set());
+            return () => {
+                isActive = false;
+            };
+        }
+
+        Promise.all(todayExams.map(checkExamCompletion)).then(examIds => {
+            if (!isActive) return;
+            setCompletedExamIds(new Set(examIds.filter(Boolean)));
+        });
+
+        return () => {
+            isActive = false;
+        };
+    }, [todayExams]);
 
     if (branchesQuery.isLoading || entitiesQuery.isLoading || todayQuery.isLoading) {
         return <Loader />;
@@ -191,7 +261,10 @@ export default function ConductExams() {
                             <div className="flex items-center gap-3">
                                 {(() => {
                                     const scheduleState = getScheduleState(
-                                        exam,
+                                        {
+                                            ...exam,
+                                            isCompleted: completedExamIds.has(String(exam.id))
+                                        },
                                         now,
                                         isArabic,
                                         earlyStartMinutes

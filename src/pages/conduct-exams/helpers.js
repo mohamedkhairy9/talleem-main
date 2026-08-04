@@ -99,21 +99,49 @@ export const normalizeSegmentItem = (item, index) => ({
 });
 
 export const resolveStudentStatus = student => {
+    // A completed exam can be returned by the API with different status keys
+    // depending on the exam type.  Prefer the final-result evidence so a
+    // student who has already been graded is never offered "Start Exam"
+    // again.
+    const hasFinalResult = [
+        student?.submitted_at,
+        student?.completed_at,
+        student?.finished_at,
+        student?.result_submitted_at,
+        student?.is_submitted === true,
+        student?.is_completed === true,
+        student?.is_finalized === true,
+        student?.submitted === true,
+        student?.completed === true,
+        student?.result_id,
+        student?.evaluation_id,
+        student?.result?.id,
+        student?.exam_result?.id,
+        student?.evaluation?.id
+    ].some(Boolean);
+
+    if (hasFinalResult) return 'submitted';
+
     const normalized = String(
         firstNonEmpty(
+            student?.status_key,
             student?.status_text,
             student?.status,
             student?.exam_status,
-            student?.submitted_at ? 'submitted' : null,
             student?.started_at ? 'started' : null,
             'not_started'
         )
-    ).toLowerCase();
+    ).toLowerCase().replace(/[\s-]+/g, '_');
 
     if (
         normalized.includes('submit') ||
         normalized.includes('complete') ||
-        normalized.includes('result')
+        normalized.includes('result') ||
+        normalized.includes('finish') ||
+        normalized.includes('final') ||
+        normalized.includes('grade') ||
+        normalized.includes('evaluat') ||
+        normalized.includes('done')
     ) {
         return 'submitted';
     }
@@ -128,6 +156,20 @@ export const normalizeStudentItem = (item, index) => {
     const segments = extractCollection(
         firstNonEmpty(item?.segments, item?.exam_segments, item?.student_segments, [])
     );
+    // `completed` is the API's final status for an exam attempt. Preserve it
+    // explicitly so the UI never offers "Start Exam" for that student again.
+    const attemptStatus = String(
+        firstNonEmpty(
+            item?.status,
+            item?.exam_status,
+            item?.exam_conduction?.status,
+            item?.examConduction?.status,
+            ''
+        )
+    )
+        .trim()
+        .toLowerCase();
+    const isCompleted = attemptStatus === 'completed';
 
     return {
         id: firstNonEmpty(item?.student_id, student?.id, item?.id, `student-${index}`),
@@ -142,7 +184,8 @@ export const normalizeStudentItem = (item, index) => {
             getDisplayDate(item?.submitted_at),
             getDisplayDate(item?.completed_at)
         ),
-        statusKey: resolveStudentStatus(item),
+        isCompleted,
+        statusKey: isCompleted ? 'submitted' : resolveStudentStatus(item),
         statusLabel: firstNonEmpty(item?.status_text, item?.status, item?.exam_status),
         evaluationParameterId: firstNonEmpty(
             item?.evaluation_parameter_id,

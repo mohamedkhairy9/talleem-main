@@ -9,6 +9,7 @@ import {
     useSetConductExamModelMutation,
     useStartConductExamMutation
 } from '@/api/hooks/useConductExams';
+import { conductExamsService } from '@/api/services/conductExams.service';
 import {
     extractCollection,
     formatTimeRange,
@@ -43,6 +44,9 @@ export default function ConductExamDetails() {
         evaluation_parameter_id: ''
     });
     const [locallySavedExamModel, setLocallySavedExamModel] = useState(null);
+    // The students list does not always include an attempt status. Keep statuses
+    // returned by the start endpoint so the action is updated immediately.
+    const [completedStudentIds, setCompletedStudentIds] = useState(() => new Set());
 
     const detailsQuery = useConductExamDetailsQuery(scheduledExamId, {
         enabled: Boolean(scheduledExamId)
@@ -127,7 +131,64 @@ export default function ConductExamDetails() {
 
     useEffect(() => {
         setLocallySavedExamModel(null);
+        setCompletedStudentIds(new Set());
     }, [scheduledExamId]);
+
+    // The details response does not always include the attempt status for each
+    // student. Read the result endpoint only, so refreshing the page can still
+    // identify completed attempts without accidentally starting any new exam.
+    useEffect(() => {
+        if (!scheduledExamId || !exam?.students?.length) return undefined;
+
+        let cancelled = false;
+        const studentsToCheck = exam.students.filter(
+            student =>
+                !student.isCompleted && student.statusKey !== 'submitted'
+        );
+
+        if (!studentsToCheck.length) return undefined;
+
+        const checkCompletedAttempts = async () => {
+            const results = await Promise.all(
+                studentsToCheck.map(async student => {
+                    try {
+                        const response =
+                            await conductExamsService.getStudentResult(
+                                scheduledExamId,
+                                student.id
+                            );
+                        const result =
+                            response?.data?.data || response?.data || response;
+
+                        return String(result?.status || '')
+                            .trim()
+                            .toLowerCase() === 'completed'
+                            ? String(student.id)
+                            : null;
+                    } catch {
+                        // Students without a submitted result simply remain
+                        // eligible for the normal start flow.
+                        return null;
+                    }
+                })
+            );
+
+            const completedIds = results.filter(Boolean);
+            if (!cancelled && completedIds.length) {
+                setCompletedStudentIds(current => {
+                    const next = new Set(current);
+                    completedIds.forEach(id => next.add(id));
+                    return next;
+                });
+            }
+        };
+
+        checkCompletedAttempts();
+
+        return () => {
+            cancelled = true;
+        };
+    }, [scheduledExamId, exam?.students]);
 
     const handleSaveExamModel = () => {
         if (!examModel.evaluation_parameter_id || isExamModelLocked) return;
@@ -180,6 +241,35 @@ export default function ConductExamDetails() {
             {
                 onSuccess: response => {
                     const startData = response?.data?.data || response?.data || response;
+                    const returnedStatus = String(startData?.status || '')
+                        .trim()
+                        .toLowerCase();
+
+                    // This endpoint returns a successful response with
+                    // `status: completed` when the student's exam was already
+                    // submitted. Do not open a new conduct session in that case.
+                    if (returnedStatus === 'completed') {
+                        setCompletedStudentIds(current => {
+                            const next = new Set(current);
+                            next.add(String(student.id));
+                            return next;
+                        });
+                        navigate(
+                            `/conduct-exams/${scheduledExamId}/students/${student.id}/result`,
+                            {
+                                state: {
+                                    student: {
+                                        ...student,
+                                        isCompleted: true,
+                                        statusKey: 'submitted'
+                                    },
+                                    exam,
+                                    resultData: startData
+                                }
+                            }
+                        );
+                        return;
+                    }
 
                     navigate(
                         `/conduct-exams/${scheduledExamId}/students/${student.id}/conduct`,
@@ -205,8 +295,20 @@ export default function ConductExamDetails() {
                     const isCompletedExam = error?.status === 409 && rawMessage.includes('already completed');
 
                     if (isCompletedExam) {
+                        setCompletedStudentIds(current => {
+                            const next = new Set(current);
+                            next.add(String(student.id));
+                            return next;
+                        });
                         navigate(`/conduct-exams/${scheduledExamId}/students/${student.id}/result`, {
-                            state: { student, exam }
+                            state: {
+                                student: {
+                                    ...student,
+                                    isCompleted: true,
+                                    statusKey: 'submitted'
+                                },
+                                exam
+                            }
                         });
                         return;
                     }
@@ -426,20 +528,24 @@ export default function ConductExamDetails() {
                         </thead>
                         <tbody className="divide-y divide-gray-100">
                             {exam.students.map(student => {
+                                // The backend closes a student's attempt with status: completed.
+                                // A completed attempt must only expose its result, never a new start.
+                                const isCompleted =
+                                    student.isCompleted ||
+                                    completedStudentIds.has(String(student.id)) ||
+                                    student.statusKey === 'submitted';
                                 const canStartStudent =
-                                    student.statusKey !== 'submitted' &&
+                                    !isCompleted &&
                                     startAvailability.isAvailable &&
                                     hasSavedExamModel &&
                                     !startMutation.isPending;
-                                const canViewResult = student.statusKey === 'submitted';
+                                const canViewResult = isCompleted;
                                 const actionLabel = canViewResult
-                                    ? (isArabic ? 'عرض الدرجات' : 'View Grades')
+                                    ? (isArabic ? 'عرض النتيجة' : 'View Result')
                                     : student.statusKey === 'started'
                                     ? (isExamEnded
                                         ? (isArabic ? 'لم تُرسل الدرجات' : 'Grades not submitted')
                                         : (isArabic ? 'بدء الامتحان' : 'Start Exam'))
-                                    : student.statusKey === 'submitted'
-                                    ? (isArabic ? 'تظهر الدرجات بعد انتهاء الموعد' : 'Grades appear after the exam ends')
                                     : (isArabic ? 'بدء الامتحان' : 'Start Exam');
                                 const actionTitle = canStartStudent || canViewResult
                                     ? undefined
