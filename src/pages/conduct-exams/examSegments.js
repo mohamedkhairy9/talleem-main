@@ -27,18 +27,16 @@ const getSubmissionSegmentId = (segment, fallback = null) =>
         'submission_segment_id',
         valueOf(
             segment,
-            'quranExamSegmentItemId',
-            'quran_exam_segment_item_id',
+            'examConductionSegmentId',
+            'exam_conduction_segment_id',
             valueOf(
                 segment,
-                'examSegmentItemId',
-                'exam_segment_item_id',
-                segment?.quran_exam_segment_item?.id ??
-                    segment?.exam_segment_item?.id ??
-                    segment?.exam_segment?.item?.id ??
-                    segment?.item?.id ??
-                    segment?.segment?.id ??
-                    valueOf(segment, 'segmentId', 'segment_id', segment?.id ?? fallback)
+                'conductionSegmentId',
+                'conduction_segment_id',
+                segment?.exam_conduction_segment?.id ??
+                    segment?.conduction_segment?.id ??
+                    segment?.id ??
+                    fallback
             )
         )
     );

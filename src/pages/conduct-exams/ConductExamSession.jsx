@@ -248,9 +248,23 @@ export default function ConductExamSession() {
         }
 
         const nextErrors = {};
+        const submissionSegments = segments.map(segment => ({
+            segment,
+            segmentId: Number(getExamConductionSubmissionSegmentId(segment))
+        }));
+
+        if (submissionSegments.some(({ segmentId }) => !Number.isInteger(segmentId) || segmentId <= 0)) {
+            setPageError(
+                isArabic
+                    ? 'تعذر تحديد مقاطع جلسة الامتحان. أغلق الصفحة وابدأ الامتحان مرة أخرى.'
+                    : 'Unable to identify the exam session segments. Close this page and start the exam again.'
+            );
+            return;
+        }
+
         const payload = {
-            segments: segments.map(segment => ({
-                segment_id: getExamConductionSubmissionSegmentId(segment),
+            segments: submissionSegments.map(({ segment, segmentId }) => ({
+                segment_id: segmentId,
                 grades: criteria.map(criterion => {
                     const gradeKey = buildGradeKey(segment.id, criterion.id);
                     const rawValue = grades[gradeKey];
