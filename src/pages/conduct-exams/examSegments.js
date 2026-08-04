@@ -20,7 +20,7 @@ const normalizeJuzNumbers = values => [...new Set(
 const valueOf = (segment, camelCase, snakeCase, fallback = null) =>
     segment?.[camelCase] ?? segment?.[snakeCase] ?? fallback;
 
-const getSubmissionSegmentId = (segment, fallback = null) =>
+const getExplicitSubmissionSegmentId = segment =>
     valueOf(
         segment,
         'submissionSegmentId',
@@ -35,19 +35,26 @@ const getSubmissionSegmentId = (segment, fallback = null) =>
                 'conduction_segment_id',
                 segment?.exam_conduction_segment?.id ??
                     segment?.conduction_segment?.id ??
-                    segment?.id ??
-                    fallback
+                    null
             )
         )
     );
 
-const normalizeSegment = (segment, index, fallbackJuz) => {
+const normalizeSegment = (
+    segment,
+    index,
+    fallbackJuz,
+    { rawIdIsSubmissionId = false } = {}
+) => {
     const juzNumber = Number(valueOf(segment, 'juzNumber', 'juz_number', fallbackJuz)) || fallbackJuz;
     const id = valueOf(segment, 'id', 'segment_id', valueOf(segment, 'quranExamSegmentItemId', 'quran_exam_segment_item_id', juzNumber ?? index + 1));
 
     return {
         id,
-        submissionSegmentId: getSubmissionSegmentId(segment, id),
+        // The grades endpoint only accepts exam_conduction_segments.id. A Quran
+        // item id or juz number is valid for display, but not for submission.
+        submissionSegmentId: getExplicitSubmissionSegmentId(segment) ??
+            (rawIdIsSubmissionId ? segment?.id ?? null : null),
         order: valueOf(segment, 'order', 'order', index + 1),
         juzNumber,
         firstVerseKey: valueOf(segment, 'firstVerseKey', 'first_verse_key'),
@@ -56,7 +63,13 @@ const normalizeSegment = (segment, index, fallbackJuz) => {
     };
 };
 
-export const getExamConductionSegments = ({ examType, rawSegments, studentJuzNumbers, fallbackJuzNumbers }) => {
+export const getExamConductionSegments = ({
+    examType,
+    rawSegments,
+    studentJuzNumbers,
+    fallbackJuzNumbers,
+    rawSegmentsAreConductionSegments = false
+}) => {
     const segments = Array.isArray(rawSegments) ? rawSegments : [];
     const juzNumbers = normalizeJuzNumbers(studentJuzNumbers).length
         ? normalizeJuzNumbers(studentJuzNumbers)
@@ -67,7 +80,9 @@ export const getExamConductionSegments = ({ examType, rawSegments, studentJuzNum
             const rawSegment = segments[index] || {};
             const [firstVerseKey, lastVerseKey] = JUZ_RANGES[juzNumber] || [];
             return {
-                ...normalizeSegment(rawSegment, index, juzNumber),
+                ...normalizeSegment(rawSegment, index, juzNumber, {
+                    rawIdIsSubmissionId: rawSegmentsAreConductionSegments
+                }),
                 juzNumber,
                 firstVerseKey,
                 lastVerseKey
@@ -75,12 +90,16 @@ export const getExamConductionSegments = ({ examType, rawSegments, studentJuzNum
         });
     }
 
-    if (segments.length) return segments.map((segment, index) => normalizeSegment(segment, index));
+    if (segments.length) {
+        return segments.map((segment, index) => normalizeSegment(segment, index, undefined, {
+            rawIdIsSubmissionId: rawSegmentsAreConductionSegments
+        }));
+    }
     return juzNumbers.map((juzNumber, index) => {
         const [firstVerseKey, lastVerseKey] = JUZ_RANGES[juzNumber] || [];
         return {
             id: juzNumber,
-            submissionSegmentId: juzNumber,
+            submissionSegmentId: null,
             order: index + 1,
             juzNumber,
             firstVerseKey,
@@ -91,4 +110,4 @@ export const getExamConductionSegments = ({ examType, rawSegments, studentJuzNum
 };
 
 export const getExamConductionSubmissionSegmentId = segment =>
-    getSubmissionSegmentId(segment, segment?.id ?? null);
+    segment?.submissionSegmentId ?? null;

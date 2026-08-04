@@ -125,9 +125,18 @@ export default function ConductExamSession() {
 
     const examType =
         location.state?.startPayload?.exam_type || sessionData?.exam_type || selectedStudent?.examType || 'maqata3';
-    const sessionSegments = useMemo(() => {
+    const { sessionSegments, sessionSegmentsAreConductionSegments } = useMemo(() => {
+        // A started exam returns `segments` as exam_conduction_segments. Their
+        // `id` is the only id accepted when saving the grades.
+        const persistedSegments = extractCollection(sessionData?.segments);
+        if (persistedSegments.length) {
+            return {
+                sessionSegments: persistedSegments,
+                sessionSegmentsAreConductionSegments: true
+            };
+        }
+
         const candidates = [
-            sessionData?.segments,
             sessionData?.exam_segments,
             sessionData?.quran_exam_segment_items,
             sessionData?.exam_segment?.items,
@@ -145,7 +154,10 @@ export default function ConductExamSession() {
             sessionData?.session?.exam_segment?.items
         ];
 
-        return candidates.map(extractCollection).find(items => items.length) || [];
+        return {
+            sessionSegments: candidates.map(extractCollection).find(items => items.length) || [],
+            sessionSegmentsAreConductionSegments: false
+        };
     }, [sessionData]);
     const segments = useMemo(() => getExamConductionSegments({
         examType,
@@ -162,8 +174,9 @@ export default function ConductExamSession() {
                 []
             ) : []),
         studentJuzNumbers: selectedStudent?.juzNumbers,
-        fallbackJuzNumbers: sessionSegments.map(segment => segment?.juz_number ?? segment?.juzNumber)
-    }), [examDetails?.raw?.exam_segment?.items, examDetails?.raw?.exam_segments, examDetails?.raw?.quran_exam_segment_items, examDetails?.raw?.segments, examType, hasActiveSession, selectedStudent?.juzNumbers, selectedStudent?.raw?.exam_segments, selectedStudent?.raw?.quran_exam_segment_items, selectedStudent?.raw?.segments, sessionSegments]);
+        fallbackJuzNumbers: sessionSegments.map(segment => segment?.juz_number ?? segment?.juzNumber),
+        rawSegmentsAreConductionSegments: sessionSegmentsAreConductionSegments
+    }), [examDetails?.raw?.exam_segment?.items, examDetails?.raw?.exam_segments, examDetails?.raw?.quran_exam_segment_items, examDetails?.raw?.segments, examType, hasActiveSession, selectedStudent?.juzNumbers, selectedStudent?.raw?.exam_segments, selectedStudent?.raw?.quran_exam_segment_items, selectedStudent?.raw?.segments, sessionSegments, sessionSegmentsAreConductionSegments]);
 
     const criteria = useMemo(() => {
         const sessionCriteria = extractCollection(sessionData?.evaluation_parameter?.criteria).map(

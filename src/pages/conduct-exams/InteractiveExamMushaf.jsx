@@ -16,6 +16,31 @@ const getJuzStartPage = juz => {
     return JUZ_START_PAGES[normalizedJuz - 1];
 };
 
+const getSegmentFirstVerseKey = segment =>
+    segment?.firstVerseKey ?? segment?.first_verse_key ?? null;
+
+const getPageFromVerseKey = (wordsDb, linesDb, verseKey) => {
+    if (!wordsDb || !linesDb || !verseKey) return null;
+
+    const [surah, ayah] = String(verseKey).split(':').map(Number);
+    if (!Number.isInteger(surah) || !Number.isInteger(ayah)) return null;
+
+    try {
+        const wordResult = wordsDb.exec(
+            `SELECT id FROM words WHERE location LIKE '${surah}:${ayah}:%' ORDER BY id LIMIT 1`
+        );
+        const wordId = wordResult?.[0]?.values?.[0]?.[0];
+        if (!wordId) return null;
+
+        const pageResult = linesDb.exec(
+            `SELECT page_number FROM pages WHERE first_word_id <= ${Number(wordId)} AND last_word_id >= ${Number(wordId)} LIMIT 1`
+        );
+        return Number(pageResult?.[0]?.values?.[0]?.[0]) || null;
+    } catch {
+        return null;
+    }
+};
+
 const loadPageLines = (linesDb, pageNumber) => {
     const result = linesDb.exec(
         `SELECT * FROM pages WHERE page_number = ${Number(pageNumber)} ORDER BY line_number`
@@ -62,8 +87,18 @@ export default function InteractiveExamMushaf({ segments = [], activeSegmentId, 
     }, []);
 
     useEffect(() => {
-        if (activeSegment) setCurrentPage(getJuzStartPage(getSegmentJuz(activeSegment)));
-    }, [activeSegment]);
+        if (!activeSegment) return;
+
+        // Every generated exam segment carries its first verse. Open the
+        // Mushaf on that exact page instead of the first page of the whole Juz.
+        // The Juz start remains a safe fallback for legacy segment responses.
+        const segmentPage = getPageFromVerseKey(
+            wordsDb,
+            linesDb,
+            getSegmentFirstVerseKey(activeSegment)
+        );
+        setCurrentPage(segmentPage || getJuzStartPage(getSegmentJuz(activeSegment)));
+    }, [activeSegment, linesDb, wordsDb]);
 
     useEffect(() => {
         if (!linesDb) return undefined;
