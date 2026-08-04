@@ -31,6 +31,7 @@ import {
     getBranchManagerAssignedBranchId,
     isBranchManagerScopedUser
 } from '@/utils/helpers/branchManagerScope';
+import { getTeacherLicenseFormData } from './teacherLicenseDetails';
 
 const extractCollection = response => {
     if (Array.isArray(response)) return response;
@@ -109,12 +110,18 @@ export default function Teachers() {
         sourceResponse?.data?.length ??
         dataList.length;
 
-    const tableData = scopedDataList.map(item => ({
-        ...item,
-        name: item.name?.[i18next.language],
-        branch: item.branch?.[i18next.language],
-        main_program: item.main_program?.name?.[i18next.language]
-    }));
+    const tableData = scopedDataList.map(item => {
+        const { license_number: licenseNumber } = getTeacherLicenseFormData(item);
+
+        return {
+            ...item,
+            name: item.name?.[i18next.language],
+            branch: item.branch?.[i18next.language],
+            main_program: item.main_program?.name?.[i18next.language],
+            // The teachers index returns this value inside the current license.
+            license_number: licenseNumber ?? null
+        };
+    });
 
     const formData = scopedDataList.map(item => {
         // Map gender from Arabic text to value
